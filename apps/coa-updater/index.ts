@@ -8,15 +8,39 @@ import { createPool } from "mariadb";
 const dataPath = "/tmp/inducks",
   isvPath = `${dataPath}/isv`;
 
+/** Run CLI without a shell so MYSQL_ROOT_PASSWORD is not mangled ($, !, spaces, etc.). */
+async function runMariadbCheck(): Promise<number> {
+  const host = process.env.MYSQL_HOST;
+  const password = process.env.MYSQL_ROOT_PASSWORD;
+  const database = process.env.MYSQL_DATABASE;
+  if (!host || password === undefined || !database) {
+    throw new Error(
+      "MYSQL_HOST, MYSQL_ROOT_PASSWORD, and MYSQL_DATABASE are required for mariadb-check",
+    );
+  }
+  const proc = Bun.spawn(
+    [
+      "mariadb-check",
+      "-h",
+      host,
+      "-uroot",
+      `-p${password}`,
+      "-v",
+      database,
+    ],
+    { stdout: "inherit", stderr: "inherit" },
+  );
+  return proc.exited;
+}
+
 const poolParams = {
   host: process.env.MYSQL_HOST,
   port: parseInt(process.env.MYSQL_PORT || "3306"),
   user: "root",
   password: process.env.MYSQL_ROOT_PASSWORD,
+  connectionLimit: 5,
   multipleStatements: true,
   permitLocalInfile: true,
-  // Prevent "socket has unexpectedly been closed" during long LOAD DATA operations
-  // (inducks_entry is large; default net_read_timeout/net_write_timeout is 60s)
   sessionVariables: {
     net_read_timeout: 1800, // 30 minutes
     net_write_timeout: 1800, // 30 minutes
@@ -149,53 +173,64 @@ set unique_checks = 1;
 set foreign_key_checks = 1;
 set sql_log_bin=1`;
 
-  const cleanSqlStatements = cleanSql.split(";");
+  const cleanSqlStatements = cleanSql
+    .split(";")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 
-  const connection = await pool.getConnection();
-  await connection.query(
-    `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW};CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; set global net_buffer_length=1000000; 
-set global max_allowed_packet=1000000000; `,
-  );
+  const setupConnection = await pool.getConnection();
+  for (const statement of [
+    `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW}`,
+    `CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`,
+    "SET GLOBAL net_buffer_length=1000000",
+    "SET GLOBAL max_allowed_packet=1000000000",
+  ]) {
+    await setupConnection.query(statement);
+  }
+  await setupConnection.release();
 
   const newDbPool = createPool({
     ...poolParams,
     database: process.env.MYSQL_DATABASE_NEW,
   });
   const newDbConnection = await newDbPool.getConnection();
-  // Explicitly set timeouts on this connection (sessionVariables may not apply reliably)
-  await newDbConnection.query(
-    "SET SESSION net_read_timeout = 1800; SET SESSION net_write_timeout = 1800; SET SESSION wait_timeout = 3600",
-  );
+  await newDbConnection.query("SET SESSION net_read_timeout = 1800");
+  await newDbConnection.query("SET SESSION net_write_timeout = 1800");
+  await newDbConnection.query("SET SESSION wait_timeout = 3600");
   for (const statement of cleanSqlStatements) {
     console.log(`Executing statement: ${statement}`);
     await newDbConnection.query(statement);
     console.log(" done.");
   }
 
+  console.log(
+    `Listing tables in ${process.env.MYSQL_DATABASE_NEW} (information_schema)...`,
+  );
   const tables = (
     await newDbConnection.query(
       `SELECT table_name FROM information_schema.tables WHERE table_schema = ? ORDER BY table_name`,
       [process.env.MYSQL_DATABASE_NEW],
     )
   ).map((row: { table_name: string }) => row.table_name);
+  console.log(`Found ${tables.length} tables to rename.`);
   await newDbConnection.release();
 
-  // Get a fresh connection BEFORE releasing the original - otherwise the pool may
-  // return the same stale connection that was idle for 30+ min during the SQL phase
+  console.log("Acquiring connection for rename phase...");
   const renameConnection = await pool.getConnection();
-  await connection.release();
-  await renameConnection.query(
-    "SET SESSION net_read_timeout = 7200; SET SESSION net_write_timeout = 7200; SET SESSION wait_timeout = 28800",
-  );
+  await renameConnection.query("SET SESSION net_read_timeout = 7200");
+  await renameConnection.query("SET SESSION net_write_timeout = 7200");
+  await renameConnection.query("SET SESSION wait_timeout = 28800");
 
   for (const table of tables) {
     console.log(`Renaming ${table}...`);
+    await renameConnection.query("SET foreign_key_checks = 0");
     await renameConnection.query(
-      `set foreign_key_checks = 0;
-      drop table if exists ${process.env.MYSQL_DATABASE}.${table};
-      rename table ${process.env.MYSQL_DATABASE_NEW}.${table} to ${process.env.MYSQL_DATABASE}.${table};
-      set foreign_key_checks = 1;`,
+      `DROP TABLE IF EXISTS ${process.env.MYSQL_DATABASE}.${table}`,
     );
+    await renameConnection.query(
+      `RENAME TABLE ${process.env.MYSQL_DATABASE_NEW}.${table} TO ${process.env.MYSQL_DATABASE}.${table}`,
+    );
+    await renameConnection.query("SET foreign_key_checks = 1");
     console.log(" done.");
   }
 
@@ -203,7 +238,10 @@ set global max_allowed_packet=1000000000; `,
   await renameConnection.release();
 
   console.log("mariadb-check...");
-  await $`mariadb-check -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
+  const checkExit = await runMariadbCheck();
+  if (checkExit !== 0) {
+    throw new Error(`mariadb-check exited with code ${checkExit}`);
+  }
   console.log(" done.");
   await pool.end();
   await newDbPool.end();
