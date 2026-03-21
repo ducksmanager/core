@@ -94,4 +94,7 @@ export default defineConfig({
       "~web": path.resolve(__dirname, "../web"),
     }),
   },
+  server: {
+    forwardConsole: true,
+  },
 });

@@ -14,6 +14,7 @@ import getViteAliases from '../../vite-aliases';
 export default defineConfig({
   server: {
     port: 8008,
+    forwardConsole: true,
   },
 
   build: {

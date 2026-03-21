@@ -74,4 +74,7 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    forwardConsole: true,
+  },
 });

@@ -76,6 +76,7 @@ export default defineConfig({
   ],
 
   server: {
+    forwardConsole: true,
     watch: {
       ignored: ["**/api/**", "**/.idea/**"],
     },
