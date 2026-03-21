@@ -4,9 +4,11 @@ import storybook from "eslint-plugin-storybook";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { fixupPluginRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import vueI18n from "@intlify/eslint-plugin-vue-i18n";
+import prettierVue from "eslint-plugin-prettier-vue";
 import pluginVue from "eslint-plugin-vue";
 import tseslint from "typescript-eslint";
 import parser from "vue-eslint-parser";
@@ -34,11 +36,18 @@ export default [
   },
   ...vueI18n.configs["flat/recommended"],
   ...pluginVue.configs["flat/recommended"],
-  ...compat.extends(
-    "plugin:prettier-vue/recommended",
-    "prettier",
-    "plugin:@typescript-eslint/recommended",
-  ),
+  ...compat.extends("prettier", "plugin:@typescript-eslint/recommended"),
+
+  // prettier-vue uses legacy context.getSourceCode(); wrap for ESLint 10 (avoid fixupConfigRules — duplicates @typescript-eslint).
+  {
+    plugins: {
+      "prettier-vue": fixupPluginRules(prettierVue),
+    },
+    rules: {
+      "prettier-vue/prettier": "error",
+    },
+  },
+
   {
     plugins: {
       "@typescript-eslint": tseslint.plugin,

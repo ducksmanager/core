@@ -6,7 +6,12 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta = preview.meta({
+type TooltipEntry = InstanceType<
+  typeof StorySuggestionsTooltip
+>["$props"]["entry"];
+
+// No `component` on meta → argTypes-only `entry` is `unknown`; align CSF args with the render fn.
+const meta = preview.type<{ args: { entry: TooltipEntry } }>().meta({
   title: "Components/suggestions/StorySuggestionsTooltip",
   tags: ["autodocs"],
   argTypes: {
@@ -16,10 +21,6 @@ const meta = preview.meta({
     },
   },
 });
-
-type TooltipEntry = InstanceType<
-  typeof StorySuggestionsTooltip
->["$props"]["entry"];
 
 const createMockTooltipEntry = (
   overrides: Partial<TooltipEntry> = {},

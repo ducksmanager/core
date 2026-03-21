@@ -131,7 +131,7 @@ import type {
   CloudinaryCreateUploadWidget,
   CloudinaryUploadWidget,
   CloudinaryUploadWidgetInfo,
-} from "cloudinary-widget";
+} from "../../cloudinary-widget";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 

@@ -75,12 +75,19 @@
 import {
   moveArrayElement,
   useSortable,
+  type UseSortableOptions,
 } from "@vueuse/integrations/useSortable";
 import { vElementVisibility } from "@vueuse/components";
+import Sortable, { MultiDrag } from "sortablejs";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { ui } from "~/stores/ui";
 import { suggestions } from "~/stores/suggestions";
+
+try {
+  Sortable.mount(new MultiDrag());
+} catch {
+}
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { loadIndexation } = suggestions();
@@ -133,7 +140,7 @@ const maxUploadableImagesFromPageNumber = (
     onlyIncludeEmptyPages ? page.image : false,
   );
 
-  return firstBreakIndex === -1
+  return firstBreakIndex === -1 
     ? subsequentPages.length + 1
     : firstBreakIndex + 1;
 };
@@ -143,29 +150,30 @@ const { visiblePages, currentPage, currentEntry, currentEntryPageNumbers } =
 
 const imagesRef = ref<HTMLElement>();
 
-useSortable(imagesRef, pages, {
-  multiDrag: true,
-  selectedClass: "selected",
-  fallbackTolerance: 3,
-  animation: 150,
+useSortable(
+  imagesRef,
+  pages,
+  {
+    multiDrag: true,
+    selectedClass: "selected",
+    fallbackTolerance: 3,
+    animation: 150,
 
-  onUpdate: async (e: Event) => {
-    const event = e as unknown as { oldIndex: number; newIndex: number };
-    moveArrayElement(pages, event.oldIndex, event.newIndex, e);
-    nextTick(async () => {
-      await indexationSocket.value?.swapPageUrls(
-        pages[event.oldIndex].pageNumber,
-        pages[event.newIndex].pageNumber,
-      );
-    });
-  },
-});
+    onUpdate: async (e: Sortable.SortableEvent) => {
+      const { oldIndex, newIndex } = e;
+      if (oldIndex === undefined || newIndex === undefined) return;
+      moveArrayElement(pages, oldIndex, newIndex, e);
+      nextTick( () => indexationSocket.value?.swapPageUrls(
+        pages[oldIndex].pageNumber,
+        pages[newIndex].pageNumber
+      ));
+    },
+  } satisfies UseSortableOptions,
+);
 
 const selectedId = ref<number>();
 
-const disconnectPageUrl = async (id: number) => {
-  await indexationSocket.value!.setPageUrl(id, null);
-};
+const disconnectPageUrl = (id: number) => indexationSocket.value!.setPageUrl(id, null);
 
 watch(selectedId, (id) => {
   if (id) {

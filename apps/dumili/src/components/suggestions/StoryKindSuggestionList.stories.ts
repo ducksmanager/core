@@ -8,13 +8,15 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta = preview.meta({
-  title: "Components/suggestions/StoryKindSuggestionList",
-  tags: ["autodocs"],
-  parameters: {
-    layout: "padded",
-  },
-});
+const meta = preview
+  .type<{ args: { entry: FullEntry; editable: boolean } }>()
+  .meta({
+    title: "Components/suggestions/StoryKindSuggestionList",
+    tags: ["autodocs"],
+    parameters: {
+      layout: "padded",
+    },
+  });
 
 const createMockEntryWithStoryKinds = (
   overrides: Partial<FullEntry> = {},

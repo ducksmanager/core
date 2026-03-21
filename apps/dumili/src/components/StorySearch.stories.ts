@@ -1,7 +1,11 @@
 import preview from "../../.storybook/preview";
 import StorySearch from "./StorySearch.vue";
 
-const meta = preview.meta({
+type StorySearchArgs = {
+  kind?: string | null;
+};
+
+const meta = preview.type<{ args: StorySearchArgs }>().meta({
   title: "Components/StorySearch",
   tags: ["autodocs"],
   argTypes: {
@@ -13,7 +17,7 @@ const meta = preview.meta({
   },
 });
 
-const render = (args: { kind?: string }) => ({
+const render = (args: StorySearchArgs) => ({
   components: { StorySearch },
   setup: () => ({ args }),
   template: `
