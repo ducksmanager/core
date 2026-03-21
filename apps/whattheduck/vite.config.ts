@@ -18,32 +18,45 @@ export default defineConfig({
 
   build: {
     sourcemap: true,
-    rollupOptions: {
+    // Vite 8 / Rolldown: object-form manualChunks removed; use output.codeSplitting.groups.
+    // https://rolldown.rs/in-depth/manual-code-splitting
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunks
-          'vendor-vue': ['vue', 'vue-router', 'pinia'],
-          'vendor-ionic': ['@ionic/vue', '@ionic/vue-router'],
-          'vendor-capacitor': [
-            '@capacitor/core',
-            '@capacitor/app',
-            '@capacitor/device',
-            '@capacitor/haptics',
-            '@capacitor/keyboard',
-            '@capacitor/preferences',
-            '@capacitor/status-bar',
-            '@capacitor/camera',
-            '@capacitor/clipboard',
-            '@capgo/camera-preview',
-            '@capawesome/capacitor-app-update',
-            '@capawesome/capacitor-file-picker',
-            '@capgo/capacitor-updater',
+        codeSplitting: {
+          groups: [
+            {
+              name: 'vendor-vue',
+              test: /node_modules\/(vue|vue-router|pinia)(\/|$)/,
+            },
+            {
+              name: 'vendor-ionic',
+              test: /node_modules\/@ionic\/(vue|vue-router)(\/|$)/,
+            },
+            {
+              name: 'vendor-capacitor',
+              test: /node_modules\/(@capacitor\/(core|app|device|haptics|keyboard|preferences|status-bar|camera|clipboard)|@capgo\/(camera-preview|capacitor-updater)|@capawesome\/(capacitor-app-update|capacitor-file-picker))(\/|$)/,
+            },
+            {
+              name: 'vendor-charts',
+              test: /node_modules\/(chart\.js|vue-chartjs)(\/|$)/,
+            },
+            {
+              name: 'vendor-utils',
+              test: /node_modules\/(@vueuse\/(core|components|integrations)|dayjs)(\/|$)/,
+            },
+            {
+              name: 'vendor-ui',
+              test: /node_modules\/(ionicons|@ionic\/pwa-elements|vue-virtual-scroller)(\/|$)/,
+            },
+            {
+              name: 'vendor-socket',
+              test: /node_modules\/socket-call-client(\/|$)/,
+            },
+            {
+              name: 'vendor-sentry',
+              test: /node_modules\/@sentry\/(capacitor|vue)(\/|$)/,
+            },
           ],
-          'vendor-charts': ['chart.js', 'vue-chartjs'],
-          'vendor-utils': ['@vueuse/core', '@vueuse/components', '@vueuse/integrations', 'dayjs'],
-          'vendor-ui': ['ionicons', '@ionic/pwa-elements', 'vue-virtual-scroller'],
-          'vendor-socket': ['socket-call-client'],
-          'vendor-sentry': ['@sentry/capacitor', '@sentry/vue'],
         },
       },
     },

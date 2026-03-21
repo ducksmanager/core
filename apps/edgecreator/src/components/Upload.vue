@@ -117,7 +117,7 @@ onMounted(() => {
   }
 }
 
-:deep(a.uppy-Dashboard-poweredBy) {
+a.uppy-Dashboard-poweredBy {
   display: none;
 }
 </style>

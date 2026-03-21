@@ -47,15 +47,18 @@ export default defineConfig({
     minify: false,
     outDir: "dist",
     cssCodeSplit: false,
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         content: resolve(__dirname, "src/content.ts"),
       },
       output: {
         entryFileNames: "content.js",
         chunkFileNames: "[name].js",
-        assetFileNames: (assetInfo) =>
-          assetInfo.name === "style.css" ? "content.css" : assetInfo.name,
+        assetFileNames: (assetInfo) => {
+          // Vite 8 may pass `names` (Rolldown) instead of `name` for internal calls.
+          const name = assetInfo.name ?? assetInfo.names?.[0];
+          return name === "style.css" ? "content.css" : name;
+        },
       },
     },
   },
