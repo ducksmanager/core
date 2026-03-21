@@ -86,8 +86,7 @@ import { suggestions } from "~/stores/suggestions";
 
 try {
   Sortable.mount(new MultiDrag());
-} catch {
-}
+} catch {}
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { loadIndexation } = suggestions();
@@ -140,7 +139,7 @@ const maxUploadableImagesFromPageNumber = (
     onlyIncludeEmptyPages ? page.image : false,
   );
 
-  return firstBreakIndex === -1 
+  return firstBreakIndex === -1
     ? subsequentPages.length + 1
     : firstBreakIndex + 1;
 };
@@ -150,30 +149,29 @@ const { visiblePages, currentPage, currentEntry, currentEntryPageNumbers } =
 
 const imagesRef = ref<HTMLElement>();
 
-useSortable(
-  imagesRef,
-  pages,
-  {
-    multiDrag: true,
-    selectedClass: "selected",
-    fallbackTolerance: 3,
-    animation: 150,
+useSortable(imagesRef, pages, {
+  multiDrag: true,
+  selectedClass: "selected",
+  fallbackTolerance: 3,
+  animation: 150,
 
-    onUpdate: async (e: Sortable.SortableEvent) => {
-      const { oldIndex, newIndex } = e;
-      if (oldIndex === undefined || newIndex === undefined) return;
-      moveArrayElement(pages, oldIndex, newIndex, e);
-      nextTick( () => indexationSocket.value?.swapPageUrls(
+  onUpdate: async (e: Sortable.SortableEvent) => {
+    const { oldIndex, newIndex } = e;
+    if (oldIndex === undefined || newIndex === undefined) return;
+    moveArrayElement(pages, oldIndex, newIndex, e);
+    nextTick(() =>
+      indexationSocket.value?.swapPageUrls(
         pages[oldIndex].pageNumber,
-        pages[newIndex].pageNumber
-      ));
-    },
-  } satisfies UseSortableOptions,
-);
+        pages[newIndex].pageNumber,
+      ),
+    );
+  },
+} satisfies UseSortableOptions);
 
 const selectedId = ref<number>();
 
-const disconnectPageUrl = (id: number) => indexationSocket.value!.setPageUrl(id, null);
+const disconnectPageUrl = (id: number) =>
+  indexationSocket.value!.setPageUrl(id, null);
 
 watch(selectedId, (id) => {
   if (id) {

@@ -11,7 +11,7 @@ const meta = preview.meta({
     docs: {
       story: {
         inline: false,
-        iframeHeight: '200px',
+        iframeHeight: "200px",
       },
     },
   },

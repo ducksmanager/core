@@ -16,6 +16,9 @@
       }}</b-alert
     >
     <template v-else>
+      <b-alert variant="info" :model-value="true">
+        {{ $t("Vous avez indiqué toutes les entrées de cette indexation ? L'index au format DBI est indiqué ci-dessous. Copiez l'index et utilisez l'extension navigateur Dumili pour remplir les champs d'indexation automatiquement sur Inducks.") }}
+      </b-alert>
       <b-form-checkbox
         v-model="showEntryLetters"
         :disabled="hasEntrycodesLongerThanFirstColumnMaxWidth"
@@ -40,10 +43,12 @@
             ><b-td
               v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
               :key="idx" /></template></b-table
-        ><b-button variant="light" @click="copyToClipboard"
+        ><b-button  class="my-2"variant="light" @click="copyToClipboard"
           ><template v-if="isCopied">{{ $t("Copié !") }}<i-bi-check /></template
           ><template v-else>{{ $t("Copier") }}</template>
         </b-button>
+
+        <div class="my-2"><a href="https://addons.mozilla.org/en-US/firefox/addon/dumili-auto-indexer/" target="_blank"><img src="/get-add-on.png"></a></div>
       </div></template
     ></b-container
   >

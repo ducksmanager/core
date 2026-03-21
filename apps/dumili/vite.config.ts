@@ -17,7 +17,7 @@ import getViteAliases from "../../vite-aliases";
 export default defineConfig({
   build: {
     sourcemap: true,
-    cssMinify: 'esbuild'
+    cssMinify: "esbuild",
   },
   plugins: [
     vue(),
