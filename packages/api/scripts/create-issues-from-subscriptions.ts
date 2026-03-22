@@ -109,3 +109,5 @@ await prismaDm.subscriptionRelease.updateMany({
     haveIssuesBeenAdded: true,
   },
 });
+
+await prismaDm.$disconnect();
