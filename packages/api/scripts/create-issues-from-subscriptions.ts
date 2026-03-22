@@ -105,3 +105,4 @@ await prismaDm.$executeRaw`
   `;
 await prismaDm.$executeRaw`UPDATE abonnements_sorties SET Numeros_ajoutes=1`;
 
+await prismaDm.$disconnect();
