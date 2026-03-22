@@ -79,6 +79,13 @@ for (const subscription of ongoingSubscriptions) {
         },
       });
     }
+    else {
+      console.log(
+        "Issue %s already exists for user %s",
+        release.issuecode,
+        subscription.userId,
+      );
+    }
   }
 }
 
