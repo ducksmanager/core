@@ -2,7 +2,7 @@
   "name": "~outducks",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "scripts": {
     "build": "bun build --external playwright-firefox --external playwright-core --external playwright --target node index.ts --outfile dist/index.js && mv dist/index.js bundle.mjs && rm -rf dist",

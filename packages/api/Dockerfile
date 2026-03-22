@@ -1,4 +1,4 @@
-FROM node:22-slim AS api
+FROM node:24-slim AS api
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app

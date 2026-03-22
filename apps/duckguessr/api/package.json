@@ -1,7 +1,7 @@
 {
   "name": "~duckguessr-api",
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "type": "module",
   "version": "1.0.0",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.19.15",
+    "@types/node": "^24.0.0",
     "concurrently": "^9.2.1",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",

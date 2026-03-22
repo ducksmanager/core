@@ -2,7 +2,7 @@
   "name": "~web",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "scripts": {
     "web": "concurrently -p \"[dm-{name}]\" --kill-others-on-fail -n front,api \"pnpm -F ~web dev\" \"pnpm -F ~api dev\"",
@@ -59,7 +59,7 @@
     "@sentry/cli": "^2.58.5",
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.1.1",
-    "@types/node": "^22.19.15",
+    "@types/node": "^24.0.0",
     "@types/page-flip": "^2.0.4",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue-macros/reactivity-transform": "^3.1.2",

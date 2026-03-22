@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "author": {
     "email": "brunoperel@gmail.com",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^22.19.15",
+    "@types/node": "^24.0.0",
     "@types/yargs": "^17.0.35",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
