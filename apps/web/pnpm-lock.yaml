@@ -20,6 +20,9 @@ importers:
       '@sentry/vue':
         specifier: ^9.47.1
         version: 9.47.1(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
+      '@studiometa/vue-mapbox-gl':
+        specifier: ^2.7.2
+        version: 2.7.2(@mapbox/mapbox-gl-geocoder@5.1.2)(mapbox-gl@3.20.0)(vue@3.5.30(typescript@5.9.3))
       '@unhead/vue':
         specifier: ^1.11.20
         version: 1.11.20(vue@3.5.30(typescript@5.9.3))
@@ -44,6 +47,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      mapbox-gl:
+        specifier: ^3.20.0
+        version: 3.20.0
       page-flip:
         specifier: ^2.0.7
         version: 2.0.7
@@ -68,9 +74,6 @@ importers:
       vue-i18n:
         specifier: ^11.3.0
         version: 11.3.0(vue@3.5.30(typescript@5.9.3))
-      vue-mapbox-ts:
-        specifier: ^0.9.10
-        version: 0.9.10(vue@3.5.30(typescript@5.9.3))
       vue-router:
         specifier: ^5.0.4
         version: 5.0.4(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
@@ -849,20 +852,9 @@ packages:
   '@mapbox/fusspot@0.4.0':
     resolution: {integrity: sha512-6sys1vUlhNCqMvJOqPEPSi0jc9tg7aJ//oG1A16H3PXoIt9whtNngD7UzBHUVTH15zunR/vRvMtGNVsogm1KzA==}
 
-  '@mapbox/geojson-area@0.2.2':
-    resolution: {integrity: sha512-bBqqFn1kIbLBfn7Yq1PzzwVkPYQr9lVUeT8Dhd0NL5n76PBuXzOcuLV7GOSbEB1ia8qWxH4COCvFpziEu/yReA==}
-
-  '@mapbox/geojson-normalize@0.0.1':
-    resolution: {integrity: sha512-82V7YHcle8lhgIGqEWwtXYN5cy0QM/OHq3ypGhQTbvHR57DF0vMHMjjVSQKFfVXBe/yWCBZTyOuzvK7DFFnx5Q==}
-    hasBin: true
-
   '@mapbox/jsonlint-lines-primitives@2.0.2':
     resolution: {integrity: sha512-rY0o9A5ECsTQRVhv7tL/OyDpGAoUB4tTvLiW1DSzQGq4bvTPhNw1VpSNjDJc5GFZ2XuyOtSWSVN05qOtcD71qQ==}
     engines: {node: '>= 0.6'}
-
-  '@mapbox/mapbox-gl-draw@1.5.1':
-    resolution: {integrity: sha512-DnR/oarZVoIrVHssAn+mtpuGzYH+ebORoPjow46zTBNPod/HQnvIZGtL6hIb5BVWxxH49RC9D20ipxiO9WDRxA==}
-    engines: {node: ^18.0.0 || >=20.0.0}
 
   '@mapbox/mapbox-gl-geocoder@5.1.2':
     resolution: {integrity: sha512-UjtGKL/bfaUTf4NfDaKCeYIvtMIJi9nr94QQB13p8uPXhSfjo931zhWNAib3YY7xkNqzVEBWzFGuB1IT5w7lGA==}
@@ -1364,21 +1356,16 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
+  '@studiometa/vue-mapbox-gl@2.7.2':
+    resolution: {integrity: sha512-iYbS7vvUPkuKO+YI9PVqBlCPS1R7qrh4Yz9nHLJY+rU0VEVqDvu37Ies2o2gj3IF4k/VazSM6nqTQr6QCA6F3A==}
+    peerDependencies:
+      '@mapbox/mapbox-gl-geocoder': ^5.0.1
+      mapbox-gl: ^2.8.2 || ^3.0.0
+      vue: ^3.2.37
+
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
-
-  '@turf/clone@7.3.4':
-    resolution: {integrity: sha512-pwQ+RyQw986uu7IulY/18NRAebwZZScb084bvVqVkTrllwLSv4oVBqUxmUMiwtp+PNdiRGRFOvNyZqtRsiD+Jw==}
-
-  '@turf/helpers@7.3.4':
-    resolution: {integrity: sha512-U/S5qyqgx3WTvg4twaH0WxF3EixoTCfDsmk98g1E3/5e2YKp7JKYZdz0vivsS5/UZLJeZDEElOSFH4pUgp+l7g==}
-
-  '@turf/meta@7.3.4':
-    resolution: {integrity: sha512-tlmw9/Hs1p2n0uoHVm1w3ugw1I6L8jv9YZrcdQa4SH5FX5UY0ATrKeIvfA55FlL//PGuYppJp+eyg/0eb4goqw==}
-
-  '@turf/projection@7.3.4':
-    resolution: {integrity: sha512-p91zOaLmzoBHzU/2H6Ot1tOhTmAom85n1P7I4Oo0V9xU8hmJXWfNnomLFf/6rnkKDIFZkncLQIBz4iIecZ61sA==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -1421,12 +1408,6 @@ packages:
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
-
-  '@types/mapbox-gl@2.7.21':
-    resolution: {integrity: sha512-Dx9MuF2kKgT/N22LsMUB4b3acFZh9clVqz9zv1fomoiPoBrJolwYxpWA/9LPO/2N0xWbKi4V+pkjTaFkkx/4wA==}
-
-  '@types/mapbox__mapbox-gl-geocoder@4.7.7':
-    resolution: {integrity: sha512-RFUDSDnFoCBapQWfGdgNGkB76drJ2kVG9tH0ottQtDpTW3KPtdQobw0lvvJK4VIMDEKIt/ssEyyLvY1Tja7MSw==}
 
   '@types/mapbox__mapbox-gl-geocoder@5.1.1':
     resolution: {integrity: sha512-P7yqK+nsM/bdcvrwMdOjrHesSYhdt89rVnVAe+mrXFYW9kqwDpkJhfuwAlYq1k/TBQ6pP8Nn8m58A9CetW3Odg==}
@@ -2909,17 +2890,9 @@ packages:
   murmurhash-js@1.0.0:
     resolution: {integrity: sha512-TvmkNhkv8yct0SVBSy+o8wYzXjE4Zz3PCesbfs8HiCXXdcTuocApFv11UWlNFWKYsP2okqrhb7JNlSm9InBhIw==}
 
-  my-deferred@1.2.0:
-    resolution: {integrity: sha512-DueyYK3cUuWDFkkSWpH6Vu80eXW1z4646r8AR4EYVCZlFfgnfrQhwiLHe0YZ9E0tgukL3fFvD3QQ6vvSDK0ILg==}
-
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
-  nanoid@5.1.7:
-    resolution: {integrity: sha512-ua3NDgISf6jdwezAheMOk4mbE1LXjm1DfMUDMuJf4AqxLFK3ccGpgWizwa5YV7Yz9EpXwEaWoRXSb/BnV0t5dQ==}
-    engines: {node: ^18 || >=20}
     hasBin: true
 
   natural-compare@1.4.0:
@@ -3766,11 +3739,6 @@ packages:
     peerDependencies:
       vue: ^3.0.0
 
-  vue-mapbox-ts@0.9.10:
-    resolution: {integrity: sha512-Rqcp84JTxYSYmiJx8NLT2Gb7IKBUwdKa4u8ChLQ7E3bSIsDNv6dNVPS6H8rdmhktoBKzyoFCYU4FPMad/cLL5g==}
-    peerDependencies:
-      vue: '>= 3.2'
-
   vue-router@5.0.4:
     resolution: {integrity: sha512-lCqDLCI2+fKVRl2OzXuzdSWmxXFLQRxQbmHugnRpTMyYiT+hNaycV0faqG5FBHDXoYrZ6MQcX87BvbY8mQ20Bg==}
     peerDependencies:
@@ -3826,9 +3794,6 @@ packages:
 
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
-
-  wgs84@0.0.0:
-    resolution: {integrity: sha512-ANHlY4Rb5kHw40D0NJ6moaVfOCMrp9Gpd1R/AIQYg2ko4/jzcJ+TVXYYF6kXJqQwITvEZP4yEthjM7U6rYlljQ==}
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -4510,22 +4475,7 @@ snapshots:
       is-plain-obj: 1.1.0
       xtend: 4.0.2
 
-  '@mapbox/geojson-area@0.2.2':
-    dependencies:
-      wgs84: 0.0.0
-
-  '@mapbox/geojson-normalize@0.0.1': {}
-
   '@mapbox/jsonlint-lines-primitives@2.0.2': {}
-
-  '@mapbox/mapbox-gl-draw@1.5.1':
-    dependencies:
-      '@mapbox/geojson-area': 0.2.2
-      '@mapbox/geojson-normalize': 0.0.1
-      '@mapbox/point-geometry': 1.1.0
-      '@turf/projection': 7.3.4
-      fast-deep-equal: 3.1.3
-      nanoid: 5.1.7
 
   '@mapbox/mapbox-gl-geocoder@5.1.2':
     dependencies:
@@ -4920,34 +4870,15 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
+  '@studiometa/vue-mapbox-gl@2.7.2(@mapbox/mapbox-gl-geocoder@5.1.2)(mapbox-gl@3.20.0)(vue@3.5.30(typescript@5.9.3))':
+    dependencies:
+      '@mapbox/mapbox-gl-geocoder': 5.1.2
+      mapbox-gl: 3.20.0
+      vue: 3.5.30(typescript@5.9.3)
+
   '@szmarczak/http-timer@4.0.6':
     dependencies:
       defer-to-connect: 2.0.1
-
-  '@turf/clone@7.3.4':
-    dependencies:
-      '@turf/helpers': 7.3.4
-      '@types/geojson': 7946.0.16
-      tslib: 2.8.1
-
-  '@turf/helpers@7.3.4':
-    dependencies:
-      '@types/geojson': 7946.0.16
-      tslib: 2.8.1
-
-  '@turf/meta@7.3.4':
-    dependencies:
-      '@turf/helpers': 7.3.4
-      '@types/geojson': 7946.0.16
-      tslib: 2.8.1
-
-  '@turf/projection@7.3.4':
-    dependencies:
-      '@turf/clone': 7.3.4
-      '@turf/helpers': 7.3.4
-      '@turf/meta': 7.3.4
-      '@types/geojson': 7946.0.16
-      tslib: 2.8.1
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -4995,15 +4926,6 @@ snapshots:
       '@types/node': 24.12.0
 
   '@types/linkify-it@5.0.0': {}
-
-  '@types/mapbox-gl@2.7.21':
-    dependencies:
-      '@types/geojson': 7946.0.16
-
-  '@types/mapbox__mapbox-gl-geocoder@4.7.7':
-    dependencies:
-      '@types/geojson': 7946.0.16
-      '@types/mapbox-gl': 2.7.21
 
   '@types/mapbox__mapbox-gl-geocoder@5.1.1':
     dependencies:
@@ -6690,11 +6612,7 @@ snapshots:
 
   murmurhash-js@1.0.0: {}
 
-  my-deferred@1.2.0: {}
-
   nanoid@3.3.11: {}
-
-  nanoid@5.1.7: {}
 
   natural-compare@1.4.0: {}
 
@@ -7512,18 +7430,6 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.30(typescript@5.9.3)
 
-  vue-mapbox-ts@0.9.10(vue@3.5.30(typescript@5.9.3)):
-    dependencies:
-      '@mapbox/mapbox-gl-draw': 1.5.1
-      '@mapbox/mapbox-gl-geocoder': 5.1.2
-      '@types/geojson': 7946.0.16
-      '@types/mapbox-gl': 2.7.21
-      '@types/mapbox__mapbox-gl-geocoder': 4.7.7
-      fast-deep-equal: 3.1.3
-      mapbox-gl: 3.20.0
-      my-deferred: 1.2.0
-      vue: 3.5.30(typescript@5.9.3)
-
   vue-router@5.0.4(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3)):
     dependencies:
       '@babel/generator': 7.29.1
@@ -7589,8 +7495,6 @@ snapshots:
   webidl-conversions@8.0.1: {}
 
   webpack-virtual-modules@0.6.2: {}
-
-  wgs84@0.0.0: {}
 
   whatwg-mimetype@4.0.0: {}
 

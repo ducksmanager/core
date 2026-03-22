@@ -19,6 +19,9 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  optimizeDeps: {
+    include: ["mapbox-gl"],
+  },
   resolve: {
     alias: getViteAliases(path.resolve(__dirname, "../.."), {
       "~/": `${path.resolve(__dirname, "src")}/`,
