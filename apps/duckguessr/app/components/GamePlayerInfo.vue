@@ -88,21 +88,11 @@ const src = computed(() =>
     ? "/avatars/Little Helper.png"
     : `/avatars/${avatar}.png`,
 );
-
-onMounted(() => {
-  setInterval(() => {
-    if (!hasPlayed.value) {
-      percentFilled.value--;
-      if (percentFilled.value < 0) {
-        percentFilled.value = 0;
-      }
-    }
-  }, 100);
-});
 </script>
 
 <style lang="scss">
 @import "../../styles/progress.scss";
+@import "../../styles/main.scss";
 
 .b-avatar {
   z-index: 1;
@@ -127,7 +117,7 @@ onMounted(() => {
 .username {
   display: flex;
   flex-direction: column;
-  max-width: 100%;
+  max-width: #{$username-max-width};
   align-items: stretch;
   font-size: small;
   border: 2px solid black;

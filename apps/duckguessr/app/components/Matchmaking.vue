@@ -1,9 +1,16 @@
 <template>
+  <game-table
+    v-if="game"
+    :game="game"
+    :current-round-number="null"
+    :round-scores="[]"
+    @guess="gameSocket.guess"
+  />
   <waiting-for-players
     v-if="players.length"
     :players="players"
     :game-players-stats="gamePlayersStats!"
-    :game-id="gameId"
+    :game-id="game.id"
     :is-bot-available="isBotAvailableForGame === true"
     @start-match="startMatch"
     @add-bot="addBot"
@@ -12,20 +19,20 @@
 </template>
 
 <script lang="ts" setup>
-import type { MatchDetails } from "~duckguessr-types/matchDetails";
 import { playerStore } from "~/stores/player";
 import type { player, userMedalPoints } from "~duckguessr-prisma-browser";
+import type { GameFullNoPersoncode } from "~duckguessr-types/game";
 
-const players = ref([] as player[]);
-const gamePlayersStats = ref(null as userMedalPoints[] | null);
-const isBotAvailableForGame = ref(null as boolean | null);
+const players = ref<player[]>([]);
+const gamePlayersStats = ref<userMedalPoints[]>();
+const isBotAvailableForGame = ref<boolean>();
 
-const { gameId } = defineProps<{
-  gameId: number;
+const { game } = defineProps<{
+  game: GameFullNoPersoncode;
 }>();
 
 const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
-const gameSocket = getGameSocketFromId(gameId);
+const gameSocket = getGameSocketFromId(game.id);
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -62,7 +69,7 @@ watch(
       gameSocket.sendGame = () => {
         gameSocket
           .joinMatch()
-          .then(({ players, isBotAvailable, playerStats }: MatchDetails) => {
+          .then(({ players, isBotAvailable, playerStats }) => {
             isBotAvailableForGame.value = isBotAvailable;
             gamePlayersStats.value = playerStats;
             for (const currentPlayer of players) {
@@ -79,7 +86,7 @@ watch(
         removePlayer(player);
       };
       gameSocket.matchStarts = () => {
-        console.debug(`Match starts on game ${gameId}`);
+        console.debug(`Match starts on game ${game.id}`);
         emit("start-match");
       };
     }

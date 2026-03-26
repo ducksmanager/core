@@ -76,8 +76,6 @@ import type { ClientEmitEvents as DatasetsEmitEvents } from "~duckguessr-service
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import type { EventOutput } from "socket-call-client";
 
-const router = useRouter();
-
 const { t, locale } = useI18n();
 
 const datasets = ref<EventOutput<DatasetsEmitEvents, "getDatasets">>();

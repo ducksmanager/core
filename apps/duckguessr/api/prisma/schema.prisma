@@ -67,7 +67,7 @@ model player {
 model round {
   id          Int          @id @default(autoincrement())
   gameId      Int          @map("game_id")
-  roundNumber Int?         @map("round_number") @db.UnsignedTinyInt
+  roundNumber Int?         @map("round_number") @db.UnsignedTinyInt // NULL for the round of the last author of the game
   sitecodeUrl String       @map("sitecode_url") @db.VarChar(100)
   personcode  String       @db.VarChar(79)
   startedAt   DateTime?    @map("started_at") @db.DateTime(0)

@@ -104,10 +104,20 @@ export default defineNuxtConfig({
 
   // Vite config
   vite: {
+    optimizeDeps: {
+      include: [
+        "bootstrap-vue-next",
+        "socket-call-client",
+        "js-cookie",
+        "dayjs", // CJS
+        "page-flip", // CJS
+        "chart.js",
+        "vue-chartjs",
+        "@vueuse/integrations/useCookies",
+      ],
+    },
     plugins: [
-      // Type assertion: vite-plugin-checker and unplugin-vue-components have Plugin type
-      // mismatches with Vite 7's stricter Rollup types (PluginContextMeta.viteVersion)
-      checker({ vueTsc: true }) as any,
+      checker({ vueTsc: true }),
       ViteComponents({
         resolvers: [
           IconsResolver({
@@ -116,7 +126,7 @@ export default defineNuxtConfig({
           }),
         ],
         dts: true,
-      }) as any,
+      }),
     ],
     resolve: {
       dedupe: ["vue", "vue-i18n", "@vueuse/core", "bootstrap-vue-next"],
@@ -152,6 +162,8 @@ export default defineNuxtConfig({
   sourcemap: {
     client: "hidden",
   },
+
+  ssr: false,
 
   ignore: ["**/node_modules", "**/dist", ".git/**", "api/prisma/client_*"],
 });

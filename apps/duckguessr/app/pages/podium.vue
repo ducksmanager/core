@@ -7,7 +7,7 @@ import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket"
 
 const { podiumSocket } = inject(duckguessrSocketInjectionKey)!;
 
-const players = ref(null as (player & { sumScore: number })[] | null);
+const players = ref<(player & { sumScore: number })[]>();
 
 onMounted(async () => {
   players.value = await podiumSocket.getPodium();

@@ -51,12 +51,7 @@
     :authors="game.authors"
     :first-round-start-date="firstRoundStartDate"
   />
-  <matchmaking
-    v-else-if="game"
-    :game-id="gameId"
-    :game-socket="gameSocket"
-    @start-match="loadGame()"
-  />
+  <matchmaking v-else-if="game" :game="game" @start-match="loadGame()" />
   <b-container
     v-else
     fluid
@@ -69,7 +64,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from "@vueuse/integrations/useCookies";
 import { getDuckguessrId } from "~/composables/user";
 import { useScoreToVariant as scoreToVariant } from "~/composables/use-score-to-variant";
 import type { GameFullNoPersoncode } from "~duckguessr-types/game";
@@ -83,8 +77,6 @@ const { t } = useI18n();
 const route = useRoute();
 
 const gameId = parseInt(route.params.id as string);
-
-const isConnectedToSocket = ref(false);
 
 const chosenAuthor = ref<string>();
 const hasEverybodyGuessed = ref(false);
@@ -136,7 +128,7 @@ const remainingTime = computed(() =>
 
 const nextRoundStartDate = computed(() => {
   const nextRound =
-    currentRoundNumber.value == null
+    currentRoundNumber.value === undefined
       ? null
       : game.value?.rounds.find(
           (round) => round?.roundNumber === currentRoundNumber.value! + 1,
@@ -227,10 +219,6 @@ gameSocket.sendGame = (serverGame) => {
     }, 1000);
   });
 };
-
-gameSocket._socket?.onAny((event, ...args) => {
-  console.log("event", event, args);
-});
 </script>
 
 <style lang="scss" scoped>
