@@ -9,7 +9,6 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
-    implementation project(':capgo-camera-preview')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-clipboard')
@@ -21,6 +20,7 @@ dependencies {
     implementation project(':capawesome-capacitor-android-edge-to-edge-support')
     implementation project(':capawesome-capacitor-app-update')
     implementation project(':capawesome-capacitor-file-picker')
+    implementation project(':capgo-camera-preview')
     implementation project(':capgo-capacitor-updater')
     implementation project(':sentry-capacitor')
 

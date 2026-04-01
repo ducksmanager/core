@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
-    "@prisma/client": "^7.5.0",
+    "@prisma/client": "^7.6.0",
     "@sentry/node": "^9.47.1",
     "@sentry/profiling-node": "^9.47.1",
-    "axios": "^1.13.6",
+    "axios": "^1.14.0",
     "axios-cache-interceptor": "^1.12.0",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
@@ -52,8 +52,8 @@
     "concurrently": "^9.2.1",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
-    "prisma": "^7.5.0",
+    "prisma": "^7.6.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.2"
+    "typescript-eslint": "^8.58.0"
   }
 }

@@ -1,9 +1,5 @@
 [
 	{
-		"pkg": "@capgo/camera-preview",
-		"classpath": "app.capgo.capacitor.camera.preview.CameraPreview"
-	},
-	{
 		"pkg": "@capacitor/app",
 		"classpath": "com.capacitorjs.plugins.app.AppPlugin"
 	},
@@ -46,6 +42,10 @@
 	{
 		"pkg": "@capawesome/capacitor-file-picker",
 		"classpath": "io.capawesome.capacitorjs.plugins.filepicker.FilePickerPlugin"
+	},
+	{
+		"pkg": "@capgo/camera-preview",
+		"classpath": "app.capgo.capacitor.camera.preview.CameraPreview"
 	},
 	{
 		"pkg": "@capgo/capacitor-updater",

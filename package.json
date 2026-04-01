@@ -9,7 +9,7 @@
     "husky": "^9.1.7"
   },
   "devDependencies": {
-    "turbo": "^2.8.20"
+    "turbo": "^2.9.3"
   },
   "scripts": {
     "prepare": "husky",

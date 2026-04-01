@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@iconify-json/bi": "^1.2.7",
-    "@prisma/adapter-mariadb": "^7.5.0",
+    "@prisma/adapter-mariadb": "^7.6.0",
     "@sentry/browser": "^9.47.1",
     "@sentry/vue": "^9.47.1",
     "@unhead/vue": "^1.11.20",
@@ -70,7 +70,7 @@
     "sass": "^1.98.0",
     "storybook": "^10.3.3",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.2",
+    "typescript-eslint": "^8.58.0",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-icons": "^22.5.0",
     "unplugin-vue-components": "^31.1.0",
