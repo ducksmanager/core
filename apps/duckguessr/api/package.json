@@ -27,7 +27,6 @@
     "sharp": "^0.33.5",
     "socket-call-server": "^0.7.7",
     "socket.io": "^4.8.3",
-    "typescript": "^5.9.3",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
@@ -40,7 +39,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "prettier": "^3.8.1",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0"
   }
 }

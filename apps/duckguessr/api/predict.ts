@@ -25,37 +25,32 @@ export const predict = (
       }),
     })
       .then((response) => response.json())
-      .then(
-        ({
+      .then((json) => {
+        const {
           data: { predicted, predictionProbability },
-        }: {
-          data: PredictionResponse;
-        }) => {
-          console.log(
-            `Prediction done in ${new Date().getTime() - startTime}ms`,
-          );
-          console.log(
-            `Round ${round.roundNumber} - Predicted artist = ${predicted},
+        } = json as { data: PredictionResponse };
+        console.log(`Prediction done in ${new Date().getTime() - startTime}ms`);
+        console.log(
+          `Round ${round.roundNumber} - Predicted artist = ${predicted},
             probability of ${predictionProbability}%`,
-          );
-          if (!possibleAuthors.includes(predicted)) {
-            console.log("Skipped");
-          } else {
-            resolve(predicted);
-            return;
-          }
-          console.error(
-            "No possible authors match the prediction, choosing a random author",
-          );
-          const randomElement =
-            possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)];
-          if (randomElement) {
-            resolve(randomElement);
-          } else {
-            resolve("Unknown");
-          }
-        },
-      )
+        );
+        if (!possibleAuthors.includes(predicted)) {
+          console.log("Skipped");
+        } else {
+          resolve(predicted);
+          return;
+        }
+        console.error(
+          "No possible authors match the prediction, choosing a random author",
+        );
+        const randomElement =
+          possibleAuthors[Math.floor(Math.random() * possibleAuthors.length)];
+        if (randomElement) {
+          resolve(randomElement);
+        } else {
+          resolve("Unknown");
+        }
+      })
       .catch((error: unknown) => {
         console.error(
           (error as { response?: { data?: string } })?.response?.data ||

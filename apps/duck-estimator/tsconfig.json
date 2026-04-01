@@ -17,6 +17,7 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
+    "rootDir": "../../..",
     "paths": {
       "~/*": [
         "./*"
@@ -26,9 +27,5 @@
       ],
     }
   },
-  "include": [
-    "eslint.config.mjs",
-    "*.ts",
-    "scrapes/**/*.ts"
-  ]
+  "include": ["*.ts", "scrapes/**/*.ts"]
 }

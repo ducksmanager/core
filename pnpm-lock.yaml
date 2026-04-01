@@ -10,6 +10,7 @@ overrides:
   '@sentry/vue': 9.46.0
   eslint: ^10.0.0
   '@eslint/js': ^10.0.0
+  typescript: ^6.0.2
 
 importers:
 
