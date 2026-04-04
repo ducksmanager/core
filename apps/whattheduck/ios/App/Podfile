@@ -15,7 +15,7 @@ def capacitor_pods
   pod 'CapacitorCamera', :path => '../../node_modules/.pnpm/@capacitor+camera@7.0.5_@capacitor+core@7.6.1/node_modules/@capacitor/camera'
   pod 'CapacitorClipboard', :path => '../../node_modules/.pnpm/@capacitor+clipboard@7.0.4_@capacitor+core@7.6.1/node_modules/@capacitor/clipboard'
   pod 'CapacitorDevice', :path => '../../node_modules/.pnpm/@capacitor+device@7.0.5_@capacitor+core@7.6.1/node_modules/@capacitor/device'
-  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@7.0.4_@capacitor+core@7.6.1/node_modules/@capacitor/haptics'
+  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@7.0.5_@capacitor+core@7.6.1/node_modules/@capacitor/haptics'
   pod 'CapacitorKeyboard', :path => '../../node_modules/.pnpm/@capacitor+keyboard@7.0.6_@capacitor+core@7.6.1/node_modules/@capacitor/keyboard'
   pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@7.0.4_@capacitor+core@7.6.1/node_modules/@capacitor/preferences'
   pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@7.0.6_@capacitor+core@7.6.1/node_modules/@capacitor/status-bar'
@@ -23,7 +23,7 @@ def capacitor_pods
   pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/.pnpm/@capawesome+capacitor-file-picker@7.2.0_@capacitor+core@7.6.1/node_modules/@capawesome/capacitor-file-picker'
   pod 'CapgoCameraPreview', :path => '../../node_modules/.pnpm/@capgo+camera-preview@7.26.4_@capacitor+core@7.6.1/node_modules/@capgo/camera-preview'
   pod 'CapgoCapacitorUpdater', :path => '../../node_modules/.pnpm/@capgo+capacitor-updater@7.39.0_@capacitor+core@7.6.1/node_modules/@capgo/capacitor-updater'
-  pod 'SentryCapacitor', :path => '../../node_modules/.pnpm/@sentry+capacitor@2.4.1_@capacitor+core@7.6.1_@sentry+vue@9.46.0_pinia@3.0.4_typescript@5.9.3_umuefntmqw6nguhu3n4gmosb3a/node_modules/@sentry/capacitor'
+  pod 'SentryCapacitor', :path => '../../node_modules/.pnpm/@sentry+capacitor@2.4.1_@capacitor+core@7.6.1_@sentry+vue@9.46.0_pinia@3.0.4_typescript@6.0.2_ol55nh6ewddgwlcrdbxaoujv5a/node_modules/@sentry/capacitor'
 end
 
 target 'What The Duck' do
