@@ -211,14 +211,21 @@ const items = computed(() => {
   }
 });
 
+const coaIssueIndexByCode = computed(() =>
+  coaIssuecodes.value
+    ? (Object.fromEntries(coaIssuecodes.value.map((issuecode, index) => [issuecode, index])) as Record<string, number>)
+    : undefined,
+);
+
 const sortedItems = computed(
   () =>
     coaIssuecodes.value &&
+    coaIssueIndexByCode.value &&
     items.value
       ?.map(({ key, item }) => ({
         key,
         item,
-        indexInCoaList: coaIssuecodes.value.indexOf(item.issuecode),
+        indexInCoaList: coaIssueIndexByCode.value?.[item.issuecode] ?? -1,
         isOwned: (item as (typeof userIssues.value)[0]).condition !== undefined,
       }))
 
