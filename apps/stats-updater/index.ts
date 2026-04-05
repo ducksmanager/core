@@ -129,7 +129,7 @@ connect().then(async () => {
   const authorUsers = await prismaDm.authorUser.findMany({
     where: {
       notation: {
-        gt: 0,
+        not: null,
       },
     },
   });
