@@ -5,7 +5,7 @@ import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import { IonicResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 import getViteAliases from '../../vite-aliases';
@@ -70,8 +70,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: '../web/public/images/medals/*.png',
+          src: normalizePath(path.resolve(__dirname, '../web/public/images/medals/*.png')),
           dest: 'images/medals',
+          // Matched paths are ../web/public/images/medals/<file>.png → destDir becomes
+          // images/medals/web/public/images/medals; go up 4 segments to land in images/medals/.
+          rename: (name, ext) => `../../../../${name}.${ext}`,
         },
       ],
     }),
