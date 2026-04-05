@@ -425,12 +425,12 @@ export const createGameSocket = async (gameId: number) => {
   >(namespaces.GAME.replace("{id}", gameId.toString()), {
     listenEvents,
     middlewares: [
-      ({ _socket, sendGame: sendGameEvent }, next: (error?: Error) => void) => {
+      ({ _socket, sendGame }, next: (error?: Error) => void) => {
         getPlayer(_socket.handshake.auth).then(async (user) => {
           if (user) {
             _socket.data.user = user;
             _socket.data.currentGame = currentGame;
-            sendGameEvent(await getPublicGame(currentGame));
+            sendGame(await getPublicGame(currentGame));
             next();
           } else {
             next(new Error("User not found"));

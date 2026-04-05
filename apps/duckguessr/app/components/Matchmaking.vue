@@ -1,7 +1,8 @@
 <template>
   <game-table
-    v-if="game"
-    :game="game"
+    v-if="players"
+    :players="players"
+    :rounds="rounds"
     :current-round-number="null"
     :round-scores="[]"
     @guess="gameSocket.guess"
@@ -20,11 +21,16 @@
 
 <script lang="ts" setup>
 import { playerStore } from "~/stores/player";
-import type { player, userMedalPoints } from "~duckguessr-prisma-browser";
+import type {
+  player,
+  round,
+  userMedalPoints,
+} from "~duckguessr-prisma-browser";
 import type { GameFullNoPersoncode } from "~duckguessr-types/game";
 
 const players = ref<player[]>([]);
 const gamePlayersStats = ref<userMedalPoints[]>();
+const rounds = ref<round[]>([]);
 const isBotAvailableForGame = ref<boolean>();
 
 const { game } = defineProps<{
@@ -33,6 +39,8 @@ const { game } = defineProps<{
 
 const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
 const gameSocket = getGameSocketFromId(game.id);
+
+const { playerUser } = storeToRefs(playerStore());
 
 const emit = defineEmits<{
   (e: "start-match"): void;
@@ -63,20 +71,18 @@ const removeBot = () => {
 };
 
 watch(
-  () => playerStore().playerUser,
+  playerUser,
   (value) => {
     if (value) {
-      gameSocket.sendGame = () => {
-        gameSocket
-          .joinMatch()
-          .then(({ players, isBotAvailable, playerStats }) => {
-            isBotAvailableForGame.value = isBotAvailable;
-            gamePlayersStats.value = playerStats;
-            for (const currentPlayer of players) {
-              addPlayer(currentPlayer);
-            }
-          });
-      };
+      gameSocket
+        .joinMatch()
+        .then(({ players, isBotAvailable, playerStats }) => {
+          isBotAvailableForGame.value = isBotAvailable;
+          gamePlayersStats.value = playerStats;
+          for (const currentPlayer of players) {
+            addPlayer(currentPlayer);
+          }
+        });
       gameSocket.playerJoined = (player: player) => {
         console.debug(`${player.username} is also ready`);
         addPlayer(player);

@@ -125,12 +125,6 @@ datasets.value = await datasetsSocket.getDatasets();
 .card {
   color: black;
   cursor: pointer;
-  padding-bottom: 20px;
-
-  .card-footer {
-    position: absolute;
-    bottom: 0;
-  }
 }
 
 hr + .card-footer {

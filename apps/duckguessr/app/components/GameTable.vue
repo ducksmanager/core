@@ -4,7 +4,7 @@
       class="card"
       :class="{
         flipped: currentRound,
-        played: currentRoundScores.some(
+        played: (currentRoundScores ?? []).some(
           (currentRound) => currentRound.playerId === playerId,
         ),
         'card--username-gap': withUsernameGap,
@@ -36,7 +36,7 @@
       }"
     >
       <img
-        v-if="currentRoundNumber !== null"
+        v-if="currentRoundNumber !== null && currentRound"
         :src="`${CLOUDINARY_URL_ROOT}/${currentRound.sitecodeUrl}`"
       />
       <div
@@ -80,9 +80,15 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import type { roundScore } from "~duckguessr-prisma-browser";
-import type { GameFullNoPersoncode } from "~duckguessr-types/game";
-import type { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
+import type {
+  player as playerType,
+  round,
+  roundScore,
+} from "~duckguessr-prisma-browser";
+import type {
+  Author,
+  RoundWithScoresAndAuthor,
+} from "~duckguessr-types/roundWithScoresAndAuthor";
 
 const CLOUDINARY_URL_ROOT = import.meta.env.VITE_CLOUDINARY_URL_ROOT;
 
@@ -96,44 +102,54 @@ const [DefineTemplate, ReuseTemplate] = createReusableTemplate({
   },
 });
 
-const { game, roundScores, currentRoundNumber } = defineProps<{
-  game: GameFullNoPersoncode;
+const {
+  players,
+  rounds = null,
+  authors = null,
+  currentRoundNumber,
+  roundScores,
+} = defineProps<{
+  players: playerType[];
+  rounds?: round[] | null;
+  authors?: Author[] | null;
   currentRoundNumber: number | null;
   roundScores: roundScore[];
 }>();
-
-const players = computed(() => game.gamePlayers.map(({ player }) => player));
 
 const emit = defineEmits<{
   (e: "guess"): void;
 }>();
 
-const currentRound = computed(
-  () =>
-    game.rounds.find(
-      (round): round is RoundWithScoresAndAuthor =>
-        round.roundNumber! === currentRoundNumber,
-    )!,
-);
-
-const currentRoundScores = computed(() =>
-  roundScores.filter(
-    (roundScore) => roundScore.roundId === currentRound.value.id,
+const currentRound = computed(() =>
+  rounds?.find(
+    (round): round is RoundWithScoresAndAuthor =>
+      round.roundNumber! === currentRoundNumber,
   ),
 );
 
+const currentRoundScores = computed(() =>
+  !currentRound.value
+    ? null
+    : roundScores.filter(
+        (roundScore) => roundScore.roundId === currentRound.value!.id,
+      ),
+);
+
 const cards = computed(() =>
-  game.authors
-    .filter(
-      (author) =>
-        !game.rounds
-          .filter(
-            (round): round is RoundWithScoresAndAuthor =>
-              !!currentRoundNumber && round.roundNumber! < currentRoundNumber,
-          )
-          .some((round) => round.personcode === author.personcode),
-    )
-    .map(({ personcode }) => personcode),
+  authors && rounds
+    ? authors
+        .filter(
+          (author) =>
+            !rounds
+              .filter(
+                (round): round is RoundWithScoresAndAuthor =>
+                  !!currentRoundNumber &&
+                  round.roundNumber! < currentRoundNumber,
+              )
+              .some((round) => round.personcode === author.personcode),
+        )
+        .map(({ personcode }) => personcode)
+    : [],
 );
 
 const totalCards = computed(() => 9 - (currentRoundNumber || 0));
