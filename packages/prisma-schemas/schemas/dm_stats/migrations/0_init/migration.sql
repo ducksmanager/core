@@ -11,23 +11,25 @@ CREATE TABLE `auteurs_histoires` (
 
 -- CreateTable
 CREATE TABLE `auteurs_pseudos` (
+    `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `NomAuteurAbrege` VARCHAR(79) NOT NULL,
-    `ID_user` INTEGER NOT NULL,
-    `Notation` INTEGER NOT NULL DEFAULT -1,
+    `ID_User` INTEGER NOT NULL,
+    `Notation` TINYINT UNSIGNED NULL,
 
-    INDEX `auteurs_pseudos_ID_user_index`(`ID_user`),
-    UNIQUE INDEX `auteurs_pseudos_uindex`(`ID_user`, `NomAuteurAbrege`)
+    INDEX `auteurs_pseudos_ID_user_index`(`ID_User`),
+    UNIQUE INDEX `auteurs_pseudos_uindex`(`ID_User`, `NomAuteurAbrege`),
+    PRIMARY KEY (`ID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `numeros_simple` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `ID_Utilisateur` INTEGER NOT NULL,
-    `issuecode` VARCHAR(25) NULL DEFAULT (concat(convert(`Pays` using utf8mb3),'/',convert(`Magazine` using utf8mb3),' ',`Numero`)),
+    `issuecode` VARCHAR(25) NOT NULL,
 
-    INDEX `Utilisateur`(`ID_Utilisateur`),
-    INDEX `issuecode`(`issuecode`),
-    INDEX `issuecode_user`(`issuecode`, `ID_Utilisateur`),
+    INDEX `ID_Utilisateur`(`ID_Utilisateur`),
+    INDEX `user_issue`(`issuecode`),
+    UNIQUE INDEX `unique_index`(`ID_Utilisateur`, `issuecode`),
     PRIMARY KEY (`ID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -35,8 +37,6 @@ CREATE TABLE `numeros_simple` (
 CREATE TABLE `histoires_publications` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `storycode` VARCHAR(19) NOT NULL,
-    `publicationcode` VARCHAR(12) NULL,
-    `issuenumber` VARCHAR(12) NULL,
     `issuecode` VARCHAR(25) NOT NULL,
     `oldestdate` VARCHAR(10) NULL,
 
@@ -64,19 +64,14 @@ CREATE TABLE `utilisateurs_publications_manquantes` (
     `ID_User` INTEGER NOT NULL,
     `personcode` VARCHAR(79) NOT NULL,
     `storycode` VARCHAR(19) NOT NULL,
-    `publicationcode` VARCHAR(12) NULL,
-    `issuenumber` VARCHAR(12) NULL,
     `issuecode` VARCHAR(25) NOT NULL,
     `oldestdate` VARCHAR(10) NULL,
-    `Notation` TINYINT UNSIGNED NOT NULL,
+    `Notation` TINYINT UNSIGNED NULL,
 
-    INDEX `missing_user_issue`(`ID_User`, `publicationcode`, `issuenumber`),
-    INDEX `suggested`(`ID_User`, `publicationcode`, `issuenumber`, `oldestdate`),
+    INDEX `missing_user_issue`(`ID_User`, `issuecode`),
+    INDEX `suggested`(`ID_User`, `issuecode`, `oldestdate`),
     INDEX `user_stories`(`ID_User`, `personcode`, `storycode`),
-    INDEX `missing_user_issue_issuecode`(`ID_User`, `issuecode`),
-    INDEX `suggested_issuecode`(`ID_User`, `issuecode`, `oldestdate`),
-    UNIQUE INDEX `unique_index`(`ID_User`, `personcode`, `storycode`, `publicationcode`, `issuenumber`),
-    UNIQUE INDEX `unique_index_issuecode`(`ID_User`, `personcode`, `storycode`, `issuecode`),
+    UNIQUE INDEX `unique_index`(`ID_User`, `personcode`, `storycode`, `issuecode`),
     PRIMARY KEY (`ID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -84,15 +79,12 @@ CREATE TABLE `utilisateurs_publications_manquantes` (
 CREATE TABLE `utilisateurs_publications_suggerees` (
     `ID` INTEGER NOT NULL AUTO_INCREMENT,
     `ID_User` INTEGER NOT NULL,
-    `publicationcode` VARCHAR(12) NULL,
-    `issuenumber` VARCHAR(12) NULL,
     `issuecode` VARCHAR(25) NOT NULL,
     `oldestdate` VARCHAR(10) NULL,
     `Score` INTEGER NOT NULL,
 
     INDEX `suggested_issue_user`(`ID_User`),
-    UNIQUE INDEX `suggested_issue_for_user`(`ID_User`, `publicationcode`, `issuenumber`),
-    UNIQUE INDEX `suggested_issue_for_user_issuecode`(`ID_User`, `issuecode`),
+    UNIQUE INDEX `suggested_issue_for_user`(`ID_User`, `issuecode`),
     PRIMARY KEY (`ID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

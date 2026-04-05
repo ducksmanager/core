@@ -94,7 +94,7 @@ const countryNamesWithAllCountriesOption = $computed(
     ],
 );
 const watchedAuthorsWithNotation = $computed(() =>
-  ratings.value?.filter(({ notation }) => notation > 0),
+  ratings.value?.filter(({ notation }) => notation !== null),
 );
 
 watch(

@@ -12,7 +12,7 @@ import {
   Prisma,
 } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { authorUser } from "~prisma-schemas/schemas/dm";
+import type { authorUser, issue as dmIssue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
@@ -109,6 +109,17 @@ const runQuery = async (sql: string) => {
 const runQueryFile = async (dbName: string, sqlFile: string) =>
   runQuery(`USE ${dbName};` + readFileSync(sqlFile).toString());
 
+// Direct connection for heavy SQL (avoids Prisma adapter issues). Use ANALYZE after bulk insert — OPTIMIZE rebuilds can run long and close the socket.
+const runQueryOnDirectConnection = async (sql: string, dbName?: string) => {
+  if (dbName) {
+    await connection.query(`USE ${dbName}`);
+  }
+  await connection.query(
+    "SET SESSION net_read_timeout = 28800, net_write_timeout = 28800",
+  );
+  await connection.query(sql);
+};
+
 connect().then(async () => {
   await runQuery(`DROP DATABASE IF EXISTS ${DATABASE_NAME_DM_STATS_NEW}`);
   await runQuery(`CREATE DATABASE ${DATABASE_NAME_DM_STATS_NEW}`);
@@ -132,21 +143,23 @@ connect().then(async () => {
   });
 
   await prismaDmStats.issueSimple.createMany({
-    data: await prismaDm.issue.findMany({
-      distinct: ["issuecode", "userId"],
-      select: {
-        issuecode: true,
-        userId: true,
-      },
-      where: {
-        issuecode: {
-          not: null,
+    data: (
+      await prismaDm.issue.findMany({
+        distinct: ["issuecode", "userId"],
+        select: {
+          issuecode: true,
+          userId: true,
         },
-        userId: {
-          in: userIdsWithPersoncodes,
+        where: {
+          issuecode: {
+            not: null,
+          },
+          userId: {
+            in: userIdsWithPersoncodes,
+          },
         },
-      },
-    }),
+      })
+    ).map((issue) => issue as dmIssue & { issuecode: string }),
   });
 
   console.log("Creating storyIssue entries");
@@ -208,8 +221,8 @@ connect().then(async () => {
   await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_histoires_manquantes`;
 
   console.log("Creating missingIssueForUser entries");
-  await prismaDmStats.$executeRaw`
-    insert into utilisateurs_publications_manquantes(ID_User, personcode, storycode, issuecode, Notation)
+  await runQueryOnDirectConnection(
+    `insert into utilisateurs_publications_manquantes(ID_User, personcode, storycode, issuecode, Notation)
     select distinct u_h_m.ID_User AS userId,
       u_h_m.personcode,
       u_h_m.storycode,
@@ -217,18 +230,30 @@ connect().then(async () => {
       a_p.Notation AS notation
     from utilisateurs_histoires_manquantes u_h_m
       inner join histoires_publications h_p using (storycode)
-      inner join auteurs_pseudos a_p on a_p.ID_User = u_h_m.ID_User and u_h_m.personcode = a_p.NomAuteurAbrege`;
+      inner join auteurs_pseudos a_p on a_p.ID_User = u_h_m.ID_User and u_h_m.personcode = a_p.NomAuteurAbrege`,
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
-  await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_manquantes`;
+  console.log("ANALYZING TABLE utilisateurs_publications_manquantes");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE utilisateurs_publications_manquantes",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
   console.log("Creating suggestedIssueForUser entries");
-  await prismaDmStats.$executeRaw`
-      insert into utilisateurs_publications_suggerees(ID_User, issuecode, oldestdate, Score)
+  await runQueryOnDirectConnection(
+    `insert into utilisateurs_publications_suggerees(ID_User, issuecode, oldestdate, Score)
       select ID_User AS userId, issuecode, '0000-00-00', sum(Notation) AS score
       from utilisateurs_publications_manquantes
-      group by ID_User, issuecode`;
+      group by ID_User, issuecode`,
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
-  await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_publications_suggerees`;
+  console.log("ANALYZING TABLE utilisateurs_publications_suggerees");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE utilisateurs_publications_suggerees",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
   await runQuery(`DROP DATABASE IF EXISTS ${DATABASE_NAME_DM_STATS}_old`);
   await runQuery(`CREATE DATABASE ${DATABASE_NAME_DM_STATS}_old`);

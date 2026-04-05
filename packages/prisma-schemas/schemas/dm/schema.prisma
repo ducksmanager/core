@@ -43,9 +43,10 @@ model authorUser {
   id         Int    @id @default(autoincrement()) @map("ID")
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
   userId     Int    @map("ID_user")
-  notation   Int    @default(-1) @map("Notation")
+  notation   Int?   @map("Notation") @db.UnsignedTinyInt
 
   @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
+  @@index([userId], map: "auteurs_pseudos_ID_user_index")
   @@map("auteurs_pseudos")
 }
 

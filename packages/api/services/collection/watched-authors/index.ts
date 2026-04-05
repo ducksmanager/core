@@ -29,7 +29,7 @@ export default ({ _socket }: UserServices) => ({
 
   addWatchedAuthor: async (personcode: string) => {
     try {
-      await upsertAuthorUser(personcode, _socket.data.user.id);
+      await upsertAuthorUser(personcode, _socket.data.user.id, null);
     } catch (e) {
       console.log(e);
       return { error: "Error", errorDetails: (e as Error).message };
@@ -59,7 +59,7 @@ export default ({ _socket }: UserServices) => ({
 const upsertAuthorUser = async (
   personcode: string,
   userId: number,
-  notation?: number,
+  notation: number | null,
 ) => {
   const criteria = {
     personcode,
@@ -84,7 +84,7 @@ const upsertAuthorUser = async (
     await prismaDm.authorUser.create({
       data: {
         ...criteria,
-        notation: 5,
+        notation,
       },
     });
   }
