@@ -26,7 +26,7 @@ const [
 
 console.log(
   execSync(
-    `mariadb-dump -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -P ${MYSQL_PORT} --all-databases | gzip > dump.gz`
+    `mariadb-dump -h ${MYSQL_HOST} -uroot -p${MYSQL_ROOT_PASSWORD} -P ${MYSQL_PORT} --ignore-table=coa.inducks_entryurl_vector --databases coa dm dm_stats edgecreator cover_info | gzip > dump.gz`
   ).toString()
 );
 
