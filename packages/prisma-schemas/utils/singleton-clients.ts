@@ -164,18 +164,18 @@ export const disconnectAllClients = async () => {
   }
   
   await Promise.all(promises);
-  console.log('All PrismaClient instances disconnected');
+  if (promises.length) {
+    console.log('All PrismaClient instances disconnected');
+  }
 };
 
-export const getConnectionStatus = () => {
-  return {
-    dm: dmClient ? 'connected' : 'not created',
-    dmStats: dmStatsClient ? 'connected' : 'not created',
-    coa: coaClient ? 'connected' : 'not created',
-    edgeCreator: edgeCreatorClient ? 'connected' : 'not created',
-    coverInfo: coverInfoClient ? 'connected' : 'not created',
-  };
-};
+export const getConnectionStatus = () => ({
+  dm: dmClient ? 'connected' : 'not created',
+  dmStats: dmStatsClient ? 'connected' : 'not created',
+  coa: coaClient ? 'connected' : 'not created',
+  edgeCreator: edgeCreatorClient ? 'connected' : 'not created',
+  coverInfo: coverInfoClient ? 'connected' : 'not created',
+});
 
 process.on('beforeExit', async () => {
   await disconnectAllClients();
