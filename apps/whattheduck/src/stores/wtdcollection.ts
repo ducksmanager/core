@@ -3,15 +3,19 @@ import { defineStore } from 'pinia';
 import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
 import type { issue, purchase } from '~prisma-schemas/schemas/dm';
-import { composables as webComposables, stores as webStores } from '~web';
+import useCollection from '~web/src/composables/useCollection';
+import { coa } from '~web/src/stores/coa';
+import { collection } from '~web/src/stores/collection';
+import { stats } from '~web/src/stores/stats';
+import { users } from '~web/src/stores/users';
 
 export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
   date: string;
 };
 
 export const wtdcollection = defineStore('wtdcollection', () => {
-  const coaStore = webStores.coa();
-  const webCollectionStore = webStores.collection();
+  const coaStore = coa();
+  const webCollectionStore = collection();
 
   const {
     createPurchase,
@@ -43,9 +47,9 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     totalUniqueIssues,
     user,
   } = storeToRefs(webCollectionStore);
-  const statsStore = webStores.stats();
-  const usersStore = webStores.users();
-  const { quotedIssues, quotationSum } = webComposables.useCollection(issues);
+  const statsStore = stats();
+  const usersStore = users();
+  const { quotedIssues, quotationSum } = useCollection(issues);
 
   const ownedCountries = computed(() =>
       ownedPublications.value
@@ -75,8 +79,8 @@ export const wtdcollection = defineStore('wtdcollection', () => {
       async () => {
         const issue = quotedIssues.value?.sort((a, b) => b.estimationGivenCondition - a.estimationGivenCondition)[0];
         if (issue) {
-          await coa().fetchIssuecodeDetails([issue.issuecode]);
-          return { ...issue, ...coa().issuecodeDetails[issue.issuecode] };
+          await coaStore.fetchIssuecodeDetails([issue.issuecode]);
+          return { ...issue, ...coaStore.issuecodeDetails[issue.issuecode] };
         }
         return issue;
       },

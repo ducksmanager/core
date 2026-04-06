@@ -26,7 +26,7 @@ import VueVirtualScroller from 'vue-virtual-scroller';
 
 import en from '~translations/en.json';
 import sv from '~translations/sv.json';
-import { i18n } from '~web';
+import i18n from '~web/src/i18n';
 
 import App from './App.vue';
 import router from './router';

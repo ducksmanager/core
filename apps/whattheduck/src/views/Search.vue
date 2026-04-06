@@ -65,7 +65,7 @@ import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
 import type { SimpleStory } from '~dm-types/SimpleStory';
 import type { StorySearchResults } from '~dm-types/StorySearchResults';
 import type { issue_condition } from '~prisma-schemas/schemas/dm';
-import { stores } from '~web';
+import { coa } from '~web/src/stores/coa';
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import FullIssue from '~/components/FullIssue.vue';
@@ -75,7 +75,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
 const { issuesByIssuecode: collectionIssuesByIssuecode } = storeToRefs(wtdcollection());
-const coaStore = stores.coa();
+const coaStore = coa();
 const { fetchPublicationNames, fetchIssuecodeDetails } = coaStore;
 const { issuecodeDetails } = storeToRefs(coaStore);
 const { currentNavigationItem } = storeToRefs(app());

@@ -35,14 +35,14 @@
 
 <script setup lang="ts">
 import { calendarOutline, calendarSharp } from 'ionicons/icons';
-import { stores } from '~web/index';
+import { coa } from '~web/src/stores/coa';
 
 import FullIssue from '~/components/FullIssue.vue';
 import { app } from '~/stores/app';
 
 const recentIssues = ref();
 
-const coaStore = stores.coa();
+const coaStore = coa();
 const { currentNavigationItem } = storeToRefs(app());
 const { fetchPublicationNames, fetchRecentIssues, fetchIssuecodeDetails } = coaStore;
 

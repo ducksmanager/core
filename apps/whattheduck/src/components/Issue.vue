@@ -3,10 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { stores as webStores } from '~web';
+import { coa } from '~web/src/stores/coa';
 
-const { coa: webCoa } = webStores;
-const { issuecodeDetails } = storeToRefs(webCoa());
+const { issuecodeDetails } = storeToRefs(coa());
 defineProps<{
   issuecode: string;
 }>();

@@ -17,11 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { components as webComponents } from '~web';
+import MedalImage from '~web/src/components/MedalImage.vue';
 
 import { images as wtdImages } from '~/stores/images';
-
-const { MedalImage } = webComponents;
 
 const {
   contribution,

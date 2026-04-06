@@ -65,7 +65,8 @@ import { toastController } from '@ionic/vue';
 import { bookmarkOutline, bookmarkSharp, calendarOutline, calendarSharp } from 'ionicons/icons';
 import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
 import type { issue } from '~prisma-schemas/schemas/dm';
-import { stores as webStores, components as webComponents } from '~web';
+import Bookcase from '~web/src/components/Bookcase.vue';
+import { coa } from '~web/src/stores/coa';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -83,7 +84,6 @@ type IssueItem = Pick<
 
 type Item = IssueItem | IssueWithIssuecodeOnly;
 
-const { Bookcase } = webComponents;
 const filteredIssuenumbers = ref<string[]>([]);
 
 const { getConditionDbEnValue } = useCondition();
@@ -106,8 +106,8 @@ const colSize = computed(() => {
 const { issues, user, purchasesById } = storeToRefs(wtdcollection());
 const { publicationcode, currentNavigationItem, isCoaView, currentIssueViewMode, selectedIssuecodes, currentFilter } =
   storeToRefs(app());
-const { issuecodeDetails, issuecodesByPublicationcode } = storeToRefs(webStores.coa());
-const { fetchCoverUrls, fetchIssuecodesByPublicationcode, fetchIssuecodeDetails } = webStores.coa();
+const { issuecodeDetails, issuecodesByPublicationcode } = storeToRefs(coa());
+const { fetchCoverUrls, fetchIssuecodesByPublicationcode, fetchIssuecodeDetails } = coa();
 
 const { bookcaseOptions, bookcaseUsername } = storeToRefs(bookcase());
 const { loadBookcaseOptions, loadBookcaseOrder } = bookcase();

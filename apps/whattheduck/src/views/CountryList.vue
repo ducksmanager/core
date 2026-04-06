@@ -25,14 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import { stores } from '~web';
+import { coa } from '~web/src/stores/coa';
 
 import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { totalPerCountryWithoutDuplicates, ownedCountries } = storeToRefs(wtdcollection());
-const { countryNames, issueCountsByCountrycode: coaIssueCountsPerCountrycode } = storeToRefs(stores.coa());
+const { countryNames, issueCountsByCountrycode: coaIssueCountsPerCountrycode } = storeToRefs(coa());
 const { isCoaView } = storeToRefs(app());
 
 const ownershipPercentages = computed(() =>
