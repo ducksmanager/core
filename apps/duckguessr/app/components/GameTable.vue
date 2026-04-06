@@ -51,6 +51,8 @@
             !!roundScores.find(({ playerId }) => playerId === player.id)
               ?.timeSpentGuessing
           "
+          :toggleable="player.isBot"
+          @toggle="emit('toggleBot')"
         >
           <template #cards>
             <div v-if="player.id !== 1" class="cards other-player">
@@ -109,7 +111,7 @@ const {
   currentRoundNumber,
   roundScores,
 } = defineProps<{
-  players: playerType[];
+  players: (playerType & { isBot?: boolean })[];
   rounds?: round[] | null;
   authors?: Author[] | null;
   currentRoundNumber: number | null;
@@ -118,6 +120,7 @@ const {
 
 const emit = defineEmits<{
   (e: "guess"): void;
+  (e: "toggleBot"): void;
 }>();
 
 const currentRound = computed(() =>

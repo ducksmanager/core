@@ -51,11 +51,12 @@ const checkAndAssociatePlayer = async (
   player: player,
 ) => {
   if (currentGame.gamePlayers.find(({ playerId }) => playerId === player.id)) {
-    throw new Error(
+    console.log(
       `Player ${player.username} is already associated with game ${
         currentGame!.id
       }`,
     );
+    return currentGame;
   }
   const updatedGame = await game.associatePlayer(currentGame!.id, player);
   console.log(`${player.username} is ready in game ${currentGame!.id}`);

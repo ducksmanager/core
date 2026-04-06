@@ -109,10 +109,6 @@ export default defineNuxtConfig({
         "bootstrap-vue-next",
         "socket-call-client",
         "js-cookie",
-        "dayjs", // CJS
-        "page-flip", // CJS
-        "chart.js",
-        "vue-chartjs",
         "@vueuse/integrations/useCookies",
       ],
     },

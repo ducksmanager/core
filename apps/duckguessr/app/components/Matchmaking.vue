@@ -1,11 +1,17 @@
 <template>
   <game-table
     v-if="players"
-    :players="players"
+    :players="[...players, botPlayer!]"
     :rounds="rounds"
     :current-round-number="null"
     :round-scores="[]"
     @guess="gameSocket.guess"
+    @toggle-bot="
+      botPlayer.username =
+        botPlayer.username === 'potential_bot'
+          ? `bot_${game.dataset.name}`
+          : 'potential_bot'
+    "
   />
   <waiting-for-players
     v-if="players.length"
@@ -41,6 +47,14 @@ const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
 const gameSocket = getGameSocketFromId(game.id);
 
 const { playerUser } = storeToRefs(playerStore());
+
+const botPlayer = ref({
+  id: 1,
+  username: "potential_bot",
+  ducksmanagerId: 1,
+  avatar: "DD",
+  isBot: true,
+});
 
 const emit = defineEmits<{
   (e: "start-match"): void;

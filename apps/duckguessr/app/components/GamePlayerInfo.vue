@@ -33,12 +33,8 @@
         :src="src"
       />
       <div class="username" :style="nowrap ? 'overflow: auto' : ''">
-        <div
-          v-if="isBot(username) || isPotentialBot(username)"
-          :class="{ 'text-nowrap': nowrap }"
-        >
-          BOT
-        </div>
+        <div v-if="isPotentialBotUser">{{ $t("Add a bot") }}</div>
+        <div v-else-if="isBotUser">BOT</div>
         <div v-else :class="{ 'text-nowrap': nowrap }">{{ username }}</div>
       </div>
       <slot name="cards" />
@@ -67,7 +63,10 @@ const {
 
 const hasPlayed = defineModel<boolean>("hasPlayed", { required: true });
 
-const slots = defineSlots<{
+const isBotUser = computed(() => isBot(username));
+const isPotentialBotUser = computed(() => isPotentialBot(username));
+
+defineSlots<{
   cards: () => VNode[];
 }>();
 
@@ -84,7 +83,7 @@ const ringColorVar = computed(() => {
 });
 
 const src = computed(() =>
-  isBot(username) || isPotentialBot(username)
+  isBotUser.value || isPotentialBotUser.value
     ? "/avatars/Little Helper.png"
     : `/avatars/${avatar}.png`,
 );
