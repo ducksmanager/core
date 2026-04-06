@@ -44,6 +44,7 @@
   "Ignorer les pages existantes": "Ignore existing pages",
   "Images": "Images",
   "Indexations en cours": "Ongoing indexations",
+  "Installer l'extension Dumili pour {extensionName}": "Install the Dumili extension for {extensionName}",
   "La couverture ne devrait faire qu'une page": "The cover should be only one page",
   "La première page est généralement une page de couverture": "The first page is usually a cover page",
   "Le type d'entrée de cette page ne peut pas être détecté car aucune image n'y est associée": "The type of the entry of this page can't be detected because no image is associated with it",

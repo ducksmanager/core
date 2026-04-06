@@ -47,17 +47,29 @@
             ><b-td
               v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
               :key="idx" /></template></b-table
-        ><b-button class="my-2" variant="light" @click="copyToClipboard"
+        ><b-button
+          class="mt-2 mb-4"
+          variant="light"
+          size="lg"
+          @click="copyToClipboard"
           ><template v-if="isCopied">{{ $t("Copié !") }}<i-bi-check /></template
           ><template v-else>{{ $t("Copier") }}</template>
         </b-button>
 
-        <div class="my-2">
-          <a
-            href="https://addons.mozilla.org/en-US/firefox/addon/dumili-auto-indexer/"
-            target="_blank"
-            ><img src="/get-add-on.png"
-          /></a>
+        <div
+          v-for="extension in extensionLinks"
+          :key="extension.name"
+          class="my-2"
+        >
+          <b-button variant="primary" :href="extension.url" target="_blank"
+            ><component :is="extension.icon" />
+            {{
+              $t("Installer l'extension Dumili pour {extensionName}", {
+                extensionName: extension.name,
+              })
+            }}
+            <i-bi-box-arrow-up-right
+          /></b-button>
         </div></div></template
   ></b-container>
 </template>
@@ -80,6 +92,19 @@ const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 const showEntryLetters = ref(false);
 const showHorizontalScroll = ref(false);
 const isCopied = ref(false);
+
+const extensionLinks = [
+  {
+    name: "Firefox",
+    url: "https://addons.mozilla.org/en-US/firefox/addon/dumili-auto-indexer/",
+    icon: "i-bi-browser-firefox",
+  },
+  {
+    name: "Chrome",
+    url: "https://chromewebstore.google.com/detail/dumili-auto-indexer/abhifeccdlekpcfbhjkkeifmbbikejeb",
+    icon: "i-bi-browser-chrome",
+  },
+] as const;
 
 const copyToClipboard = () => {
   navigator.clipboard.writeText(text.value);
