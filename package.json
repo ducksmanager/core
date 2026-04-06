@@ -27,9 +27,6 @@
     "overrides": {
       "@vercel/nft": "^0.27.4",
       "@types/node": "^24.0.0",
-      "@sentry/vue": "9.46.0",
-      "eslint": "^10.0.0",
-      "@eslint/js": "^10.0.0",
       "typescript": "^6.0.2"
     }
   }

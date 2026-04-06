@@ -84,7 +84,7 @@
     "@intlify/unplugin-vue-i18n": "^11.1.1",
     "@ionic/cli": "^7.2.1",
     "@ionic/prettier-config": "^4.0.0",
-    "@sentry/cli": "^2.58.5",
+    "@sentry/cli": "^3.3.5",
     "@types/imagemin": "9.0.1",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.12.0",
