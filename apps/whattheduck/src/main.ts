@@ -60,10 +60,16 @@ router.isReady().then(async () => {
     initSentry(
       {
         dsn: import.meta.env.VITE_SENTRY_DSN,
-        app,
         debug: true,
         release: `whattheduck@${currentBundleVersion}`,
         dist: currentBundleVersion,
+        siblingOptions: {
+          vueOptions: {
+            app,
+            attachProps: true,
+            attachErrorHandler: true,
+          },
+        },
         integrations: [
           browserTracingIntegration(),
           replayIntegration({

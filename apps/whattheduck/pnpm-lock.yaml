@@ -9,56 +9,53 @@ importers:
   .:
     dependencies:
       '@capacitor/android':
-        specifier: ^7.6.1
-        version: 7.6.1(@capacitor/core@7.6.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@capacitor/core@8.3.0)
       '@capacitor/app':
-        specifier: ^7.1.2
-        version: 7.1.2(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.1.0(@capacitor/core@8.3.0)
       '@capacitor/camera':
-        specifier: ^7.0.5
-        version: 7.0.5(@capacitor/core@7.6.1)
-      '@capacitor/cli':
-        specifier: ^7.6.1
-        version: 7.6.1
+        specifier: ^8.0.0
+        version: 8.0.2(@capacitor/core@8.3.0)
       '@capacitor/clipboard':
-        specifier: ^7.0.4
-        version: 7.0.4(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.0.1(@capacitor/core@8.3.0)
       '@capacitor/core':
-        specifier: ^7.6.1
-        version: 7.6.1
+        specifier: ^8.3.0
+        version: 8.3.0
       '@capacitor/device':
-        specifier: ^7.0.5
-        version: 7.0.5(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.0.2(@capacitor/core@8.3.0)
       '@capacitor/haptics':
-        specifier: ^7.0.5
-        version: 7.0.5(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.0.2(@capacitor/core@8.3.0)
       '@capacitor/ios':
-        specifier: ^7.6.1
-        version: 7.6.1(@capacitor/core@7.6.1)
+        specifier: ^8.3.0
+        version: 8.3.0(@capacitor/core@8.3.0)
       '@capacitor/keyboard':
-        specifier: ^7.0.6
-        version: 7.0.6(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.0.2(@capacitor/core@8.3.0)
       '@capacitor/preferences':
-        specifier: ^7.0.4
-        version: 7.0.4(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.0.1(@capacitor/core@8.3.0)
       '@capacitor/status-bar':
-        specifier: ^7.0.6
-        version: 7.0.6(@capacitor/core@7.6.1)
+        specifier: ^8.0.0
+        version: 8.0.2(@capacitor/core@8.3.0)
       '@capawesome/capacitor-android-edge-to-edge-support':
-        specifier: ^7.2.3
-        version: 7.2.3(@capacitor/core@7.6.1)
+        specifier: ^8.0.6
+        version: 8.0.6(@capacitor/core@8.3.0)
       '@capawesome/capacitor-app-update':
-        specifier: ^7.2.0
-        version: 7.2.0(@capacitor/core@7.6.1)
+        specifier: ^8.0.3
+        version: 8.0.3(@capacitor/core@8.3.0)
       '@capawesome/capacitor-file-picker':
-        specifier: ^7.2.0
-        version: 7.2.0(@capacitor/core@7.6.1)
+        specifier: ^8.0.2
+        version: 8.0.2(@capacitor/core@8.3.0)
       '@capgo/camera-preview':
-        specifier: ^7.26.4
-        version: 7.26.4(@capacitor/core@7.6.1)
+        specifier: ^8.2.2
+        version: 8.2.2(@capacitor/core@8.3.0)
       '@capgo/capacitor-updater':
-        specifier: 7.39.0
-        version: 7.39.0(@capacitor/core@7.6.1)
+        specifier: ^8.45.1
+        version: 8.45.1(@capacitor/core@8.3.0)
       '@ionic/pwa-elements':
         specifier: ^3.4.0
         version: 3.4.0
@@ -75,11 +72,11 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(typescript@6.0.2)
       '@sentry/capacitor':
-        specifier: ^2.4.1
-        version: 2.4.1(@capacitor/core@7.6.1)(@sentry/vue@9.46.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2)))
+        specifier: ^3.2.0
+        version: 3.2.0(@capacitor/core@8.3.0)(@sentry/vue@10.43.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2)))
       '@sentry/vue':
-        specifier: 9.46.0
-        version: 9.46.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2))
+        specifier: 10.43.0
+        version: 10.43.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2))
       '@vueuse/components':
         specifier: ^14.2.1
         version: 14.2.1(vue@3.5.31(typescript@6.0.2))
@@ -147,6 +144,9 @@ importers:
       '@capacitor/assets':
         specifier: ^3.0.5
         version: 3.0.5(@types/node@24.12.0)(typescript@6.0.2)
+      '@capacitor/cli':
+        specifier: ^8.3.0
+        version: 8.3.0
       '@capgo/cli':
         specifier: ^7.88.9
         version: 7.88.9
@@ -325,98 +325,98 @@ packages:
   '@borewit/text-codec@0.2.2':
     resolution: {integrity: sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==}
 
-  '@capacitor/android@7.6.1':
-    resolution: {integrity: sha512-wjK2FloJSp5eVqy/DecRA4zBuGhe/pY8pkkU5+G1mfBFqrmmuXJJIBdKgd2/iqyWhsp89LRZMmHV8EEDXYPqPg==}
+  '@capacitor/android@8.3.0':
+    resolution: {integrity: sha512-EQy6ByUuKayQBJmMm/e0byJiHavqsQHrvW23BuT2GNVQvenAvipqwaePiJHzrv2PZr7A0T0+se4kgDCeROj0mQ==}
     peerDependencies:
-      '@capacitor/core': ^7.6.0
+      '@capacitor/core': ^8.3.0
 
-  '@capacitor/app@7.1.2':
-    resolution: {integrity: sha512-d4I/oF/PRu4megL7/IGKYfe5j7yzSON1FRFgq6kH+m5kH6g7V+wyjHRLauCzGNjdRx4S+nWOumINds0qcRBtKg==}
+  '@capacitor/app@8.1.0':
+    resolution: {integrity: sha512-MlmttTOWHDedr/G4SrhNRxsXMqY+R75S4MM4eIgzsgCzOYhb/MpCkA5Q3nuOCfL1oHm26xjUzqZ5aupbOwdfYg==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
   '@capacitor/assets@3.0.5':
     resolution: {integrity: sha512-ohz/OUq61Y1Fc6aVSt0uDrUdeOA7oTH4pkWDbv/8I3UrPjH7oPkzYhShuDRUjekNp9RBi198VSFdt0CetpEOzw==}
     engines: {node: '>=10.3.0'}
     hasBin: true
 
-  '@capacitor/camera@7.0.5':
-    resolution: {integrity: sha512-+53f1xHq8on7O+ULXbgWp00ooWvn3fUkWxTP3p5zHi1nVriCxLbYnY0zTpZQqn52M96vclFKkoABbTVQ3x755w==}
+  '@capacitor/camera@8.0.2':
+    resolution: {integrity: sha512-v2BsKFjJSg0dMl/UO7jEvrAvjChCGrzQG5jx4yN2t8LnC7eFDh0YkSg1t+AMNveSDSKCvAsTk/JUzzr5VAvzmg==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
   '@capacitor/cli@5.7.8':
     resolution: {integrity: sha512-qN8LDlREMhrYhOvVXahoJVNkP8LP55/YPRJrzTAFrMqlNJC18L3CzgWYIblFPnuwfbH/RxbfoZT/ydkwgVpMrw==}
     engines: {node: '>=16.0.0'}
     hasBin: true
 
-  '@capacitor/cli@7.6.1':
-    resolution: {integrity: sha512-MdmelaYbwWldKlNxiLOhfHV8F8hoM6bIHPRB/+k81FTQoOqq3HYIdHVMZVl7s2800ubNnr4lSP3FevxU20lDew==}
-    engines: {node: '>=20.0.0'}
+  '@capacitor/cli@8.3.0':
+    resolution: {integrity: sha512-n3QDUimtFNbagoo8kLdjvTz3i3Y4jX1fOjvo6ptUKLzErmuqeamL8kECASoyQvg/OzJisZToGZrgLphBsptJcw==}
+    engines: {node: '>=22.0.0'}
     hasBin: true
 
-  '@capacitor/clipboard@7.0.4':
-    resolution: {integrity: sha512-+kiTRFjwD5UiWRg/m1JA/0Z0DDdsZLa25MLqI1e3MUi3yNZIwVZV5Oj6v4O0gxmpoBxf5A1L1v3weq+vWOBUuQ==}
+  '@capacitor/clipboard@8.0.1':
+    resolution: {integrity: sha512-iOlbTi8MojKyLnYE+M27priXid7vHd0PlDwyHohPzkuQ8Rkp6q7ykwZmPEUD+OnU/Ink7Qw/pUOfKgraKmA6Eg==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/core@7.6.1':
-    resolution: {integrity: sha512-nsNouCMxgYenyemy20sZwZYMtFi93LSZVWm2KqHTYIPIDgwx24+PzwHIdRQBZdK7hpvD5jQEhWuo/QyLLnAyBQ==}
+  '@capacitor/core@8.3.0':
+    resolution: {integrity: sha512-S4ajn4G/fS3VJj8salxqH/3LO5PPWv1VxGKQ27OCajnDcLJjEg9VXwgMPnlypgkIOqCJ2fmQLtk8GT+BlI9/rw==}
 
-  '@capacitor/device@7.0.5':
-    resolution: {integrity: sha512-tf6BYeQMBARNLKELQq2RGsvG3z03oM/ga+aqVhvE8M4IM8+h/516eeSz07Eqm4+yySGaQFT+2rIkpJrvA7gaAA==}
+  '@capacitor/device@8.0.2':
+    resolution: {integrity: sha512-fIqSXnG0s6bz5A/0xFgSXDkbU+Xl65ti80LhucNvLI4kGhJzcNn6SwWVwpXN9SJTOFWXblXknHNppheP8X1frQ==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/haptics@7.0.5':
-    resolution: {integrity: sha512-ujXuUkL8UG1YLhuJo/q+jiHr0K5JmclGZHmV1RttmiUBRG1XpC4Fc4gXUJyEX+6IoyfwWhgtPvJFRUB31HYnRQ==}
+  '@capacitor/haptics@8.0.2':
+    resolution: {integrity: sha512-c2hZzRR5Fk1tbTvhG1jhh2XBAf3EhnIerMIb2sl7Mt41Gxx1fhBJFDa0/BI1IbY4loVepyyuqNC9820/GZuoWQ==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/ios@7.6.1':
-    resolution: {integrity: sha512-53Pf2Fz6Pnll4ciHl+Z7wM/Xvo8urcSWGrqexwSdhXuDGfb1bZrkv0CxWMg8h1EFmMzJadYkINrS3LkG3lgJWg==}
+  '@capacitor/ios@8.3.0':
+    resolution: {integrity: sha512-5Rtwv8SITKlYTt8lAZG+khnVIdzPtqbocH3eP+JkEmX1vpSMwx4TOKtT8OBz8gpQ+pUJDRp7DBYOv3U6l/obCw==}
     peerDependencies:
-      '@capacitor/core': ^7.6.0
+      '@capacitor/core': ^8.3.0
 
-  '@capacitor/keyboard@7.0.6':
-    resolution: {integrity: sha512-mH9EHo4EnBA9zJAi6domGVB/PdEkcm0h27nJDHG4Y3fd2oKsheCxDRXlYrbgj8hcyQPe0cGWqAfzfwKzkWQoFQ==}
+  '@capacitor/keyboard@8.0.2':
+    resolution: {integrity: sha512-he6xKmTBp5AhVrWJeEi6RYkJ25FjLLdNruBU2wafpITk3Nb7UdzOj96x3K6etFuEj8/rtn9WXBTs1o2XA86A1A==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/preferences@7.0.4':
-    resolution: {integrity: sha512-TJhkwaI2RCs/iDC9PjNczZV4h6JM4gUtTuKMeFdy0OwGgFEHf4TrtW2mFMc1TnPDalYQ91p9NT+UKgiJs9/xtg==}
+  '@capacitor/preferences@8.0.1':
+    resolution: {integrity: sha512-T6no3ebi79XJCk91U3Jp/liJUwgBdvHR+s6vhvPkPxSuch7z3zx5Rv1bdWM6sWruNx+pViuEGqZvbfCdyBvcHQ==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/status-bar@7.0.6':
-    resolution: {integrity: sha512-7AVqj46b26QikImQzWfsJmzG8NUJZBGkrVSuoeTo+SX/YH3hXH0MqwwFgMqMGHfa/BICDgSvTjM9miVFlq0+RQ==}
+  '@capacitor/status-bar@8.0.2':
+    resolution: {integrity: sha512-WXs8YB8B9eEaPZz+bcdY6t2nForF1FLoj/JU0Dl9RRgQnddnS98FEEyDooQhaY7wivr000j4+SC1FyeJkrFO7A==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capawesome/capacitor-android-edge-to-edge-support@7.2.3':
-    resolution: {integrity: sha512-WtwXeU5Clg13t3SO6JvtIfJlpO+E48tHC+vNmC519zcS6GV9URl705UOvwOOvEyh6GFxAi2dHi8lj8iqIOYCdA==}
+  '@capawesome/capacitor-android-edge-to-edge-support@8.0.6':
+    resolution: {integrity: sha512-DhE45F0D73d1nEZyU8J103l7NiBIPKEC3BfvF1+LBxcDkxQpV9J/63VASblKjqHaM0/5k+UZGxmQT5WEp2D1iA==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capawesome/capacitor-app-update@7.2.0':
-    resolution: {integrity: sha512-fwPxR9tV5qecn3FSgwS5wBwlHDV9JND5dnY1iqIYnqRG2s/Oq0h32u4hV6+/zpDARJFMZycb3pddEfwLwhglEg==}
+  '@capawesome/capacitor-app-update@8.0.3':
+    resolution: {integrity: sha512-5pS9I+i2TuUl8b6L3h2WsWF/PE68exzoc9CciXK/I2SdB2fIkdxObrYBeYS2Z09ndCGqJgx4iwZJmhXwVcMh4w==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capawesome/capacitor-file-picker@7.2.0':
-    resolution: {integrity: sha512-qUNa+Ypem575xSNiJwgiOaaHXzAHaxMtERySRIsIC0HggoCa11xGS3xEVtMooQ3fS0cDXfl4/17DYoHQtkDjXA==}
+  '@capawesome/capacitor-file-picker@8.0.2':
+    resolution: {integrity: sha512-TQstOBrynvQP7t1s7egvf0RkiTR29EUbBMEhus8bb4uPFROfACOxR0s68uuOS6uTN3bSF2tpsz2NcVnVV/XvzA==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capgo/camera-preview@7.26.4':
-    resolution: {integrity: sha512-fbBZ0NnrJWq3Oo4fZJpRhvC/Ct7aapTXyw1423u5jaQKkqi9JsxZEm4YQ6LHEihJwpQKjcINFl+/HgMh74cpvA==}
+  '@capgo/camera-preview@8.2.2':
+    resolution: {integrity: sha512-9Yb7BgIaQSAjqpkeb6RjlSCngrqqvDJiSob8lcv4qjgn+HMVoJfp8yYYETiiuyOXwMclibItOxRMqULdUy993Q==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': '>=8.0.0'
 
-  '@capgo/capacitor-updater@7.39.0':
-    resolution: {integrity: sha512-c0n5p1BPFYhcN1m0mtu1zaYwlwUPgT47q2PY7NeIAAXiXYk50veS2y6Vg7zii58FPZ65LNiGu6ONmz6n59HF8A==}
+  '@capgo/capacitor-updater@8.45.1':
+    resolution: {integrity: sha512-dKErfDUd100/ZlJiE/L8sEjiDf5106zm3w8+a4zXa/HoqDGhwyHW+/RG9TQJVqqXoZ0SDquuVMJyzWAIHAuZsw==}
     peerDependencies:
-      '@capacitor/core': '>=7.0.0'
+      '@capacitor/core': ^8.0.0
 
   '@capgo/cli@7.88.9':
     resolution: {integrity: sha512-xcN7qPqTPxLjPTKCmncYSz0bNr7zkC50bUFfZFhH4rrazaY0yPhPmB2u9sG5oZgaeFxBEWyorqCTmOsgHgMUgA==}
@@ -1593,33 +1593,33 @@ packages:
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
 
-  '@sentry-internal/browser-utils@9.46.0':
-    resolution: {integrity: sha512-Q0CeHym9wysku8mYkORXmhtlBE0IrafAI+NiPSqxOBKXGOCWKVCvowHuAF56GwPFic2rSrRnub5fWYv7T1jfEQ==}
+  '@sentry-internal/browser-utils@10.43.0':
+    resolution: {integrity: sha512-8zYTnzhAPvNkVH1Irs62wl0J/c+0QcJ62TonKnzpSFUUD3V5qz8YDZbjIDGfxy+1EB9fO0sxtddKCzwTHF/MbQ==}
     engines: {node: '>=18'}
 
-  '@sentry-internal/feedback@9.46.0':
-    resolution: {integrity: sha512-KLRy3OolDkGdPItQ3obtBU2RqDt9+KE8z7r7Gsu7c6A6A89m8ZVlrxee3hPQt6qp0YY0P8WazpedU3DYTtaT8w==}
+  '@sentry-internal/feedback@10.43.0':
+    resolution: {integrity: sha512-YoXuwluP6eOcQxTeTtaWb090++MrLyWOVsUTejzUQQ6LFL13Jwt+bDPF1kvBugMq4a7OHw/UNKQfd6//rZMn2g==}
     engines: {node: '>=18'}
 
-  '@sentry-internal/replay-canvas@9.46.0':
-    resolution: {integrity: sha512-QcBjrdRWFJrrrjbmrr2bbrp2R9RYj1KMEbhHNT2Lm1XplIQw+tULEKOHxNtkUFSLR1RNje7JQbxhzM1j95FxVQ==}
+  '@sentry-internal/replay-canvas@10.43.0':
+    resolution: {integrity: sha512-ZIw1UNKOFXo1LbPCJPMAx9xv7D8TMZQusLDUgb6BsPQJj0igAuwd7KRGTkjjgnrwBp2O/sxcQFRhQhknWk7QPg==}
     engines: {node: '>=18'}
 
-  '@sentry-internal/replay@9.46.0':
-    resolution: {integrity: sha512-+8JUblxSSnN0FXcmOewbN+wIc1dt6/zaSeAvt2xshrfrLooVullcGsuLAiPhY0d/e++Fk06q1SAl9g4V0V13gg==}
+  '@sentry-internal/replay@10.43.0':
+    resolution: {integrity: sha512-khCXlGrlH1IU7P5zCEAJFestMeH97zDVCekj8OsNNDtN/1BmCJ46k6Xi0EqAUzdJgrOLJeLdoYdgtiIjovZ8Sg==}
     engines: {node: '>=18'}
 
-  '@sentry/browser@9.46.0':
-    resolution: {integrity: sha512-NOnCTQCM0NFuwbyt4DYWDNO2zOTj1mCf43hJqGDFb1XM9F++7zAmSNnCx4UrEoBTiFOy40McJwBBk9D1blSktA==}
+  '@sentry/browser@10.43.0':
+    resolution: {integrity: sha512-2V3I3sXi3SMeiZpKixd9ztokSgK27cmvsD9J5oyOyjhGLTW/6QKCwHbKnluMgQMXq20nixQk5zN4wRjRUma3sg==}
     engines: {node: '>=18'}
 
-  '@sentry/capacitor@2.4.1':
-    resolution: {integrity: sha512-fDpY+QDq9J6zidQKBermuLE6zv+6q4C76pXt6DhtiIZ6jONGfGk10wt5ldyq6vUb9uCunUg/uLK+M6TvjRtrjw==}
+  '@sentry/capacitor@3.2.0':
+    resolution: {integrity: sha512-1OHBWRuDxJ13CGNwuhm0CpZZuew2WIi2e+BqR8dR14mSXSyauTP6PByRCT4nVt3I0DHJNgIll1pHao5j4LOx4g==}
     peerDependencies:
       '@capacitor/core': '>=3.0.0'
-      '@sentry/angular': 9.46.0
-      '@sentry/react': 9.46.0
-      '@sentry/vue': 9.46.0
+      '@sentry/angular': 10.43.0
+      '@sentry/react': 10.43.0
+      '@sentry/vue': 10.43.0
     peerDependenciesMeta:
       '@sentry/angular':
         optional: true
@@ -1680,21 +1680,24 @@ packages:
     engines: {node: '>= 10'}
     hasBin: true
 
-  '@sentry/core@9.46.0':
-    resolution: {integrity: sha512-it7JMFqxVproAgEtbLgCVBYtQ9fIb+Bu0JD+cEplTN/Ukpe6GaolyYib5geZqslVxhp2sQgT+58aGvfd/k0N8Q==}
+  '@sentry/core@10.43.0':
+    resolution: {integrity: sha512-l0SszQAPiQGWl/ferw8GP3ALyHXiGiRKJaOvNmhGO+PrTQyZTZ6OYyPnGijAFRg58dE1V3RCH/zw5d2xSUIiNg==}
     engines: {node: '>=18'}
 
-  '@sentry/types@9.46.0':
-    resolution: {integrity: sha512-YsnZOEC1DfSpNzoT1FyLJh1MAVuKiSMMNTUVguB4NvXVBQSUnaVjv+3/rmwuri2enDyyFfxbXAwG5AiUPV+b3A==}
+  '@sentry/types@10.43.0':
+    resolution: {integrity: sha512-AbKGWFGmDJkl0F7yvNTqZEovMJTAEdVbsZC/Zy6w2PFUk7pHUtIJQ5DXkBxJ9QVZhOjGmHQRLKvXYaeXmI/6PA==}
     engines: {node: '>=18'}
 
-  '@sentry/vue@9.46.0':
-    resolution: {integrity: sha512-xFeZevR2nG+4tdvZcVgO6U1YiTQJZJTtV8aKRsCEh4yYpBO3FrfLxbSMTUeipILfKxpFf2iu1lwmqNyQtEllkA==}
+  '@sentry/vue@10.43.0':
+    resolution: {integrity: sha512-PYBJVHfd7JwnQv92sTnsfLVNwVEKY2wQzXt9aux6QNcKh4g3pyK68PoEBrcCSEHpUb7zs3lJedk3+aeX+kN7fw==}
     engines: {node: '>=18'}
     peerDependencies:
+      '@tanstack/vue-router': ^1.64.0
       pinia: 2.x || 3.x
       vue: 2.x || 3.x
     peerDependenciesMeta:
+      '@tanstack/vue-router':
+        optional: true
       pinia:
         optional: true
 
@@ -6684,13 +6687,13 @@ snapshots:
 
   '@borewit/text-codec@0.2.2': {}
 
-  '@capacitor/android@7.6.1(@capacitor/core@7.6.1)':
+  '@capacitor/android@8.3.0(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/app@7.1.2(@capacitor/core@7.6.1)':
+  '@capacitor/app@8.1.0(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
   '@capacitor/assets@3.0.5(@types/node@24.12.0)(typescript@6.0.2)':
     dependencies:
@@ -6717,9 +6720,9 @@ snapshots:
       - supports-color
       - typescript
 
-  '@capacitor/camera@7.0.5(@capacitor/core@7.6.1)':
+  '@capacitor/camera@8.0.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
   '@capacitor/cli@5.7.8':
     dependencies:
@@ -6743,7 +6746,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@capacitor/cli@7.6.1':
+  '@capacitor/cli@8.3.0':
     dependencies:
       '@ionic/cli-framework-output': 2.2.8
       '@ionic/utils-subprocess': 3.0.1
@@ -6765,57 +6768,57 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@capacitor/clipboard@7.0.4(@capacitor/core@7.6.1)':
+  '@capacitor/clipboard@8.0.1(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/core@7.6.1':
+  '@capacitor/core@8.3.0':
     dependencies:
       tslib: 2.8.1
 
-  '@capacitor/device@7.0.5(@capacitor/core@7.6.1)':
+  '@capacitor/device@8.0.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/haptics@7.0.5(@capacitor/core@7.6.1)':
+  '@capacitor/haptics@8.0.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/ios@7.6.1(@capacitor/core@7.6.1)':
+  '@capacitor/ios@8.3.0(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/keyboard@7.0.6(@capacitor/core@7.6.1)':
+  '@capacitor/keyboard@8.0.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/preferences@7.0.4(@capacitor/core@7.6.1)':
+  '@capacitor/preferences@8.0.1(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capacitor/status-bar@7.0.6(@capacitor/core@7.6.1)':
+  '@capacitor/status-bar@8.0.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capawesome/capacitor-android-edge-to-edge-support@7.2.3(@capacitor/core@7.6.1)':
+  '@capawesome/capacitor-android-edge-to-edge-support@8.0.6(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capawesome/capacitor-app-update@7.2.0(@capacitor/core@7.6.1)':
+  '@capawesome/capacitor-app-update@8.0.3(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capawesome/capacitor-file-picker@7.2.0(@capacitor/core@7.6.1)':
+  '@capawesome/capacitor-file-picker@8.0.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capgo/camera-preview@7.26.4(@capacitor/core@7.6.1)':
+  '@capgo/camera-preview@8.2.2(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
-  '@capgo/capacitor-updater@7.39.0(@capacitor/core@7.6.1)':
+  '@capgo/capacitor-updater@8.45.1(@capacitor/core@8.3.0)':
     dependencies:
-      '@capacitor/core': 7.6.1
+      '@capacitor/core': 8.3.0
 
   '@capgo/cli@7.88.9':
     dependencies:
@@ -7436,7 +7439,7 @@ snapshots:
       debug: 4.3.4
       signal-exit: 3.0.7
       tree-kill: 1.2.2
-      tslib: 2.6.2
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -7454,7 +7457,7 @@ snapshots:
   '@ionic/utils-stream@3.1.6':
     dependencies:
       debug: 4.3.4
-      tslib: 2.6.2
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -7474,7 +7477,7 @@ snapshots:
       '@ionic/utils-terminal': 2.3.4
       cross-spawn: 7.0.6
       debug: 4.3.4
-      tslib: 2.6.2
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -7499,7 +7502,7 @@ snapshots:
       slice-ansi: 4.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
-      tslib: 2.6.2
+      tslib: 2.8.1
       untildify: 4.0.0
       wrap-ansi: 7.0.0
     transitivePeerDependencies:
@@ -7896,40 +7899,40 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@sentry-internal/browser-utils@9.46.0':
+  '@sentry-internal/browser-utils@10.43.0':
     dependencies:
-      '@sentry/core': 9.46.0
+      '@sentry/core': 10.43.0
 
-  '@sentry-internal/feedback@9.46.0':
+  '@sentry-internal/feedback@10.43.0':
     dependencies:
-      '@sentry/core': 9.46.0
+      '@sentry/core': 10.43.0
 
-  '@sentry-internal/replay-canvas@9.46.0':
+  '@sentry-internal/replay-canvas@10.43.0':
     dependencies:
-      '@sentry-internal/replay': 9.46.0
-      '@sentry/core': 9.46.0
+      '@sentry-internal/replay': 10.43.0
+      '@sentry/core': 10.43.0
 
-  '@sentry-internal/replay@9.46.0':
+  '@sentry-internal/replay@10.43.0':
     dependencies:
-      '@sentry-internal/browser-utils': 9.46.0
-      '@sentry/core': 9.46.0
+      '@sentry-internal/browser-utils': 10.43.0
+      '@sentry/core': 10.43.0
 
-  '@sentry/browser@9.46.0':
+  '@sentry/browser@10.43.0':
     dependencies:
-      '@sentry-internal/browser-utils': 9.46.0
-      '@sentry-internal/feedback': 9.46.0
-      '@sentry-internal/replay': 9.46.0
-      '@sentry-internal/replay-canvas': 9.46.0
-      '@sentry/core': 9.46.0
+      '@sentry-internal/browser-utils': 10.43.0
+      '@sentry-internal/feedback': 10.43.0
+      '@sentry-internal/replay': 10.43.0
+      '@sentry-internal/replay-canvas': 10.43.0
+      '@sentry/core': 10.43.0
 
-  '@sentry/capacitor@2.4.1(@capacitor/core@7.6.1)(@sentry/vue@9.46.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2)))':
+  '@sentry/capacitor@3.2.0(@capacitor/core@8.3.0)(@sentry/vue@10.43.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2)))':
     dependencies:
-      '@capacitor/core': 7.6.1
-      '@sentry/browser': 9.46.0
-      '@sentry/core': 9.46.0
-      '@sentry/types': 9.46.0
+      '@capacitor/core': 8.3.0
+      '@sentry/browser': 10.43.0
+      '@sentry/core': 10.43.0
+      '@sentry/types': 10.43.0
     optionalDependencies:
-      '@sentry/vue': 9.46.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2))
+      '@sentry/vue': 10.43.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2))
 
   '@sentry/cli-darwin@2.58.5':
     optional: true
@@ -7975,16 +7978,16 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sentry/core@9.46.0': {}
+  '@sentry/core@10.43.0': {}
 
-  '@sentry/types@9.46.0':
+  '@sentry/types@10.43.0':
     dependencies:
-      '@sentry/core': 9.46.0
+      '@sentry/core': 10.43.0
 
-  '@sentry/vue@9.46.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2))':
+  '@sentry/vue@10.43.0(pinia@3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2)))(vue@3.5.31(typescript@6.0.2))':
     dependencies:
-      '@sentry/browser': 9.46.0
-      '@sentry/core': 9.46.0
+      '@sentry/browser': 10.43.0
+      '@sentry/core': 10.43.0
       vue: 3.5.31(typescript@6.0.2)
     optionalDependencies:
       pinia: 3.0.4(typescript@6.0.2)(vue@3.5.31(typescript@6.0.2))
