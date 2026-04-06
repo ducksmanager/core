@@ -126,8 +126,8 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@6.0.2)(vue@3.5.32(typescript@6.0.2)))(vue@3.5.32(typescript@6.0.2))
       vue-virtual-scroller:
-        specifier: 2.0.0-beta.8
-        version: 2.0.0-beta.8(vue@3.5.32(typescript@6.0.2))
+        specifier: 2.0.0
+        version: 2.0.0(vue@3.5.32(typescript@6.0.2))
       ~dm-types:
         specifier: workspace:*
         version: link:../../packages/types
@@ -6325,16 +6325,6 @@ packages:
     peerDependencies:
       vue: ^3.0.0
 
-  vue-observe-visibility@2.0.0-alpha.1:
-    resolution: {integrity: sha512-flFbp/gs9pZniXR6fans8smv1kDScJ8RS7rEpMjhVabiKeq7Qz3D9+eGsypncjfIyyU84saU88XZ0zjbD6Gq/g==}
-    peerDependencies:
-      vue: ^3.0.0
-
-  vue-resize@2.0.0-alpha.1:
-    resolution: {integrity: sha512-7+iqOueLU7uc9NrMfrzbG8hwMqchfVfSzpVlCMeJQe4pyibqyoifDNbKTZvwxZKDvGkB+PdFeKvnGZMoEb8esg==}
-    peerDependencies:
-      vue: ^3.0.0
-
   vue-router@5.0.4:
     resolution: {integrity: sha512-lCqDLCI2+fKVRl2OzXuzdSWmxXFLQRxQbmHugnRpTMyYiT+hNaycV0faqG5FBHDXoYrZ6MQcX87BvbY8mQ20Bg==}
     peerDependencies:
@@ -6356,10 +6346,10 @@ packages:
     peerDependencies:
       typescript: '>=5.0.0'
 
-  vue-virtual-scroller@2.0.0-beta.8:
-    resolution: {integrity: sha512-b8/f5NQ5nIEBRTNi6GcPItE4s7kxNHw2AIHLtDp+2QvqdTjVN0FgONwX9cr53jWRgnu+HRLPaWDOR2JPI5MTfQ==}
+  vue-virtual-scroller@2.0.0:
+    resolution: {integrity: sha512-FmLgxTmt5iG7cqVrlifX0aTCo12Gsuo1zLutHpkbQTuOTA6XVsaSJ2CAfsk8MyPPxxU7oGiQSQKLM7oUyKllwA==}
     peerDependencies:
-      vue: ^3.2.0
+      vue: ^3.3.0
 
   vue@3.5.32:
     resolution: {integrity: sha512-vM4z4Q9tTafVfMAK7IVzmxg34rSzTFMyIe0UUEijUCkn9+23lj0WRfA83dg7eQZIUlgOSGrkViIaCfqSAUXsMw==}
@@ -13178,14 +13168,6 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.32(typescript@6.0.2)
 
-  vue-observe-visibility@2.0.0-alpha.1(vue@3.5.32(typescript@6.0.2)):
-    dependencies:
-      vue: 3.5.32(typescript@6.0.2)
-
-  vue-resize@2.0.0-alpha.1(vue@3.5.32(typescript@6.0.2)):
-    dependencies:
-      vue: 3.5.32(typescript@6.0.2)
-
   vue-router@5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@6.0.2)(vue@3.5.32(typescript@6.0.2)))(vue@3.5.32(typescript@6.0.2)):
     dependencies:
       '@babel/generator': 7.29.1
@@ -13216,12 +13198,10 @@ snapshots:
       '@vue/language-core': 3.2.6
       typescript: 6.0.2
 
-  vue-virtual-scroller@2.0.0-beta.8(vue@3.5.32(typescript@6.0.2)):
+  vue-virtual-scroller@2.0.0(vue@3.5.32(typescript@6.0.2)):
     dependencies:
       mitt: 2.1.0
       vue: 3.5.32(typescript@6.0.2)
-      vue-observe-visibility: 2.0.0-alpha.1(vue@3.5.32(typescript@6.0.2))
-      vue-resize: 2.0.0-alpha.1(vue@3.5.32(typescript@6.0.2))
 
   vue@3.5.32(typescript@6.0.2):
     dependencies:

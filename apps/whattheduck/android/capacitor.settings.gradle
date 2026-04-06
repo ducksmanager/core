@@ -42,4 +42,4 @@ include ':capgo-capacitor-updater'
 project(':capgo-capacitor-updater').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-updater@8.45.1_@capacitor+core@8.3.0/node_modules/@capgo/capacitor-updater/android')
 
 include ':sentry-capacitor'
-project(':sentry-capacitor').projectDir = new File('../node_modules/.pnpm/@sentry+capacitor@3.2.0_@capacitor+core@8.3.0_@sentry+vue@10.43.0_pinia@3.0.4_typescript@6.0._paraeeepwhili6mb63la5y6joq/node_modules/@sentry/capacitor/android')
+project(':sentry-capacitor').projectDir = new File('../node_modules/.pnpm/@sentry+capacitor@3.2.0_@capacitor+core@8.3.0_@sentry+vue@10.43.0_pinia@3.0.4_typescript@6.0._ptazu75xosugzatzilkdujddfy/node_modules/@sentry/capacitor/android')

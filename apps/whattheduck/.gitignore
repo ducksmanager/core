@@ -38,7 +38,6 @@ npm-debug.log*
 
 *.local
 *.d.ts
-!vue-virtual-scroller.d.ts
 
 whattheduck-bundle*.zip
 
