@@ -36,9 +36,39 @@
       }"
     >
       <img
-        v-if="currentRoundNumber !== null && currentRound"
+        v-if="currentRound"
         :src="`${CLOUDINARY_URL_ROOT}/${currentRound.sitecodeUrl}`"
       />
+      <div v-else class="d-flex flex-column align-items-center gap-5">
+        <div class="d-flex flex-column align-items-center text-white">
+          {{ $t("Lien d'invitation:") }}
+          <b-input type="text" :model-value="gameUrl" readonly size="sm" />
+          <b-button
+            variant="primary"
+            size="sm"
+            :disabled="isGameUrlCopied"
+            @click="copyGameUrlToClipboard"
+            ><template v-if="isGameUrlCopied">
+              {{ $t("Copié !") }}
+            </template>
+            <template v-else>
+              {{ $t("Copier") }}
+            </template>
+          </b-button>
+        </div>
+        <b-button
+          variant="success"
+          :disabled="!isReadyToStartMatch"
+          @click="emit('start-match')"
+          ><template v-if="isReadyToStartMatch"
+            >{{ $t("Tout le monde est là ?") }}<br />{{
+              $t("Démarrer la partie !")
+            }}</template
+          ><template v-else>{{
+            $t("En attente d'au moins un autre joueur...")
+          }}</template></b-button
+        >
+      </div>
       <div
         v-for="(player, index) in players"
         :key="player.id"
@@ -121,7 +151,24 @@ const {
 const emit = defineEmits<{
   (e: "guess"): void;
   (e: "toggleBot"): void;
+  (e: "start-match"): void;
 }>();
+
+const gameUrl = computed(() => `${location.href}`);
+const isGameUrlCopied = ref(false);
+const copyGameUrlToClipboard = () => {
+  navigator.clipboard.writeText(gameUrl.value);
+  isGameUrlCopied.value = true;
+  setTimeout(() => {
+    isGameUrlCopied.value = false;
+  }, 2000);
+};
+
+const isReadyToStartMatch = computed(
+  () =>
+    players.filter(({ username }) => !/^potential_bot/.test(username)).length >
+    1,
+);
 
 const currentRound = computed(() =>
   rounds?.find(

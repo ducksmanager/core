@@ -82,15 +82,18 @@ export const create = async (datasetName: string) => {
   }
 };
 
-export const associatePlayer = async (gameId: number, player: player) =>
+export const associatePlayer = async (gameId: number, playerId: number) =>
   prisma.game.update({
     include: gameRelations,
     where: { id: gameId },
     data: {
       gamePlayers: {
-        create: {
-          player: {
-            connect: { id: player.id },
+        connectOrCreate: {
+          where: { gameId_playerId: { gameId, playerId } },
+          create: {
+            player: {
+              connect: { id: playerId },
+            },
           },
         },
       },

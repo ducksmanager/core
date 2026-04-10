@@ -6,6 +6,7 @@
     :current-round-number="null"
     :round-scores="[]"
     @guess="gameSocket.guess"
+    @start-match="startMatch"
     @toggle-bot="
       botPlayer.username =
         botPlayer.username === 'potential_bot'

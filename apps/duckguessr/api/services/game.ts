@@ -58,7 +58,7 @@ const checkAndAssociatePlayer = async (
     );
     return currentGame;
   }
-  const updatedGame = await game.associatePlayer(currentGame!.id, player);
+  const updatedGame = await game.associatePlayer(currentGame!.id, player.id);
   console.log(`${player.username} is ready in game ${currentGame!.id}`);
 
   return updatedGame;

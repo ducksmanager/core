@@ -50,6 +50,7 @@ model gamePlayer {
   game     game   @relation(fields: [gameId], references: [id], onUpdate: Restrict, map: "game_player_game_id_fk")
   player   player @relation(fields: [playerId], references: [id], onUpdate: Restrict, map: "game_player_player_id_fk")
 
+  @@unique([gameId, playerId], map: "game_player_unique")
   @@index([gameId], map: "game_player_game_id_fk")
   @@index([playerId], map: "game_player_player_id_fk")
   @@map("game_player")
