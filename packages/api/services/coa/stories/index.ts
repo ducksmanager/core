@@ -5,8 +5,6 @@ import type { inducks_story } from "~prisma-schemas/schemas/coa";
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-const STORY = "n";
-
 const getStoryAndStoryversionDetails = async (
   searchResults: StorySearchResults<false>["results"],
 ) => {
@@ -39,8 +37,7 @@ const getStoryAndStoryversionDetails = async (
   return searchResults
     .filter(
       ({ storycode }) =>
-        storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
-          .kind === STORY,
+        storyDetails[storycode].originalstoryversioncode && storyDetails[storycode].originalstoryversioncode in storyversionDetails
     )
     .map(({ storycode, score }) => {
       const storyversion = storyversionDetails[storyDetails[storycode].originalstoryversioncode!];
