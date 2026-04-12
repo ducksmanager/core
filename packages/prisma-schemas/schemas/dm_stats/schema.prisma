@@ -18,13 +18,11 @@ model authorStory {
 }
 
 model authorUser {
-  id         Int    @id @default(autoincrement()) @map("ID")
   userId     Int    @map("ID_User")
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
-  notation   Int?   @map("Notation") @db.UnsignedTinyInt
+  notation   Int?   @map("Notation") @db.TinyInt
 
-  @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
-  @@index([userId], map: "auteurs_pseudos_ID_user_index")
+  @@id([userId, personcode])
   @@map("auteurs_pseudos")
 }
 
@@ -69,7 +67,7 @@ model missingIssueForUser {
   storycode  String  @db.VarChar(19)
   issuecode  String  @db.VarChar(25)
   oldestdate String? @db.VarChar(10)
-  notation   Int?    @map("Notation") @db.UnsignedTinyInt
+  notation   Int     @map("Notation") @db.UnsignedTinyInt
 
   @@unique([userId, personcode, storycode, issuecode], map: "unique_index")
   @@index([userId, issuecode], map: "missing_user_issue")

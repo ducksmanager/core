@@ -43,10 +43,9 @@ model authorUser {
   id         Int    @id @default(autoincrement()) @map("ID")
   personcode String @map("NomAuteurAbrege") @db.VarChar(79)
   userId     Int    @map("ID_user")
-  notation   Int?   @map("Notation") @db.UnsignedTinyInt
+  notation   Int?   @map("Notation")
 
   @@unique([userId, personcode], map: "auteurs_pseudos_uindex")
-  @@index([userId], map: "auteurs_pseudos_ID_user_index")
   @@map("auteurs_pseudos")
 }
 
@@ -137,6 +136,7 @@ model issue {
   /// @deprecated
   short_issuecode String?         @ignore @db.VarChar(25)
   issuecode       String?         @map("issuecode") @db.VarChar(25)
+  users           user            @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "numeros_users_ID_fk")
   labels          issueLabel[]
 
   @@index([country, magazine, issuenumber, userId], map: "Numero_Utilisateur")
@@ -238,6 +238,7 @@ model user {
   subscriptions               subscription[]
   bookstoreComments           bookstoreComment[]
   labels                      label[]
+  numeros                     issue[]
   requestedIssues             requestedIssue[]
   userContributions           userContribution[]
   userOptions                 userOption[]
