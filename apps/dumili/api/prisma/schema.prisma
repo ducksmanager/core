@@ -15,7 +15,7 @@ model entry {
   position                      Int
   entrycomment                  String?               @db.VarChar(2009)
   part                          String?               @db.VarChar(5)
-  title                         String?               @db.VarChar(100)
+  title                         String?               @db.VarChar(284)
   entirepages                   Int
   brokenpagenumerator           Int                   @default(0)
   brokenpagedenominator         Int                   @default(1)
