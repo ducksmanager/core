@@ -10,7 +10,18 @@
         )
       }}</b-alert
     >
-    <b-alert v-else-if="!rows" variant="warning" :model-value="true">
+    <b-alert
+      v-if="!indexation!.releaseDate"
+      variant="warning"
+      :model-value="true"
+    >
+      {{
+        $t(
+          'Vous devez spécifier la date de sortie du numéro dans "Méta-données" pour continuer',
+        )
+      }}</b-alert
+    >
+    <b-alert v-else-if="!csv" variant="warning" :model-value="true">
       {{
         $t("Vous devez identifier au moins une histoire pour continuer")
       }}</b-alert
@@ -19,64 +30,44 @@
       <b-alert variant="info" :model-value="true">
         {{
           $t(
-            "Vous avez indiqué toutes les entrées de cette indexation ? L'index au format DBI est indiqué ci-dessous. Copiez l'index et utilisez l'extension navigateur Dumili pour remplir les champs d'indexation automatiquement sur Inducks.",
+            "Vous avez indiqué toutes les entrées de cette indexation ? Cliquez sur le bouton ci-dessous pour prévisualiser l'indexation sur Inducks. Vous pourrez visualiser une dernière fois l'indexation avant de l'envoyer.",
           )
         }}
       </b-alert>
-      <b-form-checkbox
-        v-model="showEntryLetters"
-        :disabled="hasEntrycodesLongerThanFirstColumnMaxWidth"
-        class="m-2"
-        >{{
-          $t("Afficher des lettres au lieu des numéros de pages")
-        }}</b-form-checkbox
+      <b-form
+        action="https://inducks.org/csvinx.php"
+        method="POST"
+        target="_blank"
       >
-      <b-form-checkbox v-model="showHorizontalScroll" class="m-2">{{
-        $t("Afficher la barre de défilement horizontale")
-      }}</b-form-checkbox>
-      <div
-        class="h-100 overflow-y-auto align-items-start"
-        :class="{
-          'mw-100 text-nowrap overflow-x-auto': showHorizontalScroll,
-        }"
-      >
-        <b-table head-variant="light" :items="rows" borderless small
-          ><template #top-row
-            ><b-td>{{ issueRow.issuecode }}</b-td
-            ><b-td>{{ issueRow.details }}</b-td
-            ><b-td
-              v-for="idx in Object.keys(rows![0]).filter((_, idx) => idx >= 2)"
-              :key="idx" /></template></b-table
-        ><b-button
-          class="mt-2 mb-4"
-          variant="light"
-          size="lg"
-          @click="copyToClipboard"
-          ><template v-if="isCopied">{{ $t("Copié !") }}<i-bi-check /></template
-          ><template v-else>{{ $t("Copier") }}</template>
-        </b-button>
-
-        <div
-          v-for="extension in extensionLinks"
-          :key="extension.name"
-          class="my-2"
-        >
-          <b-button variant="primary" :href="extension.url" target="_blank"
-            ><component :is="extension.icon" />
-            {{
-              $t("Installer l'extension Dumili pour {extensionName}", {
-                extensionName: extension.name,
-              })
-            }}
-            <i-bi-box-arrow-up-right
-          /></b-button>
-        </div></div></template
-  ></b-container>
+        <b-form-input
+          v-model="issuecode"
+          type="text"
+          name="issuecode"
+          class="d-none"
+        />
+        <b-form-input
+          v-model="indexation!.price"
+          type="text"
+          name="price"
+          class="d-none"
+        />
+        <b-form-input
+          v-model="indexation!.releaseDate"
+          type="text"
+          name="issdate"
+          class="d-none"
+        />
+        <b-form-textarea name="csv" :model-value="csv" class="d-none" />
+        <b-button type="submit" variant="primary">{{
+          $t("Prévisualiser l'indexation sur Inducks")
+        }}</b-button>
+      </b-form>
+    </template>
+  </b-container>
 </template>
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import { entryColumns, issueColumns } from "~/composables/useTextEditor";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
@@ -88,31 +79,6 @@ const { indexation } = storeToRefs(suggestions());
 const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
-
-const showEntryLetters = ref(false);
-const showHorizontalScroll = ref(false);
-const isCopied = ref(false);
-
-const extensionLinks = [
-  {
-    name: "Firefox",
-    url: "https://addons.mozilla.org/en-US/firefox/addon/dumili-auto-indexer/",
-    icon: "i-bi-browser-firefox",
-  },
-  {
-    name: "Chrome",
-    url: "https://chromewebstore.google.com/detail/dumili-auto-indexer/abhifeccdlekpcfbhjkkeifmbbikejeb",
-    icon: "i-bi-browser-chrome",
-  },
-] as const;
-
-const copyToClipboard = () => {
-  navigator.clipboard.writeText(text.value);
-  isCopied.value = true;
-  setTimeout(() => {
-    isCopied.value = false;
-  }, 2000);
-};
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -144,7 +110,7 @@ const getStoriesWithDetails = (stories: storySuggestion[]) =>
 
 const issuecode = computed(() =>
   issue.value
-    ? `${issue.value.publicationcode.split("/")[1]} ${issue.value.issuenumber}`
+    ? `${issue.value.publicationcode} ${issue.value.issuenumber}`
     : null,
 );
 
@@ -159,117 +125,39 @@ const entrycodesWithPageNumbers = computed(() =>
   ),
 );
 
-const toPosition = (n: number): string =>
-  n < 26
-    ? String.fromCharCode(97 + n)
-    : toPosition(Math.floor(n / 26) - 1) + String.fromCharCode(97 + (n % 26));
+const csv = computed(() => {
+  if (!storiesWithDetails.value?.length) {
+    return undefined;
+  } else {
+    const data = indexation.value!.entries.map((entry, idx) => {
+      const storyWithDetails = storiesWithDetails.value!.find(
+        ({ storycode }) => storycode === entry.acceptedStory?.storycode,
+      );
+      return {
+        entrycode: entrycodesWithPageNumbers.value[idx],
+        storycode: entry.acceptedStory?.storycode || "",
+        pg: String(getEntryPages(indexation.value!, entry.id).length),
+        ...(Object.fromEntries(
+          (["plot", "writ", "art", "ink"] as const).map((job) => [
+            job,
+            storyWithDetails?.storyjobs?.find(
+              ({ plotwritartink }) => plotwritartink === job,
+            )?.personcode,
+          ]),
+        ) as { plot: string; writ: string; art: string; ink: string }),
+        la:
+          entry.acceptedStoryKind?.storyKindRows.kind === "n"
+            ? entry.acceptedStoryKind?.storyKindRows.numberOfRows
+            : entry.acceptedStoryKind?.storyKindRows.kind,
+        title: entry.title || "",
+      };
+    });
 
-// const entrycodesWithPositions = computed(() =>
-//   indexation.value!.entries.map(
-//     (_entry, idx) => `${issuecode.value}${toPosition(idx)}`,
-//   ),
-// );
-
-const positions = computed(() =>
-  indexation.value!.entries.map((_entry, idx) => toPosition(idx)),
-);
-
-const hasEntrycodesLongerThanFirstColumnMaxWidth = computed(
-  () => false,
-  // entrycodesWithPageNumbers.value.some(
-  //   (entrycode) =>
-  //     entrycode.length >
-  //     entryColumns.find(
-  //       (column) => "field" in column && column.field === "entrycode",
-  //     )!.width,
-  // ),
-);
-
-watch(
-  hasEntrycodesLongerThanFirstColumnMaxWidth,
-  (value) => {
-    if (value) {
-      showEntryLetters.value = true;
-    }
-  },
-  { immediate: true },
-);
-
-const issueRow = computed(() => ({
-  issuecode: issuecode.value,
-  details: [
-    "h3",
-    ...[indexation.value!.title ? [indexation.value!.title] : []],
-    ...[indexation.value!.price ? [`[price:${indexation.value!.price}]`] : []],
-    ...[
-      indexation.value!.releaseDate
-        ? [`[issdate:${indexation.value!.releaseDate}]`]
-        : [],
-    ],
-    `[inx:${indexation.value!.user.inducksUsername}]`,
-    `[pages:${indexation.value!.pages.length}]`,
-  ]
-    .flat()
-    .join(" "),
-}));
-
-const rows = computed(() =>
-  !storiesWithDetails.value?.length
-    ? undefined
-    : indexation.value!.entries.map((entry, idx) => {
-        const storyWithDetails = storiesWithDetails.value!.find(
-          ({ storycode }) => storycode === entry.acceptedStory?.storycode,
-        );
-        return {
-          entrycode:
-            idx === 0 ||
-            (showEntryLetters.value &&
-              !hasEntrycodesLongerThanFirstColumnMaxWidth.value)
-              ? positions.value[idx]
-              : hasEntrycodesLongerThanFirstColumnMaxWidth.value
-                ? "->"
-                : entrycodesWithPageNumbers.value[idx],
-          storycode: entry.acceptedStory?.storycode || "",
-          pg: String(getEntryPages(indexation.value!, entry.id).length),
-          la:
-            entry.acceptedStoryKind?.storyKindRows.kind === "n"
-              ? entry.acceptedStoryKind?.storyKindRows.numberOfRows
-              : entry.acceptedStoryKind?.storyKindRows.kind,
-          _: " ",
-          ...(Object.fromEntries(
-            (["plot", "writ", "art", "ink"] as const).map((job) => [
-              job,
-              storyWithDetails?.storyjobs?.find(
-                ({ plotwritartink }) => plotwritartink === job,
-              )?.personcode,
-            ]),
-          ) as { plot: string; writ: string; art: string; ink: string }),
-          hero: "", //story!.printedhero,
-          title: `${entry.title || ""}${
-            hasEntrycodesLongerThanFirstColumnMaxWidth.value && idx > 0
-              ? `[entrycode:${entrycodesWithPageNumbers.value[idx]}]`
-              : ""
-          }`,
-        };
-      }),
-);
-
-const text = computed(() =>
-  [Object.entries(issueRow.value)]
-    .concat((rows.value || []).map(Object.entries))
-    .map((row, rowIndex) =>
-      row
-        .map(([thisField, text]) =>
-          String(text || "").padEnd(
-            (rowIndex === 0 ? issueColumns : entryColumns).find(
-              (column) => "field" in column && column.field === thisField,
-            )?.width || 0,
-          ),
-        )
-        .join(""),
-    )
-    .join("\n"),
-);
+    return [Object.keys(data[0]), ...data.map((row) => Object.values(row))]
+      .map((row) => row.join(";"))
+      .join("\n");
+  }
+});
 
 watch(
   acceptedStories,

@@ -70,6 +70,7 @@
   "Pas de résultats OCR": "No OCR results",
   "PDF": "PDF",
   "Personnaliser...": "Customize...",
+  "Prévisualiser l'indexation sur Inducks": "Preview the indexation on Inducks",
   "Prix": "Price",
   "Rechercher...": "Search...",
   "Réduire cette entrée à {originalPagesCount} page|Réduire cette entrée à {originalPagesCount} pages": "Shrink this entry to {originalPagesCount} page|Shrink this entry to {originalPagesCount} pages",
@@ -97,10 +98,11 @@
   "Voir sur Inducks": "See on Inducks",
   "Voulez-vous vraiment supprimer cette entrée ?": "Do you really want to delete this entry?",
   "Vous aurez la possibilité de rogner les images avant de les envoyer.": "You will be able to crop the images before sending them.",
-  "Vous avez indiqué toutes les entrées de cette indexation ? L'index au format DBI est indiqué ci-dessous. Copiez l'index et utilisez l'extension navigateur Dumili pour remplir les champs d'indexation automatiquement sur Inducks.": "Have you filled all the entries of this indexation? The index in DBI format is indicated below. Copy the index and use the Dumili browser extension to fill in the indexation fields automatically on Inducks.",
+  "Vous avez indiqué toutes les entrées de cette indexation ? Cliquez sur le bouton ci-dessous pour prévisualiser l'indexation sur Inducks. Vous pourrez visualiser une dernière fois l'indexation avant de l'envoyer.": "Have you filled all the entries of this indexation? Click the button below to preview the indexation on Inducks. You will be able to preview the indexation before submitting it.",
   "Vous devez être connecté pour accéder à cette page.": "You must be logged in to access this page.",
   "Vous devez identifier au moins une histoire pour continuer": "You must identify at least one story to continue",
   "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.": "You must specify the characteristics of the issue\nbefore being able to modify some of its metadata.",
   "Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement \"Numéro inconnu\")": "You must specify a publication and an issue number to continue (click on the dropdown that currently says \"Unknown issue\")",
+  "Vous devez spécifier la date de sortie du numéro dans \"Méta-données\" pour continuer": "You must specify the release date of the issue in \"Metadata\" to continue",
   "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?": "You are about to delete the last {numberOfPagesToDelete} pages of the indexation. Are you sure?"
 }
