@@ -1,12 +1,11 @@
 import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
+import usePartialQueryCache from "../composables/usePartialCache";
+
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
-import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type {
   ExtraSelectField,
-  inducks_story,
-  inducks_storyversion,
   IssuecodeDetail,
 } from "~prisma-schemas/schemas/coa";
 
@@ -44,80 +43,68 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
 
 export const coa = defineStore("coa", () => {
   const { coa: events } = inject(socketInjectionKey)!;
+  const locale = useI18n().locale;
 
-  const locale = useI18n().locale,
-    coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
+  const coaCachedEvents = usePartialQueryCache(
+    "coa",
+    events as CoaClientEvents,
+    locale,
+  );
+
+  const {
+    ref: publicationNames,
+    fetch: fetchPublicationNames,
+    add: addPublicationNames,
+  } = coaCachedEvents.query("getPublicationListFromPublicationcodeList");
+
+  const {
+    ref: personNames,
+    fetch: fetchPersonNames,
+    add: setPersonNames,
+  } = coaCachedEvents.query("getAuthorList");
+
+  const { ref: issuePopularities, fetch: fetchIssuePopularities } =
+    coaCachedEvents.query("getIssuePopularities");
+
+  const {
+    ref: issueQuotations,
+    fetch: fetchIssueQuotations,
+    add: addIssueQuotations,
+  } = coaCachedEvents.query("getQuotationsByIssuecodes", "quotations");
+
+  const {
+    ref: issuecodesByPublicationcode,
+    fetch: fetchIssuecodesByPublicationcode,
+  } = coaCachedEvents.query("getIssuecodesByPublicationcodes");
+
+  const { ref: storyDetails, fetch: fetchStoryDetails } =
+    coaCachedEvents.query("getStoryDetails");
+
+  const { ref: storyversionDetails, fetch: fetchStoryversionDetails } =
+    coaCachedEvents.query("getStoryversionsDetails");
+
+  const {
+    ref: issueCountsByCountrycode,
+    fetch: fetchIssueCountsByCountrycode,
+  } = coaCachedEvents.query("getCoaCountByCountrycode");
+
+  const coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
     countryNames = shallowRef<EventOutput<CoaClientEvents, "getCountryList">>(),
-    publicationNames = shallowRef<
-      EventOutput<CoaClientEvents, "getPublicationListFromCountrycodes">
-    >({}),
     publicationNamesFullCountries = shallowRef<string[]>([]),
-    personNames = shallowRef<EventOutput<CoaClientEvents, "getAuthorList">>(),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = shallowRef<Record<string, IssuecodeDetail>>({}),
-    issuePopularities = shallowRef<
-      EventOutput<CoaClientEvents, "getIssuePopularities">
-    >({}),
-    issuecodesByPublicationcode = ref<
-      EventOutput<CoaClientEvents, "getIssuecodesByPublicationcodes">
-    >({}),
     issuesByPublicationcode = ref<
       Record<string, EventOutput<CoaClientEvents, "getIssuesByPublicationcode">>
-    >({}),
-    issueCountsByCountrycode = ref<
-      EventOutput<CoaClientEvents, "getCoaCountByCountrycode">
     >({}),
     issueCountsByPublicationcode = ref<
       EventOutput<CoaClientEvents, "getCoaCountByPublicationcode">
     >({}),
-    issueQuotations = ref<
-      SuccessfulEventOutput<
-        CoaClientEvents,
-        "getQuotationsByIssuecodes"
-      >["quotations"]
-    >({}),
-    storyDetails = ref<Record<string, inducks_story>>({}),
     storyUrls = ref<
       SuccessfulEventOutput<CoaClientEvents, "getStoryDetails">["storyUrls"]
     >({}),
-    storyversionDetails = ref<Record<string, inducks_storyversion>>({}),
-    addPublicationNames = (
-      newPublicationNames: typeof publicationNames.value,
-    ) => {
-      publicationNames.value = {
-        ...publicationNames.value,
-        ...newPublicationNames,
-      };
-    },
-    setPersonNames = (newPersonNames: { [personcode: string]: string }) => {
-      if (!personNames.value) {
-        personNames.value = {};
-      }
-      personNames.value = Object.assign(personNames.value, newPersonNames);
-    },
     setCoverUrl = (issuecode: string, url: string) => {
       coverUrls.value[issuecode] = url;
-    },
-    fetchIssueQuotations = async (issuecodes: string[]) => {
-      const existingIssuecodes = new Set(
-        Object.keys(issueQuotations.value || {}),
-      );
-      const newIssuecodes = issuecodes.filter(
-        (issuecode) => !existingIssuecodes.has(issuecode),
-      );
-      if (newIssuecodes.length) {
-        const newIssueQuotations =
-          await events.getQuotationsByIssuecodes(newIssuecodes);
-        if (!("error" in newIssueQuotations)) {
-          addIssueQuotations(newIssueQuotations.quotations);
-        }
-      }
-    },
-    addIssueQuotations = (
-      newIssueQuotations: Record<string, InducksIssueQuotationSimple>,
-    ) => {
-      Object.assign(issueQuotations.value, newIssueQuotations);
     },
     fetchCountryNames = async (ignoreCache = false) => {
       if (
@@ -132,57 +119,18 @@ export const coa = defineStore("coa", () => {
         isLoadingCountryNames.value = false;
       }
     },
-    fetchPublicationNames = async (newPublicationCodes: string[]) => {
-      const actualNewPublicationCodes = [
-        ...new Set(
-          newPublicationCodes.filter(
-            (publicationcode) =>
-              publicationcode &&
-              !Object.keys(publicationNames.value).includes(publicationcode),
-          ),
-        ),
-      ];
-      return (
-        actualNewPublicationCodes.length &&
-        addPublicationNames(
-          await events.getPublicationListFromPublicationcodeList(
-            actualNewPublicationCodes,
-          ),
-        )
-      );
-    },
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
         ? void 0
         : events
             .getPublicationListFromCountrycodes([countrycode])
             .then((data) => {
-              addPublicationNames({
-                ...(publicationNames.value || {}),
-                ...data,
-              });
+              addPublicationNames(data);
               publicationNamesFullCountries.value = [
                 ...publicationNamesFullCountries.value,
                 countrycode,
               ];
             }),
-    fetchPersonNames = async (newPersonCodes: string[]) => {
-      const actualNewPersonCodes = [
-        ...new Set(
-          newPersonCodes.filter(
-            (personCode) =>
-              !Object.keys(personNames.value || {}).includes(personCode),
-          ),
-        ),
-      ];
-      return (
-        actualNewPersonCodes.length &&
-        setPersonNames({
-          ...(personNames.value || {}),
-          ...(await events.getAuthorList(actualNewPersonCodes)),
-        })
-      );
-    },
     fetchIssuecodeDetails = async (
       issuecodes: string[],
       withFields: ExtraSelectField[] = [],
@@ -201,85 +149,11 @@ export const coa = defineStore("coa", () => {
         );
       }
     },
-    fetchIssuePopularities = async (issuecodes: string[]) => {
-      const existingIssuecodes = new Set(
-        Object.keys(issuePopularities.value || {}),
-      );
-      const newIssuecodes = issuecodes.filter(
-        (issuecode) => !existingIssuecodes.has(issuecode),
-      );
-      if (newIssuecodes.length) {
-        Object.assign(
-          issuePopularities.value,
-          await events.getIssuePopularities(newIssuecodes),
-        );
-      }
-    },
-    fetchStoryDetails = async (storycodes: string[]) => {
-      const existingStorycodes = new Set(Object.keys(storyDetails.value || {}));
-      const newStorycodes = storycodes.filter(
-        (storycode) => !existingStorycodes.has(storycode),
-      );
-      if (newStorycodes.length) {
-        const newStoryDetails = await events.getStoryDetails(newStorycodes);
-        if (!("error" in newStoryDetails)) {
-          Object.assign(storyDetails.value, newStoryDetails.stories);
-          Object.assign(storyUrls.value, newStoryDetails.storyUrls);
-        }
-      }
-    },
-    fetchStoryversionDetails = async (storyversioncodes: string[]) => {
-      const existingStoryversioncodes = new Set(
-        Object.keys(storyversionDetails.value || {}),
-      );
-      const newStoryversioncodes = storyversioncodes.filter(
-        (storyversion) => !existingStoryversioncodes.has(storyversion),
-      );
-      if (newStoryversioncodes.length) {
-        const newStoryversionDetails =
-          await events.getStoryversionsDetails(newStoryversioncodes);
-        if (!("error" in newStoryversionDetails)) {
-          Object.assign(
-            storyversionDetails.value,
-            newStoryversionDetails.storyversions,
-          );
-        }
-      }
-    },
-    fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
-      const existingPublicationcodes = new Set(
-        Object.keys(issuecodesByPublicationcode.value || {}),
-      );
-      const newPublicationcodes = new Set(
-        publicationcodes.filter(
-          (publicationcode) => !existingPublicationcodes.has(publicationcode),
-        ),
-      );
-
-      if (newPublicationcodes.size) {
-        Object.assign(
-          issuecodesByPublicationcode.value,
-          await events.getIssuecodesByPublicationcodes(
-            Array.from(newPublicationcodes),
-          ),
-        );
-      }
-    },
     fetchIssuesByPublicationcode = async (publicationcode: string) => {
       if (!(publicationcode in issuesByPublicationcode.value)) {
         issuesByPublicationcode.value[publicationcode] =
           await events.getIssuesByPublicationcode(publicationcode);
       }
-    },
-    fetchIssueCountsByCountrycode = async (countrycodes: string[]) => {
-      Object.assign(
-        issueCountsByCountrycode.value,
-        await events.getCoaCountByCountrycode(
-          countrycodes.filter(
-            (countrycode) => !(countrycode in issueCountsByCountrycode.value),
-          ),
-        ),
-      );
     },
     fetchIssueCountsByPublicationcode = async (publicationcodes: string[]) => {
       Object.assign(
@@ -337,7 +211,7 @@ export const coa = defineStore("coa", () => {
     issueCountsByCountrycode,
     issueCountsByPublicationcode,
     issueDetails,
-    issuePopularities: issuePopularities,
+    issuePopularities,
     issueQuotations,
     issuesByPublicationcode,
     personNames,

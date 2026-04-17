@@ -178,36 +178,11 @@ const publishedIssuecodes = computed(() =>
 );
 
 // Dependent queries – run when primary data is ready
-useQuery({
-  key: () => [
-    "progress",
-    "publicationNames",
-    [...publicationcodesToFetch.value].sort().join(","),
-  ],
-  query: () => fetchPublicationNames(publicationcodesToFetch.value),
-  enabled: () => publicationcodesToFetch.value.length > 0,
-});
+fetchPublicationNames(publicationcodesToFetch.value);
 
-useQuery({
-  key: () => [
-    "progress",
-    "issuecodesByPublicationcode",
-    [...publishedPublicationcodes.value].sort().join(","),
-  ],
-  query: () =>
-    fetchIssuecodesByPublicationcode(publishedPublicationcodes.value),
-  enabled: () => publishedPublicationcodes.value.length > 0,
-});
+fetchIssuecodesByPublicationcode(publishedPublicationcodes.value);
 
-useQuery({
-  key: () => [
-    "progress",
-    "issuecodeDetails",
-    [...publishedIssuecodes.value].sort().join(","),
-  ],
-  query: () => fetchIssuecodeDetails(publishedIssuecodes.value),
-  enabled: () => publishedIssuecodes.value.length > 0,
-});
+fetchIssuecodeDetails(publishedIssuecodes.value);
 
 useQuery({
   key: ["progress", "collection"],
