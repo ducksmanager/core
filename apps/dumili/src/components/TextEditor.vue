@@ -30,13 +30,19 @@
       <b-alert variant="info" :model-value="true">
         {{
           $t(
-            "Vous avez indiqué toutes les entrées de cette indexation ? Cliquez sur le bouton ci-dessous pour prévisualiser l'indexation sur Inducks. Vous pourrez visualiser une dernière fois l'indexation avant de l'envoyer.",
+            "Vous avez indiqué toutes les entrées de cette indexation ? Cliquez sur le bouton ci-dessous pour télécharger le fichier CSV correspondant à votre indexation, puis sélectionnez-le ci-dessous pour le prévisualiser sur Inducks. Vous pourrez visualiser une dernière fois l'indexation avant qu'elle soit envoyée à Inducks.",
           )
         }}
       </b-alert>
+
+      <b-button variant="primary" class="mb-3" @click="downloadCsv">{{
+        $t("Télécharger le fichier CSV")
+      }}</b-button>
+
       <b-form
         action="https://inducks.org/csvinx.php"
         method="POST"
+        enctype="multipart/form-data"
         target="_blank"
       >
         <b-form-input
@@ -57,8 +63,8 @@
           name="issdate"
           class="d-none"
         />
-        <b-form-textarea name="csv" :model-value="csv" class="d-none" />
-        <b-button type="submit" variant="primary">{{
+        <b-form-file v-model="csvFile" name="csvfile" accept="text/csv" />
+        <b-button type="submit" variant="primary" :disabled="!csvFile">{{
           $t("Prévisualiser l'indexation sur Inducks")
         }}</b-button>
       </b-form>
@@ -79,6 +85,8 @@ const { indexation } = storeToRefs(suggestions());
 const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
+
+const csvFile = ref<File | null>(null);
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -124,6 +132,17 @@ const entrycodesWithPageNumbers = computed(() =>
       }`,
   ),
 );
+
+const downloadCsv = () => {
+  if (csv.value) {
+    const blob = new Blob([csv.value], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "indexation.csv";
+    a.click();
+  }
+};
 
 const csv = computed(() => {
   if (!storiesWithDetails.value?.length) {
