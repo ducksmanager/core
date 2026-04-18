@@ -6,7 +6,8 @@
     "lint:precommit": {},
     "build": {
       "passThroughEnv": [
-        "SENTRY_AUTH_TOKEN"
+        "SENTRY_AUTH_TOKEN",
+        "SENTRY_RELEASE"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",

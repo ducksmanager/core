@@ -61,6 +61,7 @@ if (import.meta.env.VITE_SENTRY_DSN) {
     ],
     app,
     dsn: import.meta.env.VITE_SENTRY_DSN,
+    release: import.meta.env.VITE_SENTRY_RELEASE,
     tracesSampleRate: 1.0,
   });
 }
