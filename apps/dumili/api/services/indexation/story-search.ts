@@ -52,9 +52,9 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
   }
 
   const stories = response.results.map(
-    ({ storyversioncode, score }) =>
+    ({ storycode, score }) =>
       ({
-        storycode: storyversioncode,
+        storycode,
         score,
       }) as const,
   );

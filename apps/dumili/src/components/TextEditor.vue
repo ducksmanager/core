@@ -74,9 +74,9 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
+import useCsvExport from "~/composables/useCsvExport";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
-import { getEntryPages } from "~dumili-utils/entryPages";
 import { type storySuggestion } from "~prisma/client_dumili/client";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
@@ -122,17 +122,6 @@ const issuecode = computed(() =>
     : null,
 );
 
-const entrycodesWithPageNumbers = computed(() =>
-  indexation.value!.entries.map(
-    (entry, idx) =>
-      `${issuecode.value}${
-        idx === 0
-          ? String.fromCharCode(97 + idx)
-          : `p${String(entry.position).padStart(3, "0")}`
-      }`,
-  ),
-);
-
 const downloadCsv = () => {
   if (csv.value) {
     const blob = new Blob([csv.value], { type: "text/csv" });
@@ -144,39 +133,9 @@ const downloadCsv = () => {
   }
 };
 
-const csv = computed(() => {
-  if (!storiesWithDetails.value?.length) {
-    return undefined;
-  } else {
-    const data = indexation.value!.entries.map((entry, idx) => {
-      const storyWithDetails = storiesWithDetails.value!.find(
-        ({ storycode }) => storycode === entry.acceptedStory?.storycode,
-      );
-      return {
-        entrycode: entrycodesWithPageNumbers.value[idx],
-        storycode: entry.acceptedStory?.storycode || "",
-        pg: String(getEntryPages(indexation.value!, entry.id).length),
-        ...(Object.fromEntries(
-          (["plot", "writ", "art", "ink"] as const).map((job) => [
-            job,
-            storyWithDetails?.storyjobs?.find(
-              ({ plotwritartink }) => plotwritartink === job,
-            )?.personcode,
-          ]),
-        ) as { plot: string; writ: string; art: string; ink: string }),
-        la:
-          entry.acceptedStoryKind?.storyKindRows.kind === "n"
-            ? entry.acceptedStoryKind?.storyKindRows.numberOfRows
-            : entry.acceptedStoryKind?.storyKindRows.kind,
-        title: entry.title || "",
-      };
-    });
-
-    return [Object.keys(data[0]), ...data.map((row) => Object.values(row))]
-      .map((row) => row.join(";"))
-      .join("\n");
-  }
-});
+const csv = computed(() =>
+  useCsvExport(indexation.value!, storiesWithDetails.value!),
+);
 
 watch(
   acceptedStories,

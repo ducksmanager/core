@@ -72,9 +72,12 @@
               show-code
             /> </template
           ><template #cell(title)="row">
-            <div class="d-flex flex-column align-items-center">
+            <div
+              v-if="row.item!.storycode in storyDetails"
+              class="d-flex flex-column align-items-center"
+            >
               <div>
-                {{ row.item!.storycode in storyDetails ? storyDetails[row.item!.storycode].title : row.item!.storycode }}
+                {{ storyDetails[row.item!.storycode].title }}
               </div>
               <img
                 :src="inducksCoverRoot.replace('f_auto', 'c_crop,h_0.5,x_0,w_1') + storyUrls[row.item!.storycode]"

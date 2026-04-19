@@ -230,6 +230,7 @@ export const findSimilarImages = async (
         entrycode: string;
         issuecode: string;
         storyversioncode: string;
+        storycode: string;
         score: number;
         fullUrl: string;
       }[]
@@ -247,6 +248,7 @@ export const findSimilarImages = async (
         1 - vector_similarity.similarity as score,
         e.issuecode,
         sv.storyversioncode,
+        sv.storycode,
         CONCAT('webusers/webusers/', eu.url) as fullUrl
       FROM vector_similarity
       INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
