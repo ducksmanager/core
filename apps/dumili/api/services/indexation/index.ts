@@ -19,6 +19,8 @@ import type {
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili/client";
+import type { ClientEvents as CoaEvents } from "~dm-services/coa";
+import dmNamespaces from "~dm-services/namespaces";
 
 import type { SessionDataWithIndexation } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
@@ -26,6 +28,11 @@ import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
 import { getStoriesFromImage, getFullStoriesFromKeywords } from "./story-search";
+import { SocketClient } from "socket-call-client";
+
+
+const socket = new SocketClient(process.env.DM_SOCKET_URL!);
+const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
 
 const indexationPayloadInclude = {
   user: true,
@@ -155,6 +162,8 @@ const createAiStorySuggestions = async (
   services: IndexationServices,
   indexation: FullIndexation,
 ) => {
+  const languagecode = indexation.acceptedIssueSuggestion?.publicationcode ? (await coaEvents.getPublicationLanguagecode(indexation.acceptedIssueSuggestion.publicationcode)) || 'en' : 'en';
+  
   for (const entry of indexation.entries) {
     if (
       [STORY, COVER].includes(
@@ -234,6 +243,7 @@ const createAiStorySuggestions = async (
                       services,
                       entry.position,
                       firstPageOfEntry.image,
+                      languagecode
                     )
                   ).map(({ text }) => text),
                 );

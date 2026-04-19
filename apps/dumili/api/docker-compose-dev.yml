@@ -12,9 +12,13 @@ services:
     restart: always
     ports:
       - "8006:8081"
+    shm_size: "2gb"
+    environment:
+      PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
     volumes:
       - /root/.paddlex
       - ./paddleocr/server.py:/server.py
+      - ./paddleocr/recognition_model_rules.json:/recognition_model_rules.json
     build:
       context: ../../..
       dockerfile: apps/dumili/api/paddleocr/Dockerfile

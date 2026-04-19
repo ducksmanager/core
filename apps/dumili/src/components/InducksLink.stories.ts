@@ -6,21 +6,21 @@ const meta = preview.meta({
   component: InducksLink,
   tags: ["autodocs"],
   argTypes: {
-    urlEncodedStorycode: {
+    storycode: {
       control: "text",
-      description: "The URL-encoded story code for Inducks",
+      description: "The Inducks story code",
     },
   },
 });
 
 export const Default = meta.story({
   args: {
-    urlEncodedStorycode: "I+TL+1234-A",
+    storycode: "I+TL+1234-A",
   },
 });
 
 export const WithSpecialCharacters = meta.story({
   args: {
-    urlEncodedStorycode: "I+TL+1234-A%2FB",
+    storycode: "I+TL+1234-A%2FB",
   },
 });

@@ -11,6 +11,9 @@ services:
     container_name: paddleocr
     image: ghcr.io/bperel/paddleocr
     restart: always
+    shm_size: "2gb"
+    environment:
+      PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
     volumes:
       - /root/.paddlex
     networks:

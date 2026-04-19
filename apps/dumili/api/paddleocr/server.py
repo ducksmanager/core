@@ -4,330 +4,68 @@ from paddle import utils
 utils.run_check()
 from paddleocr import PaddleOCR
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import base64
 import json
 import os
+import tempfile
+from urllib.parse import parse_qs, urlparse
+
 import numpy as np
 
-# select countrycode, GROUP_CONCAT(languagecode ORDER BY entries_with_language DESC) AS languages
-# from (select countrycode, coalesce(inducks_entry.languagecode, ip.languagecode) as languagecode, count(*) as entries_with_language
-#       from inducks_entry
-#                inner join inducks_issue using (issuecode)
-#                inner join inducks_publication ip using (publicationcode)
-#       group by countrycode, coalesce(inducks_entry.languagecode, ip.languagecode) ORDER BY countrycode) as country_and_language
-# group by countrycode
+_DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 
-json_string = """
-[
-  {
-    "countrycode": "ae",
-    "languages": "ar,en"
-  },
-  {
-    "countrycode": "al",
-    "languages": "sq"
-  },
-  {
-    "countrycode": "ar",
-    "languages": "es-ar"
-  },
-  {
-    "countrycode": "at",
-    "languages": "de"
-  },
-  {
-    "countrycode": "au",
-    "languages": "en"
-  },
-  {
-    "countrycode": "be",
-    "languages": "nl-be,fr-be,fr,nl,af,la,en"
-  },
-  {
-    "countrycode": "bg",
-    "languages": "bg"
-  },
-  {
-    "countrycode": "br",
-    "languages": "pt-br,en"
-  },
-  {
-    "countrycode": "by",
-    "languages": "be"
-  },
-  {
-    "countrycode": "ca",
-    "languages": "fr-ca,fr,en"
-  },
-  {
-    "countrycode": "ch",
-    "languages": "fr,de"
-  },
-  {
-    "countrycode": "cl",
-    "languages": "es-cl,es"
-  },
-  {
-    "countrycode": "cn",
-    "languages": "zh-hans,en,it,fr,de,es,zh-hant,sr-cyrl,nl"
-  },
-  {
-    "countrycode": "co",
-    "languages": "es-co"
-  },
-  {
-    "countrycode": "cz",
-    "languages": "cs,en,zh-hans,ja"
-  },
-  {
-    "countrycode": "dc",
-    "languages": "en"
-  },
-  {
-    "countrycode": "de",
-    "languages": "de,en,fr,it,es,nl,da,fi,no,la,pt-br,ar,uk,nde,bg,sv,is,sl,pt,sr-cyrl,zh-hans,el,hr,ru,cs,ja,eo,tr,pl"
-  },
-  {
-    "countrycode": "dk",
-    "languages": "da,en,sv,de,zh-hans,ja,fi"
-  },
-  {
-    "countrycode": "dz",
-    "languages": "fr"
-  },
-  {
-    "countrycode": "ee",
-    "languages": "et,en"
-  },
-  {
-    "countrycode": "eg",
-    "languages": "ar,en"
-  },
-  {
-    "countrycode": "es",
-    "languages": "es,es-co,en,it,fr"
-  },
-  {
-    "countrycode": "fi",
-    "languages": "fi,en,sv,de,nl,se-sme,se-sms,it,se-smn,fr,ru,et,pt,es,no,da"
-  },
-  {
-    "countrycode": "fo",
-    "languages": "fo,en"
-  },
-  {
-    "countrycode": "fr",
-    "languages": "fr,en,es,de,ar,it,la,ru,sr-cyrl,nl,el,hi"
-  },
-  {
-    "countrycode": "gr",
-    "languages": "el,en,it,fr,nl"
-  },
-  {
-    "countrycode": "gy",
-    "languages": "en"
-  },
-  {
-    "countrycode": "hk",
-    "languages": "zh-hant,en,sq"
-  },
-  {
-    "countrycode": "hr",
-    "languages": "hr"
-  },
-  {
-    "countrycode": "hu",
-    "languages": "hu"
-  },
-  {
-    "countrycode": "id",
-    "languages": "id,en"
-  },
-  {
-    "countrycode": "ie",
-    "languages": "en,af"
-  },
-  {
-    "countrycode": "il",
-    "languages": "he"
-  },
-  {
-    "countrycode": "in",
-    "languages": "en,hi,bn,ta,as,ml,kn"
-  },
-  {
-    "countrycode": "ir",
-    "languages": "fa"
-  },
-  {
-    "countrycode": "is",
-    "languages": "is"
-  },
-  {
-    "countrycode": "it",
-    "languages": "it,en,fr,la,de,fi,no,zh-hant,eo,sv"
-  },
-  {
-    "countrycode": "jp",
-    "languages": "ja,en"
-  },
-  {
-    "countrycode": "kr",
-    "languages": "ko"
-  },
-  {
-    "countrycode": "kw",
-    "languages": "ar,ur"
-  },
-  {
-    "countrycode": "lb",
-    "languages": "ar"
-  },
-  {
-    "countrycode": "lt",
-    "languages": "lt"
-  },
-  {
-    "countrycode": "lu",
-    "languages": "ltz"
-  },
-  {
-    "countrycode": "lv",
-    "languages": "lv,ru-lv"
-  },
-  {
-    "countrycode": "ma",
-    "languages": "fr"
-  },
-  {
-    "countrycode": "mk",
-    "languages": "mk"
-  },
-  {
-    "countrycode": "mn",
-    "languages": "mn"
-  },
-  {
-    "countrycode": "mx",
-    "languages": "es-mx"
-  },
-  {
-    "countrycode": "my",
-    "languages": "zh-hans,ms,en"
-  },
-  {
-    "countrycode": "nl",
-    "languages": "nl,en,fy,nl-be,lim,it,sv,fr,el,de,ja"
-  },
-  {
-    "countrycode": "no",
-    "languages": "no,se-sme,en,nn,da,se-sma,sv,se-smj,fr,fo"
-  },
-  {
-    "countrycode": "nz",
-    "languages": "en"
-  },
-  {
-    "countrycode": "ph",
-    "languages": "en,tl"
-  },
-  {
-    "countrycode": "pl",
-    "languages": "pl,en,de,fi,ja"
-  },
-  {
-    "countrycode": "pt",
-    "languages": "pt,pt-br,en"
-  },
-  {
-    "countrycode": "ro",
-    "languages": "ro,en"
-  },
-  {
-    "countrycode": "rs",
-    "languages": "sr-cyrl,af,sr-latn"
-  },
-  {
-    "countrycode": "ru",
-    "languages": "ru,en"
-  },
-  {
-    "countrycode": "sa",
-    "languages": "ar"
-  },
-  {
-    "countrycode": "se",
-    "languages": "sv,en,it,de,da,no,fi,fr,el,ja,es,zh-hans,hu,nl,tr,hr,lv,he,la,ru,ar,pt-br,pl,is"
-  },
-  {
-    "countrycode": "sg",
-    "languages": "en"
-  },
-  {
-    "countrycode": "si",
-    "languages": "sl"
-  },
-  {
-    "countrycode": "sk",
-    "languages": "sk"
-  },
-  {
-    "countrycode": "th",
-    "languages": "th,en"
-  },
-  {
-    "countrycode": "tn",
-    "languages": "fr"
-  },
-  {
-    "countrycode": "tr",
-    "languages": "tr"
-  },
-  {
-    "countrycode": "tw",
-    "languages": "zh-hant"
-  },
-  {
-    "countrycode": "ua",
-    "languages": "uk,ru,en"
-  },
-  {
-    "countrycode": "uk",
-    "languages": "en,fr"
-  },
-  {
-    "countrycode": "us",
-    "languages": "en,it,fr,nl,de,sv,sr-cyrl,pt-br,pt,fi,es,ja,da"
-  },
-  {
-    "countrycode": "ve",
-    "languages": "es"
-  },
-  {
-    "countrycode": "vn",
-    "languages": "vi"
-  },
-  {
-    "countrycode": "yu",
-    "languages": "sr-cyrl,sl,sr-latn,hr,en,it"
-  },
-  {
-    "countrycode": "za",
-    "languages": "en,af"
-  }
-]
-"""
 
-data = json.loads(json_string)
+def _load_json(filename: str):
+    path = os.path.join(_DATA_DIR, filename)
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
-country_languages = {}
-for item in data:
-    country_languages[item['countrycode']] = item['languages'].split(',')
 
-# https://github.com/PaddlePaddle/PaddleOCR/issues/1048
-ocr_languages = {
-    lang: PaddleOCR(use_textline_orientation=True, lang=lang)
-    for lang in ['french']
-}
+def _build_language_to_recognition_model(rules: dict) -> tuple[str, dict[str, str]]:
+    """Apply group lists first, then per-code overrides (same as former if/chain order)."""
+    default = rules["default_recognition_model"]
+    by_code: dict[str, str] = {}
+    for model, codes in rules["recognition_model_to_language_codes"].items():
+        for c in codes:
+            by_code[c.strip()] = model
+    for code, model in rules["language_code_to_model"].items():
+        by_code[code.strip()] = model
+    return default, by_code
+
+_RECOGNITION_RULES = _load_json("recognition_model_rules.json")
+_RECOGNITION_DEFAULT, _LANGUAGE_TO_RECOGNITION_MODEL = _build_language_to_recognition_model(
+    _RECOGNITION_RULES
+)
+
+
+def recognition_model_for_language_code(code: str) -> str:
+    """Map inducks language codes (see language_codes_by_country.json) to a Paddle rec model."""
+    return _LANGUAGE_TO_RECOGNITION_MODEL.get(code.strip(), _RECOGNITION_DEFAULT)
+
+
+def is_language_code_supported(code: str) -> bool:
+    """True only for language codes listed in recognition_model_rules.json (groups or per-code overrides)."""
+    c = (code or "").strip()
+    return bool(c) and c in _LANGUAGE_TO_RECOGNITION_MODEL
+
+
+# One PaddleOCR instance per recognition model (many language codes share latin / cyrillic / …).
+_OCR_BY_REC_MODEL: dict[str, PaddleOCR] = {}
+
+
+def get_ocr_engine(language_code: str) -> PaddleOCR:
+    """Return a cached PaddleOCR for the given inducks language code (e.g. `fr`, `ru`, `zh-hans`)."""
+    lang = language_code.strip()
+    rec = recognition_model_for_language_code(lang)
+    if rec not in _OCR_BY_REC_MODEL:
+        _OCR_BY_REC_MODEL[rec] = PaddleOCR(
+            text_detection_model_name="PP-OCRv5_mobile_det",
+            text_recognition_model_name=rec,
+            use_doc_orientation_classify=False,
+            use_doc_unwarping=False,
+            use_textline_orientation=False,
+        )
+    return _OCR_BY_REC_MODEL[rec]
 
 def convert_numpy_to_python(obj):
     if isinstance(obj, np.ndarray):
@@ -339,15 +77,50 @@ def convert_numpy_to_python(obj):
     return obj
 
 class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        if parsed.path != "/supported":
+            self.send_error(404)
+            return
+        qs = parse_qs(parsed.query)
+        raw = (qs.get("languagecode") or [None])[0]
+        if raw is None:
+            body = json.dumps({"error": "missing languagecode query parameter"}).encode("utf-8")
+            self.send_response(400)
+            self.send_header("Content-type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        supported = is_language_code_supported(raw)
+        body = json.dumps(supported).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = json.loads(self.rfile.read(content_length))
         url = post_data['url'].replace('upload/', 'upload/c_limit,h_4000,w_4000/')
         language = post_data['language']
+        want_annotated = bool(post_data.get('annotated'))
+
+        try:
+            ocr = get_ocr_engine(language)
+        except ValueError as err:
+            body = json.dumps({"error": str(err)}).encode("utf-8")
+            self.send_response(400)
+            self.send_header("Content-type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
 
         os.remove("tmp.jpg") if os.path.exists("tmp.jpg") else None
-        result = ocr_languages[language].predict(url)
-        result = result[0]
+        predict_out = ocr.predict(url)
+        result = predict_out[0] if predict_out else None
 
         converted_data = []
         
@@ -376,10 +149,35 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
                   }
                   converted_data.append(converted_item)
 
+        if want_annotated:
+            annotated_b64 = None
+            annotated_mime = None
+            if result is not None and hasattr(result, 'save_to_img'):
+                with tempfile.TemporaryDirectory() as tmpd:
+                    result.save_to_img(tmpd)
+                    for name in sorted(os.listdir(tmpd)):
+                        if name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                            path = os.path.join(tmpd, name)
+                            with open(path, 'rb') as img_f:
+                                annotated_b64 = base64.standard_b64encode(
+                                    img_f.read()
+                                ).decode('ascii')
+                            annotated_mime = (
+                                'image/png' if name.lower().endswith('.png') else 'image/jpeg'
+                            )
+                            break
+            payload = {
+                'ocr': converted_data,
+                'annotated_image_base64': annotated_b64,
+                'annotated_image_mime': annotated_mime,
+            }
+        else:
+            payload = converted_data
+
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write(json.dumps(converted_data).encode())
+        self.wfile.write(json.dumps(payload).encode())
 
 if __name__ == '__main__':
     host = '0.0.0.0'

@@ -42,14 +42,18 @@
           :items="firstPageOcrResult.matches"
           show-empty
           :empty-text="$t('Aucun texte détecté')"
-        />
+        >
+          <template #cell(confidence)="row">
+            {{ parseInt((row.item!.confidence * 100).toFixed()) }}%
+          </template>
+        </b-table>
       </template>
       <template v-if="firstPageStorySearchResult">
         <h4>{{ $t("Résultats de la recherche par image") }}</h4>
         <b-table
           :fields="[
             {
-              key: 'aiStorySuggestion.aiStorySearchPossibleStory.score',
+              key: 'score',
               label: $t('Score'),
             },
             { key: 'storycode', label: $t('Code histoire') },
@@ -59,13 +63,14 @@
           :empty-text="$t('Aucune histoire trouvée')"
           :items="suggestedStories"
         >
+          <template #cell(score)="row">
+            {{ row.item!.aiStorySuggestion!.aiStorySearchPossibleStory!.score.toFixed(2) }}
+          </template>
           <template #cell(storycode)="row">
-            <a
-              class="text-nowrap"
-              :href="`https://inducks.org/story.php?c=${encodeURIComponent(row.item!.storycode)}`"
-              target="_blank"
-              >{{ row.item!.storycode }}</a
-            ></template
+            <inducks-link
+              :storycode="row.item!.storycode"
+              show-code
+            /> </template
           ><template #cell(title)="row">
             <div class="d-flex flex-column align-items-center">
               <div>
@@ -144,3 +149,12 @@ watch(
   { immediate: true },
 );
 </script>
+
+<style scoped lang="scss">
+:deep(.inducks-link) {
+  img {
+    filter: brightness(0) invert(1);
+    margin-left: 0.5em;
+  }
+}
+</style>

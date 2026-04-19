@@ -26,7 +26,7 @@
       <template v-else-if="urlEncodedStorycode">
         {{ storyDetails[entry.acceptedStory!.storycode].title || $t("(Sans titre)") }}
         &nbsp;<inducks-link
-          :url-encoded-storycode="urlEncodedStorycode" /></template
+          :storycode="entry.acceptedStory!.storycode" /></template
       ><template v-else>{{ $t("Contenu inconnu") }}</template>
       <StorySuggestionsTooltip :entry="entry" />
     </b-col>
