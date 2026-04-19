@@ -34,7 +34,7 @@ const sentryRelease = gitCommitHash();
 export default defineConfig({
   clearScreen: false,
   define: {
-    "import.meta.env.VITE_SENTRY_RELEASE": gitCommitHash(),
+    "import.meta.env.VITE_SENTRY_RELEASE": JSON.stringify(sentryRelease ?? ""),
   },
   build: {
     sourcemap: true,
