@@ -338,31 +338,39 @@ const createAiStorySuggestions = async (
 
               for (const storycode of Object.keys(storiesWithScores)) {
                 console.log("Creating story suggestion for storycode", storycode);
-                await prisma.storySuggestion.create({
-                  data: {
-                    aiStorySuggestion: {
-                      create: {
-                        [storyField]: {
-                          // aiOcrPossibleStory or aiStorySearchPossibleStory
-                          create: {
-                            [field]: {
-                              // aiOcrResult or aiStorySearchResult
-                              connect: {
-                                id: aiResultId,
-                              },
+                const data = {
+                  aiStorySuggestion: {
+                    create: {
+                      [storyField]: {
+                        // aiOcrPossibleStory or aiStorySearchPossibleStory
+                        create: {
+                          [field]: {
+                            // aiOcrResult or aiStorySearchResult
+                            connect: {
+                              id: aiResultId,
                             },
-                            score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
                           },
+                          score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
                         },
                       },
                     },
-                    storycode,
-                    entry: {
-                      connect: {
-                        id: entry.id,
-                      },
+                  },
+                  storycode,
+                  entry: {
+                    connect: {
+                      id: entry.id,
                     },
                   },
+                };
+                await prisma.storySuggestion.upsert({
+                  where: {
+                    entryId_storycode: {
+                      entryId: entry.id,
+                      storycode,
+                    },
+                  },
+                  create: data,
+                  update: data,
                 });
               }
 
