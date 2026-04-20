@@ -46,21 +46,33 @@
         target="_blank"
       >
         <b-form-input
-          v-model="issuecode"
+          :model-value="csvMetadata.issuecode"
           type="text"
           name="issuecode"
           class="d-none"
         />
         <b-form-input
-          v-model="indexation!.price"
+          :model-value="csvMetadata.price"
           type="text"
           name="price"
           class="d-none"
         />
         <b-form-input
-          v-model="indexation!.releaseDate"
+          :model-value="csvMetadata.issdate"
           type="text"
           name="issdate"
+          class="d-none"
+        />
+        <b-form-input
+          :model-value="csvMetadata.title"
+          type="text"
+          name="title"
+          class="d-none"
+        />
+        <b-form-input
+          :model-value="csvMetadata.issue_comment"
+          type="text"
+          name="issue_comment"
           class="d-none"
         />
         <b-form-file v-model="csvFile" name="csvfile" accept="text/csv" />
@@ -74,7 +86,7 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import useCsvExport from "~/composables/useCsvExport";
+import { getCsvEntries, getCsvMetadata } from "~/composables/useCsvExport";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { type storySuggestion } from "~prisma/client_dumili/client";
@@ -116,12 +128,6 @@ const getStoriesWithDetails = (stories: storySuggestion[]) =>
       }),
   );
 
-const issuecode = computed(() =>
-  issue.value
-    ? `${issue.value.publicationcode} ${issue.value.issuenumber}`
-    : null,
-);
-
 const downloadCsv = () => {
   if (csv.value) {
     const blob = new Blob([csv.value], { type: "text/csv" });
@@ -134,8 +140,9 @@ const downloadCsv = () => {
 };
 
 const csv = computed(() =>
-  useCsvExport(indexation.value!, storiesWithDetails.value!),
+  getCsvEntries(indexation.value!, storiesWithDetails.value!),
 );
+const csvMetadata = computed(() => getCsvMetadata(indexation.value!));
 
 watch(
   acceptedStories,

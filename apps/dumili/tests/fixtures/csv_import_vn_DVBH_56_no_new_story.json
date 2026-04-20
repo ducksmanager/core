@@ -1,0 +1,5037 @@
+{
+    "id": "20250125T175811768",
+    "acceptedIssueSuggestionId": 2,
+    "dmUserId": 117,
+    "title": "Kẹt ngoài vũ trụ",
+    "price": "3500 đ",
+    "releaseDate": "1998-02-02",
+    "user": {
+        "dmId": 117,
+        "inducksUsername": "Bruno Perel"
+    },
+    "pages": [
+        {
+            "id": 1237,
+            "pageNumber": 1,
+            "indexationId": "20250125T175811768",
+            "imageId": 292,
+            "image": {
+                "id": 292,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_1/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": 348,
+                "aiStorySearchResultId": 20,
+                "aiKumikoResultId": 1228,
+                "aiKumikoResult": {
+                    "id": 1228,
+                    "inferredStoryKindRowsStr": null,
+                    "detectedPanels": [
+                        {
+                            "id": 875,
+                            "resultId": 1228,
+                            "x": 0,
+                            "y": 80,
+                            "width": 2031,
+                            "height": 866
+                        },
+                        {
+                            "id": 876,
+                            "resultId": 1228,
+                            "x": 0,
+                            "y": 962,
+                            "width": 2031,
+                            "height": 506
+                        },
+                        {
+                            "id": 877,
+                            "resultId": 1228,
+                            "x": 0,
+                            "y": 1484,
+                            "width": 799,
+                            "height": 871
+                        },
+                        {
+                            "id": 878,
+                            "resultId": 1228,
+                            "x": 961,
+                            "y": 1484,
+                            "width": 1070,
+                            "height": 871
+                        },
+                        {
+                            "id": 879,
+                            "resultId": 1228,
+                            "x": 0,
+                            "y": 2371,
+                            "width": 2031,
+                            "height": 349
+                        }
+                    ],
+                    "inferredStoryKindRows": null
+                },
+                "aiOcrResult": {
+                    "id": 348,
+                    "matches": [
+                        {
+                            "id": 5696,
+                            "resultId": 348,
+                            "x1": 1613,
+                            "x2": 1624,
+                            "y1": 306,
+                            "y2": 313,
+                            "text": "—",
+                            "confidence": 0.45593076944351196
+                        },
+                        {
+                            "id": 5697,
+                            "resultId": 348,
+                            "x1": 472,
+                            "x2": 486,
+                            "y1": 318,
+                            "y2": 325,
+                            "text": "I",
+                            "confidence": 0.20621074736118317
+                        },
+                        {
+                            "id": 5698,
+                            "resultId": 348,
+                            "x1": 569,
+                            "x2": 582,
+                            "y1": 342,
+                            "y2": 349,
+                            "text": "S",
+                            "confidence": 0.8186022639274597
+                        },
+                        {
+                            "id": 5699,
+                            "resultId": 348,
+                            "x1": 615,
+                            "x2": 624,
+                            "y1": 335,
+                            "y2": 341,
+                            "text": "-",
+                            "confidence": 0.4872570037841797
+                        },
+                        {
+                            "id": 5700,
+                            "resultId": 348,
+                            "x1": 693,
+                            "x2": 703,
+                            "y1": 340,
+                            "y2": 350,
+                            "text": "-",
+                            "confidence": 0.5654711723327637
+                        },
+                        {
+                            "id": 5701,
+                            "resultId": 348,
+                            "x1": 1323,
+                            "x2": 1334,
+                            "y1": 362,
+                            "y2": 370,
+                            "text": "-",
+                            "confidence": 0.39334338903427124
+                        },
+                        {
+                            "id": 5702,
+                            "resultId": 348,
+                            "x1": 58,
+                            "x2": 835,
+                            "y1": 414,
+                            "y2": 773,
+                            "text": "Donald",
+                            "confidence": 0.9963438510894775
+                        },
+                        {
+                            "id": 5703,
+                            "resultId": 348,
+                            "x1": 735,
+                            "x2": 1180,
+                            "y1": 419,
+                            "y2": 730,
+                            "text": "và",
+                            "confidence": 0.9437326788902283
+                        },
+                        {
+                            "id": 5704,
+                            "resultId": 348,
+                            "x1": 1336,
+                            "x2": 1346,
+                            "y1": 544,
+                            "y2": 554,
+                            "text": "-",
+                            "confidence": 0.8579825758934021
+                        },
+                        {
+                            "id": 5705,
+                            "resultId": 348,
+                            "x1": 613,
+                            "x2": 623,
+                            "y1": 568,
+                            "y2": 578,
+                            "text": "-",
+                            "confidence": 0.7103428840637207
+                        },
+                        {
+                            "id": 5706,
+                            "resultId": 348,
+                            "x1": 1755,
+                            "x2": 1767,
+                            "y1": 566,
+                            "y2": 573,
+                            "text": "S",
+                            "confidence": 0.8843746781349182
+                        },
+                        {
+                            "id": 5707,
+                            "resultId": 348,
+                            "x1": 1410,
+                            "x2": 1539,
+                            "y1": 747,
+                            "y2": 784,
+                            "text": "© Disney",
+                            "confidence": 0.9270229935646057
+                        },
+                        {
+                            "id": 5708,
+                            "resultId": 348,
+                            "x1": 1543,
+                            "x2": 1706,
+                            "y1": 752,
+                            "y2": 786,
+                            "text": "Enterprises,",
+                            "confidence": 0.9870061874389648
+                        },
+                        {
+                            "id": 5709,
+                            "resultId": 348,
+                            "x1": 1713,
+                            "x2": 1780,
+                            "y1": 753,
+                            "y2": 789,
+                            "text": "Inc.,",
+                            "confidence": 0.9961212277412415
+                        },
+                        {
+                            "id": 5710,
+                            "resultId": 348,
+                            "x1": 37,
+                            "x2": 179,
+                            "y1": 766,
+                            "y2": 864,
+                            "text": "Tâp",
+                            "confidence": 0.8344430923461914
+                        },
+                        {
+                            "id": 5711,
+                            "resultId": 348,
+                            "x1": 169,
+                            "x2": 269,
+                            "y1": 771,
+                            "y2": 852,
+                            "text": "56",
+                            "confidence": 0.9997597336769104
+                        },
+                        {
+                            "id": 5712,
+                            "resultId": 348,
+                            "x1": 1414,
+                            "x2": 1467,
+                            "y1": 785,
+                            "y2": 812,
+                            "text": "The",
+                            "confidence": 0.9999713897705078
+                        },
+                        {
+                            "id": 5713,
+                            "resultId": 348,
+                            "x1": 1467,
+                            "x2": 1565,
+                            "y1": 781,
+                            "y2": 815,
+                            "text": "Saigon",
+                            "confidence": 0.9867331385612488
+                        },
+                        {
+                            "id": 5714,
+                            "resultId": 348,
+                            "x1": 1566,
+                            "x2": 1650,
+                            "y1": 783,
+                            "y2": 816,
+                            "text": "Times",
+                            "confidence": 0.9997072219848633
+                        },
+                        {
+                            "id": 5715,
+                            "resultId": 348,
+                            "x1": 1648,
+                            "x2": 1703,
+                            "y1": 786,
+                            "y2": 815,
+                            "text": "hop",
+                            "confidence": 0.9999143481254578
+                        },
+                        {
+                            "id": 5716,
+                            "resultId": 348,
+                            "x1": 1706,
+                            "x2": 1863,
+                            "y1": 788,
+                            "y2": 815,
+                            "text": "tác xuát bn",
+                            "confidence": 0.8932113647460938
+                        },
+                        {
+                            "id": 5717,
+                            "resultId": 348,
+                            "x1": 1411,
+                            "x2": 1636,
+                            "y1": 812,
+                            "y2": 846,
+                            "text": "vi Nha Xut bàn",
+                            "confidence": 0.9128257036209106
+                        },
+                        {
+                            "id": 5718,
+                            "resultId": 348,
+                            "x1": 1637,
+                            "x2": 1682,
+                            "y1": 820,
+                            "y2": 843,
+                            "text": "Tre",
+                            "confidence": 0.9921151995658875
+                        },
+                        {
+                            "id": 5719,
+                            "resultId": 348,
+                            "x1": 1421,
+                            "x2": 1475,
+                            "y1": 848,
+                            "y2": 865,
+                            "text": "Theo",
+                            "confidence": 0.88155198097229
+                        },
+                        {
+                            "id": 5720,
+                            "resultId": 348,
+                            "x1": 1487,
+                            "x2": 1535,
+                            "y1": 850,
+                            "y2": 865,
+                            "text": "hon",
+                            "confidence": 0.904478132724762
+                        },
+                        {
+                            "id": 5721,
+                            "resultId": 348,
+                            "x1": 1547,
+                            "x2": 1600,
+                            "y1": 851,
+                            "y2": 865,
+                            "text": "dòno",
+                            "confidence": 0.7363952994346619
+                        }
+                    ],
+                    "stories": [
+                        {
+                            "id": 243,
+                            "score": 35.98735427856445,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1599,
+                                "ocrPossibleStoryId": 243,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 244,
+                            "score": 34.7183952331543,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1600,
+                                "ocrPossibleStoryId": 244,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 245,
+                            "score": 34.7183952331543,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1601,
+                                "ocrPossibleStoryId": 245,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 246,
+                            "score": 34.7183952331543,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1602,
+                                "ocrPossibleStoryId": 246,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 247,
+                            "score": 30.581693649291992,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1603,
+                                "ocrPossibleStoryId": 247,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 248,
+                            "score": 29.755693435668945,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1604,
+                                "ocrPossibleStoryId": 248,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 249,
+                            "score": 29.755693435668945,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1605,
+                                "ocrPossibleStoryId": 249,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 250,
+                            "score": 29.755693435668945,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1606,
+                                "ocrPossibleStoryId": 250,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 251,
+                            "score": 29.755693435668945,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1607,
+                                "ocrPossibleStoryId": 251,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 252,
+                            "score": 29.755693435668945,
+                            "resultId": 348,
+                            "aiStorySuggestion": {
+                                "id": 1608,
+                                "ocrPossibleStoryId": 252,
+                                "storySearchPossibleStoryId": null
+                            }
+                        }
+                    ]
+                },
+                "aiStorySearchResult": {
+                    "id": 20,
+                    "stories": []
+                }
+            }
+        },
+        {
+            "id": 1238,
+            "pageNumber": 2,
+            "indexationId": "20250125T175811768",
+            "imageId": 293,
+            "image": {
+                "id": 293,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_2/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": 349,
+                "aiStorySearchResultId": 21,
+                "aiKumikoResultId": 1229,
+                "aiKumikoResult": {
+                    "id": 1229,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 880,
+                            "resultId": 1229,
+                            "x": 113,
+                            "y": 143,
+                            "width": 1726,
+                            "height": 1359
+                        },
+                        {
+                            "id": 881,
+                            "resultId": 1229,
+                            "x": 113,
+                            "y": 1558,
+                            "width": 838,
+                            "height": 600
+                        },
+                        {
+                            "id": 882,
+                            "resultId": 1229,
+                            "x": 958,
+                            "y": 1558,
+                            "width": 881,
+                            "height": 635
+                        },
+                        {
+                            "id": 883,
+                            "resultId": 1229,
+                            "x": 113,
+                            "y": 2214,
+                            "width": 1118,
+                            "height": 570
+                        },
+                        {
+                            "id": 884,
+                            "resultId": 1229,
+                            "x": 1238,
+                            "y": 2249,
+                            "width": 601,
+                            "height": 535
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": {
+                    "id": 349,
+                    "matches": [
+                        {
+                            "id": 5722,
+                            "resultId": 349,
+                            "x1": 884,
+                            "x2": 1368,
+                            "y1": 82,
+                            "y2": 171,
+                            "text": "VIT DONALD",
+                            "confidence": 0.9991270303726196
+                        },
+                        {
+                            "id": 5723,
+                            "resultId": 349,
+                            "x1": 916,
+                            "x2": 1337,
+                            "y1": 192,
+                            "y2": 264,
+                            "text": "Kt ngoài vü tr",
+                            "confidence": 0.9411660432815552
+                        },
+                        {
+                            "id": 5724,
+                            "resultId": 349,
+                            "x1": 1399,
+                            "x2": 1724,
+                            "y1": 247,
+                            "y2": 287,
+                            "text": "Ngưi dich : VN THNG",
+                            "confidence": 0.9677286744117737
+                        },
+                        {
+                            "id": 5725,
+                            "resultId": 349,
+                            "x1": 69,
+                            "x2": 392,
+                            "y1": 340,
+                            "y2": 377,
+                            "text": "1. Ngày xa ngày xua,",
+                            "confidence": 0.971122145652771
+                        },
+                        {
+                            "id": 5726,
+                            "resultId": 349,
+                            "x1": 69,
+                            "x2": 378,
+                            "y1": 376,
+                            "y2": 411,
+                            "text": "trên mt dåi ngân hà",
+                            "confidence": 0.9965173602104187
+                        },
+                        {
+                            "id": 5727,
+                            "resultId": 349,
+                            "x1": 66,
+                            "x2": 240,
+                            "y1": 408,
+                            "y2": 445,
+                            "text": "xa tht xa...",
+                            "confidence": 0.9366173148155212
+                        },
+                        {
+                            "id": 5728,
+                            "resultId": 349,
+                            "x1": 666,
+                            "x2": 695,
+                            "y1": 488,
+                            "y2": 516,
+                            "text": "3.",
+                            "confidence": 0.9705488681793213
+                        },
+                        {
+                            "id": 5729,
+                            "resultId": 349,
+                            "x1": 679,
+                            "x2": 885,
+                            "y1": 517,
+                            "y2": 580,
+                            "text": "VÈ TRÁI ĐT",
+                            "confidence": 0.8749165534973145
+                        },
+                        {
+                            "id": 5730,
+                            "resultId": 349,
+                            "x1": 669,
+                            "x2": 893,
+                            "y1": 569,
+                            "y2": 626,
+                            "text": "HAY LÀ CHT!",
+                            "confidence": 0.8873752355575562
+                        },
+                        {
+                            "id": 5731,
+                            "resultId": 349,
+                            "x1": 711,
+                            "x2": 965,
+                            "y1": 1012,
+                            "y2": 1062,
+                            "text": "2. Ê, ai đó  đàng",
+                            "confidence": 0.9435325860977173
+                        },
+                        {
+                            "id": 5732,
+                            "resultId": 349,
+                            "x1": 709,
+                            "x2": 966,
+                            "y1": 1047,
+                            "y2": 1089,
+                            "text": "kia di! Có v cùng",
+                            "confidence": 0.9785786867141724
+                        },
+                        {
+                            "id": 5733,
+                            "resultId": 349,
+                            "x1": 745,
+                            "x2": 934,
+                            "y1": 1081,
+                            "y2": 1115,
+                            "text": "đưng vi tôi",
+                            "confidence": 0.9193122982978821
+                        },
+                        {
+                            "id": 5734,
+                            "resultId": 349,
+                            "x1": 753,
+                            "x2": 925,
+                            "y1": 1108,
+                            "y2": 1149,
+                            "text": "không vy?",
+                            "confidence": 0.9792649149894714
+                        },
+                        {
+                            "id": 5735,
+                            "resultId": 349,
+                            "x1": 10,
+                            "x2": 1478,
+                            "y1": 1325,
+                            "y2": 1359,
+                            "text": "1. Once upon a time, in a galaxy far, far away — 2. EARTH OR BUST!3. Hey, you up there! Goin' my way?",
+                            "confidence": 0.9775234460830688
+                        }
+                    ],
+                    "stories": [
+                        {
+                            "id": 253,
+                            "score": 71.01139831542969,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1609,
+                                "ocrPossibleStoryId": 253,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 254,
+                            "score": 53.69672393798828,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1610,
+                                "ocrPossibleStoryId": 254,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 255,
+                            "score": 52.912193298339844,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1611,
+                                "ocrPossibleStoryId": 255,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 256,
+                            "score": 49.475799560546875,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1612,
+                                "ocrPossibleStoryId": 256,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 257,
+                            "score": 47.34093475341797,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1613,
+                                "ocrPossibleStoryId": 257,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 258,
+                            "score": 47.34093475341797,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1614,
+                                "ocrPossibleStoryId": 258,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 259,
+                            "score": 44.56043243408203,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1615,
+                                "ocrPossibleStoryId": 259,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 260,
+                            "score": 44.11043930053711,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1616,
+                                "ocrPossibleStoryId": 260,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 261,
+                            "score": 43.20438003540039,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1617,
+                                "ocrPossibleStoryId": 261,
+                                "storySearchPossibleStoryId": null
+                            }
+                        },
+                        {
+                            "id": 262,
+                            "score": 43.20438003540039,
+                            "resultId": 349,
+                            "aiStorySuggestion": {
+                                "id": 1618,
+                                "ocrPossibleStoryId": 262,
+                                "storySearchPossibleStoryId": null
+                            }
+                        }
+                    ]
+                },
+                "aiStorySearchResult": {
+                    "id": 21,
+                    "stories": []
+                }
+            }
+        },
+        {
+            "id": 1239,
+            "pageNumber": 3,
+            "indexationId": "20250125T175811768",
+            "imageId": 294,
+            "image": {
+                "id": 294,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_3/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1230,
+                "aiKumikoResult": {
+                    "id": 1230,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 885,
+                            "resultId": 1230,
+                            "x": 208,
+                            "y": 114,
+                            "width": 1194,
+                            "height": 607
+                        },
+                        {
+                            "id": 886,
+                            "resultId": 1230,
+                            "x": 1429,
+                            "y": 114,
+                            "width": 496,
+                            "height": 607
+                        },
+                        {
+                            "id": 887,
+                            "resultId": 1230,
+                            "x": 208,
+                            "y": 798,
+                            "width": 861,
+                            "height": 601
+                        },
+                        {
+                            "id": 888,
+                            "resultId": 1230,
+                            "x": 1096,
+                            "y": 798,
+                            "width": 829,
+                            "height": 596
+                        },
+                        {
+                            "id": 889,
+                            "resultId": 1230,
+                            "x": 208,
+                            "y": 1476,
+                            "width": 881,
+                            "height": 600
+                        },
+                        {
+                            "id": 890,
+                            "resultId": 1230,
+                            "x": 1116,
+                            "y": 1471,
+                            "width": 809,
+                            "height": 600
+                        },
+                        {
+                            "id": 891,
+                            "resultId": 1230,
+                            "x": 208,
+                            "y": 2153,
+                            "width": 1099,
+                            "height": 600
+                        },
+                        {
+                            "id": 892,
+                            "resultId": 1230,
+                            "x": 1334,
+                            "y": 2148,
+                            "width": 591,
+                            "height": 605
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1240,
+            "pageNumber": 4,
+            "indexationId": "20250125T175811768",
+            "imageId": 295,
+            "image": {
+                "id": 295,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_4/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1231,
+                "aiKumikoResult": {
+                    "id": 1231,
+                    "inferredStoryKindRowsStr": "n/3",
+                    "detectedPanels": [
+                        {
+                            "id": 893,
+                            "resultId": 1231,
+                            "x": 121,
+                            "y": 810,
+                            "width": 757,
+                            "height": 732
+                        },
+                        {
+                            "id": 894,
+                            "resultId": 1231,
+                            "x": 937,
+                            "y": 810,
+                            "width": 910,
+                            "height": 733
+                        },
+                        {
+                            "id": 895,
+                            "resultId": 1231,
+                            "x": 121,
+                            "y": 1561,
+                            "width": 936,
+                            "height": 598
+                        },
+                        {
+                            "id": 896,
+                            "resultId": 1231,
+                            "x": 121,
+                            "y": 2178,
+                            "width": 936,
+                            "height": 604
+                        },
+                        {
+                            "id": 897,
+                            "resultId": 1231,
+                            "x": 1116,
+                            "y": 1562,
+                            "width": 731,
+                            "height": 1220
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1241,
+            "pageNumber": 5,
+            "indexationId": "20250125T175811768",
+            "imageId": 296,
+            "image": {
+                "id": 296,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_5/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1232,
+                "aiKumikoResult": {
+                    "id": 1232,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 898,
+                            "resultId": 1232,
+                            "x": 181,
+                            "y": 118,
+                            "width": 1182,
+                            "height": 605
+                        },
+                        {
+                            "id": 899,
+                            "resultId": 1232,
+                            "x": 1388,
+                            "y": 118,
+                            "width": 534,
+                            "height": 605
+                        },
+                        {
+                            "id": 900,
+                            "resultId": 1232,
+                            "x": 181,
+                            "y": 731,
+                            "width": 1741,
+                            "height": 727
+                        },
+                        {
+                            "id": 901,
+                            "resultId": 1232,
+                            "x": 181,
+                            "y": 1466,
+                            "width": 998,
+                            "height": 669
+                        },
+                        {
+                            "id": 902,
+                            "resultId": 1232,
+                            "x": 1204,
+                            "y": 1466,
+                            "width": 718,
+                            "height": 669
+                        },
+                        {
+                            "id": 903,
+                            "resultId": 1232,
+                            "x": 181,
+                            "y": 2143,
+                            "width": 1741,
+                            "height": 608
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1242,
+            "pageNumber": 6,
+            "indexationId": "20250125T175811768",
+            "imageId": 297,
+            "image": {
+                "id": 297,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_6/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1233,
+                "aiKumikoResult": {
+                    "id": 1233,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 904,
+                            "resultId": 1233,
+                            "x": 117,
+                            "y": 116,
+                            "width": 891,
+                            "height": 580
+                        },
+                        {
+                            "id": 905,
+                            "resultId": 1233,
+                            "x": 1028,
+                            "y": 116,
+                            "width": 822,
+                            "height": 585
+                        },
+                        {
+                            "id": 906,
+                            "resultId": 1233,
+                            "x": 117,
+                            "y": 763,
+                            "width": 989,
+                            "height": 638
+                        },
+                        {
+                            "id": 907,
+                            "resultId": 1233,
+                            "x": 1126,
+                            "y": 768,
+                            "width": 724,
+                            "height": 633
+                        },
+                        {
+                            "id": 908,
+                            "resultId": 1233,
+                            "x": 117,
+                            "y": 1468,
+                            "width": 1733,
+                            "height": 608
+                        },
+                        {
+                            "id": 909,
+                            "resultId": 1233,
+                            "x": 117,
+                            "y": 2143,
+                            "width": 840,
+                            "height": 605
+                        },
+                        {
+                            "id": 910,
+                            "resultId": 1233,
+                            "x": 977,
+                            "y": 2143,
+                            "width": 873,
+                            "height": 605
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1243,
+            "pageNumber": 7,
+            "indexationId": "20250125T175811768",
+            "imageId": 298,
+            "image": {
+                "id": 298,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_7/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1234,
+                "aiKumikoResult": {
+                    "id": 1234,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 911,
+                            "resultId": 1234,
+                            "x": 183,
+                            "y": 103,
+                            "width": 1732,
+                            "height": 1277
+                        },
+                        {
+                            "id": 912,
+                            "resultId": 1234,
+                            "x": 183,
+                            "y": 1452,
+                            "width": 982,
+                            "height": 607
+                        },
+                        {
+                            "id": 913,
+                            "resultId": 1234,
+                            "x": 1170,
+                            "y": 1452,
+                            "width": 745,
+                            "height": 600
+                        },
+                        {
+                            "id": 914,
+                            "resultId": 1234,
+                            "x": 183,
+                            "y": 2131,
+                            "width": 965,
+                            "height": 604
+                        },
+                        {
+                            "id": 915,
+                            "resultId": 1234,
+                            "x": 1153,
+                            "y": 2124,
+                            "width": 762,
+                            "height": 611
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1244,
+            "pageNumber": 8,
+            "indexationId": "20250125T175811768",
+            "imageId": 299,
+            "image": {
+                "id": 299,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_8/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1235,
+                "aiKumikoResult": {
+                    "id": 1235,
+                    "inferredStoryKindRowsStr": "n/3",
+                    "detectedPanels": [
+                        {
+                            "id": 916,
+                            "resultId": 1235,
+                            "x": 83,
+                            "y": 88,
+                            "width": 1743,
+                            "height": 583
+                        },
+                        {
+                            "id": 917,
+                            "resultId": 1235,
+                            "x": 83,
+                            "y": 746,
+                            "width": 742,
+                            "height": 685
+                        },
+                        {
+                            "id": 918,
+                            "resultId": 1235,
+                            "x": 840,
+                            "y": 746,
+                            "width": 986,
+                            "height": 685
+                        },
+                        {
+                            "id": 919,
+                            "resultId": 1235,
+                            "x": 83,
+                            "y": 1506,
+                            "width": 1743,
+                            "height": 1222
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1245,
+            "pageNumber": 9,
+            "indexationId": "20250125T175811768",
+            "imageId": 300,
+            "image": {
+                "id": 300,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_9/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1236,
+                "aiKumikoResult": {
+                    "id": 1236,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 920,
+                            "resultId": 1236,
+                            "x": 177,
+                            "y": 88,
+                            "width": 903,
+                            "height": 626
+                        },
+                        {
+                            "id": 921,
+                            "resultId": 1236,
+                            "x": 1093,
+                            "y": 88,
+                            "width": 830,
+                            "height": 635
+                        },
+                        {
+                            "id": 922,
+                            "resultId": 1236,
+                            "x": 177,
+                            "y": 775,
+                            "width": 771,
+                            "height": 616
+                        },
+                        {
+                            "id": 923,
+                            "resultId": 1236,
+                            "x": 961,
+                            "y": 784,
+                            "width": 962,
+                            "height": 607
+                        },
+                        {
+                            "id": 924,
+                            "resultId": 1236,
+                            "x": 177,
+                            "y": 1452,
+                            "width": 1746,
+                            "height": 617
+                        },
+                        {
+                            "id": 925,
+                            "resultId": 1236,
+                            "x": 177,
+                            "y": 2130,
+                            "width": 907,
+                            "height": 612
+                        },
+                        {
+                            "id": 926,
+                            "resultId": 1236,
+                            "x": 1097,
+                            "y": 2130,
+                            "width": 826,
+                            "height": 612
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1246,
+            "pageNumber": 10,
+            "indexationId": "20250125T175811768",
+            "imageId": 301,
+            "image": {
+                "id": 301,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_10/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1237,
+                "aiKumikoResult": {
+                    "id": 1237,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 927,
+                            "resultId": 1237,
+                            "x": 113,
+                            "y": 80,
+                            "width": 842,
+                            "height": 683
+                        },
+                        {
+                            "id": 928,
+                            "resultId": 1237,
+                            "x": 974,
+                            "y": 80,
+                            "width": 860,
+                            "height": 686
+                        },
+                        {
+                            "id": 929,
+                            "resultId": 1237,
+                            "x": 113,
+                            "y": 766,
+                            "width": 835,
+                            "height": 743
+                        },
+                        {
+                            "id": 930,
+                            "resultId": 1237,
+                            "x": 967,
+                            "y": 769,
+                            "width": 367,
+                            "height": 740
+                        },
+                        {
+                            "id": 931,
+                            "resultId": 1237,
+                            "x": 1353,
+                            "y": 769,
+                            "width": 481,
+                            "height": 740
+                        },
+                        {
+                            "id": 932,
+                            "resultId": 1237,
+                            "x": 113,
+                            "y": 1512,
+                            "width": 1721,
+                            "height": 602
+                        },
+                        {
+                            "id": 933,
+                            "resultId": 1237,
+                            "x": 113,
+                            "y": 2117,
+                            "width": 788,
+                            "height": 652
+                        },
+                        {
+                            "id": 934,
+                            "resultId": 1237,
+                            "x": 920,
+                            "y": 2117,
+                            "width": 914,
+                            "height": 652
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1247,
+            "pageNumber": 11,
+            "indexationId": "20250125T175811768",
+            "imageId": 302,
+            "image": {
+                "id": 302,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_11/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": 350,
+                "aiStorySearchResultId": 22,
+                "aiKumikoResultId": 1238,
+                "aiKumikoResult": {
+                    "id": 1238,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 935,
+                            "resultId": 1238,
+                            "x": 178,
+                            "y": 86,
+                            "width": 1077,
+                            "height": 626
+                        },
+                        {
+                            "id": 936,
+                            "resultId": 1238,
+                            "x": 1281,
+                            "y": 86,
+                            "width": 636,
+                            "height": 622
+                        },
+                        {
+                            "id": 937,
+                            "resultId": 1238,
+                            "x": 178,
+                            "y": 776,
+                            "width": 1162,
+                            "height": 620
+                        },
+                        {
+                            "id": 938,
+                            "resultId": 1238,
+                            "x": 1366,
+                            "y": 772,
+                            "width": 551,
+                            "height": 624
+                        },
+                        {
+                            "id": 939,
+                            "resultId": 1238,
+                            "x": 178,
+                            "y": 1460,
+                            "width": 1739,
+                            "height": 606
+                        },
+                        {
+                            "id": 940,
+                            "resultId": 1238,
+                            "x": 178,
+                            "y": 2130,
+                            "width": 866,
+                            "height": 616
+                        },
+                        {
+                            "id": 941,
+                            "resultId": 1238,
+                            "x": 1070,
+                            "y": 2130,
+                            "width": 847,
+                            "height": 616
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": {
+                    "id": 350,
+                    "matches": [
+                        {
+                            "id": 5736,
+                            "resultId": 350,
+                            "x1": 997,
+                            "x2": 1067,
+                            "y1": 16,
+                            "y2": 123,
+                            "text": "6",
+                            "confidence": 0.5440964102745056
+                        },
+                        {
+                            "id": 5737,
+                            "resultId": 350,
+                            "x1": 39,
+                            "x2": 318,
+                            "y1": 59,
+                            "y2": 95,
+                            "text": "119. Hai ngày sau..",
+                            "confidence": 0.9832345843315125
+                        },
+                        {
+                            "id": 5738,
+                            "resultId": 350,
+                            "x1": 489,
+                            "x2": 711,
+                            "y1": 48,
+                            "y2": 87,
+                            "text": "120. Xin làm on!",
+                            "confidence": 0.968537449836731
+                        },
+                        {
+                            "id": 5739,
+                            "resultId": 350,
+                            "x1": 473,
+                            "x2": 726,
+                            "y1": 86,
+                            "y2": 123,
+                            "text": "Xin giúp đ ngưi",
+                            "confidence": 0.964731752872467
+                        },
+                        {
+                            "id": 5740,
+                            "resultId": 350,
+                            "x1": 522,
+                            "x2": 680,
+                            "y1": 120,
+                            "y2": 158,
+                            "text": "Trái Đt tôi",
+                            "confidence": 0.9368093013763428
+                        },
+                        {
+                            "id": 5741,
+                            "resultId": 350,
+                            "x1": 511,
+                            "x2": 686,
+                            "y1": 153,
+                            "y2": 202,
+                            "text": "nghip này!",
+                            "confidence": 0.9923967123031616
+                        },
+                        {
+                            "id": 5742,
+                            "resultId": 350,
+                            "x1": 92,
+                            "x2": 150,
+                            "y1": 173,
+                            "y2": 206,
+                            "text": "121.",
+                            "confidence": 0.996039628982544
+                        },
+                        {
+                            "id": 5743,
+                            "resultId": 350,
+                            "x1": 946,
+                            "x2": 985,
+                            "y1": 172,
+                            "y2": 187,
+                            "text": "0O0",
+                            "confidence": 0.405005544424057
+                        },
+                        {
+                            "id": 5744,
+                            "resultId": 350,
+                            "x1": 23,
+                            "x2": 262,
+                            "y1": 227,
+                            "y2": 308,
+                            "text": "SN SÀNG LÀM",
+                            "confidence": 0.9713035821914673
+                        },
+                        {
+                            "id": 5745,
+                            "resultId": 350,
+                            "x1": 48,
+                            "x2": 254,
+                            "y1": 269,
+                            "y2": 346,
+                            "text": "VIC Đ QUÁ",
+                            "confidence": 0.921884298324585
+                        },
+                        {
+                            "id": 5746,
+                            "resultId": 350,
+                            "x1": 69,
+                            "x2": 253,
+                            "y1": 311,
+                            "y2": 385,
+                            "text": "GIANG ĐN",
+                            "confidence": 0.9703296422958374
+                        },
+                        {
+                            "id": 5747,
+                            "resultId": 350,
+                            "x1": 89,
+                            "x2": 243,
+                            "y1": 350,
+                            "y2": 419,
+                            "text": "TRÁI ĐT",
+                            "confidence": 0.9636366963386536
+                        }
+                    ],
+                    "stories": []
+                },
+                "aiStorySearchResult": {
+                    "id": 22,
+                    "stories": []
+                }
+            }
+        },
+        {
+            "id": 1249,
+            "pageNumber": 12,
+            "indexationId": "20250125T175811768",
+            "imageId": 304,
+            "image": {
+                "id": 304,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_13/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1240,
+                "aiKumikoResult": {
+                    "id": 1240,
+                    "inferredStoryKindRowsStr": "n/3",
+                    "detectedPanels": [
+                        {
+                            "id": 949,
+                            "resultId": 1240,
+                            "x": 181,
+                            "y": 89,
+                            "width": 1723,
+                            "height": 612
+                        },
+                        {
+                            "id": 950,
+                            "resultId": 1240,
+                            "x": 181,
+                            "y": 773,
+                            "width": 1041,
+                            "height": 666
+                        },
+                        {
+                            "id": 951,
+                            "resultId": 1240,
+                            "x": 1270,
+                            "y": 773,
+                            "width": 634,
+                            "height": 666
+                        },
+                        {
+                            "id": 952,
+                            "resultId": 1240,
+                            "x": 181,
+                            "y": 1511,
+                            "width": 1723,
+                            "height": 1238
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1248,
+            "pageNumber": 13,
+            "indexationId": "20250125T175811768",
+            "imageId": 303,
+            "image": {
+                "id": 303,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_12/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1239,
+                "aiKumikoResult": {
+                    "id": 1239,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 942,
+                            "resultId": 1239,
+                            "x": 125,
+                            "y": 86,
+                            "width": 1730,
+                            "height": 619
+                        },
+                        {
+                            "id": 943,
+                            "resultId": 1239,
+                            "x": 125,
+                            "y": 779,
+                            "width": 819,
+                            "height": 613
+                        },
+                        {
+                            "id": 944,
+                            "resultId": 1239,
+                            "x": 969,
+                            "y": 779,
+                            "width": 886,
+                            "height": 616
+                        },
+                        {
+                            "id": 945,
+                            "resultId": 1239,
+                            "x": 125,
+                            "y": 1466,
+                            "width": 866,
+                            "height": 612
+                        },
+                        {
+                            "id": 946,
+                            "resultId": 1239,
+                            "x": 1016,
+                            "y": 1469,
+                            "width": 839,
+                            "height": 603
+                        },
+                        {
+                            "id": 947,
+                            "resultId": 1239,
+                            "x": 125,
+                            "y": 2152,
+                            "width": 981,
+                            "height": 602
+                        },
+                        {
+                            "id": 948,
+                            "resultId": 1239,
+                            "x": 1131,
+                            "y": 2146,
+                            "width": 724,
+                            "height": 608
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1250,
+            "pageNumber": 14,
+            "indexationId": "20250125T175811768",
+            "imageId": 305,
+            "image": {
+                "id": 305,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_14/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1241,
+                "aiKumikoResult": {
+                    "id": 1241,
+                    "inferredStoryKindRowsStr": "n/3",
+                    "detectedPanels": [
+                        {
+                            "id": 953,
+                            "resultId": 1241,
+                            "x": 132,
+                            "y": 416,
+                            "width": 1716,
+                            "height": 988
+                        },
+                        {
+                            "id": 954,
+                            "resultId": 1241,
+                            "x": 132,
+                            "y": 1425,
+                            "width": 790,
+                            "height": 614
+                        },
+                        {
+                            "id": 955,
+                            "resultId": 1241,
+                            "x": 949,
+                            "y": 1425,
+                            "width": 899,
+                            "height": 614
+                        },
+                        {
+                            "id": 956,
+                            "resultId": 1241,
+                            "x": 132,
+                            "y": 2060,
+                            "width": 1202,
+                            "height": 602
+                        },
+                        {
+                            "id": 957,
+                            "resultId": 1241,
+                            "x": 1361,
+                            "y": 2060,
+                            "width": 487,
+                            "height": 602
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1251,
+            "pageNumber": 15,
+            "indexationId": "20250125T175811768",
+            "imageId": 306,
+            "image": {
+                "id": 306,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_15/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1242,
+                "aiKumikoResult": {
+                    "id": 1242,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 958,
+                            "resultId": 1242,
+                            "x": 189,
+                            "y": 119,
+                            "width": 704,
+                            "height": 607
+                        },
+                        {
+                            "id": 959,
+                            "resultId": 1242,
+                            "x": 924,
+                            "y": 119,
+                            "width": 976,
+                            "height": 609
+                        },
+                        {
+                            "id": 960,
+                            "resultId": 1242,
+                            "x": 189,
+                            "y": 758,
+                            "width": 625,
+                            "height": 599
+                        },
+                        {
+                            "id": 961,
+                            "resultId": 1242,
+                            "x": 845,
+                            "y": 760,
+                            "width": 1055,
+                            "height": 597
+                        },
+                        {
+                            "id": 962,
+                            "resultId": 1242,
+                            "x": 189,
+                            "y": 1389,
+                            "width": 1711,
+                            "height": 600
+                        },
+                        {
+                            "id": 963,
+                            "resultId": 1242,
+                            "x": 189,
+                            "y": 2021,
+                            "width": 730,
+                            "height": 592
+                        },
+                        {
+                            "id": 964,
+                            "resultId": 1242,
+                            "x": 950,
+                            "y": 2021,
+                            "width": 950,
+                            "height": 592
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1252,
+            "pageNumber": 16,
+            "indexationId": "20250125T175811768",
+            "imageId": 307,
+            "image": {
+                "id": 307,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_16/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1243,
+                "aiKumikoResult": {
+                    "id": 1243,
+                    "inferredStoryKindRowsStr": "n/3",
+                    "detectedPanels": [
+                        {
+                            "id": 965,
+                            "resultId": 1243,
+                            "x": 124,
+                            "y": 121,
+                            "width": 848,
+                            "height": 610
+                        },
+                        {
+                            "id": 966,
+                            "resultId": 1243,
+                            "x": 1001,
+                            "y": 121,
+                            "width": 835,
+                            "height": 613
+                        },
+                        {
+                            "id": 967,
+                            "resultId": 1243,
+                            "x": 124,
+                            "y": 758,
+                            "width": 845,
+                            "height": 602
+                        },
+                        {
+                            "id": 968,
+                            "resultId": 1243,
+                            "x": 998,
+                            "y": 761,
+                            "width": 838,
+                            "height": 604
+                        },
+                        {
+                            "id": 969,
+                            "resultId": 1243,
+                            "x": 124,
+                            "y": 1387,
+                            "width": 756,
+                            "height": 1237
+                        },
+                        {
+                            "id": 970,
+                            "resultId": 1243,
+                            "x": 909,
+                            "y": 1392,
+                            "width": 927,
+                            "height": 1232
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1253,
+            "pageNumber": 17,
+            "indexationId": "20250125T175811768",
+            "imageId": 308,
+            "image": {
+                "id": 308,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_17/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1244,
+                "aiKumikoResult": {
+                    "id": 1244,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 971,
+                            "resultId": 1244,
+                            "x": 199,
+                            "y": 126,
+                            "width": 1712,
+                            "height": 611
+                        },
+                        {
+                            "id": 972,
+                            "resultId": 1244,
+                            "x": 199,
+                            "y": 759,
+                            "width": 708,
+                            "height": 618
+                        },
+                        {
+                            "id": 973,
+                            "resultId": 1244,
+                            "x": 935,
+                            "y": 759,
+                            "width": 976,
+                            "height": 614
+                        },
+                        {
+                            "id": 974,
+                            "resultId": 1244,
+                            "x": 199,
+                            "y": 1399,
+                            "width": 1009,
+                            "height": 603
+                        },
+                        {
+                            "id": 975,
+                            "resultId": 1244,
+                            "x": 1236,
+                            "y": 1395,
+                            "width": 675,
+                            "height": 607
+                        },
+                        {
+                            "id": 976,
+                            "resultId": 1244,
+                            "x": 199,
+                            "y": 2024,
+                            "width": 1712,
+                            "height": 605
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1254,
+            "pageNumber": 18,
+            "indexationId": "20250125T175811768",
+            "imageId": 309,
+            "image": {
+                "id": 309,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_18/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1245,
+                "aiKumikoResult": {
+                    "id": 1245,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 977,
+                            "resultId": 1245,
+                            "x": 158,
+                            "y": 115,
+                            "width": 1713,
+                            "height": 611
+                        },
+                        {
+                            "id": 978,
+                            "resultId": 1245,
+                            "x": 158,
+                            "y": 753,
+                            "width": 763,
+                            "height": 605
+                        },
+                        {
+                            "id": 979,
+                            "resultId": 1245,
+                            "x": 948,
+                            "y": 753,
+                            "width": 923,
+                            "height": 605
+                        },
+                        {
+                            "id": 980,
+                            "resultId": 1245,
+                            "x": 158,
+                            "y": 1385,
+                            "width": 1713,
+                            "height": 605
+                        },
+                        {
+                            "id": 981,
+                            "resultId": 1245,
+                            "x": 158,
+                            "y": 2017,
+                            "width": 759,
+                            "height": 600
+                        },
+                        {
+                            "id": 982,
+                            "resultId": 1245,
+                            "x": 944,
+                            "y": 2017,
+                            "width": 927,
+                            "height": 600
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1255,
+            "pageNumber": 19,
+            "indexationId": "20250125T175811768",
+            "imageId": 310,
+            "image": {
+                "id": 310,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_19/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1246,
+                "aiKumikoResult": {
+                    "id": 1246,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 983,
+                            "resultId": 1246,
+                            "x": 171,
+                            "y": 125,
+                            "width": 1719,
+                            "height": 610
+                        },
+                        {
+                            "id": 984,
+                            "resultId": 1246,
+                            "x": 171,
+                            "y": 759,
+                            "width": 905,
+                            "height": 609
+                        },
+                        {
+                            "id": 985,
+                            "resultId": 1246,
+                            "x": 1103,
+                            "y": 759,
+                            "width": 787,
+                            "height": 609
+                        },
+                        {
+                            "id": 986,
+                            "resultId": 1246,
+                            "x": 171,
+                            "y": 1392,
+                            "width": 1719,
+                            "height": 603
+                        },
+                        {
+                            "id": 987,
+                            "resultId": 1246,
+                            "x": 171,
+                            "y": 2019,
+                            "width": 980,
+                            "height": 603
+                        },
+                        {
+                            "id": 988,
+                            "resultId": 1246,
+                            "x": 1178,
+                            "y": 2019,
+                            "width": 712,
+                            "height": 603
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1256,
+            "pageNumber": 20,
+            "indexationId": "20250125T175811768",
+            "imageId": 311,
+            "image": {
+                "id": 311,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_20/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1247,
+                "aiKumikoResult": {
+                    "id": 1247,
+                    "inferredStoryKindRowsStr": "n/6",
+                    "detectedPanels": [
+                        {
+                            "id": 989,
+                            "resultId": 1247,
+                            "x": 131,
+                            "y": 119,
+                            "width": 618,
+                            "height": 641
+                        },
+                        {
+                            "id": 990,
+                            "resultId": 1247,
+                            "x": 776,
+                            "y": 119,
+                            "width": 1062,
+                            "height": 640
+                        },
+                        {
+                            "id": 991,
+                            "resultId": 1247,
+                            "x": 131,
+                            "y": 762,
+                            "width": 876,
+                            "height": 624
+                        },
+                        {
+                            "id": 992,
+                            "resultId": 1247,
+                            "x": 1034,
+                            "y": 761,
+                            "width": 804,
+                            "height": 631
+                        },
+                        {
+                            "id": 993,
+                            "resultId": 1247,
+                            "x": 131,
+                            "y": 1388,
+                            "width": 1006,
+                            "height": 636
+                        },
+                        {
+                            "id": 994,
+                            "resultId": 1247,
+                            "x": 1164,
+                            "y": 1394,
+                            "width": 674,
+                            "height": 630
+                        },
+                        {
+                            "id": 995,
+                            "resultId": 1247,
+                            "x": 131,
+                            "y": 2026,
+                            "width": 818,
+                            "height": 310
+                        },
+                        {
+                            "id": 996,
+                            "resultId": 1247,
+                            "x": 131,
+                            "y": 2026,
+                            "width": 358,
+                            "height": 644
+                        },
+                        {
+                            "id": 997,
+                            "resultId": 1247,
+                            "x": 516,
+                            "y": 2338,
+                            "width": 433,
+                            "height": 332
+                        },
+                        {
+                            "id": 998,
+                            "resultId": 1247,
+                            "x": 976,
+                            "y": 2026,
+                            "width": 862,
+                            "height": 644
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1257,
+            "pageNumber": 21,
+            "indexationId": "20250125T175811768",
+            "imageId": 312,
+            "image": {
+                "id": 312,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_21/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1248,
+                "aiKumikoResult": {
+                    "id": 1248,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 999,
+                            "resultId": 1248,
+                            "x": 191,
+                            "y": 123,
+                            "width": 1710,
+                            "height": 606
+                        },
+                        {
+                            "id": 1000,
+                            "resultId": 1248,
+                            "x": 191,
+                            "y": 755,
+                            "width": 760,
+                            "height": 608
+                        },
+                        {
+                            "id": 1001,
+                            "resultId": 1248,
+                            "x": 985,
+                            "y": 755,
+                            "width": 916,
+                            "height": 728
+                        },
+                        {
+                            "id": 1002,
+                            "resultId": 1248,
+                            "x": 191,
+                            "y": 1389,
+                            "width": 965,
+                            "height": 605
+                        },
+                        {
+                            "id": 1003,
+                            "resultId": 1248,
+                            "x": 1190,
+                            "y": 1509,
+                            "width": 711,
+                            "height": 485
+                        },
+                        {
+                            "id": 1004,
+                            "resultId": 1248,
+                            "x": 191,
+                            "y": 2020,
+                            "width": 1710,
+                            "height": 597
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1258,
+            "pageNumber": 22,
+            "indexationId": "20250125T175811768",
+            "imageId": 313,
+            "image": {
+                "id": 313,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_22/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1249,
+                "aiKumikoResult": {
+                    "id": 1249,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 1005,
+                            "resultId": 1249,
+                            "x": 131,
+                            "y": 104,
+                            "width": 1763,
+                            "height": 332
+                        },
+                        {
+                            "id": 1006,
+                            "resultId": 1249,
+                            "x": 131,
+                            "y": 456,
+                            "width": 1763,
+                            "height": 954
+                        },
+                        {
+                            "id": 1007,
+                            "resultId": 1249,
+                            "x": 131,
+                            "y": 1430,
+                            "width": 973,
+                            "height": 610
+                        },
+                        {
+                            "id": 1008,
+                            "resultId": 1249,
+                            "x": 1126,
+                            "y": 1430,
+                            "width": 768,
+                            "height": 614
+                        },
+                        {
+                            "id": 1009,
+                            "resultId": 1249,
+                            "x": 131,
+                            "y": 2060,
+                            "width": 899,
+                            "height": 603
+                        },
+                        {
+                            "id": 1010,
+                            "resultId": 1249,
+                            "x": 1052,
+                            "y": 2064,
+                            "width": 842,
+                            "height": 599
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1259,
+            "pageNumber": 23,
+            "indexationId": "20250125T175811768",
+            "imageId": 314,
+            "image": {
+                "id": 314,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_23/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1250,
+                "aiKumikoResult": {
+                    "id": 1250,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 1011,
+                            "resultId": 1250,
+                            "x": 178,
+                            "y": 74,
+                            "width": 1730,
+                            "height": 630
+                        },
+                        {
+                            "id": 1012,
+                            "resultId": 1250,
+                            "x": 178,
+                            "y": 724,
+                            "width": 856,
+                            "height": 617
+                        },
+                        {
+                            "id": 1013,
+                            "resultId": 1250,
+                            "x": 1061,
+                            "y": 724,
+                            "width": 847,
+                            "height": 612
+                        },
+                        {
+                            "id": 1014,
+                            "resultId": 1250,
+                            "x": 178,
+                            "y": 1361,
+                            "width": 1014,
+                            "height": 606
+                        },
+                        {
+                            "id": 1015,
+                            "resultId": 1250,
+                            "x": 1219,
+                            "y": 1356,
+                            "width": 689,
+                            "height": 607
+                        },
+                        {
+                            "id": 1016,
+                            "resultId": 1250,
+                            "x": 178,
+                            "y": 1987,
+                            "width": 978,
+                            "height": 599
+                        },
+                        {
+                            "id": 1017,
+                            "resultId": 1250,
+                            "x": 1183,
+                            "y": 1983,
+                            "width": 725,
+                            "height": 603
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1260,
+            "pageNumber": 24,
+            "indexationId": "20250125T175811768",
+            "imageId": 315,
+            "image": {
+                "id": 315,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_24/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1251,
+                "aiKumikoResult": {
+                    "id": 1251,
+                    "inferredStoryKindRowsStr": null,
+                    "detectedPanels": [
+                        {
+                            "id": 1018,
+                            "resultId": 1251,
+                            "x": 133,
+                            "y": 81,
+                            "width": 985,
+                            "height": 622
+                        },
+                        {
+                            "id": 1019,
+                            "resultId": 1251,
+                            "x": 1133,
+                            "y": 81,
+                            "width": 759,
+                            "height": 672
+                        },
+                        {
+                            "id": 1020,
+                            "resultId": 1251,
+                            "x": 133,
+                            "y": 720,
+                            "width": 910,
+                            "height": 619
+                        },
+                        {
+                            "id": 1021,
+                            "resultId": 1251,
+                            "x": 1058,
+                            "y": 770,
+                            "width": 834,
+                            "height": 575
+                        },
+                        {
+                            "id": 1022,
+                            "resultId": 1251,
+                            "x": 133,
+                            "y": 1356,
+                            "width": 958,
+                            "height": 611
+                        },
+                        {
+                            "id": 1023,
+                            "resultId": 1251,
+                            "x": 1106,
+                            "y": 1362,
+                            "width": 786,
+                            "height": 614
+                        },
+                        {
+                            "id": 1024,
+                            "resultId": 1251,
+                            "x": 133,
+                            "y": 1984,
+                            "width": 834,
+                            "height": 612
+                        },
+                        {
+                            "id": 1025,
+                            "resultId": 1251,
+                            "x": 982,
+                            "y": 1993,
+                            "width": 910,
+                            "height": 603
+                        }
+                    ],
+                    "inferredStoryKindRows": null
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1261,
+            "pageNumber": 25,
+            "indexationId": "20250125T175811768",
+            "imageId": 316,
+            "image": {
+                "id": 316,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_25/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1252,
+                "aiKumikoResult": {
+                    "id": 1252,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 1026,
+                            "resultId": 1252,
+                            "x": 162,
+                            "y": 83,
+                            "width": 1080,
+                            "height": 638
+                        },
+                        {
+                            "id": 1027,
+                            "resultId": 1252,
+                            "x": 1264,
+                            "y": 83,
+                            "width": 642,
+                            "height": 638
+                        },
+                        {
+                            "id": 1028,
+                            "resultId": 1252,
+                            "x": 162,
+                            "y": 728,
+                            "width": 1744,
+                            "height": 620
+                        },
+                        {
+                            "id": 1029,
+                            "resultId": 1252,
+                            "x": 162,
+                            "y": 1355,
+                            "width": 732,
+                            "height": 628
+                        },
+                        {
+                            "id": 1030,
+                            "resultId": 1252,
+                            "x": 916,
+                            "y": 1355,
+                            "width": 990,
+                            "height": 609
+                        },
+                        {
+                            "id": 1031,
+                            "resultId": 1252,
+                            "x": 162,
+                            "y": 1990,
+                            "width": 968,
+                            "height": 599
+                        },
+                        {
+                            "id": 1032,
+                            "resultId": 1252,
+                            "x": 1152,
+                            "y": 1971,
+                            "width": 754,
+                            "height": 618
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1262,
+            "pageNumber": 26,
+            "indexationId": "20250125T175811768",
+            "imageId": 317,
+            "image": {
+                "id": 317,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_26/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1253,
+                "aiKumikoResult": {
+                    "id": 1253,
+                    "inferredStoryKindRowsStr": "n/4",
+                    "detectedPanels": [
+                        {
+                            "id": 1033,
+                            "resultId": 1253,
+                            "x": 134,
+                            "y": 93,
+                            "width": 976,
+                            "height": 618
+                        },
+                        {
+                            "id": 1034,
+                            "resultId": 1253,
+                            "x": 1110,
+                            "y": 93,
+                            "width": 770,
+                            "height": 623
+                        },
+                        {
+                            "id": 1035,
+                            "resultId": 1253,
+                            "x": 134,
+                            "y": 731,
+                            "width": 935,
+                            "height": 618
+                        },
+                        {
+                            "id": 1036,
+                            "resultId": 1253,
+                            "x": 1069,
+                            "y": 736,
+                            "width": 811,
+                            "height": 618
+                        },
+                        {
+                            "id": 1037,
+                            "resultId": 1253,
+                            "x": 134,
+                            "y": 1369,
+                            "width": 1100,
+                            "height": 607
+                        },
+                        {
+                            "id": 1038,
+                            "resultId": 1253,
+                            "x": 1234,
+                            "y": 1374,
+                            "width": 646,
+                            "height": 605
+                        },
+                        {
+                            "id": 1039,
+                            "resultId": 1253,
+                            "x": 134,
+                            "y": 1996,
+                            "width": 931,
+                            "height": 605
+                        },
+                        {
+                            "id": 1040,
+                            "resultId": 1253,
+                            "x": 1065,
+                            "y": 1999,
+                            "width": 815,
+                            "height": 602
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1263,
+            "pageNumber": 27,
+            "indexationId": "20250125T175811768",
+            "imageId": 318,
+            "image": {
+                "id": 318,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_27/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1254,
+                "aiKumikoResult": {
+                    "id": 1254,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 1041,
+                            "resultId": 1254,
+                            "x": 154,
+                            "y": 95,
+                            "width": 936,
+                            "height": 614
+                        },
+                        {
+                            "id": 1042,
+                            "resultId": 1254,
+                            "x": 1107,
+                            "y": 95,
+                            "width": 791,
+                            "height": 611
+                        },
+                        {
+                            "id": 1043,
+                            "resultId": 1254,
+                            "x": 154,
+                            "y": 733,
+                            "width": 916,
+                            "height": 613
+                        },
+                        {
+                            "id": 1044,
+                            "resultId": 1254,
+                            "x": 1087,
+                            "y": 730,
+                            "width": 811,
+                            "height": 609
+                        },
+                        {
+                            "id": 1045,
+                            "resultId": 1254,
+                            "x": 154,
+                            "y": 1370,
+                            "width": 902,
+                            "height": 604
+                        },
+                        {
+                            "id": 1046,
+                            "resultId": 1254,
+                            "x": 1073,
+                            "y": 1363,
+                            "width": 825,
+                            "height": 606
+                        },
+                        {
+                            "id": 1047,
+                            "resultId": 1254,
+                            "x": 154,
+                            "y": 1998,
+                            "width": 1007,
+                            "height": 600
+                        },
+                        {
+                            "id": 1048,
+                            "resultId": 1254,
+                            "x": 1178,
+                            "y": 1993,
+                            "width": 720,
+                            "height": 605
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1264,
+            "pageNumber": 28,
+            "indexationId": "20250125T175811768",
+            "imageId": 319,
+            "image": {
+                "id": 319,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_28/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1255,
+                "aiKumikoResult": {
+                    "id": 1255,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 1049,
+                            "resultId": 1255,
+                            "x": 119,
+                            "y": 79,
+                            "width": 888,
+                            "height": 636
+                        },
+                        {
+                            "id": 1050,
+                            "resultId": 1255,
+                            "x": 1023,
+                            "y": 79,
+                            "width": 845,
+                            "height": 636
+                        },
+                        {
+                            "id": 1051,
+                            "resultId": 1255,
+                            "x": 119,
+                            "y": 722,
+                            "width": 920,
+                            "height": 626
+                        },
+                        {
+                            "id": 1052,
+                            "resultId": 1255,
+                            "x": 1055,
+                            "y": 722,
+                            "width": 813,
+                            "height": 622
+                        },
+                        {
+                            "id": 1053,
+                            "resultId": 1255,
+                            "x": 119,
+                            "y": 1355,
+                            "width": 1017,
+                            "height": 794
+                        },
+                        {
+                            "id": 1054,
+                            "resultId": 1255,
+                            "x": 1152,
+                            "y": 1351,
+                            "width": 716,
+                            "height": 608
+                        },
+                        {
+                            "id": 1055,
+                            "resultId": 1255,
+                            "x": 119,
+                            "y": 2156,
+                            "width": 691,
+                            "height": 437
+                        },
+                        {
+                            "id": 1056,
+                            "resultId": 1255,
+                            "x": 826,
+                            "y": 1966,
+                            "width": 1042,
+                            "height": 627
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1265,
+            "pageNumber": 29,
+            "indexationId": "20250125T175811768",
+            "imageId": 320,
+            "image": {
+                "id": 320,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_29/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1256,
+                "aiKumikoResult": {
+                    "id": 1256,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 1057,
+                            "resultId": 1256,
+                            "x": 183,
+                            "y": 78,
+                            "width": 952,
+                            "height": 627
+                        },
+                        {
+                            "id": 1058,
+                            "resultId": 1256,
+                            "x": 1161,
+                            "y": 78,
+                            "width": 752,
+                            "height": 623
+                        },
+                        {
+                            "id": 1059,
+                            "resultId": 1256,
+                            "x": 183,
+                            "y": 711,
+                            "width": 867,
+                            "height": 646
+                        },
+                        {
+                            "id": 1060,
+                            "resultId": 1256,
+                            "x": 1076,
+                            "y": 707,
+                            "width": 837,
+                            "height": 647
+                        },
+                        {
+                            "id": 1061,
+                            "resultId": 1256,
+                            "x": 183,
+                            "y": 1363,
+                            "width": 929,
+                            "height": 624
+                        },
+                        {
+                            "id": 1062,
+                            "resultId": 1256,
+                            "x": 1138,
+                            "y": 1360,
+                            "width": 775,
+                            "height": 607
+                        },
+                        {
+                            "id": 1063,
+                            "resultId": 1256,
+                            "x": 183,
+                            "y": 1993,
+                            "width": 964,
+                            "height": 601
+                        },
+                        {
+                            "id": 1064,
+                            "resultId": 1256,
+                            "x": 1173,
+                            "y": 1973,
+                            "width": 740,
+                            "height": 621
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1266,
+            "pageNumber": 30,
+            "indexationId": "20250125T175811768",
+            "imageId": 321,
+            "image": {
+                "id": 321,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_30/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1257,
+                "aiKumikoResult": {
+                    "id": 1257,
+                    "inferredStoryKindRowsStr": "n/6",
+                    "detectedPanels": [
+                        {
+                            "id": 1065,
+                            "resultId": 1257,
+                            "x": 108,
+                            "y": 129,
+                            "width": 1139,
+                            "height": 612
+                        },
+                        {
+                            "id": 1066,
+                            "resultId": 1257,
+                            "x": 1264,
+                            "y": 129,
+                            "width": 601,
+                            "height": 605
+                        },
+                        {
+                            "id": 1067,
+                            "resultId": 1257,
+                            "x": 108,
+                            "y": 752,
+                            "width": 1084,
+                            "height": 610
+                        },
+                        {
+                            "id": 1068,
+                            "resultId": 1257,
+                            "x": 1209,
+                            "y": 745,
+                            "width": 656,
+                            "height": 624
+                        },
+                        {
+                            "id": 1069,
+                            "resultId": 1257,
+                            "x": 108,
+                            "y": 1373,
+                            "width": 1040,
+                            "height": 612
+                        },
+                        {
+                            "id": 1070,
+                            "resultId": 1257,
+                            "x": 1165,
+                            "y": 1380,
+                            "width": 700,
+                            "height": 605
+                        },
+                        {
+                            "id": 1071,
+                            "resultId": 1257,
+                            "x": 108,
+                            "y": 1996,
+                            "width": 1757,
+                            "height": 603
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1267,
+            "pageNumber": 31,
+            "indexationId": "20250125T175811768",
+            "imageId": 322,
+            "image": {
+                "id": 322,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_31/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1258,
+                "aiKumikoResult": {
+                    "id": 1258,
+                    "inferredStoryKindRowsStr": "n/6",
+                    "detectedPanels": [
+                        {
+                            "id": 1072,
+                            "resultId": 1258,
+                            "x": 181,
+                            "y": 135,
+                            "width": 996,
+                            "height": 617
+                        },
+                        {
+                            "id": 1073,
+                            "resultId": 1258,
+                            "x": 1199,
+                            "y": 135,
+                            "width": 714,
+                            "height": 610
+                        },
+                        {
+                            "id": 1074,
+                            "resultId": 1258,
+                            "x": 181,
+                            "y": 764,
+                            "width": 758,
+                            "height": 609
+                        },
+                        {
+                            "id": 1075,
+                            "resultId": 1258,
+                            "x": 961,
+                            "y": 757,
+                            "width": 952,
+                            "height": 609
+                        },
+                        {
+                            "id": 1076,
+                            "resultId": 1258,
+                            "x": 181,
+                            "y": 1385,
+                            "width": 977,
+                            "height": 602
+                        },
+                        {
+                            "id": 1077,
+                            "resultId": 1258,
+                            "x": 1180,
+                            "y": 1378,
+                            "width": 733,
+                            "height": 609
+                        },
+                        {
+                            "id": 1078,
+                            "resultId": 1258,
+                            "x": 181,
+                            "y": 1999,
+                            "width": 1732,
+                            "height": 614
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1268,
+            "pageNumber": 32,
+            "indexationId": "20250125T175811768",
+            "imageId": 323,
+            "image": {
+                "id": 323,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_32/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1259,
+                "aiKumikoResult": {
+                    "id": 1259,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 1079,
+                            "resultId": 1259,
+                            "x": 125,
+                            "y": 113,
+                            "width": 861,
+                            "height": 621
+                        },
+                        {
+                            "id": 1080,
+                            "resultId": 1259,
+                            "x": 1003,
+                            "y": 113,
+                            "width": 870,
+                            "height": 621
+                        },
+                        {
+                            "id": 1081,
+                            "resultId": 1259,
+                            "x": 125,
+                            "y": 746,
+                            "width": 1748,
+                            "height": 612
+                        },
+                        {
+                            "id": 1082,
+                            "resultId": 1259,
+                            "x": 125,
+                            "y": 1370,
+                            "width": 973,
+                            "height": 609
+                        },
+                        {
+                            "id": 1083,
+                            "resultId": 1259,
+                            "x": 1115,
+                            "y": 1370,
+                            "width": 758,
+                            "height": 615
+                        },
+                        {
+                            "id": 1084,
+                            "resultId": 1259,
+                            "x": 125,
+                            "y": 1991,
+                            "width": 693,
+                            "height": 611
+                        },
+                        {
+                            "id": 1085,
+                            "resultId": 1259,
+                            "x": 835,
+                            "y": 1997,
+                            "width": 1038,
+                            "height": 605
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1269,
+            "pageNumber": 33,
+            "indexationId": "20250125T175811768",
+            "imageId": 324,
+            "image": {
+                "id": 324,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_33/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1260,
+                "aiKumikoResult": {
+                    "id": 1260,
+                    "inferredStoryKindRowsStr": "n/6",
+                    "detectedPanels": [
+                        {
+                            "id": 1086,
+                            "resultId": 1260,
+                            "x": 166,
+                            "y": 120,
+                            "width": 703,
+                            "height": 633
+                        },
+                        {
+                            "id": 1087,
+                            "resultId": 1260,
+                            "x": 882,
+                            "y": 120,
+                            "width": 1046,
+                            "height": 616
+                        },
+                        {
+                            "id": 1088,
+                            "resultId": 1260,
+                            "x": 166,
+                            "y": 756,
+                            "width": 631,
+                            "height": 620
+                        },
+                        {
+                            "id": 1089,
+                            "resultId": 1260,
+                            "x": 810,
+                            "y": 739,
+                            "width": 1118,
+                            "height": 619
+                        },
+                        {
+                            "id": 1090,
+                            "resultId": 1260,
+                            "x": 166,
+                            "y": 1379,
+                            "width": 818,
+                            "height": 601
+                        },
+                        {
+                            "id": 1091,
+                            "resultId": 1260,
+                            "x": 997,
+                            "y": 1361,
+                            "width": 931,
+                            "height": 619
+                        },
+                        {
+                            "id": 1092,
+                            "resultId": 1260,
+                            "x": 166,
+                            "y": 1983,
+                            "width": 1762,
+                            "height": 620
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1270,
+            "pageNumber": 34,
+            "indexationId": "20250125T175811768",
+            "imageId": 325,
+            "image": {
+                "id": 325,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_34/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1261,
+                "aiKumikoResult": {
+                    "id": 1261,
+                    "inferredStoryKindRowsStr": "n/5",
+                    "detectedPanels": [
+                        {
+                            "id": 1093,
+                            "resultId": 1261,
+                            "x": 104,
+                            "y": 68,
+                            "width": 1712,
+                            "height": 633
+                        },
+                        {
+                            "id": 1094,
+                            "resultId": 1261,
+                            "x": 104,
+                            "y": 701,
+                            "width": 775,
+                            "height": 738
+                        },
+                        {
+                            "id": 1095,
+                            "resultId": 1261,
+                            "x": 903,
+                            "y": 704,
+                            "width": 913,
+                            "height": 626
+                        },
+                        {
+                            "id": 1096,
+                            "resultId": 1261,
+                            "x": 104,
+                            "y": 1442,
+                            "width": 755,
+                            "height": 511
+                        },
+                        {
+                            "id": 1097,
+                            "resultId": 1261,
+                            "x": 883,
+                            "y": 1333,
+                            "width": 933,
+                            "height": 620
+                        },
+                        {
+                            "id": 1098,
+                            "resultId": 1261,
+                            "x": 104,
+                            "y": 1956,
+                            "width": 1712,
+                            "height": 598
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1271,
+            "pageNumber": 35,
+            "indexationId": "20250125T175811768",
+            "imageId": 326,
+            "image": {
+                "id": 326,
+                "url": "https://res.cloudinary.com/dl7hskxab/image/upload/pg_35/v1737828435/dumili/Wizyx/20250125T175811768/56-K%E1%BA%B9t_Ngo%C3%A0i_V%C5%A9_Tr%E1%BB%A5_axdgjc.png",
+                "aiOcrResultId": null,
+                "aiStorySearchResultId": null,
+                "aiKumikoResultId": 1262,
+                "aiKumikoResult": {
+                    "id": 1262,
+                    "inferredStoryKindRowsStr": "n/3",
+                    "detectedPanels": [
+                        {
+                            "id": 1099,
+                            "resultId": 1262,
+                            "x": 212,
+                            "y": 613,
+                            "width": 1560,
+                            "height": 1189
+                        },
+                        {
+                            "id": 1100,
+                            "resultId": 1262,
+                            "x": 212,
+                            "y": 1844,
+                            "width": 1560,
+                            "height": 849
+                        },
+                        {
+                            "id": 1101,
+                            "resultId": 1262,
+                            "x": 212,
+                            "y": 2735,
+                            "width": 1560,
+                            "height": 331
+                        }
+                    ],
+                    "inferredStoryKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                "aiOcrResult": null,
+                "aiStorySearchResult": null
+            }
+        },
+        {
+            "id": 1272,
+            "pageNumber": 36,
+            "indexationId": "20250125T175811768",
+            "imageId": null,
+            "image": null
+        }
+    ],
+    "acceptedIssueSuggestion": {
+        "id": 2,
+        "indexationId": "20250125T175811768",
+        "publicationcode": "vn/DVBH",
+        "issuenumber": "56",
+        "aiStorySearchPossibleStoryId": null
+    },
+    "issueSuggestions": [
+        {
+            "id": 2,
+            "indexationId": "20250125T175811768",
+            "publicationcode": "vn/DVBH",
+            "issuenumber": "56",
+            "aiStorySearchPossibleStoryId": null
+        }
+    ],
+    "entries": [
+        {
+            "id": 29,
+            "acceptedStorySuggestionId": 1027,
+            "acceptedStoryKindSuggestionId": 283,
+            "indexationId": "20250125T175811768",
+            "position": 1,
+            "entrycomment": null,
+            "part": null,
+            "title": "Kẹt ngoài vũ trụ",
+            "entirepages": 1,
+            "brokenpagenumerator": 0,
+            "brokenpagedenominator": 1,
+            "acceptedStory": {
+                "id": 1027,
+                "storycode": "Xvn/DVBH  56",
+                "entryId": 29,
+                "aiStorySuggestionId": null
+            },
+            "acceptedStoryKind": {
+                "id": 283,
+                "storyKindRowsStr": "c/1",
+                "entryId": 29,
+                "aiKumikoResultId": null,
+                "storyKindRows": {
+                    "id": "c/1",
+                    "kind": "c",
+                    "numberOfRows": 1
+                }
+            },
+            "storyKindSuggestions": [
+                {
+                    "id": 281,
+                    "storyKindRowsStr": "n/3",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                {
+                    "id": 282,
+                    "storyKindRowsStr": "k/0",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "k/0",
+                        "kind": "k",
+                        "numberOfRows": 0
+                    }
+                },
+                {
+                    "id": 283,
+                    "storyKindRowsStr": "c/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "c/1",
+                        "kind": "c",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 284,
+                    "storyKindRowsStr": "i/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "i/1",
+                        "kind": "i",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 285,
+                    "storyKindRowsStr": "g/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "g/1",
+                        "kind": "g",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 286,
+                    "storyKindRowsStr": "t/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "t/1",
+                        "kind": "t",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 287,
+                    "storyKindRowsStr": "a/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "a/1",
+                        "kind": "a",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 288,
+                    "storyKindRowsStr": "P/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "P/1",
+                        "kind": "P",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 289,
+                    "storyKindRowsStr": "L/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "L/1",
+                        "kind": "L",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 290,
+                    "storyKindRowsStr": "f/1",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "f/1",
+                        "kind": "f",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 953,
+                    "storyKindRowsStr": "n/4",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                {
+                    "id": 1012,
+                    "storyKindRowsStr": "n/5",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                {
+                    "id": 1071,
+                    "storyKindRowsStr": "n/6",
+                    "entryId": 29,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                }
+            ],
+            "storySuggestions": [
+                {
+                    "id": 1027,
+                    "storycode": "Xvn/DVBH  56",
+                    "entryId": 29,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 2663,
+                    "storycode": "D 96118",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1599,
+                    "aiStorySuggestion": {
+                        "id": 1599,
+                        "ocrPossibleStoryId": 243,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2664,
+                    "storycode": "ZX 65-04-18",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1600,
+                    "aiStorySuggestion": {
+                        "id": 1600,
+                        "ocrPossibleStoryId": 244,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2665,
+                    "storycode": "XPW DF 114-3",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1601,
+                    "aiStorySuggestion": {
+                        "id": 1601,
+                        "ocrPossibleStoryId": 245,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2666,
+                    "storycode": "D  7036",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1602,
+                    "aiStorySuggestion": {
+                        "id": 1602,
+                        "ocrPossibleStoryId": 246,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2667,
+                    "storycode": "I TL 2080-1",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1603,
+                    "aiStorySuggestion": {
+                        "id": 1603,
+                        "ocrPossibleStoryId": 247,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2668,
+                    "storycode": "D 93061",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1604,
+                    "aiStorySuggestion": {
+                        "id": 1604,
+                        "ocrPossibleStoryId": 248,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2669,
+                    "storycode": "D 97008",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1605,
+                    "aiStorySuggestion": {
+                        "id": 1605,
+                        "ocrPossibleStoryId": 249,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2670,
+                    "storycode": "D 95182",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1606,
+                    "aiStorySuggestion": {
+                        "id": 1606,
+                        "ocrPossibleStoryId": 250,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2671,
+                    "storycode": "D 93466",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1607,
+                    "aiStorySuggestion": {
+                        "id": 1607,
+                        "ocrPossibleStoryId": 251,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2672,
+                    "storycode": "W WDC 246-03",
+                    "entryId": 29,
+                    "aiStorySuggestionId": 1608,
+                    "aiStorySuggestion": {
+                        "id": 1608,
+                        "ocrPossibleStoryId": 252,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                }
+            ]
+        },
+        {
+            "id": 30,
+            "acceptedStorySuggestionId": 86,
+            "acceptedStoryKindSuggestionId": 291,
+            "indexationId": "20250125T175811768",
+            "position": 2,
+            "entrycomment": null,
+            "part": null,
+            "title": "Kẹt ngoài vũ trụ",
+            "entirepages": 9,
+            "brokenpagenumerator": 0,
+            "brokenpagedenominator": 1,
+            "acceptedStory": {
+                "id": 86,
+                "storycode": "D 97006",
+                "entryId": 30,
+                "aiStorySuggestionId": null
+            },
+            "acceptedStoryKind": {
+                "id": 291,
+                "storyKindRowsStr": "n/3",
+                "entryId": 30,
+                "aiKumikoResultId": null,
+                "storyKindRows": {
+                    "id": "n/3",
+                    "kind": "n",
+                    "numberOfRows": 3
+                }
+            },
+            "storyKindSuggestions": [
+                {
+                    "id": 291,
+                    "storyKindRowsStr": "n/3",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                {
+                    "id": 292,
+                    "storyKindRowsStr": "k/0",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "k/0",
+                        "kind": "k",
+                        "numberOfRows": 0
+                    }
+                },
+                {
+                    "id": 293,
+                    "storyKindRowsStr": "c/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "c/1",
+                        "kind": "c",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 294,
+                    "storyKindRowsStr": "i/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "i/1",
+                        "kind": "i",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 295,
+                    "storyKindRowsStr": "g/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "g/1",
+                        "kind": "g",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 296,
+                    "storyKindRowsStr": "t/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "t/1",
+                        "kind": "t",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 297,
+                    "storyKindRowsStr": "a/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "a/1",
+                        "kind": "a",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 298,
+                    "storyKindRowsStr": "P/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "P/1",
+                        "kind": "P",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 299,
+                    "storyKindRowsStr": "L/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "L/1",
+                        "kind": "L",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 300,
+                    "storyKindRowsStr": "f/1",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "f/1",
+                        "kind": "f",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 954,
+                    "storyKindRowsStr": "n/4",
+                    "entryId": 30,
+                    "aiKumikoResultId": 1229,
+                    "storyKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                {
+                    "id": 1013,
+                    "storyKindRowsStr": "n/5",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                {
+                    "id": 1072,
+                    "storyKindRowsStr": "n/6",
+                    "entryId": 30,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                }
+            ],
+            "storySuggestions": [
+                {
+                    "id": 86,
+                    "storycode": "D 97006",
+                    "entryId": 30,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 2673,
+                    "storycode": "D 2003-150",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1609,
+                    "aiStorySuggestion": {
+                        "id": 1609,
+                        "ocrPossibleStoryId": 253,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2674,
+                    "storycode": "D 96170",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1610,
+                    "aiStorySuggestion": {
+                        "id": 1610,
+                        "ocrPossibleStoryId": 254,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2675,
+                    "storycode": "D 92209",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1611,
+                    "aiStorySuggestion": {
+                        "id": 1611,
+                        "ocrPossibleStoryId": 255,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2676,
+                    "storycode": "I PK3   6-1",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1612,
+                    "aiStorySuggestion": {
+                        "id": 1612,
+                        "ocrPossibleStoryId": 256,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2677,
+                    "storycode": "G C 1073",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1613,
+                    "aiStorySuggestion": {
+                        "id": 1613,
+                        "ocrPossibleStoryId": 257,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2678,
+                    "storycode": "W DD  118-01",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1614,
+                    "aiStorySuggestion": {
+                        "id": 1614,
+                        "ocrPossibleStoryId": 258,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2679,
+                    "storycode": "U MMA 16B17",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1615,
+                    "aiStorySuggestion": {
+                        "id": 1615,
+                        "ocrPossibleStoryId": 259,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2680,
+                    "storycode": "D 96347",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1616,
+                    "aiStorySuggestion": {
+                        "id": 1616,
+                        "ocrPossibleStoryId": 260,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2681,
+                    "storycode": "D 2006-136",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1617,
+                    "aiStorySuggestion": {
+                        "id": 1617,
+                        "ocrPossibleStoryId": 261,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                },
+                {
+                    "id": 2682,
+                    "storycode": "KG 0190",
+                    "entryId": 30,
+                    "aiStorySuggestionId": 1618,
+                    "aiStorySuggestion": {
+                        "id": 1618,
+                        "ocrPossibleStoryId": 262,
+                        "storySearchPossibleStoryId": null,
+                        "aiStorySearchPossibleStory": null
+                    }
+                }
+            ]
+        },
+        {
+            "id": 31,
+            "acceptedStorySuggestionId": 97,
+            "acceptedStoryKindSuggestionId": 301,
+            "indexationId": "20250125T175811768",
+            "position": 11,
+            "entrycomment": null,
+            "part": null,
+            "title": "Thành phố dưới lòng đất",
+            "entirepages": 11,
+            "brokenpagenumerator": 0,
+            "brokenpagedenominator": 1,
+            "acceptedStory": {
+                "id": 97,
+                "storycode": "D 96163",
+                "entryId": 31,
+                "aiStorySuggestionId": null
+            },
+            "acceptedStoryKind": {
+                "id": 301,
+                "storyKindRowsStr": "n/3",
+                "entryId": 31,
+                "aiKumikoResultId": null,
+                "storyKindRows": {
+                    "id": "n/3",
+                    "kind": "n",
+                    "numberOfRows": 3
+                }
+            },
+            "storyKindSuggestions": [
+                {
+                    "id": 301,
+                    "storyKindRowsStr": "n/3",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                {
+                    "id": 302,
+                    "storyKindRowsStr": "k/0",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "k/0",
+                        "kind": "k",
+                        "numberOfRows": 0
+                    }
+                },
+                {
+                    "id": 303,
+                    "storyKindRowsStr": "c/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "c/1",
+                        "kind": "c",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 304,
+                    "storyKindRowsStr": "i/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "i/1",
+                        "kind": "i",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 305,
+                    "storyKindRowsStr": "g/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "g/1",
+                        "kind": "g",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 306,
+                    "storyKindRowsStr": "t/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "t/1",
+                        "kind": "t",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 307,
+                    "storyKindRowsStr": "a/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "a/1",
+                        "kind": "a",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 308,
+                    "storyKindRowsStr": "P/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "P/1",
+                        "kind": "P",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 309,
+                    "storyKindRowsStr": "L/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "L/1",
+                        "kind": "L",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 310,
+                    "storyKindRowsStr": "f/1",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "f/1",
+                        "kind": "f",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 955,
+                    "storyKindRowsStr": "n/4",
+                    "entryId": 31,
+                    "aiKumikoResultId": 1238,
+                    "storyKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                {
+                    "id": 1014,
+                    "storyKindRowsStr": "n/5",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                {
+                    "id": 1073,
+                    "storyKindRowsStr": "n/6",
+                    "entryId": 31,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                }
+            ],
+            "storySuggestions": [
+                {
+                    "id": 87,
+                    "storycode": "H 91033",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 88,
+                    "storycode": "D 95119",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 89,
+                    "storycode": "H 97178",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 90,
+                    "storycode": "D 96171",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 91,
+                    "storycode": "H 83065",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 92,
+                    "storycode": "D 93369",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 93,
+                    "storycode": "D 95188",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 94,
+                    "storycode": "D 93174",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 95,
+                    "storycode": "D 95201",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 96,
+                    "storycode": "D 95199",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 97,
+                    "storycode": "D 96163",
+                    "entryId": 31,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                }
+            ]
+        },
+        {
+            "id": 32,
+            "acceptedStorySuggestionId": 239,
+            "acceptedStoryKindSuggestionId": 311,
+            "indexationId": "20250125T175811768",
+            "position": 22,
+            "entrycomment": null,
+            "part": null,
+            "title": "Donald đón mừng năm mới",
+            "entirepages": 12,
+            "brokenpagenumerator": 0,
+            "brokenpagedenominator": 1,
+            "acceptedStory": {
+                "id": 239,
+                "storycode": "D 97198",
+                "entryId": 32,
+                "aiStorySuggestionId": null
+            },
+            "acceptedStoryKind": {
+                "id": 311,
+                "storyKindRowsStr": "n/3",
+                "entryId": 32,
+                "aiKumikoResultId": null,
+                "storyKindRows": {
+                    "id": "n/3",
+                    "kind": "n",
+                    "numberOfRows": 3
+                }
+            },
+            "storyKindSuggestions": [
+                {
+                    "id": 311,
+                    "storyKindRowsStr": "n/3",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                {
+                    "id": 312,
+                    "storyKindRowsStr": "k/0",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "k/0",
+                        "kind": "k",
+                        "numberOfRows": 0
+                    }
+                },
+                {
+                    "id": 313,
+                    "storyKindRowsStr": "c/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "c/1",
+                        "kind": "c",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 314,
+                    "storyKindRowsStr": "i/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "i/1",
+                        "kind": "i",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 315,
+                    "storyKindRowsStr": "g/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "g/1",
+                        "kind": "g",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 316,
+                    "storyKindRowsStr": "t/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "t/1",
+                        "kind": "t",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 317,
+                    "storyKindRowsStr": "a/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "a/1",
+                        "kind": "a",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 318,
+                    "storyKindRowsStr": "P/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "P/1",
+                        "kind": "P",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 319,
+                    "storyKindRowsStr": "L/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "L/1",
+                        "kind": "L",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 320,
+                    "storyKindRowsStr": "f/1",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "f/1",
+                        "kind": "f",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 956,
+                    "storyKindRowsStr": "n/4",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                {
+                    "id": 1015,
+                    "storyKindRowsStr": "n/5",
+                    "entryId": 32,
+                    "aiKumikoResultId": 1252,
+                    "storyKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                {
+                    "id": 1074,
+                    "storyKindRowsStr": "n/6",
+                    "entryId": 32,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                }
+            ],
+            "storySuggestions": [
+                {
+                    "id": 98,
+                    "storycode": "I TL 1039-BP",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 99,
+                    "storycode": "D 88377",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 100,
+                    "storycode": "D  2200",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 101,
+                    "storycode": "D 99173",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 102,
+                    "storycode": "F JM 82044",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 103,
+                    "storycode": "S 77079",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 104,
+                    "storycode": "Qit/AO 55016",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 105,
+                    "storycode": "Qit/AO 55014A",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 106,
+                    "storycode": "XPW CA   6-3",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 239,
+                    "storycode": "D 97198",
+                    "entryId": 32,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                }
+            ]
+        },
+        {
+            "id": 35,
+            "acceptedStorySuggestionId": 238,
+            "acceptedStoryKindSuggestionId": 341,
+            "indexationId": "20250125T175811768",
+            "position": 34,
+            "entrycomment": null,
+            "part": null,
+            "title": "Coi \"cọp\"",
+            "entirepages": 1,
+            "brokenpagenumerator": 0,
+            "brokenpagedenominator": 1,
+            "acceptedStory": {
+                "id": 238,
+                "storycode": "D 93042",
+                "entryId": 35,
+                "aiStorySuggestionId": null
+            },
+            "acceptedStoryKind": {
+                "id": 341,
+                "storyKindRowsStr": "n/3",
+                "entryId": 35,
+                "aiKumikoResultId": null,
+                "storyKindRows": {
+                    "id": "n/3",
+                    "kind": "n",
+                    "numberOfRows": 3
+                }
+            },
+            "storyKindSuggestions": [
+                {
+                    "id": 341,
+                    "storyKindRowsStr": "n/3",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                {
+                    "id": 342,
+                    "storyKindRowsStr": "k/0",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "k/0",
+                        "kind": "k",
+                        "numberOfRows": 0
+                    }
+                },
+                {
+                    "id": 343,
+                    "storyKindRowsStr": "c/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "c/1",
+                        "kind": "c",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 344,
+                    "storyKindRowsStr": "i/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "i/1",
+                        "kind": "i",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 345,
+                    "storyKindRowsStr": "g/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "g/1",
+                        "kind": "g",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 346,
+                    "storyKindRowsStr": "t/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "t/1",
+                        "kind": "t",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 347,
+                    "storyKindRowsStr": "a/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "a/1",
+                        "kind": "a",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 348,
+                    "storyKindRowsStr": "P/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "P/1",
+                        "kind": "P",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 349,
+                    "storyKindRowsStr": "L/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "L/1",
+                        "kind": "L",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 350,
+                    "storyKindRowsStr": "f/1",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "f/1",
+                        "kind": "f",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 958,
+                    "storyKindRowsStr": "n/4",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                {
+                    "id": 1017,
+                    "storyKindRowsStr": "n/5",
+                    "entryId": 35,
+                    "aiKumikoResultId": 1261,
+                    "storyKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                {
+                    "id": 1076,
+                    "storyKindRowsStr": "n/6",
+                    "entryId": 35,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                }
+            ],
+            "storySuggestions": [
+                {
+                    "id": 228,
+                    "storycode": "D 95001",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 229,
+                    "storycode": "D 95185",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 230,
+                    "storycode": "D 95087",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 231,
+                    "storycode": "H 99215",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 232,
+                    "storycode": "D 92517",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 233,
+                    "storycode": "D 95011",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 234,
+                    "storycode": "D 95189",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 235,
+                    "storycode": "D  2566",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 236,
+                    "storycode": "W SG   20-01",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 237,
+                    "storycode": "W DD   83-03",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                },
+                {
+                    "id": 238,
+                    "storycode": "D 93042",
+                    "entryId": 35,
+                    "aiStorySuggestionId": null,
+                    "aiStorySuggestion": null
+                }
+            ]
+        },
+        {
+            "id": 95,
+            "acceptedStorySuggestionId": null,
+            "acceptedStoryKindSuggestionId": 1250,
+            "indexationId": "20250125T175811768",
+            "position": 35,
+            "entrycomment": null,
+            "part": null,
+            "title": null,
+            "entirepages": 1,
+            "brokenpagenumerator": 0,
+            "brokenpagedenominator": 1,
+            "acceptedStory": null,
+            "acceptedStoryKind": {
+                "id": 1250,
+                "storyKindRowsStr": "i/1",
+                "entryId": 95,
+                "aiKumikoResultId": null,
+                "storyKindRows": {
+                    "id": "i/1",
+                    "kind": "i",
+                    "numberOfRows": 1
+                }
+            },
+            "storyKindSuggestions": [
+                {
+                    "id": 1246,
+                    "storyKindRowsStr": "a/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "a/1",
+                        "kind": "a",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1247,
+                    "storyKindRowsStr": "c/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "c/1",
+                        "kind": "c",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1248,
+                    "storyKindRowsStr": "f/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "f/1",
+                        "kind": "f",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1249,
+                    "storyKindRowsStr": "g/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "g/1",
+                        "kind": "g",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1250,
+                    "storyKindRowsStr": "i/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "i/1",
+                        "kind": "i",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1251,
+                    "storyKindRowsStr": "k/0",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "k/0",
+                        "kind": "k",
+                        "numberOfRows": 0
+                    }
+                },
+                {
+                    "id": 1252,
+                    "storyKindRowsStr": "n/3",
+                    "entryId": 95,
+                    "aiKumikoResultId": 1262,
+                    "storyKindRows": {
+                        "id": "n/3",
+                        "kind": "n",
+                        "numberOfRows": 3
+                    }
+                },
+                {
+                    "id": 1253,
+                    "storyKindRowsStr": "n/4",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/4",
+                        "kind": "n",
+                        "numberOfRows": 4
+                    }
+                },
+                {
+                    "id": 1254,
+                    "storyKindRowsStr": "n/5",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/5",
+                        "kind": "n",
+                        "numberOfRows": 5
+                    }
+                },
+                {
+                    "id": 1255,
+                    "storyKindRowsStr": "n/6",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "n/6",
+                        "kind": "n",
+                        "numberOfRows": 6
+                    }
+                },
+                {
+                    "id": 1256,
+                    "storyKindRowsStr": "t/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "t/1",
+                        "kind": "t",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1257,
+                    "storyKindRowsStr": "L/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "L/1",
+                        "kind": "L",
+                        "numberOfRows": 1
+                    }
+                },
+                {
+                    "id": 1258,
+                    "storyKindRowsStr": "P/1",
+                    "entryId": 95,
+                    "aiKumikoResultId": null,
+                    "storyKindRows": {
+                        "id": "P/1",
+                        "kind": "P",
+                        "numberOfRows": 1
+                    }
+                }
+            ],
+            "storySuggestions": []
+        }
+    ]
+}

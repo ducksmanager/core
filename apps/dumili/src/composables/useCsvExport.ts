@@ -1,17 +1,46 @@
 import type { FullIndexation } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
 
-const entrycodesWithPageNumbers = (indexation: FullIndexation) =>
-  indexation.entries.map(
+const issuenumberWithoutCountry = (
+  acceptedIssueSuggestion: NonNullable<
+    FullIndexation["acceptedIssueSuggestion"]
+  >,
+) =>
+  `${acceptedIssueSuggestion.publicationcode.split("/")[1]} ${acceptedIssueSuggestion.issuenumber}`;
+
+const entrycodesWithPageNumbers = (indexation: FullIndexation) => {
+  const pageNumberPadding = String(indexation.pages.length).length;
+  return indexation.entries.map(
     (entry, idx) =>
-      `${indexation.acceptedIssueSuggestion!.publicationcode} ${indexation.acceptedIssueSuggestion!.issuenumber}${
+      `${issuenumberWithoutCountry(indexation.acceptedIssueSuggestion!)}${
         idx === 0
           ? String.fromCharCode(97 + idx)
-          : `p${String(entry.position).padStart(3, "0")}`
+          : `p${String(entry.position).padStart(pageNumberPadding, "0")}`
       }`,
   );
+};
 
-export default (
+export const getCsvMetadata = (indexation: FullIndexation) =>
+  ({
+    issuecode: issuenumberWithoutCountry(indexation.acceptedIssueSuggestion!),
+    issdate: indexation.releaseDate,
+    title: indexation.title || undefined,
+    price: indexation.price || undefined,
+    issue_comment: Object.entries({
+      title: indexation.title,
+      pages: indexation.pages.length,
+    })
+      .map(([key, value]) => `[${key}:${value}]`)
+      .join(" "),
+  }) as {
+    issuecode: string;
+    issdate: string;
+    title?: string;
+    price?: string;
+    issue_comment?: string;
+  };
+
+export const getCsvEntries = (
   indexation: FullIndexation,
   storiesWithDetails: {
     storycode: string;
@@ -33,7 +62,7 @@ export default (
       return {
         entrycode: entrycodesWithPageNumbers(indexation)[idx],
         storycode: entry.acceptedStory?.storycode || "",
-        pg: String(getEntryPages(indexation, entry.id).length),
+        pages: String(getEntryPages(indexation, entry.id).length),
 
         ...(Object.fromEntries(
           (["plot", "writ", "art", "ink"] as const).map((job) => [
@@ -44,7 +73,7 @@ export default (
           ]),
         ) as { plot: string; writ: string; art: string; ink: string }),
 
-        la:
+        pagel:
           storyKindRows.kind === "n"
             ? storyKindRows.numberOfRows
             : storyKindRows.kind,
