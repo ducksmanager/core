@@ -5,8 +5,11 @@ const issuenumberWithoutCountry = (
   acceptedIssueSuggestion: NonNullable<
     FullIndexation["acceptedIssueSuggestion"]
   >,
-) =>
-  `${acceptedIssueSuggestion.publicationcode.split("/")[1]} ${acceptedIssueSuggestion.issuenumber}`;
+) => {
+  const { publicationcode, issuenumber } = acceptedIssueSuggestion;
+  const shortPublicationcode = publicationcode.split("/")[1];
+  return `${shortPublicationcode}${Array.from({ length: 8 - (shortPublicationcode.length + issuenumber.length) }, () => " ").join("")}${issuenumber}`;
+};
 
 const entrycodesWithPageNumbers = (indexation: FullIndexation) => {
   const pageNumberPadding = String(indexation.pages.length).length;
@@ -24,18 +27,17 @@ export const getCsvMetadata = (indexation: FullIndexation) =>
   ({
     issuecode: issuenumberWithoutCountry(indexation.acceptedIssueSuggestion!),
     issdate: indexation.releaseDate,
-    title: indexation.title || undefined,
     price: indexation.price || undefined,
-    issue_comment: Object.entries({
-      title: indexation.title,
-      pages: indexation.pages.length,
-    })
-      .map(([key, value]) => `[${key}:${value}]`)
-      .join(" "),
+    issue_comment:
+      (indexation.title ? `${indexation.title} ` : "") +
+      Object.entries({
+        pages: indexation.pages.length,
+      })
+        .map(([key, value]) => `[${key}:${value}]`)
+        .join(" "),
   }) as {
     issuecode: string;
     issdate: string;
-    title?: string;
     price?: string;
     issue_comment?: string;
   };
