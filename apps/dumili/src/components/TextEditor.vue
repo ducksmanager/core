@@ -64,12 +64,6 @@
           class="d-none"
         />
         <b-form-input
-          :model-value="csvMetadata.title"
-          type="text"
-          name="title"
-          class="d-none"
-        />
-        <b-form-input
           :model-value="csvMetadata.issue_comment"
           type="text"
           name="issue_comment"
@@ -92,7 +86,6 @@ import type { FullEntry } from "~dumili-services/indexation";
 import { type storySuggestion } from "~prisma/client_dumili/client";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { storyDetails } = storeToRefs(coa());
 const { indexation } = storeToRefs(suggestions());
 const { acceptedIssue: issue } = storeToRefs(suggestions());
 
@@ -106,27 +99,33 @@ const acceptedStories = computed(() =>
     .filter((story): story is FullEntry["acceptedStory"] => story !== null),
 );
 
-const storiesWithDetails =
-  ref<Awaited<ReturnType<typeof getStoriesWithDetails>>>();
+const storycodes = computed(() =>
+  Object.values(acceptedStories.value || {})
+    .filter(
+      (story): story is storySuggestion & { storycode: string } =>
+        story?.storycode !== null,
+    )
+    .map((story) => story.storycode),
+);
 
-const getStoriesWithDetails = (stories: storySuggestion[]) =>
-  Promise.all(
-    Object.values(stories)
-      .filter(
-        (story): story is storySuggestion & { storycode: string } =>
-          story !== undefined && story.storycode !== null,
-      )
-      .map(async (story) => {
-        const storyjobsResult = await coaEvents.getStoryjobs(story!.storycode);
-        const storyjobs =
-          "error" in storyjobsResult ? [] : storyjobsResult.data;
-        return {
-          ...story,
-          ...storyDetails.value[story!.storycode],
-          storyjobs,
-        };
-      }),
-  );
+const storiesWithDetails = computedAsync(() =>
+  Promise.all([
+    coaEvents.getStoriesStoryjobs(storycodes.value),
+    coaEvents.getStoriesHeroCharacter(storycodes.value),
+  ]).then(([storyjobs, heroCharacter]) => {
+    const storiesStoryjobs = "error" in storyjobs ? {} : storyjobs.data;
+    const heroCharacters = "error" in heroCharacter ? {} : heroCharacter.data;
+    return storycodes.value
+      .map((storycode) => ({
+        storycode,
+        heroCharacter:
+          storycode in heroCharacters ? heroCharacters[storycode] : null,
+        storyjobs:
+          storycode in storiesStoryjobs ? storiesStoryjobs[storycode] : [],
+      }))
+      .groupBy("storycode");
+  }),
+);
 
 const downloadCsv = () => {
   if (csv.value) {
@@ -143,20 +142,6 @@ const csv = computed(() =>
   getCsvEntries(indexation.value!, storiesWithDetails.value!),
 );
 const csvMetadata = computed(() => getCsvMetadata(indexation.value!));
-
-watch(
-  acceptedStories,
-  async (value) => {
-    if (value) {
-      storiesWithDetails.value = await getStoriesWithDetails(
-        value.filter(
-          (story): story is NonNullable<typeof story> => story !== null,
-        ),
-      );
-    }
-  },
-  { immediate: true, deep: true },
-);
 </script>
 <style scoped lang="scss">
 @use "sass:list";

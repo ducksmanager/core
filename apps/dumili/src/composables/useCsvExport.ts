@@ -1,5 +1,24 @@
 import type { FullIndexation } from "~dumili-services/indexation";
 import { getEntryPages } from "~dumili-utils/entryPages";
+import type { SuccessfulEventOutput } from "socket-call-client";
+import type { ClientEvents as CoaEvents } from "~dm-services/coa";
+
+export type StoriesWithDetails = Record<
+  string,
+  {
+    storycode: string;
+    heroCharacter:
+      | SuccessfulEventOutput<
+          CoaEvents,
+          "getStoriesHeroCharacter"
+        >["data"][string]
+      | null;
+    storyjobs: SuccessfulEventOutput<
+      CoaEvents,
+      "getStoriesStoryjobs"
+    >["data"][string];
+  }
+>;
 
 const issuenumberWithoutCountry = (
   acceptedIssueSuggestion: NonNullable<
@@ -44,26 +63,20 @@ export const getCsvMetadata = (indexation: FullIndexation) =>
 
 export const getCsvEntries = (
   indexation: FullIndexation,
-  storiesWithDetails: {
-    storycode: string;
-    storyjobs: {
-      plotwritartink: string;
-      personcode: string;
-    }[];
-  }[],
+  storiesWithDetails: StoriesWithDetails,
 ) => {
-  if (!storiesWithDetails?.length) {
+  if (!Object.keys(storiesWithDetails).length) {
     return undefined;
   } else {
     const data = indexation.entries.map((entry, idx) => {
-      const storyWithDetails = storiesWithDetails.find(
-        ({ storycode }) => storycode === entry.acceptedStory?.storycode,
-      );
+      const storyWithDetails =
+        storiesWithDetails[entry.acceptedStory?.storycode || ""] || undefined;
       const { storyKindRows } = entry.acceptedStoryKind!;
 
       return {
         entrycode: entrycodesWithPageNumbers(indexation)[idx],
         storycode: entry.acceptedStory?.storycode || "",
+        hero: storyWithDetails?.heroCharacter || "",
         pages: String(getEntryPages(indexation, entry.id).length),
 
         ...(Object.fromEntries(

@@ -111,14 +111,33 @@ const getStoryversionsDetails = (storyversioncodes: string[]) =>
     .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
-const getStoryjobs = (storyversioncode: string) =>
+const getStoriesStoryjobs = (storyversioncodes: string[]) =>
   prismaCoa.inducks_storyjob
     .findMany({
+      select: {
+        storyversioncode: true,
+        personcode: true,
+        plotwritartink: true,
+      },
       where: {
-        storyversioncode,
+        storyversioncode: { in: storyversioncodes },
       },
     })
-    .then((data) => ({ data }))
+    .then((data) => ({ data: data.groupBy("storyversioncode", "[]") }))
+    .catch((e) => ({ error: "Error", errorDetails: e }));
+
+const getStoriesHeroCharacter = (storycodes: string[]) =>
+  prismaCoa.inducks_herocharacter 
+    .findMany({
+      select: {
+        storycode: true,
+        charactercode: true,
+      },
+      where: {
+        storycode: { in: storycodes },
+      },
+    })
+    .then((data) => ({ data: data.groupBy("storycode", "charactercode") }))
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
 const searchStory = async <WithIssues extends boolean>(
@@ -223,7 +242,8 @@ export default {
   getFullStoriesFromKeywords,
   getStoryDetails,
   getStoryversionsDetails,
-  getStoryjobs,
+  getStoriesStoryjobs,
+  getStoriesHeroCharacter,
   searchStory,
   searchStoryByStorycode,
   listIssuesFromStoryCode,

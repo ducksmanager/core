@@ -1,4 +1,5 @@
 import test, { expect } from "@playwright/test";
+import type { StoriesWithDetails } from "../src/composables/useCsvExport";
 import { getCsvEntries, getCsvMetadata } from "../src/composables/useCsvExport";
 import csvImport from "./csv-import";
 import type { FullIndexation } from "../api/services/indexation";
@@ -14,17 +15,33 @@ test("Export and import CSV file", async ({ page }) => {
       "utf8",
     ),
   );
-  const storiesWithDetails = [
-    {
+  const storiesWithDetails: StoriesWithDetails = {
+    "Xvn/DVBH  56": {
       storycode: "Xvn/DVBH  56",
-      storyjobs: [
-        {
-          plotwritartink: "plot",
-          personcode: "1",
-        },
-      ],
+      storyjobs: [],
+      heroCharacter: null,
     },
-  ];
+    "D 97006": {
+      storycode: "D 97006",
+      storyjobs: [],
+      heroCharacter: "DD",
+    },
+    "D 96163": {
+      storycode: "D 96163",
+      storyjobs: [],
+      heroCharacter: "MM",
+    },
+    "D 97198": {
+      storycode: "D 97198",
+      storyjobs: [],
+      heroCharacter: "DD",
+    },
+    "D 93042": {
+      storycode: "D 93042",
+      storyjobs: [],
+      heroCharacter: "DD",
+    },
+  };
   const csv = getCsvEntries(indexation, storiesWithDetails);
   expect(csv).toBeDefined();
 
