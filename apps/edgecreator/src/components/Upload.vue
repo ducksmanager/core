@@ -99,7 +99,11 @@ onMounted(() => {
           });
         }
       } catch (error) {
-        window.alert((error as { error: string }).error);
+        window.alert(
+          typeof error === "string"
+            ? error
+            : (error as { error: string }).error,
+        );
       }
     });
 });
