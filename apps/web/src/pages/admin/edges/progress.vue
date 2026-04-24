@@ -44,57 +44,64 @@ meta:
         ]"
         class="publication"
       >
-        <i-bi-eye-fill
-          v-if="!showEdgesForPublication.includes(publicationcode)"
-          @click="showEdgesForPublication.push(publicationcode)"
-        />
-        <i-bi-eye-slash-fill
-          v-else
-          @click="
-            showEdgesForPublication.splice(
-              showEdgesForPublication.indexOf(publicationcode),
-              1,
-            )
-          "
-        />
-        <Publication
-          :publicationcode="publicationcode"
-          :publicationname="publicationcode"
+        <b-alert
+          v-if="publicationcode === 'undefined'"
+          variant="warning"
+          :model-value="true"
         >
-          <b class="mx-1">{{ publicationNames[publicationcode] }}</b>
-        </Publication>
-        <div v-if="inducksIssuenumbers[publicationcode]">
-          <Bookcase
-            v-if="showEdgesForPublication.includes(publicationcode)"
-            :bookcase-textures="bookcaseTextures"
-            :sorted-bookcase="sortedBookcase[publicationcode]"
+          Certaines tranches de cette publication sont prêtes mais la
+          publication n'existe plus sur Inducks :
+          {{ issuesForPublication.map((a) => JSON.stringify(a)).join(", ") }}
+        </b-alert>
+        <template v-else>
+          <i-bi-eye-fill
+            v-if="!showEdgesForPublication.includes(publicationcode)"
+            @click="showEdgesForPublication.push(publicationcode)"
           />
-          <span
-            v-for="inducksIssuecode in issuecodesByPublicationcode[
-              publicationcode
-            ]"
+          <i-bi-eye-slash-fill
             v-else
-            :key="inducksIssuecode"
+            @click="
+              showEdgesForPublication.splice(
+                showEdgesForPublication.indexOf(publicationcode),
+                1,
+              )
+            "
+          />
+          {{ JSON.stringify({ publicationcode }) }}
+          <Publication
+            :publicationcode="publicationcode"
+            :publicationname="publicationcode"
           >
+            <b class="mx-1">{{ publicationNames[publicationcode] }}</b>
+          </Publication>
+          <div>
+            <Bookcase
+              v-if="showEdgesForPublication.includes(publicationcode)"
+              :bookcase-textures="bookcaseTextures"
+              :sorted-bookcase="sortedBookcase[publicationcode]"
+            />
             <span
-              class="num bordered"
-              :class="{
+              v-for="inducksIssuecode in issuecodesByPublicationcode[
+                publicationcode
+              ]"
+              v-else
+              :key="inducksIssuecode"
+            >
+              <span
+                class="num bordered"
+                :class="{
                 available: issuesForPublication
                   .map(({ issuecode }) => issuecode)
                   ?.includes(inducksIssuecode),
                 owned: issuesByIssuecode[inducksIssuecode]!!,
               }"
-              :title="inducksIssuecode"
-              @click="open(inducksIssuecode)"
-              >&nbsp;</span
-            >
-          </span>
-        </div>
-        <div v-else>
-          Certaines tranches de cette publication sont prêtes mais la
-          publication n'existe plus sur Inducks :
-          {{ issuesForPublication.join(", ") }}
-        </div>
+                :title="inducksIssuecode"
+                @click="open(inducksIssuecode)"
+                >&nbsp;</span
+              >
+            </span>
+          </div></template
+        >
       </div>
       <br /><br />
       <b>{{ publishedEdges.length }} tranches prêtes.</b><br />
