@@ -41,6 +41,16 @@ if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
   });
+
+  process.on("unhandledRejection", (reason: Error) => {
+    console.error(reason);
+    Sentry.captureException(reason);
+  });
+
+  process.on("uncaughtException", (error: Error) => {
+    console.error(error);
+    Sentry.captureException(error);
+  });
 }
 
 const app = express();

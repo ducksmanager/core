@@ -100,9 +100,7 @@ onMounted(() => {
         }
       } catch (error) {
         window.alert(
-          typeof error === "string"
-            ? error
-            : (error as { error: string }).error,
+          typeof error === "object" && "error" in error! ? error.error : error,
         );
       }
     });
