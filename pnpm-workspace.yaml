@@ -2,7 +2,6 @@ packages:
   - "apps/*"
   - "apps/*/packages/*"
   - "apps/*/api"
-  - "apps/*/browser-extension"
   - "packages/*"
   - "util/*"
 shellEmulator: true

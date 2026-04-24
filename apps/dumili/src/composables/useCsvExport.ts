@@ -63,14 +63,14 @@ export const getCsvMetadata = (indexation: FullIndexation) =>
 
 export const getCsvEntries = (
   indexation: FullIndexation,
-  storiesWithDetails: StoriesWithDetails,
+  storiesWithDetails: StoriesWithDetails | undefined,
 ) => {
-  if (!Object.keys(storiesWithDetails).length) {
+  if (!storiesWithDetails || !Object.keys(storiesWithDetails).length) {
     return undefined;
   } else {
     const data = indexation.entries.map((entry, idx) => {
       const storyWithDetails =
-        storiesWithDetails[entry.acceptedStory?.storycode || ""] || undefined;
+        storiesWithDetails[entry.acceptedStory?.storycode || ""];
       const { storyKindRows } = entry.acceptedStoryKind!;
 
       return {

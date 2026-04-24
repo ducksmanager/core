@@ -1,5 +1,5 @@
 import preview from "../../.storybook/preview";
-import TextEditor from "./TextEditor.vue";
+import Finish from "./Finish.vue";
 import {
   createMockEntry,
   createMockPage,
@@ -7,7 +7,7 @@ import {
 } from "../../.storybook/utils/mocks";
 
 const meta = preview.meta({
-  title: "Components/TextEditor",
+  title: "Components/Finish",
   tags: ["autodocs"],
 });
 
@@ -66,10 +66,10 @@ export const Default = meta.story({
     ),
   ],
   render: () => ({
-    components: { TextEditor },
+    components: { Finish },
     template: `
       <div style="width: 100%; height: 400px;">
-        <TextEditor />
+        <Finish />
       </div>
     `,
   }),
