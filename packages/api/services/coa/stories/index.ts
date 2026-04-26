@@ -84,16 +84,28 @@ const getStoryDetails = async (storycodes: string[]) =>
           },
         }),
         prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
-            SELECT s.storycode,
-                   MIN(CONCAT('webusers/webusers/', eu.url)) AS url
-            FROM inducks_story s
-                     INNER JOIN coa.inducks_storyversion sv ON s.storycode = sv.storycode
-                     INNER JOIN coa.inducks_entry e USING (storyversioncode)
-                     INNER JOIN coa.inducks_entryurl eu USING (entrycode)
-            WHERE sv.storycode = s.storycode
-              AND s.storycode IN (${Prisma.join(storycodes)})
-              AND eu.sitecode = 'webusers'
-            GROUP BY s.storycode`,
+            SELECT storycode, CONCAT('webusers/webusers/', url) AS url
+            FROM (
+              SELECT s.storycode,
+                    eu.url,
+                    i.oldestdate,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY s.storycode
+                        ORDER BY i.oldestdate ASC
+                    ) AS rn
+              FROM coa.inducks_story s
+                      INNER JOIN coa.inducks_storyversion sv
+                          ON s.storycode = sv.storycode
+                      INNER JOIN coa.inducks_entry e
+                          USING (storyversioncode)
+                      INNER JOIN coa.inducks_entryurl eu
+                          USING (entrycode)
+                      INNER JOIN coa.inducks_issue i
+                          USING (issuecode)
+              WHERE s.storycode IN (${Prisma.join(storycodes)})
+            ) ranked
+            WHERE rn = 1
+            ORDER BY storycode`,
       ])
         .then(([stories, storyUrls]) => ({
           stories: stories.groupBy("storycode"),
