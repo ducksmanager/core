@@ -2,6 +2,7 @@ import addonDocs from "@storybook/addon-docs";
 import { setup, definePreview } from "@storybook/vue3-vite";
 import { getCurrentInstance, ref } from "vue";
 import { createPinia } from "pinia";
+import "~group-by";
 import { createBootstrap } from "bootstrap-vue-next";
 import { createRouter, createWebHistory } from "vue-router";
 import { createHead } from "@unhead/vue";

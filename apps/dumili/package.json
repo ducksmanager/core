@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "vite build && pnpm sentry:sourcemaps && pnpm build-storybook",
-    "build-storybook": "storybook build",
+    "build-storybook": "pnpm test-storybook:prebuild && storybook build",
     "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko+paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web web\" \"docker compose -f docker-compose-dev.yml up kumiko db\"",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
     "preview": "vite preview",
@@ -21,6 +21,8 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/docker-compose.yml:@apps/dumili/docker-compose.yml apps/dumili/Caddyfile:@apps/dumili/Caddyfile apps/dumili/config/sentry-relay/projects/4508868506222592.json:@apps/dumili/config/sentry-relay/projects/4508868506222592.json apps/dumili/config/sentry-relay/config.yml:@apps/dumili/config/sentry-relay/config.yml",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist",
     "storybook": "NODE_ENV=development storybook dev -p 6006",
+    "test-storybook": "test-storybook --config-dir .storybook --ci --failOnConsole --testTimeout=30000",
+    "test-storybook:prebuild": "start-server-and-test \"NODE_ENV=development storybook dev -p 6006 --no-open --ci --quiet\" http://127.0.0.1:6006 \"pnpm test-storybook\"",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -56,6 +58,7 @@
     "@playwright/test": "^1.59.1",
     "@sentry/cli": "^3.3.5",
     "@storybook/addon-docs": "^10.3.4",
+    "@storybook/test-runner": "^0.24.3",
     "@storybook/vue3-vite": "^10.3.4",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^24.12.2",
@@ -72,6 +75,7 @@
     "eslint-plugin-vue": "^10.8.0",
     "prettier": "^3.8.1",
     "sass": "^1.99.0",
+    "start-server-and-test": "^2.0.11",
     "storybook": "^10.3.4",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
