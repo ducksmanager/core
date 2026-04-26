@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "vite build && pnpm sentry:sourcemaps && pnpm build-storybook",
-    "build-storybook": "pnpm exec playwright install && pnpm test-storybook:prebuild && storybook build",
+    "build-storybook": "storybook build",
     "dumili": "concurrently -p \"[dumili-{name}]\" --kill-others-on-fail -n front,api,dm,kumiko+paddleocr \"pnpm -F ~dumili dev\" \"pnpm -F ~dumili-api dev\" \"pnpm -F ~web web\" \"docker compose -f docker-compose-dev.yml up kumiko db\"",
     "dev": "concurrently -n vite,vue-tsc \"vite --port 8004\" \"vue-tsc --noEmit --watch\"",
     "preview": "vite preview",
