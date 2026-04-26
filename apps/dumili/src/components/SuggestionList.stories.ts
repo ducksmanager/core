@@ -11,7 +11,7 @@ type MockSuggestion = {
 
 type SuggestionListStoryArgs = {
   suggestions: MockSuggestion[];
-  isAiSource: (suggestion: MockSuggestion) => boolean;
+  category: (suggestion: MockSuggestion) => "ai" | "user" | "previous";
   showCustomizeForm?: boolean;
 };
 
@@ -36,14 +36,13 @@ const meta = preview.type<{ args: SuggestionListStoryArgs }>().meta({
       control: "object",
       description: "Array of suggestions to display",
     },
-    isAiSource: {
-      control: false,
-      description: "Function to determine if a suggestion is from AI",
-    },
     showCustomizeForm: {
       control: "boolean",
       description: "Whether to show the customize form",
     },
+  },
+  args: {
+    showCustomizeForm: false,
   },
 });
 
@@ -57,24 +56,26 @@ const mockSuggestions: MockSuggestion[] = [
 export const Default = meta.story({
   args: {
     suggestions: mockSuggestions,
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
   render: (args) => ({
     components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -89,24 +90,26 @@ export const Default = meta.story({
 export const WithSelected = meta.story({
   args: {
     suggestions: mockSuggestions,
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
   render: (args) => ({
     components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(mockSuggestions[0]);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -121,25 +124,27 @@ export const WithSelected = meta.story({
 export const WithCustomizeForm = meta.story({
   args: {
     suggestions: mockSuggestions,
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
     showCustomizeForm: true,
   },
   render: (args) => ({
     components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -160,24 +165,26 @@ export const WithCustomizeForm = meta.story({
 export const OnlyUserSuggestions = meta.story({
   args: {
     suggestions: mockSuggestions.filter((s) => !s.isAi),
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
   render: (args) => ({
     components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -192,24 +199,26 @@ export const OnlyUserSuggestions = meta.story({
 export const OnlyAiSuggestions = meta.story({
   args: {
     suggestions: mockSuggestions.filter((s) => s.isAi),
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
   render: (args) => ({
     components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}

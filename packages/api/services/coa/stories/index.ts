@@ -111,6 +111,19 @@ const getStoryversionsDetails = (storyversioncodes: string[]) =>
     .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
+  const getStoryPreviousTitles = async (storycode: string, languagecode: string) =>
+    prismaCoa.$queryRaw<{ title: string }[]>`
+      select DISTINCT inducks_entry.title AS title
+      from inducks_storyversion
+      inner join inducks_entry using (storyversioncode)
+      inner join inducks_issue using (issuecode)
+      inner join inducks_publication using (publicationcode)
+      inner join inducks_country using (countrycode)
+      where storycode=${storycode}
+      and COALESCE(inducks_entry.languagecode, inducks_publication.languagecode, inducks_country.defaultlanguage) = ${languagecode}
+      order by oldestdate desc;
+    `.then((data) => data.map(({ title }) => ( title )));
+
 const getStoriesStoryjobs = (storyversioncodes: string[]) =>
   prismaCoa.inducks_storyjob
     .findMany({
@@ -242,6 +255,7 @@ export default {
   getFullStoriesFromKeywords,
   getStoryDetails,
   getStoryversionsDetails,
+  getStoryPreviousTitles,
   getStoriesStoryjobs,
   getStoriesHeroCharacter,
   searchStory,

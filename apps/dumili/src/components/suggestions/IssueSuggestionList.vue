@@ -1,14 +1,13 @@
 <template>
   <suggestion-list
     v-model="indexation.acceptedIssueSuggestion"
+    v-model:show-customize-form="showIssueSelect"
     class="position-static"
     :suggestions="indexation.issueSuggestions"
-    :is-ai-source="
+    :category="
       ({ aiStorySearchPossibleStoryId }) =>
-        aiStorySearchPossibleStoryId !== null
+        aiStorySearchPossibleStoryId !== null ? 'ai' : 'user'
     "
-    :show-customize-form="showIssueSelect"
-    @toggle-customize-form="showIssueSelect = $event"
   >
     <template #default="{ suggestion }"> <Issue :issue="suggestion" /></template
     ><template #unknown-text>{{ $t("Numéro inconnu") }}</template>

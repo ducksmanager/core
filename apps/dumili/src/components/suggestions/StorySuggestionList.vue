@@ -1,13 +1,14 @@
 <template>
   <suggestion-list
     v-model="entry.acceptedStory"
+    v-model:show-customize-form="showEntrySelect"
     class="position-absolute top-0 d-flex flex-column justify-content-center align-items-start w-100 h-100"
     :suggestions="entry.storySuggestions"
-    :is-ai-source="({ aiStorySuggestionId }) => aiStorySuggestionId !== null"
-    :show-customize-form="showEntrySelect"
-    :extra-menu-class="['w-150', 'start-m50']"
+    :category="
+      ({ aiStorySuggestionId }) =>
+        aiStorySuggestionId !== null ? 'ai' : 'user'
+    "
     :item-link-classes="['h-100p']"
-    @toggle-customize-form="showEntrySelect = $event"
   >
     <template #default="{ suggestion, location }">
       <StoryWithImage :storycode="suggestion.storycode">

@@ -1,26 +1,29 @@
 <template>
   <div :class="classes">
     <b-dropdown
-      class="position-static z-1"
+      class="position-relative z-1"
       style="width: calc(100% - 40px)"
-      :menu-class="['border-white', ...extraMenuClass]"
+      :menu-class="['border-white', 'min-w-100', ...extraMenuClass]"
+      :contenteditable="textEditable || null"
       :toggle-class="[
         'text-wrap',
         'w-100',
         ...(current ? itemClass(current) : []),
       ]"
       ><b-dropdown-group
-        v-for="(group, index) in [userSuggestions, aiSuggestions]"
-        :key="index"
-        header-class="d-none"
+        v-for="(groupSuggestions, group) in groupedSuggestions"
+        :key="group"
+        :header-class="group === 'user' ? 'pb-0 pt-0' : ''"
         :header="
-          index === 1
-            ? `${$t('Suggestions IA')} ${aiSuggestions.length ? '' : $t('(Aucune)')}`
-            : undefined
+          group === 'previous'
+            ? $t('Titres précédents')
+            : group === 'ai'
+              ? $t('Suggestions IA')
+              : undefined
         "
       >
         <b-dropdown-item
-          v-for="(suggestion, idx) of group"
+          v-for="(suggestion, idx) of groupSuggestions"
           :key="`suggestion-${idx}`"
           :link-class="[
             'd-flex',
@@ -34,23 +37,25 @@
           ]"
           @click.stop="
             current = suggestion;
-            emit('toggle-customize-form', false);
+            showCustomizeForm = false;
           "
         >
           <slot v-bind="{ suggestion, location: 'dropdown' }" />
-          <AiSuggestionIcon v-if="isAiSource(suggestion)" status="success"
+          <AiSuggestionIcon
+            v-if="category(suggestion) === 'ai'"
+            status="success"
         /></b-dropdown-item>
       </b-dropdown-group>
       <b-dropdown-group header-class="p-0">
         <b-dropdown-item
           @click="
             current = undefined;
-            emit('toggle-customize-form', false);
+            showCustomizeForm = false;
           "
           ><slot name="unknown-text" /></b-dropdown-item
       ></b-dropdown-group>
       <template v-if="allowCustomizeForm">
-        <b-dropdown-item @click="emit('toggle-customize-form', true)"
+        <b-dropdown-item @click="showCustomizeForm = true"
           ><slot name="customize-text" /></b-dropdown-item
       ></template>
       <template #button-content>
@@ -65,7 +70,7 @@
           />
           <slot v-else name="unknown-text" />
           <AiSuggestionIcon
-            v-if="current && isAiSource(current)"
+            v-if="current && category(current) === 'ai'"
             status="success"
           /></div
       ></template>
@@ -73,7 +78,7 @@
     <slot v-if="showCustomizeForm" name="customize-form" />
   </div>
 </template>
-<script setup lang="ts" generic="S extends {id: number}">
+<script setup lang="ts" generic="S extends {id: number|string}">
 const $slots = useSlots();
 
 defineSlots<{
@@ -84,29 +89,28 @@ defineSlots<{
 }>();
 
 const current = defineModel<S | null>();
+const showCustomizeForm = defineModel<boolean>("showCustomizeForm", {
+  default: false,
+});
 
 const {
   class: classes = "",
   itemLinkClasses = [],
   suggestions,
-  isAiSource,
+  category = () => "user",
   itemClass = () => [],
   selectedItemClass = () => ["selected"],
-  showCustomizeForm = false,
   extraMenuClass = [],
+  textEditable = false,
 } = defineProps<{
   class?: string;
   itemLinkClasses?: string[];
   suggestions: S[];
-  isAiSource: (suggestion: S) => boolean;
+  category?: (suggestion: S) => "ai" | "user" | "previous";
   itemClass?: (suggestion: S) => string[];
   selectedItemClass?: (suggestion: S) => string[];
-  showCustomizeForm?: boolean;
   extraMenuClass?: string[];
-}>();
-
-const emit = defineEmits<{
-  (e: "toggle-customize-form", toggle: boolean): void;
+  textEditable?: boolean;
 }>();
 
 const { t: $t } = useI18n();
@@ -115,12 +119,18 @@ const allowCustomizeForm = computed(
   () => $slots["customize-form"] !== undefined,
 );
 
-const aiSuggestions = computed(() =>
-  suggestions.filter((suggestion) => isAiSource(suggestion)),
-);
-
-const userSuggestions = computed(() =>
-  suggestions.filter((suggestion) => !isAiSource(suggestion)),
+const groupedSuggestions = computed(() =>
+  Object.fromEntries(
+    Object.entries(
+      suggestions.groupBy((suggestion) => category(suggestion), "[]"),
+    ).sort(([categoryA], [categoryB]) =>
+      categoryA === "user"
+        ? -1
+        : categoryB === "user"
+          ? 1
+          : categoryA.localeCompare(categoryB),
+    ),
+  ),
 );
 </script>
 <style lang="scss">

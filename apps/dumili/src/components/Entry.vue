@@ -35,14 +35,26 @@
       cols="4"
       class="position-relative d-flex flex-column align-items-center justify-content-center h-100"
     >
-      <b-form-textarea
+      <suggestion-list
         v-if="editable"
-        :model-value="entry.title"
-        :placeholder="$t('Titre de l\'histoire')"
-        type="text"
-        class="w-100 text-center bg-transparent text-black"
-        @update:model-value="entry.title = ($event as string).replace(/[\r\n]+/g, '')"
-      /><template v-else>
+        class="w-100"
+        text-editable
+        :model-value="{ id: entry.title || '', category: 'user' as const }"
+        :category="({ category }) => category"
+        :suggestions="[
+          ...previousTitles.map((title) => ({
+            id: title,
+            category: 'previous' as const,
+          })),
+          { id: '&nbsp;', category: 'user' as const },
+        ]"
+        @update:model-value="entry.title = $event!.id"
+      >
+        <template #default="{ suggestion }">
+          {{ suggestion.id || "&nbsp;" }}
+        </template>
+      </suggestion-list>
+      <template v-else>
         {{ title || $t("(Sans titre)") }}
         <template v-if="entry.part">
           &nbsp;-&nbsp;{{ $t("partie") }} {{ entry.part }}</template
@@ -84,6 +96,7 @@ import { watchDebounced } from "@vueuse/core";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
+import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { t } = useI18n();
 defineProps<{
@@ -92,9 +105,13 @@ defineProps<{
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
+const { languagecode } = storeToRefs(suggestions());
+
+const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
 const { storyDetails } = storeToRefs(coa());
 
+const previousTitles = ref<string[]>([]);
 const entry = defineModel<FullEntry>({ required: true });
 
 if (
@@ -161,6 +178,19 @@ const title = computed(() => entry.value.title || t("(Sans titre)"));
 
 const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value),
+);
+
+watch(
+  () => entry.value.acceptedStory?.storycode,
+  async (storycode) => {
+    if (storycode && languagecode.value) {
+      previousTitles.value = await coaEvents.getStoryPreviousTitles(
+        storycode,
+        languagecode.value,
+      );
+    }
+  },
+  { immediate: true },
 );
 </script>
 
