@@ -1,9 +1,5 @@
 <template>
   <ion-page>
-    <ion-buttons v-if="componentName === IssueList" slot="end">
-      <CopyListButton />
-      <ViewModesButton v-if="!isIOS" />
-    </ion-buttons>
     <ion-header :key="headerKey" :translucent="true" :class="{ hidden: isCameraPreviewShown }">
       <ion-toolbar>
         <ion-buttons slot="start">
@@ -30,6 +26,10 @@
               />
             </div></div
         ></ion-title>
+        <ion-buttons v-if="componentName === IssueList" slot="end">
+          <CopyListButton />
+          <ViewModesButton v-if="!isIOS" />
+        </ion-buttons>
       </ion-toolbar>
       <Navigation v-if="!isCameraPreviewShown" />
       <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
@@ -49,7 +49,7 @@ import { arrowBackOutline, arrowBackSharp, cloudOfflineOutline, cloudOfflineShar
 import FilterButton from './FilterButton.vue';
 import OwnedIssueCopies from './OwnedIssueCopies.vue';
 
-import { onIonViewDidEnter, toastController } from '@ionic/vue';
+import { toastController } from '@ionic/vue';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 import CountryList from '~/views/CountryList.vue';
@@ -88,7 +88,13 @@ watch(componentName, () => {
   filterText.value = '';
 });
 
-// Force header re-render when camera preview is closed
+const route = useRoute();
+
+/**
+ * Remount ion-header only when the camera preview closes (toolbar could stay blank otherwise).
+ * Do not bump on ionViewDidEnter — that runs more often than actual route changes and remounting
+ * ion-header leaves orphan Stencil nodes (duplicate headers under ion-page).
+ */
 const headerKey = ref(0);
 watch(isCameraPreviewShown, async (shown, wasShown) => {
   if (wasShown && !shown) {
@@ -97,11 +103,20 @@ watch(isCameraPreviewShown, async (shown, wasShown) => {
   }
 });
 
-// Force header re-render when navigating to this page
-onIonViewDidEnter(async () => {
-  await nextTick();
-  headerKey.value++;
-});
+/**
+ * Refresh header when navigating to Collection from another route (toolbar could fail to paint).
+ * Uses route.path so `/collection` hash-only changes do not bump the key — unlike `onIonViewDidEnter`.
+ */
+watch(
+  () => route.path,
+  (path, previousPath) => {
+    if (path === '/collection' && previousPath !== undefined && previousPath !== path) {
+      nextTick(() => {
+        headerKey.value++;
+      });
+    }
+  },
+);
 
 const showOfflineToast = async () => {
   const toast = await toastController.create({
@@ -142,19 +157,12 @@ strong {
   line-height: 26px;
 }
 
-ion-buttons {
-  &[slot='end'] {
-    position: fixed;
-    top: 0.4rem;
+ion-toolbar ion-buttons[slot='end'] {
+  ion-fab,
+  ion-icon {
+    position: relative;
+    top: 0;
     right: 0;
-    height: 44px;
-
-    ion-fab,
-    ion-icon {
-      position: relative;
-      top: 0;
-      right: 0;
-    }
   }
 }
 
