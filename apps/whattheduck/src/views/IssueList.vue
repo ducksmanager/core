@@ -178,7 +178,7 @@ const handleClick = (key: string) => {
 };
 
 watch(isCoaView, () => {
-  selectedIssuecodes.value = [];
+  selectedIssuecodes.value = isCoaView.value ? undefined : [];
 });
 
 const items = computed(() => {

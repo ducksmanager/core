@@ -35,7 +35,7 @@
         @click="
           (fab?.$el as HTMLIonFabElement).close();
           isCoaView = true;
-          selectedIssuecodes = [];
+          selectedIssuecodes = undefined;
         "
       >
         <ion-label>{{ $t('Par sélection de numéro') }}</ion-label>
