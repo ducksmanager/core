@@ -104,17 +104,17 @@ watch(isCameraPreviewShown, async (shown, wasShown) => {
 });
 
 /**
- * Refresh header when navigating to Collection from another route (toolbar could fail to paint).
- * Uses route.path so `/collection` hash-only changes do not bump the key — unlike `onIonViewDidEnter`.
+ * Remount ion-header when Collection’s URL changes
  */
 watch(
-  () => route.path,
-  (path, previousPath) => {
-    if (path === '/collection' && previousPath !== undefined && previousPath !== path) {
-      nextTick(() => {
-        headerKey.value++;
-      });
+  () => route.fullPath,
+  (_fullPath, previousFullPath) => {
+    if (previousFullPath === undefined || route.path !== '/collection') {
+      return;
     }
+    nextTick(() => {
+      headerKey.value++;
+    });
   },
 );
 
