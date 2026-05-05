@@ -6,5 +6,6 @@ WORKDIR /app
 COPY apps/duck-estimator/.env /app/
 COPY apps/duck-estimator/bundle.mjs /app/
 COPY apps/duck-estimator/scrapes /app/scrapes
+COPY apps/duck-estimator/bump-dump.sh /app/
 
 CMD ["node", "bundle.mjs"]
