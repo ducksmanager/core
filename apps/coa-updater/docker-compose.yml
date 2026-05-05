@@ -6,8 +6,8 @@ services:
       - ../../packages/api/.env
     environment:
       MYSQL_HOST: db
+      MYSQL_PORT: 3306
       MYSQL_DATABASE: coa
-      MYSQL_DATABASE_NEW: coa_new
     networks:
       - dm-db-network
       - dm-api-network

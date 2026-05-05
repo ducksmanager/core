@@ -5,39 +5,40 @@ import { parse } from "csv-parse";
 import { createReadStream, existsSync, mkdirSync, readFileSync } from "fs";
 import { createPool } from "mariadb";
 
-const dataPath = "/tmp/inducks",
-  isvPath = `${dataPath}/isv`;
+const host = process.env.MYSQL_HOST,
+      password = process.env.MYSQL_ROOT_PASSWORD,
+      database = process.env.MYSQL_DATABASE,
+      port = parseInt(process.env.MYSQL_PORT || "3306");
 
-/** Run CLI without a shell so MYSQL_ROOT_PASSWORD is not mangled ($, !, spaces, etc.). */
-async function runMariadbCheck(): Promise<number> {
-  const host = process.env.MYSQL_HOST;
-  const password = process.env.MYSQL_ROOT_PASSWORD;
-  const database = process.env.MYSQL_DATABASE;
-  if (!host || password === undefined || !database) {
-    throw new Error(
-      "MYSQL_HOST, MYSQL_ROOT_PASSWORD, and MYSQL_DATABASE are required for mariadb-check",
-    );
-  }
-  const proc = Bun.spawn(
-    [
-      "mariadb-check",
-      "-h",
-      host,
-      "-uroot",
-      `-p${password}`,
-      "-v",
-      database,
-    ],
-    { stdout: "inherit", stderr: "inherit" },
+if (!host || password === undefined || !database) {
+  throw new Error(
+    "MYSQL_HOST, MYSQL_ROOT_PASSWORD, and MYSQL_DATABASE are required for mariadb-check",
   );
-  return proc.exited;
 }
 
+const dataPath = "/tmp/inducks",
+      isvPath = `${dataPath}/isv`,
+      newDatabase = `${database}_new`;
+
+/** Run CLI without a shell so MYSQL_ROOT_PASSWORD is not mangled ($, !, spaces, etc.). */
+const runMariadbCheck = () => Bun.spawn(
+  [
+    "mariadb-check",
+    "-h",
+    host,
+    "-uroot",
+    `-p${password}`,
+    "-v",
+    database,
+  ],
+  { stdout: "inherit", stderr: "inherit" }
+).exited;
+
 const poolParams = {
-  host: process.env.MYSQL_HOST,
-  port: parseInt(process.env.MYSQL_PORT || "3306"),
+  host,
+  port,
   user: "root",
-  password: process.env.MYSQL_ROOT_PASSWORD,
+  password,
   connectionLimit: 5,
   multipleStatements: true,
   permitLocalInfile: true,
@@ -180,8 +181,8 @@ set sql_log_bin=1`;
 
   const setupConnection = await pool.getConnection();
   for (const statement of [
-    `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW}`,
-    `CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`,
+    `DROP DATABASE IF EXISTS ${newDatabase}`,
+    `CREATE DATABASE ${newDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`,
     "SET GLOBAL net_buffer_length=1000000",
     "SET GLOBAL max_allowed_packet=1000000000",
   ]) {
@@ -191,7 +192,7 @@ set sql_log_bin=1`;
 
   const newDbPool = createPool({
     ...poolParams,
-    database: process.env.MYSQL_DATABASE_NEW,
+    database: newDatabase,
   });
   const newDbConnection = await newDbPool.getConnection();
   await newDbConnection.query("SET SESSION net_read_timeout = 1800");
@@ -204,12 +205,12 @@ set sql_log_bin=1`;
   }
 
   console.log(
-    `Listing tables in ${process.env.MYSQL_DATABASE_NEW} (information_schema)...`,
+    `Listing tables in ${newDatabase} (information_schema)...`,
   );
   const tables = (
     await newDbConnection.query(
       `SELECT table_name FROM information_schema.tables WHERE table_schema = ? ORDER BY table_name`,
-      [process.env.MYSQL_DATABASE_NEW],
+      [newDatabase],
     )
   ).map((row: { table_name: string }) => row.table_name);
   console.log(`Found ${tables.length} tables to rename.`);
@@ -225,16 +226,16 @@ set sql_log_bin=1`;
     console.log(`Renaming ${table}...`);
     await renameConnection.query("SET foreign_key_checks = 0");
     await renameConnection.query(
-      `DROP TABLE IF EXISTS ${process.env.MYSQL_DATABASE}.${table}`,
+      `DROP TABLE IF EXISTS ${database}.${table}`,
     );
     await renameConnection.query(
-      `RENAME TABLE ${process.env.MYSQL_DATABASE_NEW}.${table} TO ${process.env.MYSQL_DATABASE}.${table}`,
+      `RENAME TABLE ${newDatabase}.${table} TO ${database}.${table}`,
     );
     await renameConnection.query("SET foreign_key_checks = 1");
     console.log(" done.");
   }
 
-  await renameConnection.query(`drop database ${process.env.MYSQL_DATABASE_NEW}`);
+  await renameConnection.query(`drop database ${newDatabase}`);
   await renameConnection.release();
 
   console.log("mariadb-check...");
@@ -248,4 +249,5 @@ set sql_log_bin=1`;
   process.exit(0);
 } catch (error) {
   console.error("Error:", (error as { message: string }).message);
+  process.exit(1);
 }

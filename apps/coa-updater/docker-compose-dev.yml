@@ -12,8 +12,8 @@ services:
       - inducks_data:/tmp/inducks
     environment:
       MYSQL_HOST: db
+      MYSQL_PORT: 3306
       MYSQL_DATABASE: coa
-      MYSQL_DATABASE_NEW: coa_new
     networks:
       - db-network
 
