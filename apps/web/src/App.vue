@@ -8,6 +8,12 @@ import Cookies from "js-cookie";
 import { buildWebStorage } from "socket-call-client";
 
 import { socketInjectionKey } from "./composables/useDmSocket";
+import { register as registerLocaleTimeAgo } from "timeago.js";
+import fr from "timeago.js/lib/lang/fr";
+
+/** @ts-expect-error - fr.default is a function */
+registerLocaleTimeAgo("fr", fr.default);
+
 let isReady = $ref(false);
 
 const socket = useDmSocket({

@@ -8,7 +8,9 @@ const { timestamp } = defineProps<{
   timestamp: number;
 }>();
 
-const timeAgo = $computed(() => timeAgoFormat(timestamp * 1000));
+const locale = useI18n().locale;
+
+const timeAgo = $computed(() => timeAgoFormat(timestamp * 1000, locale.value));
 </script>
 <style scoped lang="scss">
 .ago {
