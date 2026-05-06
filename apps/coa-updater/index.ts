@@ -204,6 +204,27 @@ set sql_log_bin=1`;
     console.log(" done.");
   }
 
+  const [obsoleteIssues] = await pool.query<[{ issuecode: string }[]]>(`
+    select distinct(numeros.issuecode)
+    from dm.numeros
+    left join ${newDatabase}.inducks_issue using(issuecode)
+    where ${newDatabase}.inducks_issue.issuecode is null
+  `);
+
+  if (obsoleteIssues.length) {
+    const [newIssues] = await pool.query<[{ issuecode: string }[]]>(`
+      select ${newDatabase}.inducks_issue.issuecode
+      from ${newDatabase}.inducks_issue
+      left join ${database}.inducks_issue using(issuecode)
+      where ${database}.inducks_issue.issuecode is null
+    `);
+    console.log('Obsolete issues:', obsoleteIssues.map(({ issuecode }) => issuecode).join(', '));
+    console.log('New issues:', newIssues.map(({ issuecode }) => issuecode).join(', '));
+  }
+  else {
+    console.log('No obsolete issues found');
+  }
+
   console.log(
     `Listing tables in ${newDatabase} (information_schema)...`,
   );
