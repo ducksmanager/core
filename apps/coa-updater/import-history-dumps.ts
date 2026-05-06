@@ -23,6 +23,7 @@ import readline from "node:readline";
 import { createPool } from "mariadb";
 
 import {
+  DEFAULT_SKIP_TABLES,
   datedSnapshotSchemaExists,
   snapshotSchemaForDate,
 } from "./snapshot-history";
@@ -37,6 +38,27 @@ const qIdent = (name: string) => `\`${name.replace(/`/g, "``")}\``;
 const parseCurrentDatabaseMarker = (line: string): string | null => {
   const m = line.match(/^--\s*Current Database:\s*`([^`]+)`\s*$/);
   return m?.[1] ?? null;
+};
+
+const TABLE_STRUCTURE_PREFIX = "-- Table structure for table `";
+const TABLE_DUMP_PREFIX = "-- Dumping data for table `";
+
+const parseTableSectionMarker = (line: string): string | null => {
+  // Fast path: most SQL lines are not dump comment headers.
+  if (!line.startsWith("-- ")) return null;
+
+  let start = -1;
+  if (line.startsWith(TABLE_STRUCTURE_PREFIX)) {
+    start = TABLE_STRUCTURE_PREFIX.length;
+  } else if (line.startsWith(TABLE_DUMP_PREFIX)) {
+    start = TABLE_DUMP_PREFIX.length;
+  } else {
+    return null;
+  }
+
+  const end = line.indexOf("`", start);
+  if (end < 0) return null;
+  return line.slice(start, end);
 };
 
 const waitForDrain = (ws: ReturnType<typeof createWriteStream>) =>
@@ -85,6 +107,8 @@ const extractCoaSectionToTempSql = async (
   let inCoa = false;
   let done = false;
   let linesWritten = 0;
+  const skippedTables = new Set<string>([...DEFAULT_SKIP_TABLES]);
+  let skipCurrentTableSection = false;
 
   try {
     for await (const line of rl) {
@@ -105,6 +129,19 @@ const extractCoaSectionToTempSql = async (
       }
 
       if (!inCoa) continue;
+
+      // Fast skip before table marker parsing for regular SQL lines.
+      const tableMarker =
+        line.startsWith("-- ") ? parseTableSectionMarker(line) : null;
+      if (tableMarker) {
+        skipCurrentTableSection = skippedTables.has(tableMarker);
+        if (skipCurrentTableSection) {
+          console.log(`Skipping table section from dump: ${tableMarker}`);
+        }
+      }
+      if (skipCurrentTableSection) {
+        continue;
+      }
 
       const rewritten = line.replaceAll("`coa`", `\`${targetDatabase}\``);
       await writeLine(output, rewritten);
@@ -136,7 +173,7 @@ const importSqlFileToMariadb = (
       "-uroot",
       `-p${password}`,
       "--max-allowed-packet=1G",
-      "--init-command=SET SESSION net_read_timeout=7200; SET SESSION net_write_timeout=7200",
+      "--init-command=SET SESSION net_read_timeout=7200; SET SESSION net_write_timeout=7200; SET SESSION foreign_key_checks=0; SET SESSION unique_checks=0; SET SESSION max_statement_time=0",
     ];
     const proc = spawn("mariadb", args, {
       stdio: ["pipe", "inherit", "inherit"],
@@ -154,6 +191,51 @@ const importSqlFileToMariadb = (
     });
     stream.pipe(proc.stdin!);
   });
+
+type BulkLoadGlobals = {
+  innodb_flush_log_at_trx_commit: number;
+  sync_binlog: number;
+};
+
+const enableBulkLoadTuning = async (pool: ReturnType<typeof createPool>) => {
+  const conn = await pool.getConnection();
+  try {
+    const rows = await conn.query<BulkLoadGlobals[]>(
+      `SELECT @@GLOBAL.innodb_flush_log_at_trx_commit AS innodb_flush_log_at_trx_commit,
+              @@GLOBAL.sync_binlog AS sync_binlog`,
+    );
+    const previous = rows[0];
+    if (!previous) {
+      throw new Error("Failed to read current MariaDB global settings");
+    }
+
+    await conn.query("SET GLOBAL innodb_flush_log_at_trx_commit = 2");
+    await conn.query("SET GLOBAL sync_binlog = 0");
+    console.log(
+      "[bulk-load] Enabled: innodb_flush_log_at_trx_commit=2, sync_binlog=0",
+    );
+
+    return async () => {
+      const restoreConn = await pool.getConnection();
+      try {
+        await restoreConn.query(
+          "SET GLOBAL innodb_flush_log_at_trx_commit = ?",
+          [previous.innodb_flush_log_at_trx_commit],
+        );
+        await restoreConn.query("SET GLOBAL sync_binlog = ?", [
+          previous.sync_binlog,
+        ]);
+        console.log(
+          `[bulk-load] Restored: innodb_flush_log_at_trx_commit=${previous.innodb_flush_log_at_trx_commit}, sync_binlog=${previous.sync_binlog}`,
+        );
+      } finally {
+        restoreConn.release();
+      }
+    };
+  } finally {
+    conn.release();
+  }
+};
 
 const parseArgs = () => {
   const argv = process.argv.slice(2);
@@ -221,77 +303,88 @@ const main = async () => {
       wait_timeout: 28800,
     },
   });
+  let restoreBulkLoadTuning: null | (() => Promise<void>) = null;
 
-  const names = await readdir(dumpDir);
-  const candidates = names
-    .filter((n) => n.endsWith(".gz") && n.startsWith("dump-"))
-    .map((n) => {
-      const d = parseDumpDateFromName(n);
-      return d ? { name: n, snapshotDate: d } : null;
-    })
-    .filter((x): x is { name: string; snapshotDate: string } => x !== null)
-    .sort((a, b) => a.snapshotDate.localeCompare(b.snapshotDate));
-
-  console.log(
-    `Found ${candidates.length} dump-*.gz files with a parsable date in ${dumpDir}`,
-  );
-
-  for (const { name, snapshotDate } of candidates) {
-    const fullPath = path.join(dumpDir, name);
-    console.log(`\n--- ${name} (snapshot_date=${snapshotDate}) ---`);
-
-    const snapSchema = snapshotSchemaForDate(snapshotDate);
-
-    if (await datedSnapshotSchemaExists(pool, snapshotDate)) {
-      console.log(`Skip: schema ${snapSchema} already exists`);
-      continue;
+  try {
+    if (!dryRun) {
+      restoreBulkLoadTuning = await enableBulkLoadTuning(pool);
     }
 
-    if (dryRun) {
-      console.log(`Dry-run: would restore coa section into ${snapSchema}`);
-      continue;
-    }
+    const names = await readdir(dumpDir);
+    const candidates = names
+      .filter((n) => n.endsWith(".gz") && n.startsWith("dump-"))
+      .map((n) => {
+        const d = parseDumpDateFromName(n);
+        return d ? { name: n, snapshotDate: d } : null;
+      })
+      .filter((x): x is { name: string; snapshotDate: string } => x !== null)
+      .sort((a, b) => a.snapshotDate.localeCompare(b.snapshotDate));
 
-    const tmpDir = await mkdtemp(path.join(os.tmpdir(), "coa-history-import-"));
-    const tempSqlPath = path.join(tmpDir, "coa-only.sql");
+    console.log(
+      `Found ${candidates.length} dump-*.gz files with a parsable date in ${dumpDir}`,
+    );
 
-    try {
-      console.log("Extracting coa section to temporary SQL file...");
-      const extractExit = await extractCoaSectionToTempSql(
-        fullPath,
-        tempSqlPath,
-        snapSchema,
-      );
-      if (extractExit !== 0) {
-        throw new Error(`failed to extract coa section from ${name}`);
+    for (const { name, snapshotDate } of candidates) {
+      const fullPath = path.join(dumpDir, name);
+      console.log(`\n--- ${name} (snapshot_date=${snapshotDate}) ---`);
+
+      const snapSchema = snapshotSchemaForDate(snapshotDate);
+
+      if (await datedSnapshotSchemaExists(pool, snapshotDate)) {
+        console.log(`Skip: schema ${snapSchema} already exists`);
+        continue;
       }
 
-      const setup = await pool.getConnection();
+      if (dryRun) {
+        console.log(`Dry-run: would restore coa section into ${snapSchema}`);
+        continue;
+      }
+
+      const tmpDir = await mkdtemp(path.join(os.tmpdir(), "coa-history-import-"));
+      const tempSqlPath = path.join(tmpDir, "coa-only.sql");
+
       try {
-        await setup.query(`DROP DATABASE IF EXISTS ${qIdent(snapSchema)}`);
+        console.log("Extracting coa section to temporary SQL file...");
+        const extractExit = await extractCoaSectionToTempSql(
+          fullPath,
+          tempSqlPath,
+          snapSchema,
+        );
+        if (extractExit !== 0) {
+          throw new Error(`failed to extract coa section from ${name}`);
+        }
+
+        const setup = await pool.getConnection();
+        try {
+          await setup.query(`DROP DATABASE IF EXISTS ${qIdent(snapSchema)}`);
+        } finally {
+          setup.release();
+        }
+
+        console.log(`Importing extracted coa SQL into ${snapSchema}...`);
+        const impExit = await importSqlFileToMariadb(
+          tempSqlPath,
+          host,
+          port,
+          password,
+        );
+        if (impExit !== 0) {
+          throw new Error(`mysqldump import failed with exit ${impExit} for ${name}`);
+        }
       } finally {
-        setup.release();
+        await rm(tmpDir, { recursive: true, force: true });
       }
 
-      console.log(`Importing extracted coa SQL into ${snapSchema}...`);
-      const impExit = await importSqlFileToMariadb(
-        tempSqlPath,
-        host,
-        port,
-        password,
-      );
-      if (impExit !== 0) {
-        throw new Error(`mysqldump import failed with exit ${impExit} for ${name}`);
-      }
-    } finally {
-      await rm(tmpDir, { recursive: true, force: true });
+      console.log(`Done: ${snapshotDate}`);
     }
 
-    console.log(`Done: ${snapshotDate}`);
+    console.log("\nAll requested dumps processed.");
+  } finally {
+    if (restoreBulkLoadTuning) {
+      await restoreBulkLoadTuning();
+    }
+    await pool.end();
   }
-
-  await pool.end();
-  console.log("\nAll requested dumps processed.");
 };
 
 main().catch((e) => {

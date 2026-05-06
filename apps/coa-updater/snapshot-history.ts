@@ -1,6 +1,6 @@
 import type { Pool, PoolConnection } from "mariadb";
 
-const DEFAULT_SKIP_TABLES = ["inducks_entryurl_vector"] as const;
+export const DEFAULT_SKIP_TABLES = ["inducks_entryurl_vector"] as const;
 
 const qIdent = (name: string) => `\`${name.replace(/`/g, "``")}\``;
 
