@@ -119,8 +119,8 @@ type SimpleStoryWithCollectionIssues = SimpleStory & {
   collectionIssues: ServiceIssues;
 };
 
-const collectionIssuesByIssuecode = $computed(() =>
-  issues.value!.groupBy(({ issuecode }) => issuecode, "[]"),
+const collectionIssuesByIssuecode = $computed(
+  () => issues.value?.groupBy(({ issuecode }) => issuecode, "[]") || {},
 );
 
 let isSearching = $ref(false);
