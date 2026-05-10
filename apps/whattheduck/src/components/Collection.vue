@@ -26,11 +26,11 @@
               />
             </div></div
         ></ion-title>
-        <ion-buttons v-if="componentName === IssueList" slot="end">
-          <CopyListButton />
-          <ViewModesButton v-if="!isIOS" />
-        </ion-buttons>
       </ion-toolbar>
+      <ion-buttons v-if="componentName === IssueList" slot="end">
+        <CopyListButton />
+        <ViewModesButton />
+      </ion-buttons>
       <Navigation v-if="!isCameraPreviewShown" />
       <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
         <ion-searchbar v-model="filterText" inputmode="text" autocapitalize="sentences" placeholder="Filter" />
@@ -68,7 +68,6 @@ const {
   issuecodes,
   currentNavigationItem,
   currentFilter,
-  isIOS,
 } = storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
@@ -155,6 +154,17 @@ const backToCollection = () => {
 strong {
   font-size: 20px;
   line-height: 26px;
+}
+
+ion-buttons[slot='end'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2rem;
+
+  ion-fab {
+    position: relative;
+  }
 }
 
 ion-toolbar ion-buttons[slot='end'] {

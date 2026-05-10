@@ -1,4 +1,3 @@
-import type { IssueSuggestion } from "~dm-types/IssueSuggestion";
 import { IssueSuggestionList } from "~dm-types/IssueSuggestionList";
 import type { StoryDetail } from "~dm-types/StoryDetail";
 import type { SuggestionList } from "~dm-types/SuggestionList";
@@ -199,7 +198,7 @@ export const getSuggestions = async (
           ...suggestedStory,
           oldestdate: suggestedStory.oldestdate?.split("T")[0] || "",
           stories: {},
-        } as IssueSuggestion;
+        };
       }
       if (!issue.stories[suggestedStory.personcode]) {
         issue.stories[suggestedStory.personcode] = [];

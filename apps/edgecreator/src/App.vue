@@ -78,7 +78,7 @@ watch(
           !userPermissions.value?.some(
             ({ privilege, role }) =>
               role === "EdgeCreator" &&
-              ["Edition", "Admin"].includes(privilege as string),
+              ["Edition", "Admin"].includes(privilege),
           )
         ) {
           location.replace("/");

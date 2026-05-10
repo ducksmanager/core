@@ -64,7 +64,7 @@ const AuthMiddleware = (
           payload as { data?: Omit<SessionUser, "token"> } | undefined
         )?.data;
         if (user) {
-          socket.data.user = { ...user, token } as SessionUser;
+          socket.data.user = { ...user, token };
         } else if (
           typeof payload === "object" &&
           payload !== null &&
@@ -73,7 +73,7 @@ const AuthMiddleware = (
           socket.data.user = {
             ...(payload as Omit<SessionUser, "token">),
             token,
-          } as SessionUser;
+          };
         } else {
           if (required) {
             console.error("There is no user in the payload:", payload);
