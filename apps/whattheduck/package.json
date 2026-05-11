@@ -111,6 +111,7 @@
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^31.1.0",
     "vite": "^8.0.11",
+    "vite-plugin-image-tools": "^4.1.1",
     "vite-plugin-static-copy": "^4.1.0",
     "vue-tsc": "^3.2.8"
   },

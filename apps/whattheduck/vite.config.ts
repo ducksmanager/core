@@ -6,6 +6,7 @@ import AutoImport from 'unplugin-auto-import/vite';
 import { IonicResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig, normalizePath } from 'vite';
+import VitePluginImageTools from 'vite-plugin-image-tools';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 import getViteAliases from '../../vite-aliases';
@@ -67,6 +68,28 @@ export default defineConfig({
   plugins: [
     vue(),
     ReactivityTransform(),
+    VitePluginImageTools({
+      convert: { enable: false },
+      spritesConfig: {
+        rules: [
+          {
+            dir: './src/assets/flags',
+            name: 'flags',
+            outputDir: './src/assets/generated',
+            algorithm: 'binary-tree',
+          },
+        ],
+      },
+      cssGen: {
+        rules: [
+          {
+            inputDir: './src/assets/flags',
+            stylePath: 'src/assets/generated/flag-classes.css',
+            classPrefix: 'flag-',
+          },
+        ],
+      },
+    }),
     viteStaticCopy({
       targets: [
         {

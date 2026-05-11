@@ -19,7 +19,7 @@
       {{ ownershipPercentages[countrycode] ? getOwnershipText(ownershipPercentages[countrycode]) : '' }}
     </template>
     <template #row-label="{ item }">
-      <Country :id="item.countrycode" :label="item.countryname" />
+      <Country :id="item.countrycode" :label="item.countryname" :style="'margin-right: 1rem'" />
     </template>
   </List>
 </template>
