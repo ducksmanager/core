@@ -35,6 +35,6 @@ console.log(`Staged ${distFiles.length} flattened asset(s) in ${stage}`);
 
 const stagedAssets = fs.readdirSync(stage).map((name) => path.join(stage, name));
 
-await $`gh release create --title ${`WhatTheDuck bundle ${DATE}`} --draft --generate-notes ${`whattheduck-${DATE}`} ${BUNDLE_FILE} ${stagedAssets}`;
+await $`gh release create --title ${`WhatTheDuck bundle ${DATE}`} --generate-notes ${`whattheduck-${DATE}`} ${BUNDLE_FILE} ${stagedAssets}`;
 
 fs.rmSync(stage, { recursive: true, force: true });
