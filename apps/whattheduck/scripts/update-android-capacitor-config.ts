@@ -3,6 +3,13 @@
 import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+
+declare global {
+  interface ImportMeta {
+    dir: string;
+  }
+}
+
 const getLocalIP = () => {
   try {
     return execSync('ipconfig getifaddr en0', { encoding: 'utf-8' }).trim();

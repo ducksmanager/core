@@ -102,52 +102,32 @@ const assignSocket = () => {
 
 const updateBundle = async () => {
   try {
-    if (Capacitor.isNativePlatform()) {
-      const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-      const githubBundle = await fetch(`https://api.github.com/repos/ducksmanager/core/releases/latest`, {
-        headers: { Accept: 'application/vnd.github+json' },
-      }).then(
-        (res) =>
-          res.json() as Promise<{
-            tag_name: string;
-            assets: { browser_download_url: string; name: string; digest: string | null }[];
-          }>,
-      );
-
-      const zipAsset = githubBundle.assets.find((asset) => asset.name.endsWith('.zip'));
-      if (!zipAsset) throw new Error('No bundle zip found in latest release');
-
-      const bundle = {
-        version: githubBundle.tag_name.replace(/^whattheduck-/, ''),
-        url: zipAsset.browser_download_url,
-        manifest: githubBundle.assets
-          .filter((asset) => !asset.name.endsWith('.zip'))
-          .map((asset) => ({
-            download_url: asset.browser_download_url,
-            file_name: asset.name.replace(/__/g, '/'),
-            file_hash: asset.digest?.replace(/^sha256:/, '') ?? null,
-          })),
-      };
-      const isNewVersion = currentBundleVersion === 'builtin' || bundle.version > currentBundleVersion;
-
-      console.info('Latest bundle', bundle);
-      console.info('Is new version', `${bundle.version} > ${currentBundleVersion} === ${isNewVersion}`);
-      if (isNewVersion) {
-        CapacitorUpdater.addListener('download', ({ percent }) => {
-          bundleDownloadProgress.value = percent / 100;
-        });
-        CapacitorUpdater.addListener('downloadFailed', () => {
-          bundleDownloadProgress.value = undefined;
-        });
-        CapacitorUpdater.addListener('updateFailed', () => {
-          bundleDownloadProgress.value = undefined;
-        });
-        const bundleInfo = await CapacitorUpdater.download(bundle);
-        await CapacitorUpdater.set(bundleInfo);
-      }
+    const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
+    const bundle = await socket.value!.app.getBundleUrl({ version: currentBundleVersion });
+    console.info('Latest bundle', bundle);
+    if (Capacitor.isNativePlatform() && 'url' in bundle && bundle.url) {
+      CapacitorUpdater.addListener('download', ({ percent }) => {
+        bundleDownloadProgress.value = percent / 100;
+      });
+      CapacitorUpdater.addListener('downloadFailed', () => {
+        bundleDownloadProgress.value = undefined;
+      });
+      CapacitorUpdater.addListener('updateFailed', () => {
+        bundleDownloadProgress.value = undefined;
+      });
+      const bundleInfo = await CapacitorUpdater.download(bundle);
+      await CapacitorUpdater.set(bundleInfo);
     }
   } catch (e) {
-    console.warn(e);
+    console.info('getBundleUrl failed', e);
+    const { error, errorDetails } = e as unknown as { error: string; errorDetails: string };
+    switch (error) {
+      case 'Already up to date':
+        console.info('Bundle is already up to date');
+        break;
+      default:
+        console.warn(error, errorDetails);
+    }
     bundleDownloadProgress.value = undefined;
   }
 };

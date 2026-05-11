@@ -37,8 +37,8 @@ import router from './router';
 CapacitorUpdater.notifyAppReady();
 
 const socketUrl = ['web', 'ios'].includes(Capacitor.getPlatform())
-  ? import.meta.env.VITE_DM_SOCKET_URL!
-  : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL!;
+  ? import.meta.env.VITE_DM_SOCKET_URL
+  : import.meta.env.VITE_DM_SOCKET_URL_NATIVE || import.meta.env.VITE_DM_SOCKET_URL;
 console.log(`Using socket URL ${socketUrl}`);
 
 const store = createPinia();
@@ -51,7 +51,7 @@ const app = createApp(App)
   .use(store)
   .use(VueVirtualScroller)
   .provide('dmSocket', new SocketClient(socketUrl))
-  .provide('storySearchSocket', new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL!));
+  .provide('storySearchSocket', new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL));
 
 router.isReady().then(async () => {
   if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
