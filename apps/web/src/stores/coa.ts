@@ -55,38 +55,35 @@ export const coa = defineStore("coa", () => {
     ref: publicationNames,
     fetch: fetchPublicationNames,
     add: addPublicationNames,
-  } = coaCachedEvents.query("getPublicationListFromPublicationcodeList");
+  } = coaCachedEvents.getPublicationListFromPublicationcodeList();
 
-  const {
-    ref: personNames,
-    fetch: fetchPersonNames,
-    add: setPersonNames,
-  } = coaCachedEvents.query("getAuthorList");
+  const { ref: personNames, fetch: fetchPersonNames } =
+    coaCachedEvents.getAuthorList();
 
   const { ref: issuePopularities, fetch: fetchIssuePopularities } =
-    coaCachedEvents.query("getIssuePopularities");
+    coaCachedEvents.getIssuePopularities();
 
   const {
     ref: issueQuotations,
     fetch: fetchIssueQuotations,
     add: addIssueQuotations,
-  } = coaCachedEvents.query("getQuotationsByIssuecodes", "quotations");
+  } = coaCachedEvents.getQuotationsByIssuecodes((data) => data.quotations);
 
   const {
     ref: issuecodesByPublicationcode,
     fetch: fetchIssuecodesByPublicationcode,
-  } = coaCachedEvents.query("getIssuecodesByPublicationcodes");
+  } = coaCachedEvents.getIssuecodesByPublicationcodes();
 
   const { ref: storyDetails, fetch: fetchStoryDetails } =
-    coaCachedEvents.query("getStoryDetails");
+    coaCachedEvents.getStoryDetails();
 
   const { ref: storyversionDetails, fetch: fetchStoryversionDetails } =
-    coaCachedEvents.query("getStoryversionsDetails");
+    coaCachedEvents.getStoryversionsDetails();
 
   const {
     ref: issueCountsByCountrycode,
     fetch: fetchIssueCountsByCountrycode,
-  } = coaCachedEvents.query("getCoaCountByCountrycode");
+  } = coaCachedEvents.getCoaCountByCountrycode();
 
   const coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
     countryNames = shallowRef<EventOutput<CoaClientEvents, "getCountryList">>(),
@@ -224,7 +221,6 @@ export const coa = defineStore("coa", () => {
     publicationNames,
     publicationNamesFullCountries,
     setCoverUrl,
-    setPersonNames,
     storyDetails,
     storyUrls,
     storyversionDetails,

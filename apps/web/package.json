@@ -23,6 +23,7 @@
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
     "@pinia/colada": "^1.0.0",
     "@pinia/colada-plugin-cache-persister": "^0.1.4",
+    "pinia-colada-plugin-normalizer": "^0.1.8",
     "@popperjs/core": "^2.11.8",
     "@sentry/vue": "^10.52.0",
     "@studiometa/vue-mapbox-gl": "^2.7.2",

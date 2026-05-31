@@ -1,103 +1,164 @@
-import { computedWithControl } from "@vueuse/core";
 import { useQueryCache } from "@pinia/colada";
-import type { SuccessfulEventOutput } from "socket-call-client";
-import { computed, type Ref } from "vue";
+import { useEntityStore } from "pinia-colada-plugin-normalizer";
+import { computed, type ComputedRef, type Ref } from "vue";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- library EventsMap shape
-type EventsMapLike = Record<string, (...args: any[]) => Promise<any>>;
+type EventsMapLike = Record<string, (...args: never[]) => Promise<unknown>>;
+type NormalizedEntry<Value> = { id: string; key: string; value: Value };
+type WithoutError<T> = T extends { error: unknown } ? never : T;
+type RecordValue<Selected extends Record<string, unknown>> =
+  Selected extends Record<string, infer Value> ? Value : never;
 
 export default <Events extends EventsMapLike>(
   namespace: string,
   events: Events,
   locale: Ref<string>,
 ) => {
-  type EventStringArrayFirst = {
+  type EventData<E extends keyof Events> = WithoutError<
+    Awaited<ReturnType<Events[E]>>
+  >;
+
+  type BatchEventKey = {
     [K in keyof Events]: Events[K] extends (...args: infer P) => unknown
       ? P extends [string[]]
-        ? SuccessfulEventOutput<Events, K> extends Record<string, unknown>
+        ? EventData<K> extends Record<string, unknown>
           ? K
           : never
         : never
       : never;
   }[keyof Events];
 
-  type EventSuccess<E extends EventStringArrayFirst> = SuccessfulEventOutput<
-    Events,
-    E
-  >;
-
-  type SelectedEventValue<
-    E extends EventStringArrayFirst,
-    S extends keyof EventSuccess<E> | undefined = undefined,
-  > =
-    (
-      [S] extends [keyof EventSuccess<E>] ? EventSuccess<E>[S] : EventSuccess<E>
-    ) extends Record<string, infer V>
-      ? V
-      : never;
-  return {
-    query: <
-      E extends EventStringArrayFirst,
-      Subkey extends keyof EventSuccess<E> | undefined = undefined,
+  type QueryApi = {
+    [E in BatchEventKey]: <
+      Selected extends Record<string, unknown> = EventData<E>,
     >(
-      event: E,
-      subKey?: Subkey,
+      select?: (data: EventData<E>) => Selected,
     ) => {
-      type SelectedValue = SelectedEventValue<E, Subkey>;
+      ref: ComputedRef<Record<string, RecordValue<Selected>>>;
+      fetch: (
+        keys: string[],
+      ) => Promise<Record<string, RecordValue<Selected>> | false>;
+      add: (newValues: Record<string, RecordValue<Selected>>) => void;
+    };
+  };
 
-      const queryCache = useQueryCache();
+  const queryCache = useQueryCache();
+  const entityStore = useEntityStore();
 
-      const map = computedWithControl(locale, () => {
-        const mapValue = {} as Record<string, SelectedValue>;
-        for (const entry of queryCache.getEntries({
-          key: [namespace, event],
-        })) {
-          const key = entry.key;
-          if (typeof key[2] === "string") {
-            const st = entry.state.value;
-            if (st.status === "success") {
-              mapValue[key[2]] = st.data as SelectedValue;
+  const toScopedId = (key: string) => `${locale.value}:${key}`;
+  const entityTypeForEvent = (event: keyof Events) =>
+    `${namespace}:${String(event)}`;
+
+  const toRecord = <Value>(
+    entries: Array<Pick<NormalizedEntry<Value>, "key" | "value">>,
+  ) =>
+    Object.fromEntries(entries.map(({ key, value }) => [key, value])) as Record<
+      string,
+      Value
+    >;
+
+  const proxyCache = new Map<string, QueryApi[BatchEventKey]>();
+
+  return new Proxy({} as QueryApi, {
+    get(_, event: BatchEventKey) {
+      if (typeof event !== "string") {
+        return undefined;
+      }
+
+      const cached = proxyCache.get(event);
+      if (cached) {
+        return cached;
+      }
+
+      const entityType = entityTypeForEvent(event);
+
+      const eventQuery = (<Selected extends Record<string, unknown>>(
+        select?: (data: EventData<BatchEventKey>) => Selected,
+      ) => {
+        type SelectedValue = RecordValue<Selected>;
+
+        const map = computed<Record<string, SelectedValue>>(() => {
+          const localePrefix = `${locale.value}:`;
+          const mappedValues = {} as Record<string, SelectedValue>;
+
+          for (const { id, data } of entityStore.getEntriesByType(
+            entityType,
+          ) as Array<{
+            id: string;
+            data: Pick<NormalizedEntry<SelectedValue>, "key" | "value">;
+          }>) {
+            if (id.startsWith(localePrefix)) {
+              mappedValues[data.key] = data.value;
             }
           }
-        }
-        return mapValue;
-      });
-      const fetch = (keys: string[]) => {
-        const actualKeys = new Set(keys).difference(
-          new Set(Object.keys(map.value)),
-        );
-        if (!actualKeys.size) {
-          return Promise.resolve(false);
-        }
-        const sorted = [...actualKeys].sort((a, b) => a.localeCompare(b));
-        return queryCache
-          .fetch(
-            queryCache.ensure({
-              key: [namespace, event, sorted.join(",")] as const,
-              query: () => {
-                const fetchBatch = events[event] as (
-                  keys: string[],
-                ) => Promise<EventSuccess<E>>;
-                return fetchBatch(sorted).then((data) =>
-                  subKey ? data[subKey] : data,
-                );
-              },
-            }),
-          )
-          .then((state) => (state.status === "success" ? state.data : false));
-      };
 
-      const add = (newValues: Record<string, SelectedValue>) => {
-        for (const [code, value] of Object.entries(newValues)) {
-          queryCache.setQueryData([namespace, event, code], value);
-        }
-        map.trigger();
-      };
-      return {
-        ref: computed(() => map.value), // Needs to be a computedRef to be understood by Pinia when used in SFCs
-        fetch,
-        add,
-      };
+          console.log("Mapped values for event", event, mappedValues);
+          return mappedValues;
+        });
+
+        const add = (newValues: Record<string, SelectedValue>) => {
+          debugger;
+          entityStore.setMany(
+            Object.entries(newValues).map(([key, value]) => ({
+              entityType,
+              id: toScopedId(key),
+              data: {
+                id: toScopedId(key),
+                key,
+                value,
+              },
+            })),
+          );
+        };
+
+        const fetch = async (keys: string[]) => {
+          const actualKeys = new Set(keys).difference(
+            new Set(Object.keys(map.value)),
+          );
+          if (!actualKeys.size) {
+            return false;
+          }
+          const sorted = [...actualKeys].sort((a, b) => a.localeCompare(b));
+
+          const ensuredQuery = queryCache.ensure({
+            key: [entityType, locale.value, sorted.join(",")] as const,
+            normalize: true,
+            query: async () => {
+              const fetchBatch = events[event] as unknown as (
+                keys: string[],
+              ) => Promise<EventData<BatchEventKey>>;
+              const data = await fetchBatch(sorted);
+              const values = (select ? select(data) : data) as Record<
+                string,
+                SelectedValue
+              >;
+
+              return Object.entries(values).map(([key, value]) => ({
+                id: toScopedId(key),
+                key,
+                value,
+              }));
+            },
+          });
+
+          const queryState = await queryCache.fetch(ensuredQuery);
+          return queryState.status === "success"
+            ? toRecord(
+                queryState.data as Array<
+                  Pick<NormalizedEntry<SelectedValue>, "key" | "value">
+                >,
+              )
+            : false;
+        };
+
+        return {
+          ref: computed(() => map.value),
+          fetch,
+          add,
+        };
+      }) as QueryApi[BatchEventKey];
+      proxyCache.set(event, eventQuery);
+
+      return eventQuery;
     },
-  };
+  });
 };
