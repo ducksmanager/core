@@ -39,15 +39,14 @@ export const useStepOptions = () => {
     if (shownTips.includes(type)) {
       return;
     }
-    let _text: string;
     switch (type) {
       case "move":
-        _text = t(
+        t(
           `You can make your selection snap to the top left corner of the edge by holding Shift while you drag it`,
         );
         break;
       case "resize":
-        _text = t(
+        t(
           `You can make your selection match the {dimension} of the edge by holding Shift while you resize it`,
           {
             dimension: t(

@@ -20,8 +20,9 @@ import type {
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
+    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -307,11 +308,15 @@ declare module 'vue-router/auto-routes' {
         | '/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/admin/bookstores.vue': {
       routes:
         | '/admin/bookstores'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/admin/edges/progress.vue': {
@@ -319,11 +324,15 @@ declare module 'vue-router/auto-routes' {
         | '/admin/edges/progress'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/admin/generate-sprites.vue': {
       routes:
         | '/admin/generate-sprites'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/admin/presentation-text/[decision].vue': {
@@ -331,23 +340,31 @@ declare module 'vue-router/auto-routes' {
         | '/admin/presentation-text/[decision]'
       views:
         | never
+      pathParamNames:
+        | 'decision'
     }
     'src/pages/bookcase/[...all].vue': {
       routes:
         | '/bookcase/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/bookcase/afficher/[username].vue': {
       routes:
         | '/bookcase/afficher/[username]'
       views:
         | never
+      pathParamNames:
+        | 'username'
     }
     'src/pages/bookcase/contributors.vue': {
       routes:
         | '/bookcase/contributors'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/bookcase/options.vue': {
@@ -355,17 +372,23 @@ declare module 'vue-router/auto-routes' {
         | '/bookcase/options'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/bookcase/show/[username].vue': {
       routes:
         | '/bookcase/show/[username]'
       views:
         | never
+      pathParamNames:
+        | 'username'
     }
     'src/pages/bookstores/index.vue': {
       routes:
         | '/bookstores/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/collection/account.vue': {
@@ -373,17 +396,23 @@ declare module 'vue-router/auto-routes' {
         | '/collection/account'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/collection/afficher/[...all].vue': {
       routes:
         | '/collection/afficher/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/collection/duplicates.vue': {
       routes:
         | '/collection/duplicates'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/collection/show/[...all].vue': {
@@ -391,11 +420,15 @@ declare module 'vue-router/auto-routes' {
         | '/collection/show/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/collection/show/new.vue': {
       routes:
         | '/collection/show/new'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/collection/subscriptions.vue': {
@@ -403,17 +436,23 @@ declare module 'vue-router/auto-routes' {
         | '/collection/subscriptions'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/collection/user/[username]/[[...all]].vue': {
       routes:
         | '/collection/user/[username]/[[...all]]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/demo.vue': {
       routes:
         | '/demo'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/expand/marketplace.vue': {
@@ -421,11 +460,15 @@ declare module 'vue-router/auto-routes' {
         | '/expand/marketplace'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/expand/suggestions.vue': {
       routes:
         | '/expand/suggestions'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/forgot/index.vue': {
@@ -433,17 +476,23 @@ declare module 'vue-router/auto-routes' {
         | '/forgot/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/forgot/[token].vue': {
       routes:
         | '/forgot/[token]'
       views:
         | never
+      pathParamNames:
+        | 'token'
     }
     'src/pages/image-search-test.vue': {
       routes:
         | '/image-search-test'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/inducks-import.vue': {
@@ -451,11 +500,15 @@ declare module 'vue-router/auto-routes' {
         | '/inducks-import'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/login.vue': {
       routes:
         | '/login'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/print/index.vue': {
@@ -463,11 +516,15 @@ declare module 'vue-router/auto-routes' {
         | '/print/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/print/classic.vue': {
       routes:
         | '/print/classic'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/print/collectable.vue': {
@@ -475,11 +532,15 @@ declare module 'vue-router/auto-routes' {
         | '/print/collectable'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/privacy.vue': {
       routes:
         | '/privacy'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/signup.vue': {
@@ -487,11 +548,15 @@ declare module 'vue-router/auto-routes' {
         | '/signup'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/stats/authors.vue': {
       routes:
         | '/stats/authors'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/stats/conditions.vue': {
@@ -499,11 +564,15 @@ declare module 'vue-router/auto-routes' {
         | '/stats/conditions'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/stats/general.vue': {
       routes:
         | '/stats/general'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/stats/possessions.vue': {
@@ -511,17 +580,23 @@ declare module 'vue-router/auto-routes' {
         | '/stats/possessions'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/stats/publications.vue': {
       routes:
         | '/stats/publications'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/stats/purchases.vue': {
       routes:
         | '/stats/purchases'
       views:
+        | never
+      pathParamNames:
         | never
     }
   }
