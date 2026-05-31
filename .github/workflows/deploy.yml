@@ -74,6 +74,8 @@ jobs:
           pnpm -r -F "...[$lastSuccessfulCommit]" ls --depth -1
 
       - name: Install dependencies
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
         run: |
           pnpm -r i --config.platform=linux --config.architecture=x64
 
