@@ -80,18 +80,18 @@ jobs:
       - name: Retrieve pre-build files
         run: |
           pnpm i -g turbo
-          turbo prod:transfer-files-pre
+          ./node_modules/.bin/turbo prod:transfer-files-pre
 
       - uses: docker/setup-buildx-action@v4
 
       - name: Build apps
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' build prod:build-docker
+          ./node_modules/.bin/turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' build prod:build-docker
 
       - name: Send post-build files
         run: |
-          turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' prod:transfer-files-post
+          ./node_modules/.bin/turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' prod:transfer-files-post
 
       - name: Deploy
         run: |
-          turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' prod:deploy
+          ./node_modules/.bin/turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' prod:deploy

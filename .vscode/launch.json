@@ -33,7 +33,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Web server",
-            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~web...'",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~web...'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -61,7 +61,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Dumili Web server",
-            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~dumili'",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~dumili'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -80,7 +80,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Duckguessr Web server",
-            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~duckguessr'",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~duckguessr'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -99,7 +99,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start EdgeCreator Web server",
-            "command": "NODE_OPTIONS='--no-inspect' turbo dev -F '~edgecreator'",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~edgecreator'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -127,7 +127,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start WTD on Android emulator",
-            "command": "NODE_OPTIONS='--no-inspect' turbo dev:android",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev:android",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"

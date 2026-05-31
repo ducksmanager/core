@@ -86,6 +86,5 @@ flowchart LR
 
 - [PNPM](https://pnpm.io/)
 - [Bun](https://bun.sh/)
-- [Node.js](https://nodejs.org/en/) 22
+- [Node.js](https://nodejs.org/en/) 24
 - [Docker](https://www.docker.com/)
-- Some Unix or WSL2 environment
