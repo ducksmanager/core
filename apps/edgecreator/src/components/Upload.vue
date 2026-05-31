@@ -111,7 +111,6 @@ const onFileAdded = async (file: UppyFile<UploadMeta, UploadBody>) => {
   syncFiles();
   uploadError.value = null;
   isUploading.value = true;
-  uploadProgress.value = 20;
 
   if (!(file.data instanceof Blob)) {
     uploadError.value = $t("Unsupported file data").toString();
@@ -121,7 +120,6 @@ const onFileAdded = async (file: UppyFile<UploadMeta, UploadBody>) => {
   }
 
   const fileArrayBuffer = await file.data.arrayBuffer();
-  uploadProgress.value = 40;
 
   try {
     const uploadParams = photo
@@ -138,7 +136,6 @@ const onFileAdded = async (file: UppyFile<UploadMeta, UploadBody>) => {
         };
 
     const results = await uploadServices.uploadFromBase64(uploadParams);
-    uploadProgress.value = 85;
 
     if ("error" in results) {
       const details = String(results.errorDetails ?? $t("Upload failed"));

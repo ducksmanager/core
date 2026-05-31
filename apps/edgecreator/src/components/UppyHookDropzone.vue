@@ -18,8 +18,8 @@
 import { useDropzone, useFileInput } from "@uppy/vue";
 import { useI18n } from "vue-i18n";
 
-const { note = "" } = defineProps<{
-  note?: string;
+const { note } = defineProps<{
+  note: string;
 }>();
 
 const { getRootProps, getInputProps } = useDropzone({
