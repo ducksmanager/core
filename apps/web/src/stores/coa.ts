@@ -156,15 +156,21 @@ export const coa = defineStore("coa", () => {
       }
     },
     fetchIssueCountsByPublicationcode = async (publicationcodes: string[]) => {
-      Object.assign(
-        issueCountsByPublicationcode.value,
-        await events.getCoaCountByPublicationcode(
-          publicationcodes.filter(
-            (publicationcode) =>
-              !(publicationcode in issueCountsByPublicationcode.value),
-          ),
-        ),
+      const filteredPublicationcodes = publicationcodes.filter(
+        (publicationcode) =>
+          !(publicationcode in issueCountsByPublicationcode.value),
       );
+      if (filteredPublicationcodes.length) {
+        Object.assign(
+          issueCountsByPublicationcode.value,
+          await events.getCoaCountByPublicationcode(
+            publicationcodes.filter(
+              (publicationcode) =>
+                !(publicationcode in issueCountsByPublicationcode.value),
+            ),
+          ),
+        );
+      }
     },
     fetchRecentIssues = () => events.getRecentIssues(),
     fetchCoverUrls = (publicationcode: string) =>
@@ -172,7 +178,7 @@ export const coa = defineStore("coa", () => {
     fetchCoverUrlsByIssuecodes = (issuecodes: string[]) =>
       events.getIssueCoverDetails(issuecodes),
     fetchIssueUrls = async (issuecode: string) => {
-      if (!issueDetails.value[issuecode]) {
+      if (!(issuecode in issueDetails.value)) {
         const newIssueDetails = await events.getIssueDetails(issuecode);
 
         Object.assign(issueDetails.value, {

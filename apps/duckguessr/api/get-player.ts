@@ -17,10 +17,12 @@ export const getPlayer = async (cookies?: {
   let player: player | null = null;
   if (cookies?.token) {
     try {
-      const { id: ducksmanagerId, username } = (jwt.verify(
-        cookies.token,
-        process.env.TOKEN_SECRET as string,
-      ) as jwt.JwtPayload)?.data;
+      const { id: ducksmanagerId, username } = (
+        jwt.verify(
+          cookies.token,
+          process.env.TOKEN_SECRET as string,
+        ) as jwt.JwtPayload
+      ).data;
       if (!username) {
         throw new Error("No username provided");
       }
@@ -67,14 +69,14 @@ export const getPlayer = async (cookies?: {
   return player!;
 };
 
-export const updatePlayer = async (playerId: number, player: player) =>
-  await prisma.player.update({
+export const updatePlayer = (playerId: number, player: player) =>
+  prisma.player.update({
     where: { id: playerId },
     data: player,
   });
 
-export const getPlayerGameStatistics = async (gameId: number) =>
-  await prisma.userGameMedalPoints.findMany({
+export const getPlayerGameStatistics = (gameId: number) =>
+  prisma.userGameMedalPoints.findMany({
     where: {
       gameId,
       medalType: {
@@ -83,8 +85,8 @@ export const getPlayerGameStatistics = async (gameId: number) =>
     },
   });
 
-export const getPlayerStatistics = async (playerIds: number[]) =>
-  await prisma.userMedalPoints.findMany({
+export const getPlayerStatistics = (playerIds: number[]) =>
+  prisma.userMedalPoints.findMany({
     where: {
       playerId: {
         in: playerIds,

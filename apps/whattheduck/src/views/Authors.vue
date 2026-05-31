@@ -31,7 +31,7 @@
           </ion-col>
           <ion-col size="5">
             <StarRating
-              v-model:rating="author.notation"
+              :rating="author.notation ?? 5"
               :readonly="isOffline"
               :max-rating="10"
               @update:rating="updateRating(author)"

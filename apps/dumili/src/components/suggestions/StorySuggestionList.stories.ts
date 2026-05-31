@@ -8,7 +8,7 @@ import {
   createIndexationDecorator,
 } from "../../../.storybook/utils/mocks";
 
-const meta = preview.meta({
+const meta = preview.type<{ args: { modelValue: FullEntry } }>().meta({
   title: "Components/suggestions/StorySuggestionList",
   tags: ["autodocs"],
   parameters: {
@@ -37,6 +37,7 @@ const createMockEntryWithStories = (
           id: 1,
           ocrPossibleStoryId: null,
           storySearchPossibleStoryId: 1,
+          aiStorySearchPossibleStory: null,
         },
       },
     ],

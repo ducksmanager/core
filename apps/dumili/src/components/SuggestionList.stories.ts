@@ -1,5 +1,5 @@
 import preview from "../../.storybook/preview";
-import { ref } from "vue";
+import { ref, type Component } from "vue";
 import SuggestionList from "./SuggestionList.vue";
 
 // Mock suggestion type for stories
@@ -9,9 +9,17 @@ type MockSuggestion = {
   isAi?: boolean;
 };
 
-const meta = preview.meta({
+type SuggestionListStoryArgs = {
+  suggestions: MockSuggestion[];
+  category: (suggestion: MockSuggestion) => "ai" | "user" | "previous";
+  showCustomizeForm?: boolean;
+};
+
+// Generic `<script setup generic="S">` SFCs don't satisfy Storybook's `Component` constraint.
+const SuggestionListForStory = SuggestionList as Component;
+
+const meta = preview.type<{ args: SuggestionListStoryArgs }>().meta({
   title: "Components/SuggestionList",
-  // component is omitted to avoid generic type issues
   tags: ["autodocs"],
   parameters: {
     layout: "padded",
@@ -19,7 +27,7 @@ const meta = preview.meta({
     docs: {
       story: {
         inline: false,
-        iframeHeight: 200,
+        iframeHeight: "200px",
       },
     },
   },
@@ -28,14 +36,13 @@ const meta = preview.meta({
       control: "object",
       description: "Array of suggestions to display",
     },
-    isAiSource: {
-      control: false,
-      description: "Function to determine if a suggestion is from AI",
-    },
     showCustomizeForm: {
       control: "boolean",
       description: "Whether to show the customize form",
     },
+  },
+  args: {
+    showCustomizeForm: false,
   },
 });
 
@@ -49,25 +56,26 @@ const mockSuggestions: MockSuggestion[] = [
 export const Default = meta.story({
   args: {
     suggestions: mockSuggestions,
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
-  // @ts-expect-error - SuggestionList is a generic component, TypeScript can't properly infer its type in Storybook
   render: (args) => ({
-    components: { SuggestionList },
+    components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -82,25 +90,26 @@ export const Default = meta.story({
 export const WithSelected = meta.story({
   args: {
     suggestions: mockSuggestions,
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
-  // @ts-expect-error - SuggestionList is a generic component, TypeScript can't properly infer its type in Storybook
   render: (args) => ({
-    components: { SuggestionList },
+    components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(mockSuggestions[0]);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -115,26 +124,27 @@ export const WithSelected = meta.story({
 export const WithCustomizeForm = meta.story({
   args: {
     suggestions: mockSuggestions,
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
     showCustomizeForm: true,
   },
-  // @ts-expect-error - SuggestionList is a generic component, TypeScript can't properly infer its type in Storybook
   render: (args) => ({
-    components: { SuggestionList },
+    components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -155,25 +165,26 @@ export const WithCustomizeForm = meta.story({
 export const OnlyUserSuggestions = meta.story({
   args: {
     suggestions: mockSuggestions.filter((s) => !s.isAi),
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
-  // @ts-expect-error - SuggestionList is a generic component, TypeScript can't properly infer its type in Storybook
   render: (args) => ({
-    components: { SuggestionList },
+    components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}
@@ -188,25 +199,26 @@ export const OnlyUserSuggestions = meta.story({
 export const OnlyAiSuggestions = meta.story({
   args: {
     suggestions: mockSuggestions.filter((s) => s.isAi),
-    isAiSource: (suggestion: MockSuggestion) => suggestion.isAi === true,
+    category: (suggestion: MockSuggestion) => (suggestion.isAi ? "ai" : "user"),
   },
-  // @ts-expect-error - SuggestionList is a generic component, TypeScript can't properly infer its type in Storybook
   render: (args) => ({
-    components: { SuggestionList },
+    components: { SuggestionList: SuggestionListForStory },
     setup() {
       const current = ref<MockSuggestion | null>(null);
+      const showCustomizeForm = ref(args.showCustomizeForm ?? false);
       return {
         args,
         current,
+        showCustomizeForm,
       };
     },
     template: `
       <div style="width: 300px; position: relative;">
         <SuggestionList
           v-model="current"
+          v-model:show-customize-form="showCustomizeForm"
           :suggestions="args.suggestions"
-          :is-ai-source="args.isAiSource"
-          :show-customize-form="args.showCustomizeForm"
+          :category="args.category"
         >
           <template #default="{ suggestion }">
             {{ suggestion.name }}

@@ -17,6 +17,9 @@ android {
         }
     }
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
             ndk {
                 debugSymbolLevel = 'FULL'

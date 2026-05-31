@@ -1,4 +1,4 @@
-import "../index.ts";
+import "../index";
 
 import { describe, expect, test } from "bun:test";
 

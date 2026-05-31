@@ -80,7 +80,7 @@ export const LastRound: Story = {
       fullname: "Carl Barks",
       nationalitycountrycode: "us",
     },
-    nextRoundStartDate: null,
+    nextRoundStartDate: undefined,
     hasEverybodyGuessed: false,
   },
 };

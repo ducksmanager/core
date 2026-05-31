@@ -17,6 +17,7 @@ import getViteAliases from "../../vite-aliases";
 export default defineConfig({
   build: {
     sourcemap: true,
+    cssMinify: "esbuild",
   },
   plugins: [
     vue(),
@@ -33,7 +34,9 @@ export default defineConfig({
     }),
     {
       // default settings on build (i.e. fail on error)
-      ...eslintPlugin(),
+      ...eslintPlugin({
+        overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
+      }),
       apply: "build",
     },
     {
@@ -41,6 +44,7 @@ export default defineConfig({
       ...eslintPlugin({
         failOnWarning: false,
         failOnError: false,
+        overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
       }),
       apply: "serve",
       enforce: "post",
@@ -90,5 +94,8 @@ export default defineConfig({
       "~translations": path.resolve(__dirname, "translations"),
       "~web": path.resolve(__dirname, "../web"),
     }),
+  },
+  server: {
+    forwardConsole: true,
   },
 });

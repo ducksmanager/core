@@ -8,7 +8,9 @@
         v-model="acceptedStoryKind"
         class="position-absolute w-100"
         :suggestions="entry.storyKindSuggestions"
-        :is-ai-source="({ aiKumikoResultId }) => aiKumikoResultId !== null"
+        :category="
+          ({ aiKumikoResultId }) => (aiKumikoResultId !== null ? 'ai' : 'user')
+        "
         :item-class="(suggestion) => [`kind-${suggestion.storyKindRows.kind}`]"
       >
         <template #default="{ suggestion, location }">

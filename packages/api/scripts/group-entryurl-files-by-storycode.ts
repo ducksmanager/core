@@ -10,11 +10,6 @@ import { existsSync, mkdirSync, readdirSync } from "fs";
 import type { inducks_storyversion } from "~prisma-schemas/client_coa/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-declare global {
-  interface ImportMeta {
-    dir: string;
-  }
-}
 const root =
   process.env.ENTRYURLS_DIR ||
   path.resolve(`${import.meta.dir}/../services/story-search/covers`);

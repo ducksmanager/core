@@ -19,12 +19,6 @@ import {
   getSession,
 } from "../services/story-search";
 
-declare global {
-  interface ImportMeta {
-    dir: string;
-  }
-}
-
 await getSession();
 
 const root =

@@ -1,9 +1,12 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Vue from "@vitejs/plugin-vue";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { BootstrapVueNextResolver } from "bootstrap-vue-next";
-import { readFile } from "fs/promises";
+import { execSync } from "child_process";
+import { readFile as readFileAsync } from "fs/promises";
 import * as path from "path";
+import { fileURLToPath } from "url";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
@@ -14,10 +17,30 @@ import { defineConfig } from "vite";
 
 import getViteAliases from "../../vite-aliases";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const gitCommitHash = () => {
+  try {
+    return execSync("git rev-parse HEAD", {
+      encoding: "utf-8",
+    }).trim();
+  } catch {
+    return undefined;
+  }
+};
+
+const sentryRelease = gitCommitHash();
+
 export default defineConfig({
   clearScreen: false,
+  define: {
+    "import.meta.env.VITE_SENTRY_RELEASE": JSON.stringify(sentryRelease ?? ""),
+  },
   build: {
     sourcemap: true,
+  },
+  optimizeDeps: {
+    include: ["mapbox-gl"],
   },
   resolve: {
     alias: getViteAliases(path.resolve(__dirname, "../.."), {
@@ -60,7 +83,7 @@ export default defineConfig({
       customCollections: {
         "extra-icons": {
           coafoot: () =>
-            readFile("./public/images/icons/coafoot.svg").then((buffer) =>
+            readFileAsync("./public/images/icons/coafoot.svg").then((buffer) =>
               buffer.toString(),
             ),
         },
@@ -73,9 +96,20 @@ export default defineConfig({
       dirs: ["src/components", "src/components/menus", "src/layouts"],
       dts: true,
     }),
+
+    sentryVitePlugin({
+      org: "bruno-perel",
+      project: "dm",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      disable: !process.env.SENTRY_AUTH_TOKEN,
+      release: {
+        name: sentryRelease,
+      },
+    }),
   ],
 
   server: {
+    forwardConsole: true,
     watch: {
       ignored: ["**/api/**", "**/.idea/**"],
     },

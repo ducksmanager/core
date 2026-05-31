@@ -1,7 +1,7 @@
 services:
   db:
     container_name: db
-    image: "mariadb:11.8"
+    image: "mariadb:12.2"
     restart: always
     volumes:
       - db:/var/lib/mysql
@@ -17,7 +17,7 @@ services:
         "--collation-server=utf8_unicode_ci",
         "--innodb-ft-min-token-size=1",
         "--ft-min-word-len=1",
-        "--innodb-buffer-pool-size=12G",
+        "--innodb-buffer-pool-size=2G",
         "--innodb-io-capacity=2000",
         "--innodb-io-capacity-max=4000",
         "--innodb-read-io-threads=8",

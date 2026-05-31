@@ -22,6 +22,7 @@ ion-fab {
   margin-top: -32px;
   top: initial;
   right: 0.5rem;
+  z-index: 0;
 
   :deep(ion-fab-list) {
     margin-top: 2rem;

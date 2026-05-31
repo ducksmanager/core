@@ -5,7 +5,8 @@ import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import { IonicResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
+import VitePluginImageTools from 'vite-plugin-image-tools';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 import getViteAliases from '../../vite-aliases';
@@ -14,36 +15,50 @@ import getViteAliases from '../../vite-aliases';
 export default defineConfig({
   server: {
     port: 8008,
+    forwardConsole: true,
   },
 
   build: {
     sourcemap: true,
-    rollupOptions: {
+    // Vite 8 / Rolldown: object-form manualChunks removed; use output.codeSplitting.groups.
+    // https://rolldown.rs/in-depth/manual-code-splitting
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunks
-          'vendor-vue': ['vue', 'vue-router', 'pinia'],
-          'vendor-ionic': ['@ionic/vue', '@ionic/vue-router'],
-          'vendor-capacitor': [
-            '@capacitor/core',
-            '@capacitor/app',
-            '@capacitor/device',
-            '@capacitor/haptics',
-            '@capacitor/keyboard',
-            '@capacitor/preferences',
-            '@capacitor/status-bar',
-            '@capacitor/camera',
-            '@capacitor/clipboard',
-            '@capacitor-community/camera-preview',
-            '@capawesome/capacitor-app-update',
-            '@capawesome/capacitor-file-picker',
-            '@capgo/capacitor-updater',
+        codeSplitting: {
+          groups: [
+            {
+              name: 'vendor-vue',
+              test: /node_modules\/(vue|vue-router|pinia)(\/|$)/,
+            },
+            {
+              name: 'vendor-ionic',
+              test: /node_modules\/@ionic\/(vue|vue-router)(\/|$)/,
+            },
+            {
+              name: 'vendor-capacitor',
+              test: /node_modules\/(@capacitor\/(core|app|device|haptics|keyboard|preferences|status-bar|camera|clipboard)|@capgo\/(camera-preview|capacitor-updater)|@capawesome\/(capacitor-app-update|capacitor-file-picker))(\/|$)/,
+            },
+            {
+              name: 'vendor-charts',
+              test: /node_modules\/(chart\.js|vue-chartjs)(\/|$)/,
+            },
+            {
+              name: 'vendor-utils',
+              test: /node_modules\/(@vueuse\/(core|components|integrations)|dayjs)(\/|$)/,
+            },
+            {
+              name: 'vendor-ui',
+              test: /node_modules\/(ionicons|@ionic\/pwa-elements|vue-virtual-scroller)(\/|$)/,
+            },
+            {
+              name: 'vendor-socket',
+              test: /node_modules\/socket-call-client(\/|$)/,
+            },
+            {
+              name: 'vendor-sentry',
+              test: /node_modules\/@sentry\/(capacitor|vue)(\/|$)/,
+            },
           ],
-          'vendor-charts': ['chart.js', 'vue-chartjs'],
-          'vendor-utils': ['@vueuse/core', '@vueuse/components', '@vueuse/integrations', 'dayjs'],
-          'vendor-ui': ['ionicons', '@ionic/pwa-elements', 'vue-virtual-scroller'],
-          'vendor-socket': ['socket-call-client'],
-          'vendor-sentry': ['@sentry/capacitor', '@sentry/vue'],
         },
       },
     },
@@ -53,11 +68,36 @@ export default defineConfig({
   plugins: [
     vue(),
     ReactivityTransform(),
+    VitePluginImageTools({
+      convert: { enable: false },
+      spritesConfig: {
+        rules: [
+          {
+            dir: './src/assets/flags',
+            name: 'flags',
+            outputDir: './src/assets/generated',
+            algorithm: 'binary-tree',
+          },
+        ],
+      },
+      cssGen: {
+        rules: [
+          {
+            inputDir: './src/assets/flags',
+            stylePath: 'src/assets/generated/flag-classes.css',
+            classPrefix: 'flag-',
+          },
+        ],
+      },
+    }),
     viteStaticCopy({
       targets: [
         {
-          src: '../web/public/images/medals/*.png',
+          src: normalizePath(path.resolve(__dirname, '../web/public/images/medals/*.png')),
           dest: 'images/medals',
+          // Matched paths are ../web/public/images/medals/<file>.png → destDir becomes
+          // images/medals/web/public/images/medals; go up 4 segments to land in images/medals/.
+          rename: (name, ext) => `../../../../${name}.${ext}`,
         },
       ],
     }),

@@ -1,10 +1,6 @@
 <template>
   <ion-page>
-    <ion-buttons v-if="componentName === IssueList" slot="end">
-      <CopyListButton />
-      <ViewModesButton v-if="!isIOS" />
-    </ion-buttons>
-    <ion-header :translucent="true" :class="{ hidden: isCameraPreviewShown }">
+    <ion-header :key="headerKey" :translucent="true" :class="{ hidden: isCameraPreviewShown }">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
@@ -31,6 +27,10 @@
             </div></div
         ></ion-title>
       </ion-toolbar>
+      <ion-buttons v-if="componentName === IssueList" slot="end">
+        <CopyListButton />
+        <ViewModesButton />
+      </ion-buttons>
       <Navigation v-if="!isCameraPreviewShown" />
       <template v-if="(list?.hasItems || filterText || currentFilter.id !== 'all') && !isCameraPreviewShown">
         <ion-searchbar v-model="filterText" inputmode="text" autocapitalize="sentences" placeholder="Filter" />
@@ -68,7 +68,6 @@ const {
   issuecodes,
   currentNavigationItem,
   currentFilter,
-  isIOS,
 } = storeToRefs(app());
 
 const { issuecodeDetails } = storeToRefs(coa());
@@ -87,6 +86,36 @@ const componentName = computed(() =>
 watch(componentName, () => {
   filterText.value = '';
 });
+
+const route = useRoute();
+
+/**
+ * Remount ion-header only when the camera preview closes (toolbar could stay blank otherwise).
+ * Do not bump on ionViewDidEnter — that runs more often than actual route changes and remounting
+ * ion-header leaves orphan Stencil nodes (duplicate headers under ion-page).
+ */
+const headerKey = ref(0);
+watch(isCameraPreviewShown, async (shown, wasShown) => {
+  if (wasShown && !shown) {
+    await nextTick();
+    headerKey.value++;
+  }
+});
+
+/**
+ * Remount ion-header when Collection’s URL changes
+ */
+watch(
+  () => route.fullPath,
+  (_fullPath, previousFullPath) => {
+    if (previousFullPath === undefined || route.path !== '/collection') {
+      return;
+    }
+    nextTick(() => {
+      headerKey.value++;
+    });
+  },
+);
 
 const showOfflineToast = async () => {
   const toast = await toastController.create({
@@ -127,19 +156,23 @@ strong {
   line-height: 26px;
 }
 
-ion-buttons {
-  &[slot='end'] {
-    position: fixed;
-    top: 0.4rem;
-    right: 0;
-    height: 44px;
+ion-buttons[slot='end'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2rem;
 
-    ion-fab,
-    ion-icon {
-      position: relative;
-      top: 0;
-      right: 0;
-    }
+  ion-fab {
+    position: relative;
+  }
+}
+
+ion-toolbar ion-buttons[slot='end'] {
+  ion-fab,
+  ion-icon {
+    position: relative;
+    top: 0;
+    right: 0;
   }
 }
 

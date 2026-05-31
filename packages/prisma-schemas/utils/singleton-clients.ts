@@ -27,13 +27,11 @@ const ensureConnectionString = (url: string): string => {
   try {
     const urlObj = new URL(url);
     
-    // Add pool parameters if not present - optimized for production with pm2
     if (!urlObj.searchParams.has('acquireTimeout')) {
       urlObj.searchParams.set('acquireTimeout', '30000');
     }
     if (!urlObj.searchParams.has('connectionLimit')) {
-      // Reduce connection limit per client instance since we have multiple databases
-      urlObj.searchParams.set('connectionLimit', '5');
+      urlObj.searchParams.set('connectionLimit', '3');
     }
     if (!urlObj.searchParams.has('idleTimeout')) {
       urlObj.searchParams.set('idleTimeout', '180000'); // 3 minutes
@@ -166,18 +164,18 @@ export const disconnectAllClients = async () => {
   }
   
   await Promise.all(promises);
-  console.log('All PrismaClient instances disconnected');
+  if (promises.length) {
+    console.log('All PrismaClient instances disconnected');
+  }
 };
 
-export const getConnectionStatus = () => {
-  return {
-    dm: dmClient ? 'connected' : 'not created',
-    dmStats: dmStatsClient ? 'connected' : 'not created',
-    coa: coaClient ? 'connected' : 'not created',
-    edgeCreator: edgeCreatorClient ? 'connected' : 'not created',
-    coverInfo: coverInfoClient ? 'connected' : 'not created',
-  };
-};
+export const getConnectionStatus = () => ({
+  dm: dmClient ? 'connected' : 'not created',
+  dmStats: dmStatsClient ? 'connected' : 'not created',
+  coa: coaClient ? 'connected' : 'not created',
+  edgeCreator: edgeCreatorClient ? 'connected' : 'not created',
+  coverInfo: coverInfoClient ? 'connected' : 'not created',
+});
 
 process.on('beforeExit', async () => {
   await disconnectAllClients();

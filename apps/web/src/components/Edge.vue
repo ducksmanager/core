@@ -1,7 +1,8 @@
 <template>
   <slot v-if="$slots['edge-prefix']" name="edge-prefix" />
+  <template v-if="!hasValidPublicationcode" />
   <EdgeContents
-    v-if="embedded"
+    v-else-if="embedded"
     :id="id"
     :src="src"
     :issuecode="issuecode"
@@ -71,15 +72,21 @@ const CLOUDINARY_ROTATED_URL =
 
 const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
+const hasValidPublicationcode = $computed(
+  () => issuecode && issuecodeDetails.value[issuecode]?.publicationcode,
+);
+
 let src = $computed(() => {
-    const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
-    const [countrycode, magazineCode] = publicationcode.split("/");
-    return spritePath && !ignoreSprite
-      ? `${SPRITES_ROOT}${spritePath}.png`
-      : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countrycode}/gen/${magazineCode}.${issuenumber.replaceAll(
-          " ",
-          "",
-        )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`;
-  }),
-  ignoreSprite = $ref(false);
+  if (!hasValidPublicationcode) return "";
+  const { publicationcode, issuenumber } = issuecodeDetails.value[issuecode];
+  const [countrycode, magazineCode] = publicationcode.split("/");
+  return spritePath && !ignoreSprite
+    ? `${SPRITES_ROOT}${spritePath}.png`
+    : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countrycode}/gen/${magazineCode}.${issuenumber.replaceAll(
+        " ",
+        "",
+      )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`;
+});
+
+let ignoreSprite = $ref(false);
 </script>

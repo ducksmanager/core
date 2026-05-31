@@ -2,21 +2,23 @@ import prisma from "./prisma/client";
 import type { player } from "./prisma/client_duckguessr/browser";
 export const numberOfRounds = 8;
 
-export const getGameWithRoundsDatasetPlayers = async (gameId: number) =>
-  await prisma.game.findUnique({
+export const gameRelations = {
+  rounds: {
     include: {
-      rounds: {
-        include: {
-          roundScores: true,
-        },
-      },
-      dataset: true,
-      gamePlayers: {
-        include: {
-          player: true,
-        },
-      },
+      roundScores: true,
     },
+  },
+  dataset: true,
+  gamePlayers: {
+    include: {
+      player: true,
+    },
+  },
+} as const;
+
+export const getGameWithRoundsDatasetPlayers = (gameId: number) =>
+  prisma.game.findUnique({
+    include: gameRelations,
     where: {
       id: gameId,
     },
@@ -80,27 +82,36 @@ export const create = async (datasetName: string) => {
   }
 };
 
-export const associatePlayer = async (gameId: number, player: player) => {
-  await prisma.gamePlayer.create({
+export const associatePlayer = async (gameId: number, playerId: number) =>
+  prisma.game.update({
+    include: gameRelations,
+    where: { id: gameId },
     data: {
-      game: {
-        connect: { id: gameId },
-      },
-      player: {
-        connect: { id: player.id },
+      gamePlayers: {
+        connectOrCreate: {
+          where: { gameId_playerId: { gameId, playerId } },
+          create: {
+            player: {
+              connect: { id: playerId },
+            },
+          },
+        },
       },
     },
   });
-};
 
-export const disassociatePlayer = async (gameId: number, player: player) => {
-  await prisma.gamePlayer.deleteMany({
-    where: {
-      gameId,
-      player,
+export const disassociatePlayer = async (gameId: number, player: player) =>
+  prisma.game.update({
+    include: gameRelations,
+    where: { id: gameId },
+    data: {
+      gamePlayers: {
+        deleteMany: {
+          playerId: player.id,
+        },
+      },
     },
   });
-};
 
 export default {
   associatePlayer,

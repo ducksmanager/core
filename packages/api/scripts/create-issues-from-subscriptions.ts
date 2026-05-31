@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { disconnectAllClients } from "~prisma-schemas/utils/singleton-clients";
 
 const ongoingSubscriptions = await prismaDm.$queryRaw<
   {
@@ -48,6 +49,7 @@ for (const subscription of ongoingSubscriptions) {
       },
     },
   });
+  console.log("Found %d releases", releases.length);
   for (const release of releases) {
     if (!release.filledoldestdate) {
       continue;
@@ -79,8 +81,17 @@ for (const subscription of ongoingSubscriptions) {
         },
       });
     }
+    else {
+      console.log(
+        "Issue %s already exists for user %s",
+        release.issuecode,
+        subscription.userId,
+      );
+    }
   }
 }
+
+console.log("Inserting issues");
 
 await prismaDm.$executeRaw`
   INSERT IGNORE INTO numeros(issuecode, Etat, ID_Acquisition, Abonnement, ID_Utilisateur)
@@ -96,5 +107,15 @@ await prismaDm.$executeRaw`
           AND least(current_date, subscription.Date_fin)
     AND Numeros_ajoutes = 0
   `;
-await prismaDm.$executeRaw`UPDATE abonnements_sorties SET Numeros_ajoutes=1`;
 
+console.log("Updating subscription releases");
+
+await prismaDm.subscriptionRelease.updateMany({
+  data: {
+    haveIssuesBeenAdded: true,
+  },
+});
+
+console.log("Done");
+
+await disconnectAllClients();

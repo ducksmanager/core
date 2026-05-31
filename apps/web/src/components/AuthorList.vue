@@ -42,7 +42,7 @@
           </b-col>
           <b-col lg="2">
             <StarRating
-              v-model:rating="author.notation"
+              :rating="author.notation ?? 5"
               :readonly="false"
               :max-rating="10"
               @update:rating="updateRating(author)"

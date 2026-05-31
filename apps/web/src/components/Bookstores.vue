@@ -11,14 +11,15 @@
     </div>
     <div v-else id="map">
       <mapbox-map
+        class="bookstores-mapbox-map"
         :access-token="accessToken"
         map-style="mapbox://styles/mapbox/light-v10"
         :center="mapCenter"
         :zoom="4"
-        @loaded="loaded = true"
+        @mb-load="loaded = true"
       >
         <template v-if="loaded">
-          <mapbox-marker
+          <bookstore-map-marker
             v-for="currentBookstore in bookstores"
             :key="currentBookstore.id"
             :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
@@ -31,15 +32,14 @@
                   : 'blue'
             "
             :offset="[0, 6]"
+            popup-anchor="top"
+            @popup-open="openedPopupId = currentBookstore.id"
+            @popup-close="
+              openedPopupId = undefined;
+              existingBookstore = undefined;
+            "
           >
-            <mapbox-popup
-              anchor="top"
-              @open="openedPopupId = currentBookstore.id"
-              @close="
-                openedPopupId = undefined;
-                existingBookstore = undefined;
-              "
-            >
+            <template #popup>
               <div :class="{ 'striped-bg': currentBookstore.reportedAsClosed }">
                 <b-alert
                   v-if="currentBookstore.reportedAsClosed"
@@ -159,8 +159,8 @@
                   </template>
                 </div>
               </div>
-            </mapbox-popup>
-          </mapbox-marker></template
+            </template>
+          </bookstore-map-marker></template
         >
       </mapbox-map>
     </div>
@@ -260,7 +260,9 @@
 
 <script setup lang="ts">
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import { MapboxMap, MapboxMarker, MapboxPopup } from "vue-mapbox-ts";
+import { MapboxMap } from "@studiometa/vue-mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import BookstoreMapMarker from "./BookstoreMapMarker.vue";
 import type {
   NewBookstore,
   NewComment,
@@ -442,7 +444,16 @@ onMounted(async () => {
 }
 
 #map {
+  position: relative;
   height: 500px;
+  width: 100%;
+  overflow: hidden;
+
+  .bookstores-mapbox-map {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+  }
 
   .mapboxgl-marker {
     cursor: pointer;

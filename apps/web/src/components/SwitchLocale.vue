@@ -1,5 +1,5 @@
 <template>
-  <div id="flags" :class="{ right }">
+  <div id="flags" :class="{ fixed }">
     <img
       v-for="locale in locales"
       :key="locale.key"
@@ -15,7 +15,7 @@
 const { getImagePath } = images();
 const { fetchCountryNames } = coa();
 
-const { right } = defineProps<{ right?: boolean }>();
+const { fixed = true } = defineProps<{ fixed?: boolean }>();
 
 const i18n = useI18n();
 const locales = computed(() => availableLocales);
@@ -33,11 +33,10 @@ const reloadWithLocale = async ({ key }: { key: string }) => {
   background: inherit;
   padding: 8px;
   cursor: pointer;
-  position: fixed;
   right: 0;
 
-  &.right {
-    right: 0;
+  &.fixed {
+    position: fixed;
   }
 }
 </style>

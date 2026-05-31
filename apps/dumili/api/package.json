@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=24.0.0 <25.0.0"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -24,11 +24,11 @@
   },
   "dependencies": {
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
-    "@prisma/client": "^7.4.2",
-    "@sentry/node": "^9.47.1",
-    "@sentry/profiling-node": "^9.47.1",
-    "axios": "^1.13.6",
-    "axios-cache-interceptor": "^1.11.4",
+    "@prisma/client": "^7.8.0",
+    "@sentry/node": "^10.52.0",
+    "@sentry/profiling-node": "^10.52.0",
+    "axios": "^1.16.0",
+    "axios-cache-interceptor": "^1.12.0",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
@@ -41,19 +41,19 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.4",
-    "@eslint/js": "^9.39.3",
-    "@sentry/cli": "^2.58.5",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@sentry/cli": "^3.4.1",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.19.13",
+    "@types/node": "^24.12.3",
     "concurrently": "^9.2.1",
-    "eslint": "^9.39.3",
+    "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
-    "prisma": "^7.4.2",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1"
+    "prisma": "^7.8.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.2"
   }
 }

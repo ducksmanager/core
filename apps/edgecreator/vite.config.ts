@@ -103,6 +103,7 @@ export default defineConfig(({ mode }) => ({
   ],
 
   server: {
+    forwardConsole: true,
     watch: {
       ignored: ["**/api/**", "**/.idea/**"],
     },
@@ -113,7 +114,7 @@ export default defineConfig(({ mode }) => ({
       ssr: "scripts/generate-svg-from-v1-models.ts",
       outDir: "dist-generate-svg",
       emptyOutDir: true,
-      rollupOptions: {
+      rolldownOptions: {
         input: "scripts/generate-svg-from-v1-models.ts",
         output: {
           entryFileNames: "generate-svg.js",

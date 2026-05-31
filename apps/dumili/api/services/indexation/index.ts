@@ -19,6 +19,8 @@ import type {
   storyKindSuggestion,
   storySuggestion,
 } from "~prisma/client_dumili/client";
+import type { ClientEvents as CoaEvents } from "~dm-services/coa";
+import dmNamespaces from "~dm-services/namespaces";
 
 import type { SessionDataWithIndexation } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
@@ -26,6 +28,11 @@ import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
 import { getStoriesFromImage, getFullStoriesFromKeywords } from "./story-search";
+import { SocketClient } from "socket-call-client";
+
+
+const socket = new SocketClient(process.env.DM_SOCKET_URL!);
+const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
 
 const indexationPayloadInclude = {
   user: true,
@@ -155,6 +162,8 @@ const createAiStorySuggestions = async (
   services: IndexationServices,
   indexation: FullIndexation,
 ) => {
+  const languagecode = indexation.acceptedIssueSuggestion?.publicationcode ? (await coaEvents.getPublicationLanguagecode(indexation.acceptedIssueSuggestion.publicationcode)) || 'en' : 'en';
+  
   for (const entry of indexation.entries) {
     if (
       [STORY, COVER].includes(
@@ -185,12 +194,12 @@ const createAiStorySuggestions = async (
           _storySuggestionRelationship: "ocrDetails",
         },
       ] as const) {
-        let cachedResults:
+        const cachedResults:
           | {
               type: typeof _storySuggestionRelationship;
               storycode: string;
             }[]
-          | undefined; /*firstPageOfEntry.image[field]?.stories
+          | undefined = undefined; /*firstPageOfEntry.image[field]?.stories
           .filter(
             (
               story
@@ -210,17 +219,17 @@ const createAiStorySuggestions = async (
           );*/
 
         if (cachedResults) {
-          if (cachedResults.length) {
-            console.log(
-              `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
-            );
-            break;
-          } else {
-            console.log(
-              `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
-            );
-            continue;
-          }
+          // if (cachedResults.length) {
+          //   console.log(
+          //     `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
+          //   );
+          //   break;
+          // } else {
+          //   console.log(
+          //     `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
+          //   );
+          //   continue;
+          // }
         } else {
           const results =
             field === "aiStorySearchResult"
@@ -234,6 +243,7 @@ const createAiStorySuggestions = async (
                       services,
                       entry.position,
                       firstPageOfEntry.image,
+                      languagecode
                     )
                   ).map(({ text }) => text),
                 );
@@ -328,31 +338,39 @@ const createAiStorySuggestions = async (
 
               for (const storycode of Object.keys(storiesWithScores)) {
                 console.log("Creating story suggestion for storycode", storycode);
-                await prisma.storySuggestion.create({
-                  data: {
-                    aiStorySuggestion: {
-                      create: {
-                        [storyField]: {
-                          // aiOcrPossibleStory or aiStorySearchPossibleStory
-                          create: {
-                            [field]: {
-                              // aiOcrResult or aiStorySearchResult
-                              connect: {
-                                id: aiResultId,
-                              },
+                const data = {
+                  aiStorySuggestion: {
+                    create: {
+                      [storyField]: {
+                        // aiOcrPossibleStory or aiStorySearchPossibleStory
+                        create: {
+                          [field]: {
+                            // aiOcrResult or aiStorySearchResult
+                            connect: {
+                              id: aiResultId,
                             },
-                            score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
                           },
+                          score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
                         },
                       },
                     },
-                    storycode,
-                    entry: {
-                      connect: {
-                        id: entry.id,
-                      },
+                  },
+                  storycode,
+                  entry: {
+                    connect: {
+                      id: entry.id,
                     },
                   },
+                };
+                await prisma.storySuggestion.upsert({
+                  where: {
+                    entryId_storycode: {
+                      entryId: entry.id,
+                      storycode,
+                    },
+                  },
+                  create: data,
+                  update: data,
                 });
               }
 

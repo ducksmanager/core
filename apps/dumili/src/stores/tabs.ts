@@ -4,7 +4,7 @@ export const tabs = defineStore("tabs", () => {
   const tabNames = computed(() => [
     { id: "pageGallery", label: $t("Galerie des pages") },
     { id: "book", label: $t("Livre") },
-    { id: "textEditor", label: $t("Editeur de texte") },
+    { id: "finish", label: $t("Terminer") },
   ]);
 
   const activeTabIndex = ref(0);

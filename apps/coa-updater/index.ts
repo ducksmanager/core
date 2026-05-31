@@ -5,17 +5,48 @@ import { parse } from "csv-parse";
 import { createReadStream, existsSync, mkdirSync, readFileSync } from "fs";
 import { createPool } from "mariadb";
 
+const host = process.env.MYSQL_HOST,
+      password = process.env.MYSQL_ROOT_PASSWORD,
+      database = process.env.MYSQL_DATABASE,
+      port = parseInt(process.env.MYSQL_PORT || "3306");
+
+if (!host || password === undefined || !database) {
+  throw new Error(
+    "MYSQL_HOST, MYSQL_ROOT_PASSWORD, and MYSQL_DATABASE are required for mariadb-check",
+  );
+}
+
 const dataPath = "/tmp/inducks",
-  isvPath = `${dataPath}/isv`;
+      isvPath = `${dataPath}/isv`,
+      newDatabase = `${database}_new`;
+
+/** Run CLI without a shell so MYSQL_ROOT_PASSWORD is not mangled ($, !, spaces, etc.). */
+const runMariadbCheck = () => Bun.spawn(
+  [
+    "mariadb-check",
+    "-h",
+    host,
+    "-uroot",
+    `-p${password}`,
+    "-v",
+    database,
+  ],
+  { stdout: "inherit", stderr: "inherit" }
+).exited;
 
 const poolParams = {
-  host: process.env.MYSQL_HOST,
-  port: parseInt(process.env.MYSQL_PORT || "3306"),
+  host,
+  port,
   user: "root",
-  password: process.env.MYSQL_ROOT_PASSWORD,
-  multipleStatements: true,
+  password,
   connectionLimit: 5,
+  multipleStatements: true,
   permitLocalInfile: true,
+  sessionVariables: {
+    net_read_timeout: 1800, // 30 minutes
+    net_write_timeout: 1800, // 30 minutes
+    wait_timeout: 3600, // 1 hour
+  },
 };
 const pool = createPool(poolParams);
 
@@ -36,34 +67,32 @@ try {
   }
 
   console.log("iconv done");
-  let cleanSql =
-    readFileSync(`${isvPath}/createtables.sql`, "utf8")
-      .split("\n")
-      .filter(
-        (line) =>
-          !(
-            ["USE ", "RENAME ", "DROP ", "# Step ", "#End of file"].some(
-              (prefix) => line.startsWith(prefix),
-            ) ||
-            /^.+priv[^;]+;$/.test(line) ||
-            /^CREATE TABLE IF NOT EXISTS ([^ ]+) LIKE \1_temp/.test(line)
-          ),
-      )
-      .join("\n")
-      // TODO uncomment? Replace "pk0" indexes with actual primary keys
-      // .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
+  let cleanSql = readFileSync(`${isvPath}/createtables.sql`, "utf8")
+    .split("\n")
+    .filter(
+      (line) =>
+        !(
+          ["USE ", "RENAME ", "DROP ", "# Step ", "#End of file"].some(
+            (prefix) => line.startsWith(prefix),
+          ) ||
+          /^.+priv[^;]+;$/.test(line) ||
+          /^CREATE TABLE IF NOT EXISTS ([^ ]+) LIKE \1_temp/.test(line)
+        ),
+    )
+    .join("\n")
+    // TODO uncomment? Replace "pk0" indexes with actual primary keys
+    // .replace(/KEY pk0/gms, "CONSTRAINT `PRIMARY` PRIMARY KEY")
 
-      // Replace ISV file paths with absolute paths
-      .replace(
-        /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
-        `LOAD DATA LOCAL INFILE '${dataPath}/$1'`,
-      )
-
-      // Prefix fulltext indexes with table name
-      .replace(
-        /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
-        "$1$2$4 fulltext_$3 $5;",
-      ) + "ALTER TABLE inducks_story_temp ADD FULLTEXT(storycode);";
+    // Replace ISV file paths with absolute paths
+    .replace(
+      /LOAD DATA LOCAL INFILE ".\/([^"]+)"/gms,
+      `LOAD DATA LOCAL INFILE '${dataPath}/$1'`,
+    )
+    // Prefix fulltext indexes with table name
+    .replace(
+      /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
+      "$1$2$4 fulltext_$3 $5;",
+    ) + "ALTER TABLE inducks_story_temp ADD FULLTEXT(storycode);";
 
   console.log("Renaming foreign keys...");
   for (let fkIndex = 0; fkIndex <= 5; fkIndex++) {
@@ -145,53 +174,101 @@ set unique_checks = 1;
 set foreign_key_checks = 1;
 set sql_log_bin=1`;
 
-  const cleanSqlStatements = cleanSql.split(";");
+  const cleanSqlStatements = cleanSql
+    .split(";")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 
-  const connection = await pool.getConnection();
-  await connection.query(
-    `DROP DATABASE IF EXISTS ${process.env.MYSQL_DATABASE_NEW};CREATE DATABASE ${process.env.MYSQL_DATABASE_NEW} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; set global net_buffer_length=1000000; 
-set global max_allowed_packet=1000000000; `,
-  );
+  const setupConnection = await pool.getConnection();
+  for (const statement of [
+    `DROP DATABASE IF EXISTS ${newDatabase}`,
+    `CREATE DATABASE ${newDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`,
+    "SET GLOBAL net_buffer_length=1000000",
+    "SET GLOBAL max_allowed_packet=1000000000",
+  ]) {
+    await setupConnection.query(statement);
+  }
+  await setupConnection.release();
 
   const newDbPool = createPool({
     ...poolParams,
-    database: process.env.MYSQL_DATABASE_NEW,
+    database: newDatabase,
   });
   const newDbConnection = await newDbPool.getConnection();
+  await newDbConnection.query("SET SESSION net_read_timeout = 1800");
+  await newDbConnection.query("SET SESSION net_write_timeout = 1800");
+  await newDbConnection.query("SET SESSION wait_timeout = 3600");
   for (const statement of cleanSqlStatements) {
     console.log(`Executing statement: ${statement}`);
     await newDbConnection.query(statement);
     console.log(" done.");
   }
 
+  const [obsoleteIssues] = await pool.query<[{ issuecode: string }[]]>(`
+    select distinct(numeros.issuecode)
+    from dm.numeros
+    left join ${newDatabase}.inducks_issue using(issuecode)
+    where ${newDatabase}.inducks_issue.issuecode is null
+  `);
+
+  if (obsoleteIssues.length) {
+    const [newIssues] = await pool.query<[{ issuecode: string }[]]>(`
+      select ${newDatabase}.inducks_issue.issuecode
+      from ${newDatabase}.inducks_issue
+      left join ${database}.inducks_issue using(issuecode)
+      where ${database}.inducks_issue.issuecode is null
+    `);
+    console.log('Obsolete issues:', obsoleteIssues.map(({ issuecode }) => issuecode).join(', '));
+    console.log('New issues:', newIssues.map(({ issuecode }) => issuecode).join(', '));
+  }
+  else {
+    console.log('No obsolete issues found');
+  }
+
+  console.log(
+    `Listing tables in ${newDatabase} (information_schema)...`,
+  );
   const tables = (
     await newDbConnection.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = ?`,
-      [process.env.MYSQL_DATABASE_NEW],
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = ? ORDER BY table_name`,
+      [newDatabase],
     )
   ).map((row: { table_name: string }) => row.table_name);
-  newDbConnection.release();
+  console.log(`Found ${tables.length} tables to rename.`);
+  await newDbConnection.release();
+
+  console.log("Acquiring connection for rename phase...");
+  const renameConnection = await pool.getConnection();
+  await renameConnection.query("SET SESSION net_read_timeout = 7200");
+  await renameConnection.query("SET SESSION net_write_timeout = 7200");
+  await renameConnection.query("SET SESSION wait_timeout = 28800");
 
   for (const table of tables) {
     console.log(`Renaming ${table}...`);
-    await connection.query(
-      `set foreign_key_checks = 0;
-      drop table if exists ${process.env.MYSQL_DATABASE}.${table};
-      rename table ${process.env.MYSQL_DATABASE_NEW}.${table} to ${process.env.MYSQL_DATABASE}.${table};
-      set foreign_key_checks = 1;`,
+    await renameConnection.query("SET foreign_key_checks = 0");
+    await renameConnection.query(
+      `DROP TABLE IF EXISTS ${database}.${table}`,
     );
+    await renameConnection.query(
+      `RENAME TABLE ${newDatabase}.${table} TO ${database}.${table}`,
+    );
+    await renameConnection.query("SET foreign_key_checks = 1");
     console.log(" done.");
   }
 
-  await connection.query(`drop database ${process.env.MYSQL_DATABASE_NEW}`);
-  connection.release();
+  await renameConnection.query(`drop database ${newDatabase}`);
+  await renameConnection.release();
 
   console.log("mariadb-check...");
-  await $`mariadb-check -h ${process.env.MYSQL_HOST} -uroot -p${process.env.MYSQL_ROOT_PASSWORD} -v ${process.env.MYSQL_DATABASE}`;
+  const checkExit = await runMariadbCheck();
+  if (checkExit !== 0) {
+    throw new Error(`mariadb-check exited with code ${checkExit}`);
+  }
   console.log(" done.");
   await pool.end();
   await newDbPool.end();
   process.exit(0);
 } catch (error) {
   console.error("Error:", (error as { message: string }).message);
+  process.exit(1);
 }

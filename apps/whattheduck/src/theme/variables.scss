@@ -15,6 +15,8 @@ $dmConditions: (
   --ion-margin: 48px;
   --ion-background-color: #303030;
   --ion-background-color-rgb: 48,48,48;
+  /* App background, not overridden when camera preview is active */
+  --dm-background-color: #303030;
 
   --ion-text-color: #ffffff;
   --ion-text-color-rgb: 255,255,255;
@@ -195,6 +197,7 @@ $dmConditions: (
   .ios body {
     --ion-background-color: #000000;
     --ion-background-color-rgb: 0, 0, 0;
+    --dm-background-color: #000000;
 
     --ion-text-color: white;
     --ion-text-color-rgb: 255, 255, 255;
@@ -238,6 +241,7 @@ $dmConditions: (
   .md body {
     --ion-background-color: #121212;
     --ion-background-color-rgb: 18, 18, 18;
+    --dm-background-color: #121212;
 
     --ion-text-color: white;
     --ion-text-color-rgb: 255, 255, 255;

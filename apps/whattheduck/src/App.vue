@@ -1,5 +1,5 @@
 <template>
-  <ion-app>
+  <ion-app :class="{ 'camera-preview-active': isCameraPreviewShown }">
     <ion-progress-bar v-if="bundleDownloadProgress" :value="bundleDownloadProgress"></ion-progress-bar>
     <OfflineBanner v-if="isOfflineMode === 'offline_no_cache'" />
 
@@ -30,7 +30,11 @@ import { useBackButton } from '@ionic/vue';
 const storage = injectLocal<IonicStorage>('storage')!;
 
 const appStore = app();
-const { isOfflineMode, token, socket, offlineBannerHeight } = storeToRefs(appStore);
+const { isOfflineMode, token, socket, offlineBannerHeight, isCameraPreviewShown } = storeToRefs(appStore);
+
+watch(isCameraPreviewShown, (active) => {
+  document.body.classList.toggle('camera-preview-active', active);
+});
 console.log('token after storeToRefs', token.value);
 
 const route = useRoute();

@@ -19,20 +19,20 @@
       {{ ownershipPercentages[countrycode] ? getOwnershipText(ownershipPercentages[countrycode]) : '' }}
     </template>
     <template #row-label="{ item }">
-      <Country :id="item.countrycode" :label="item.countryname" />
+      <Country :id="item.countrycode" :label="item.countryname" :style="'margin-right: 1rem'" />
     </template>
   </List>
 </template>
 
 <script setup lang="ts">
-import { stores } from '~web';
+import { coa } from '~web/src/stores/coa';
 
 import { getOwnershipText, getOwnershipPercentages } from '~/composables/useOwnership';
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { totalPerCountryWithoutDuplicates, ownedCountries } = storeToRefs(wtdcollection());
-const { countryNames, issueCountsByCountrycode: coaIssueCountsPerCountrycode } = storeToRefs(stores.coa());
+const { countryNames, issueCountsByCountrycode: coaIssueCountsPerCountrycode } = storeToRefs(coa());
 const { isCoaView } = storeToRefs(app());
 
 const ownershipPercentages = computed(() =>

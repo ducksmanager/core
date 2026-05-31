@@ -1,0 +1,7 @@
+DVBH  56     h3 Kẹt ngoài vũ trụ [issdate:1998-02-02] [inx:FGK] [pages:36] [price:đ]
+DVBH  56a   Xvn/DVBH  56   1 c          VR)     --  Kẹt ngoài vũ trụ [xapp:DD] [xref:D 97006(panels 1.1, 12.4)]
+DVBH  56p01 D 97006       12 4                  DD  Kẹt ngoài vũ trụ [trans:Văn Thắng]
+DVBH  56p13 D 96163        8 4                  MM  Thành phố dưới lòng đất [trans:Trường Hẳi] [part:1]
+DVBH  56p21 D 97198       12 4                  DD  Donald đón mừng năm mới [trans:Việt Dũng]
+DVBH  56y   D 93042        1 4                  DD  Coi "cọp" [trans:Đông Quỳnh]
+DVBH  56z   ?              0+i                  --  [brokpg:1/3] [xapp:MI,DA,GO,PL] [re:vn/DVBH  33z,vn/DVBH  34z,vn/DVBH  36z,vn/DVBH  37z,vn/DVBH  38z,vn/DVBH  43z,vn/DVBH  47z,vn/DVBH  49z,vn/DVBH  53z,vn/DVBH  54z]

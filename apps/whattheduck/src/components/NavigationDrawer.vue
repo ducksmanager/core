@@ -71,7 +71,7 @@ import {
   settingsOutline,
   settingsSharp,
 } from 'ionicons/icons';
-import { stores as webStores } from '~web';
+import { users } from '~web/src/stores/users';
 
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
@@ -79,7 +79,7 @@ import { wtdcollection } from '~/stores/wtdcollection';
 const { t } = useI18n();
 const { token, isOffline, isIOS } = storeToRefs(app());
 const collectionStore = wtdcollection();
-const points = computed(() => webStores.users().points);
+const points = computed(() => users().points);
 
 interface AppPage {
   title: string;

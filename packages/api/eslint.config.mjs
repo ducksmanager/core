@@ -16,6 +16,7 @@ export default defineConfig(
       "**/model",
       "**/*.d.ts",
       "prisma/client_*",
+      "eslint.config.mjs",
     ],
   },
   {

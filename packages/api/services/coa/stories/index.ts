@@ -5,8 +5,6 @@ import type { inducks_story } from "~prisma-schemas/schemas/coa";
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-const STORY = "n";
-
 const getStoryAndStoryversionDetails = async (
   searchResults: StorySearchResults<false>["results"],
 ) => {
@@ -39,8 +37,7 @@ const getStoryAndStoryversionDetails = async (
   return searchResults
     .filter(
       ({ storycode }) =>
-        storyversionDetails[storyDetails[storycode].originalstoryversioncode!]
-          .kind === STORY,
+        storyDetails[storycode].originalstoryversioncode && storyDetails[storycode].originalstoryversioncode in storyversionDetails
     )
     .map(({ storycode, score }) => {
       const storyversion = storyversionDetails[storyDetails[storycode].originalstoryversioncode!];
@@ -87,16 +84,28 @@ const getStoryDetails = async (storycodes: string[]) =>
           },
         }),
         prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
-            SELECT s.storycode,
-                   MIN(CONCAT('webusers/webusers/', eu.url)) AS url
-            FROM inducks_story s
-                     INNER JOIN coa.inducks_storyversion sv ON s.storycode = sv.storycode
-                     INNER JOIN coa.inducks_entry e USING (storyversioncode)
-                     INNER JOIN coa.inducks_entryurl eu USING (entrycode)
-            WHERE sv.storycode = s.storycode
-              AND s.storycode IN (${Prisma.join(storycodes)})
-              AND eu.sitecode = 'webusers'
-            GROUP BY s.storycode`,
+            SELECT storycode, CONCAT('webusers/webusers/', url) AS url
+            FROM (
+              SELECT s.storycode,
+                    eu.url,
+                    i.oldestdate,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY s.storycode
+                        ORDER BY i.oldestdate ASC
+                    ) AS rn
+              FROM coa.inducks_story s
+                      INNER JOIN coa.inducks_storyversion sv
+                          ON s.storycode = sv.storycode
+                      INNER JOIN coa.inducks_entry e
+                          USING (storyversioncode)
+                      INNER JOIN coa.inducks_entryurl eu
+                          USING (entrycode)
+                      INNER JOIN coa.inducks_issue i
+                          USING (issuecode)
+              WHERE s.storycode IN (${Prisma.join(storycodes)})
+            ) ranked
+            WHERE rn = 1
+            ORDER BY storycode`,
       ])
         .then(([stories, storyUrls]) => ({
           stories: stories.groupBy("storycode"),
@@ -114,14 +123,46 @@ const getStoryversionsDetails = (storyversioncodes: string[]) =>
     .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
-const getStoryjobs = (storyversioncode: string) =>
+  const getStoryPreviousTitles = async (storycode: string, languagecode: string) =>
+    prismaCoa.$queryRaw<{ title: string }[]>`
+      select DISTINCT inducks_entry.title AS title
+      from inducks_storyversion
+      inner join inducks_entry using (storyversioncode)
+      inner join inducks_issue using (issuecode)
+      inner join inducks_publication using (publicationcode)
+      inner join inducks_country using (countrycode)
+      where storycode=${storycode}
+      and COALESCE(inducks_entry.languagecode, inducks_publication.languagecode, inducks_country.defaultlanguage) = ${languagecode}
+      order by oldestdate desc;
+    `.then((data) => data.map(({ title }) => ( title )));
+
+const getStoriesStoryjobs = (storyversioncodes: string[]) =>
   prismaCoa.inducks_storyjob
     .findMany({
+      select: {
+        storyversioncode: true,
+        personcode: true,
+        plotwritartink: true,
+      },
       where: {
-        storyversioncode,
+        storyversioncode: { in: storyversioncodes },
       },
     })
-    .then((data) => ({ data }))
+    .then((data) => ({ data: data.groupBy("storyversioncode", "[]") }))
+    .catch((e) => ({ error: "Error", errorDetails: e }));
+
+const getStoriesHeroCharacter = (storycodes: string[]) =>
+  prismaCoa.inducks_herocharacter 
+    .findMany({
+      select: {
+        storycode: true,
+        charactercode: true,
+      },
+      where: {
+        storycode: { in: storycodes },
+      },
+    })
+    .then((data) => ({ data: data.groupBy("storycode", "charactercode") }))
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
 const searchStory = async <WithIssues extends boolean>(
@@ -226,7 +267,9 @@ export default {
   getFullStoriesFromKeywords,
   getStoryDetails,
   getStoryversionsDetails,
-  getStoryjobs,
+  getStoryPreviousTitles,
+  getStoriesStoryjobs,
+  getStoriesHeroCharacter,
   searchStory,
   searchStoryByStorycode,
   listIssuesFromStoryCode,

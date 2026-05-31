@@ -26,7 +26,8 @@ export type PlayerServices = NamespaceProxyTarget<
 
 const listenEvents = ({ _socket }: PlayerServices) => ({
   getPlayer: () => {
-     return Promise.resolve(_socket.data.user); },
+    return Promise.resolve(_socket.data.user);
+  },
 
   updateUser: async (updatedPlayer: player) =>
     updatePlayer(updatedPlayer.id, updatedPlayer),
@@ -70,9 +71,7 @@ const { client, server } = useSocketEvents<
   Record<string, never>
 >(namespaces.PLAYER, {
   listenEvents,
-  middlewares: [
-    RequiredPlayerMiddleware,
-  ],
+  middlewares: [RequiredPlayerMiddleware],
 });
 
 export { client, server };

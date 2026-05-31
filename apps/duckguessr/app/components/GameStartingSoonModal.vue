@@ -42,7 +42,7 @@ const { firstRoundStartDate } = defineProps<{
   firstRoundStartDate: Date;
 }>();
 
-const timeBeforeFirstRound = ref(null as number | null);
+const timeBeforeFirstRound = ref<number>();
 
 const { t } = useI18n();
 

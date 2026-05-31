@@ -99,7 +99,9 @@ onMounted(() => {
           });
         }
       } catch (error) {
-        window.alert((error as { error: string }).error);
+        window.alert(
+          typeof error === "object" && "error" in error! ? error.error : error,
+        );
       }
     });
 });
@@ -117,7 +119,7 @@ onMounted(() => {
   }
 }
 
-:deep(a.uppy-Dashboard-poweredBy) {
+a.uppy-Dashboard-poweredBy {
   display: none;
 }
 </style>

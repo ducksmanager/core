@@ -80,7 +80,7 @@ const time = new Date().getTime();
 const initialTimeBeforeNextRound = computed(() =>
   nextRoundStartTime.value ? nextRoundStartTime.value - time : null,
 );
-const timeBeforeNextRound = ref(null as number | null);
+const timeBeforeNextRound = ref<number>();
 
 const emit = defineEmits<{
   (e: "next-round"): void;
@@ -91,15 +91,12 @@ const { t } = useI18n();
 const url = computed(() => getUrl(roundUrl));
 
 const updateTimeBeforeNextRound = () => {
-  timeBeforeNextRound.value =
-    nextRoundStartDate === null
-      ? null
-      : Math.max(
-          0,
-          Math.ceil(
-            (nextRoundStartDate.getTime() - new Date().getTime()) / 1000,
-          ),
-        );
+  timeBeforeNextRound.value = !nextRoundStartDate
+    ? undefined
+    : Math.max(
+        0,
+        Math.ceil((nextRoundStartDate.getTime() - new Date().getTime()) / 1000),
+      );
 };
 
 onMounted(() => {

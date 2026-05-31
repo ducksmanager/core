@@ -1,3 +1,3 @@
-import { composables as webComposables } from '~web';
+import useMedal from '~web/src/composables/useMedal';
 
-export default webComposables.useMedal;
+export default useMedal;

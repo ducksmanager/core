@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
+    <ion-header :key="headerKey" :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
@@ -64,7 +64,8 @@
 import '@nanoandrew4/vue3-carousel-3d/dist/style.css';
 import { Carousel3d, Slide } from '@nanoandrew4/vue3-carousel-3d';
 import { pricetagOutline, pricetagSharp } from 'ionicons/icons';
-import { stores as webStores, components as webComponents } from '~web';
+import IssueQuotation from '~web/src/components/IssueQuotation.vue';
+import { coa } from '~web/src/stores/coa';
 import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 
 import useCoverSearch from '../composables/useCoverSearch';
@@ -77,11 +78,17 @@ import type { ClientEvents as StorySearchServices } from '~dm-services/story-sea
 import { SuccessfulEventOutput } from 'socket-call-client';
 
 const hasCoaData = ref(false);
-const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(webStores.coa());
-const { fetchPublicationNames, fetchIssuecodeDetails, fetchIssuePopularities, fetchIssueQuotations } = webStores.coa();
+const { issuecodeDetails, publicationNames, issuePopularities, issueQuotations } = storeToRefs(coa());
+const { fetchPublicationNames, fetchIssuecodeDetails, fetchIssuePopularities, fetchIssueQuotations } = coa();
 const { currentNavigationItem, isCameraPreviewShown } = storeToRefs(app());
 
-const { IssueQuotation } = webComponents;
+const headerKey = ref(0);
+watch(isCameraPreviewShown, async (shown, wasShown) => {
+  if (wasShown && !shown) {
+    await nextTick();
+    headerKey.value++;
+  }
+});
 
 const cover = shallowRef<(typeof covers)['value'][0]>();
 

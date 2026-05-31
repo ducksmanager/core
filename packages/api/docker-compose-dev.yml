@@ -27,6 +27,7 @@ services:
   mailcatcher:
     container_name: mailcatcher
     image: stpaquet/alpinemailcatcher
+    platform: linux/386
     ports:
       - "1025:1025"
       - "1080:1080"

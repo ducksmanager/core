@@ -14,14 +14,16 @@ export type DatasetsServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = () => ({
-  getDatasets: async () => prisma.$queryRaw<{
-    id: number;
-    name: string;
-    title: string;
-    description: string;
-    images: number;
-    authors: number;
-  }[]>`
+  getDatasets: async () => prisma.$queryRaw<
+    {
+      id: number;
+      name: string;
+      title: string;
+      description: string;
+      images: number;
+      authors: number;
+    }[]
+  >`
       SELECT dataset.id, name, title, description, COUNT(*) AS images, COUNT(DISTINCT personcode) AS authors
       FROM dataset
       LEFT JOIN dataset_entryurl de ON dataset.id = de.dataset_id
@@ -33,8 +35,8 @@ const listenEvents = () => ({
 
   previewDataset: async ({
     personNationalityFilter,
-    oldestDateFilterMin,
-    oldestDateFilterMax,
+    oldestDateFilterMin: _oldestDateFilterMin,
+    oldestDateFilterMax: _oldestDateFilterMax,
   }: {
     personNationalityFilter: string[] | undefined;
     oldestDateFilterMin: number | undefined;

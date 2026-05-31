@@ -153,7 +153,7 @@ watch(
     if (newColor === "transparent") {
       newColor = "#000000";
     }
-    originalColor.value = newColor as string;
+    originalColor.value = newColor;
   },
   { immediate: true },
 );

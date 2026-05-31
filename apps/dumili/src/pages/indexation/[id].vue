@@ -11,7 +11,7 @@
           $t("Ajoutez au moins une image de page pour consulter le livre")
         }}</template>
       </b-col>
-      <TextEditor v-else-if="activeTabIndex === 2" />
+      <Finish v-else-if="activeTabIndex === 2" />
       <b-container class="start-0 bottom-0 mw-100 pt-2" style="height: 35px"
         ><b-tabs v-model:index="activeTabIndex" tabs align="center"
           ><b-tab

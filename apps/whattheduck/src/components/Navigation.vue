@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { stores } from '~web';
+import { coa } from '~web/src/stores/coa';
 
 import Country from './Country.vue';
 import GlobeIcon from './GlobeIcon.vue';
@@ -48,7 +48,7 @@ import Publication from './Publication.vue';
 import { app } from '~/stores/app';
 
 const { currentNavigationItem, countrycode, publicationcode, issuecodes } = storeToRefs(app());
-const { countryNames, publicationNames } = storeToRefs(stores.coa());
+const { countryNames, publicationNames } = storeToRefs(coa());
 
 const maxParts = 4;
 

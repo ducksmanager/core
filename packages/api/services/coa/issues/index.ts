@@ -19,7 +19,7 @@ export default {
         },
         where: {
           publicationcode: {
-            in: publicationcodes,
+            in: publicationcodes.filter((p): p is string => !!p),
           },
         },
         by: ["publicationcode"],
@@ -69,7 +69,7 @@ export default {
         },
         where: {
           publicationcode: {
-            in: publicationcodes,
+            in: publicationcodes.filter((p): p is string => !!p),
           },
         },
         orderBy: {

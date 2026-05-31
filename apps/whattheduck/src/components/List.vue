@@ -18,6 +18,7 @@
     >
       <template v-if="$slots['row-label']">
         <RecycleScroller
+          v-if="scrollerLayoutReady"
           v-slot="{ item: { key, item, isOwned, nextItemType } }"
           :style="{ visibility: isCameraPreviewShown ? 'hidden' : 'visible' }"
           class="scroller"
@@ -105,6 +106,8 @@ const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
 
 const content = shallowRef<InstanceType<typeof IonContent>>();
+/** Defer RecycleScroller until ion-content has laid out; first tick had clientHeight 0. */
+const scrollerLayoutReady = ref(false);
 
 const scrollPositionPct = ref(0);
 const isScrolling = ref(false);
@@ -150,6 +153,21 @@ watch(
     );
   },
   { immediate: true },
+);
+
+watch(
+  [() => items.length, isCameraPreviewShown],
+  ([len, cameraShown]) => {
+    scrollerLayoutReady.value = false;
+    if (len && !cameraShown) {
+      nextTick(() => {
+        requestAnimationFrame(() => {
+          scrollerLayoutReady.value = true;
+        });
+      });
+    }
+  },
+  { flush: 'post', immediate: true },
 );
 </script>
 

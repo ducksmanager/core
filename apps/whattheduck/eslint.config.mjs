@@ -1,10 +1,12 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import vueI18n from '@intlify/eslint-plugin-vue-i18n';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import prettierVue from 'eslint-plugin-prettier-vue';
 import pluginVue from 'eslint-plugin-vue';
 import parser from 'vue-eslint-parser';
 
@@ -34,7 +36,17 @@ export default [
   },
   ...vueI18n.configs['flat/recommended'],
   ...pluginVue.configs['flat/recommended'],
-  ...compat.extends('plugin:prettier-vue/recommended', 'prettier', 'plugin:@typescript-eslint/recommended'),
+  ...compat.extends('prettier', 'plugin:@typescript-eslint/recommended'),
+
+  // prettier-vue uses legacy context.getSourceCode(); wrap for ESLint 10 (avoid fixupConfigRules — duplicates @typescript-eslint).
+  {
+    plugins: {
+      'prettier-vue': fixupPluginRules(prettierVue),
+    },
+    rules: {
+      'prettier-vue/prettier': 'error',
+    },
+  },
 
   {
     plugins: {

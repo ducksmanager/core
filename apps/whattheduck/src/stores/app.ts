@@ -14,6 +14,17 @@ export interface FabOption {
   getTextToCopy?: () => Promise<string>;
 }
 
+type NavigationItem =
+  | { type: 'all'; value: 'all' }
+  | { type: 'countrycode' | 'publicationcode'; value: string }
+  | { type: 'issuecodes'; value: string[] };
+
+const navigationItemsEqual = (a: NavigationItem, b: NavigationItem) =>
+  a.type === b.type &&
+  (Array.isArray(a.value) && Array.isArray(b.value)
+    ? a.value.every((value, index) => value === b.value[index])
+    : a.value === b.value);
+
 export const app = defineStore('app', () => {
   const offlineBannerHeight = ref(0);
   const socket = ref<ReturnType<typeof useDmSocket>>();
@@ -36,11 +47,7 @@ export const app = defineStore('app', () => {
 
   const isCoaView = ref(route.hash.startsWith('#coa-'));
 
-  const currentNavigationItem = ref<
-    | { type: 'all'; value: 'all' }
-    | { type: 'countrycode' | 'publicationcode'; value: string }
-    | { type: 'issuecodes'; value: string[] }
-  >({ type: 'all', value: 'all' });
+  const currentNavigationItem = ref<NavigationItem>({ type: 'all', value: 'all' });
 
   watch(
     () => route.hash,
@@ -52,22 +59,20 @@ export const app = defineStore('app', () => {
         .replace(/^#(coa-)?/, '')
         .replaceAll('_', ' ')
         .split('=');
-      if (parts.length === 1) {
-        currentNavigationItem.value = { type: 'all', value: 'all' };
-      } else {
-        const [type, value] = parts as ['countrycode' | 'publicationcode' | 'issuecodes', string];
-        if (type === 'issuecodes') {
-          currentNavigationItem.value = {
-            type,
-            value: value.split(','),
-          };
-        } else {
-          currentNavigationItem.value = {
-            type,
-            value,
-          };
-        }
+      const nextItem =
+        parts.length === 1
+          ? ({ type: 'all', value: 'all' } as const)
+          : (() => {
+              const [type, value] = parts as ['countrycode' | 'publicationcode' | 'issuecodes', string];
+              if (type === 'issuecodes') {
+                return { type, value: value.split(',') } as const;
+              }
+              return { type, value } as const;
+            })();
+      if (navigationItemsEqual(currentNavigationItem.value, nextItem)) {
+        return;
       }
+      currentNavigationItem.value = nextItem;
     },
     { immediate: true },
   );
@@ -188,6 +193,9 @@ export const app = defineStore('app', () => {
     )?.replace(/ /g, '_');
     const hash = (isCoaView.value ? '#coa-' : '#') + (navigationItem?.type ? `${navigationItem?.type}=${value}` : '');
     if (route.name === 'Collection') {
+      if (route.hash === hash) {
+        return;
+      }
       window.location.hash = hash;
     } else {
       await router.push({

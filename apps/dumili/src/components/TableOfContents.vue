@@ -3,7 +3,7 @@
     no-body
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
     body-class="flex-grow-1 w-100 h-100"
-    header-class="position-relative p-0"
+    header-class="position-relative p-1 d-flex align-items-center flex-column"
   >
     <template #header>
       <IssueSuggestionModal />
@@ -12,7 +12,7 @@
         :auto-close="false"
         variant="light"
         menu-class="vw-20 p-2"
-        class="position-absolute h-100 end-0 d-flex"
+        class="position-absolute h-100 end-0 d-flex align-items-start"
         style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
@@ -262,11 +262,6 @@ watch(
   user-select: none;
 
   :deep(.card-header) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-
     :deep(a),
     :deep(h6) {
       color: #666;

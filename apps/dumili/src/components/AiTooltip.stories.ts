@@ -1,9 +1,19 @@
 import preview from "../../.storybook/preview";
 import AiTooltip from "./AiTooltip.vue";
 
-const meta = preview.meta({
+type AiTooltipArgs = {
+  id: string;
+  status: "success" | "failure" | "idle";
+  topCenter?: boolean;
+  loadingEvents?: Array<{
+    eventName: string;
+    checkMatch: (id: number) => boolean;
+  }>;
+};
+
+// No `component` → argTypes-only args infer as `unknown`; narrow args for Storybook 10+ CSF typing.
+const meta = preview.type<{ args: AiTooltipArgs }>().meta({
   title: "Components/AiTooltip",
-  // component is omitted to avoid generic type issues
   tags: ["autodocs"],
   argTypes: {
     id: {
@@ -25,16 +35,6 @@ const meta = preview.meta({
     },
   },
 });
-
-type AiTooltipArgs = {
-  id: string;
-  status: "success" | "failure" | "idle";
-  topCenter?: boolean;
-  loadingEvents?: Array<{
-    eventName: string;
-    checkMatch: (id: number) => boolean;
-  }>;
-};
 
 const renderTooltip = (content: string) => (args: AiTooltipArgs) => ({
   components: { AiTooltip },

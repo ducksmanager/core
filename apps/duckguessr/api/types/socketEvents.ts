@@ -8,7 +8,6 @@ export type CurrentGame = NonNullable<
 export type InterServerEvents = Record<string, never>;
 export type SocketGameData = {
   user: player;
-  gameId: number;
   currentRound: round;
   currentRoundEndTimeout: NodeJS.Timeout;
   currentGame: CurrentGame;

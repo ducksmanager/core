@@ -48,13 +48,8 @@ watch(
   [isPersistedDataLoaded, token],
   async ([isLoaded, tokenString]) => {
     if (isLoaded && tokenString) {
-      dataLoader.value.run(
-        () => fetchCollection(true),
-        () => {
-          isCollectionLoaded.value = true;
-          fetchCollection(true);
-        },
-      );
+      await fetchCollection(true);
+      isCollectionLoaded.value = true;
     }
   },
   { immediate: true },

@@ -15,6 +15,7 @@ export default defineConfig(
       "**/bundle.mjs",
       "**/*.d.ts",
       "tsconfig.json",
+      "eslint.config.mjs",
     ],
   },
   {

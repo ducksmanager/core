@@ -155,7 +155,7 @@ const updateTags = async (edges: edge[]) => {
         publicationcode,
         spriteSize === "full"
           ? "full"
-          : getSpriteRange(issuenumber, spriteSize as number),
+          : getSpriteRange(issuenumber, spriteSize),
       );
 
       let actualSpriteSize;

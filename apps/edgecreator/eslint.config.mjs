@@ -28,6 +28,7 @@ export default [
       "**/*.d.ts",
       "**/vendor",
       "**/vite.config.ts",
+      "eslint.config.mjs",
     ],
   },
   ...pluginVue.configs["flat/recommended"],
@@ -52,7 +53,7 @@ export default [
 
       parserOptions: {
         parser: "@typescript-eslint/parser",
-        project: "./tsconfig.json",
+        projectService: true,
         extraFileExtensions: [".vue"],
         tsconfigRootDir: __dirname,
       },

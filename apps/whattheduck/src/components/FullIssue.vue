@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
-import { stores as webStores } from '~web';
+import { coa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -33,7 +33,7 @@ const {
   partInfo?: EntryPartInfo;
 }>();
 
-const coaStore = webStores.coa();
+const coaStore = coa();
 
 const { getCollectionIssues } = wtdcollection();
 

@@ -11,13 +11,14 @@
     "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
+    "rootDir": "../..",
     "paths": {
       "~group-by": [
         "../../util/group-by"
@@ -27,6 +28,7 @@
   "exclude": [
     "node_modules",
     "client_*",
-    ".turbo"
+    ".turbo",
+    "eslint.config.mjs"
   ]
 }

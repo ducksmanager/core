@@ -88,18 +88,17 @@
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
 import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
-import { stores as webStores, components as webComponents } from '~web';
+import InducksStory from '~web/src/components/InducksStory.vue';
+import { coa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
-
-const { InducksStory } = webComponents;
 
 const sortByScore = ref(false);
 
 const { suggestions, isLoadingSuggestions } = storeToRefs(wtdcollection());
 const { loadSuggestions } = wtdcollection();
-const { fetchIssuecodeDetails, fetchPublicationNames } = webStores.coa();
-const { countryNames, issuecodeDetails } = storeToRefs(webStores.coa());
+const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
+const { countryNames, issuecodeDetails } = storeToRefs(coa());
 
 interface FormattedSuggestion {
   storycode: string;

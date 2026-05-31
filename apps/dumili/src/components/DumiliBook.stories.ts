@@ -11,7 +11,12 @@ import {
 import type { FullIndexation } from "~dumili-services/indexation";
 import { ui } from "~/stores/ui";
 
-const meta = preview.meta({
+type StoryArgs = {
+  indexation: FullIndexation;
+  firstPageDimensions: { width: number; height: number };
+};
+
+const meta = preview.type<{ args: StoryArgs }>().meta({
   title: "Components/DumiliBook",
   tags: ["autodocs"],
   argTypes: {
@@ -120,11 +125,6 @@ const createPageWithPanels = () =>
     }) as FullIndexation["pages"][number]["image"],
   });
 
-type StoryArgs = {
-  indexation: FullIndexation;
-  firstPageDimensions: { width: number; height: number };
-};
-
 const createDefaultRender = () => (args: StoryArgs) => ({
   components: { DumiliBook },
   setup: () => ({ args }),
@@ -182,7 +182,7 @@ export const WithPanelsOverlay = meta.story({
       initializeSocket: false,
     }),
   ],
-  render: (args) => ({
+  render: (args: StoryArgs) => ({
     components: { DumiliBook },
     setup() {
       const { overlay, visiblePages } = storeToRefs(ui());

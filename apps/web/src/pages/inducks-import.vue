@@ -384,9 +384,9 @@ watch($$(issuesToImport), async (newValue) => {
   if (!newValue) {
     return;
   }
-  const publicationCodes = newValue.map(
-    (issuecode) => issuecodeDetails.value[issuecode].publicationcode,
-  );
+  const publicationCodes = newValue
+    .map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode)
+    .filter((p): p is string => !!p);
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;
   await fetchIssuecodesByPublicationcode(publicationCodes);

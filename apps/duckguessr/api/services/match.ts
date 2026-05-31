@@ -7,6 +7,7 @@ import game from "../game";
 import type { SessionUser } from "../types/SessionUser";
 import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
+import { createGameSocket } from "./game";
 
 export type MatchServices = NamespaceProxyTarget<
   Socket<
@@ -22,7 +23,7 @@ const listenEvents = ({ _socket }: MatchServices) => ({
   createMatch: async (dataset: string) => {
     console.log(`${_socket.data.user.username} is creating a match`);
     const newGame = (await game.create(dataset))!;
-    // await createGameSocket(_socket, newGame.id);
+    await createGameSocket(newGame.id);
     return newGame.id;
   },
 });

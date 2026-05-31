@@ -6,7 +6,7 @@
     <game-scores :game="game!" />
   </b-container>
   <b-container
-    v-else-if="currentRoundNumber && currentRound?.personcode"
+    v-else-if="currentRoundNumber && 'personcode' in currentRound!"
     fluid
     class="d-flex flex-grow-1 p-0"
   >
@@ -15,12 +15,12 @@
       :available-time="availableTime"
       :has-everybody-guessed="hasEverybodyGuessed"
       :chosen-author="chosenAuthor"
-      :current-round="currentRound!"
+      :current-round="currentRound as RoundWithScoresAndAuthor"
       :authors="game.authors"
       :players="players"
       :previous-personcodes="
         game.rounds
-          .filter((round) => round.personcode !== null)
+          .filter((round) => 'personcode' in round)
           .map((round) => round.personcode)
       "
       :remaining-time="remainingTime"
@@ -32,13 +32,15 @@
     <round-result-modal
       v-if="
         currentRound &&
-        currentRound.personcode &&
+        'personcode' in currentRound &&
         currentRoundPlayerScore !== undefined
       "
       :status="scoreToVariant(currentRoundPlayerScore)"
       :speed-bonus="currentRoundPlayerScore.speedBonus"
-      :correct-author="getAuthor(currentRound.personcode!)"
-      :round-url="currentRound.sitecodeUrl!"
+      :correct-author="
+        getAuthor((currentRound as RoundWithScoresAndAuthor).personcode)
+      "
+      :round-url="(currentRound as RoundWithScoresAndAuthor).sitecodeUrl"
       :round-number="currentRoundNumber"
       :next-round-start-date="nextRoundStartDate"
       :has-everybody-guessed="hasEverybodyGuessed"
@@ -49,12 +51,7 @@
     :authors="game.authors"
     :first-round-start-date="firstRoundStartDate"
   />
-  <matchmaking
-    v-else-if="isConnectedToSocket"
-    :game-id="gameId"
-    :game-socket="gameSocket"
-    @start-match="loadGame()"
-  />
+  <matchmaking v-else-if="game" :game="game" @start-match="loadGame()" />
   <b-container
     v-else
     fluid
@@ -67,11 +64,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from "@vueuse/integrations/useCookies";
 import { getDuckguessrId } from "~/composables/user";
-import { useScoreToVariant } from "~/composables/use-score-to-variant";
+import { useScoreToVariant as scoreToVariant } from "~/composables/use-score-to-variant";
 import type { GameFullNoPersoncode } from "~duckguessr-types/game";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
+import type { RoundWithScoresAndAuthor } from "~duckguessr-types/roundWithScoresAndAuthor";
 
 const { getGameSocketFromId } = inject(duckguessrSocketInjectionKey)!;
 
@@ -81,8 +78,6 @@ const route = useRoute();
 
 const gameId = parseInt(route.params.id as string);
 
-const isConnectedToSocket = ref(false);
-
 const chosenAuthor = ref<string>();
 const hasEverybodyGuessed = ref(false);
 const gameIsFinished = ref(false);
@@ -90,124 +85,17 @@ const firstRoundStartDate = ref<Date>();
 
 const game = ref<GameFullNoPersoncode>();
 
-const gameSocket = getGameSocketFromId(gameId);
+const hasUrlLoaded = ref(false);
 
-gameSocket._connect = () => {
-  isConnectedToSocket.value = true;
-};
-
-gameSocket.firstRoundWillStartSoon = (receivedFirstRoundStartDate) => {
-  firstRoundStartDate.value = receivedFirstRoundStartDate;
-};
-
-gameSocket.roundStarts = (round) => {
-  hasEverybodyGuessed.value = false;
-  currentRoundNumber.value = round.roundNumber || undefined;
-  game.value!.rounds[currentRoundNumber.value! - 1] = round;
-  hasUrlLoaded.value = false;
-};
-
-gameSocket.roundEnds = (round, nextRound) => {
-  hasEverybodyGuessed.value = true;
-  chosenAuthor.value = undefined;
-  game.value!.rounds[currentRoundNumber.value! - 1] = round;
-  if (nextRound) {
-    game.value!.rounds[currentRoundNumber.value!] = nextRound;
-  }
-};
-
-gameSocket.firstRoundWillStartSoon = (receivedFirstRoundStartDate) => {
-  firstRoundStartDate.value = receivedFirstRoundStartDate;
-};
-
-gameSocket.roundStarts = (round) => {
-  hasEverybodyGuessed.value = false;
-  currentRoundNumber.value = round.roundNumber || undefined;
-  game.value!.rounds[currentRoundNumber.value! - 1] = round;
-  hasUrlLoaded.value = false;
-};
-
-gameSocket.roundEnds = (round, nextRound) => {
-  hasEverybodyGuessed.value = false;
-  currentRoundNumber.value = round.roundNumber || undefined;
-  game.value!.rounds[currentRoundNumber.value! - 1] = round;
-  hasUrlLoaded.value = false;
-};
-
-gameSocket.gameEnds = () => {
-  gameIsFinished.value = true;
-};
-
-gameSocket.playerGuessed = ({ roundScore, answer }) => {
-  if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
-  }
-  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
-    roundScore,
-  );
-};
-
-gameSocket.roundEnds = (round, nextRound) => {
-  hasEverybodyGuessed.value = true;
-  chosenAuthor.value = undefined;
-  game.value!.rounds[currentRoundNumber.value! - 1] = round;
-  if (nextRound) {
-    game.value!.rounds[currentRoundNumber.value!] = nextRound;
-  }
-};
-
-gameSocket.gameEnds = () => {
-  gameIsFinished.value = true;
-};
-
-gameSocket.playerGuessed = ({ roundScore, answer }) => {
-  if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
-  }
-  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
-    roundScore,
-  );
-};
-
-gameSocket.gameEnds = () => {
-  gameIsFinished.value = true;
-};
-
-gameSocket.playerGuessed = ({ roundScore, answer }) => {
-  if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
-  }
-  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
-    roundScore,
-  );
-};
-
-gameSocket.gameEnds = () => {
-  gameIsFinished.value = true;
-};
-
-gameSocket.playerGuessed = ({ roundScore, answer }) => {
-  if (roundScore.playerId === duckguessrId) {
-    game.value!.rounds[currentRoundNumber.value! - 1].personcode = answer;
-  }
-  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
-    roundScore,
-  );
-};
-
-gameSocket._connect();
+const now = ref(Date.now());
 
 const currentRoundNumber = ref<number>();
 
-const scoreToVariant = useScoreToVariant;
+const gameSocket = getGameSocketFromId(gameId);
 
 const players = computed(
   () => game.value?.gamePlayers?.map(({ player }) => player) || [],
 );
-
-const hasUrlLoaded = ref(false);
-
-const now = ref(Date.now());
 
 const getRound = (searchedRoundNumber: number | undefined) =>
   searchedRoundNumber == undefined
@@ -240,7 +128,7 @@ const remainingTime = computed(() =>
 
 const nextRoundStartDate = computed(() => {
   const nextRound =
-    currentRoundNumber.value == null
+    currentRoundNumber.value === undefined
       ? null
       : game.value?.rounds.find(
           (round) => round?.roundNumber === currentRoundNumber.value! + 1,
@@ -280,15 +168,57 @@ const currentRoundPlayerScore = computed(() =>
 const getAuthor = (personcode2: string) =>
   game.value!.authors.find(({ personcode }) => personcode2 === personcode)!;
 
-onMounted(async () => {
-  await loadGame();
-  if (game.value && gameIsFinished.value) {
-    return;
+gameSocket._connect();
+
+gameSocket.firstRoundWillStartSoon = (receivedFirstRoundStartDate) => {
+  firstRoundStartDate.value = receivedFirstRoundStartDate;
+};
+
+gameSocket.roundStarts = (round) => {
+  hasEverybodyGuessed.value = false;
+  currentRoundNumber.value = round.roundNumber || undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  hasUrlLoaded.value = false;
+};
+
+gameSocket.roundEnds = (round, nextRound) => {
+  hasEverybodyGuessed.value = true;
+  chosenAuthor.value = undefined;
+  game.value!.rounds[currentRoundNumber.value! - 1] = round;
+  if (nextRound) {
+    game.value!.rounds[currentRoundNumber.value!] = nextRound;
   }
-  setInterval(() => {
-    now.value = Date.now();
-  }, 1000);
-});
+};
+
+gameSocket.playerGuessed = ({ roundScore, answer }) => {
+  if (roundScore.playerId === duckguessrId) {
+    (
+      game.value!.rounds[
+        currentRoundNumber.value! - 1
+      ] as RoundWithScoresAndAuthor
+    ).personcode = answer!;
+  }
+  game.value!.rounds[currentRoundNumber.value! - 1].roundScores.push(
+    roundScore,
+  );
+};
+
+gameSocket.gameEnds = () => {
+  gameIsFinished.value = true;
+};
+
+gameSocket.sendGame = (serverGame) => {
+  game.value = serverGame!;
+
+  loadGame().then(() => {
+    if (game.value && gameIsFinished.value) {
+      return;
+    }
+    setInterval(() => {
+      now.value = Date.now();
+    }, 1000);
+  });
+};
 </script>
 
 <style lang="scss" scoped>

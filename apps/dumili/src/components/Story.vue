@@ -3,9 +3,7 @@
   <div>
     {{
       storyDetails?.[storycode]?.title || $t("(Sans titre)")
-    }}&nbsp;<inducks-link
-      :url-encoded-storycode="encodeURIComponent(storycode)"
-    />
+    }}&nbsp;<inducks-link :storycode="storycode" />
   </div>
   <div><slot name="suffix" /></div>
 </template>

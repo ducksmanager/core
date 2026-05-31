@@ -1,22 +1,13 @@
 <template>
   <b-container
     fluid
-    class="position-relative d-flex flex-column align-items-center justify-content-center p-2"
+    class="position-relative d-flex flex-row align-items-center justify-content-center p-2"
   >
-    <div class="d-flex flex-row align-items-center">
-      <router-link class="display-6" to="/">DuMILi</router-link>
-      <div v-if="!isSocketConnected" class="ms-2 text-danger">
-        {{ $t("(hors-ligne)") }}
-      </div>
-      <SwitchLocale right />
-    </div>
-    DUcksManager Inducks LIttle helper
     <b-dropdown
       v-if="dumiliUser"
       id="user-dropdown"
       :auto-close="false"
       variant="light"
-      class="position-absolute start-0 d-flex"
     >
       <template #button-content><i-bi-person-fill /></template>
       <b-form @submit.prevent="updateUser">
@@ -32,6 +23,14 @@
         </b-dropdown-item>
       </b-form>
     </b-dropdown>
+    <div class="flex-grow-1">
+      <router-link class="display-6" to="/">DuMILi</router-link>
+      <div class="small">DUcksManager Inducks LIttle helper</div>
+      <div v-if="!isSocketConnected" class="ms-2 text-danger">
+        {{ $t("(hors-ligne)") }}
+      </div>
+    </div>
+    <div><SwitchLocale :fixed="false" /></div>
   </b-container>
 
   <b-container

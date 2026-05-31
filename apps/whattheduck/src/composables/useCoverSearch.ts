@@ -1,4 +1,4 @@
-import { CameraPreview } from '@capacitor-community/camera-preview';
+import { CameraPreview } from '@capgo/camera-preview';
 import { Capacitor } from '@capacitor/core';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { toastController } from '@ionic/vue';
@@ -23,7 +23,7 @@ export default (
         ? storySearchEvents
             .findSimilarImages(base64, true)
             .then((results) => ('results' in results ? results.results : null))
-        : coverIdEvents.searchFromCover(base64).then((results) => ('covers' in results ? results.covers : null))
+        : coverIdEvents.searchFromCover(base64, 1).then((results) => ('covers' in results ? results.covers : null))
     ).finally(() => {
       isSearching.value = false;
     });
@@ -38,9 +38,7 @@ export default (
       .finally(async () => {
         if (results?.length) {
           if (Capacitor.isNativePlatform()) {
-            if ((await CameraPreview.isCameraStarted()).value) {
-              await CameraPreview.stop();
-            }
+            await CameraPreview.stop().catch(() => {});
           }
           app().isCameraPreviewShown = false;
           await router.push({

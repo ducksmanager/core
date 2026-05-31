@@ -1,5 +1,5 @@
 <template>
-  <img :src="`/icons/flags_${id}.png`" :alt="id" />
+  <span :class="`flag flag-${id}`" :title="id" :aria-label="id" :style="style" />
   <template v-if="label">{{ label }}</template>
 </template>
 
@@ -7,12 +7,12 @@
 defineProps<{
   id: string;
   label?: string;
+  style?: string;
 }>();
 </script>
 
 <style lang="scss" scoped>
-img {
-  width: 18px;
-  height: 18px;
+.flag {
+  display: inline-block;
 }
 </style>
