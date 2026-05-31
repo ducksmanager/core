@@ -21,6 +21,9 @@
   "dependencies": {
     "@bperel/vue3-popper-teleport": "^1.4.3",
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
+    "@pinia/colada": "^1.0.0",
+    "@pinia/colada-plugin-cache-persister": "^0.1.4",
+    "pinia-colada-plugin-normalizer": "^0.1.8",
     "@popperjs/core": "^2.11.8",
     "@sentry/vue": "^10.52.0",
     "@studiometa/vue-mapbox-gl": "^2.7.2",
@@ -56,6 +59,7 @@
     "@histoire/plugin-vue": "1.0.0-beta.1",
     "@iconify-json/bi": "^1.2.7",
     "@intlify/unplugin-vue-i18n": "^11.1.2",
+    "@pinia/colada-devtools": "^0.4.5",
     "@sentry/vite-plugin": "^5.2.1",
     "@types/js-cookie": "^3.0.6",
     "@types/mapbox__mapbox-gl-geocoder": "^5.1.1",

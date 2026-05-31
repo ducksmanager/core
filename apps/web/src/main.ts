@@ -13,6 +13,12 @@ import { SocketClient } from "socket-call-client";
 import contextmenu from "v-contextmenu";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "vue-router/auto-routes";
+import { PiniaColada } from "@pinia/colada";
+import { PiniaColadaCachePersister } from "@pinia/colada-plugin-cache-persister";
+import {
+  PiniaColadaNormalizer,
+  defineEntity,
+} from "pinia-colada-plugin-normalizer";
 
 import App from "~/App.vue";
 import i18n from "~/i18n";
@@ -33,9 +39,39 @@ router.beforeResolve(async (to) => {
 
 const store = createPinia();
 
+const coaEntityTypes = [
+  "coa:getPublicationListFromPublicationcodeList",
+  "coa:getAuthorList",
+  "coa:getIssuePopularities",
+  "coa:getQuotationsByIssuecodes",
+  "coa:getIssuecodesByPublicationcodes",
+  "coa:getStoryDetails",
+  "coa:getStoryversionsDetails",
+  "coa:getCoaCountByCountrycode",
+] as const;
+
+const normalizerEntities = Object.fromEntries(
+  coaEntityTypes.map((entityType) => [
+    entityType,
+    defineEntity({ idField: "id" }),
+  ]),
+);
+
 const app = createApp(App)
   .use(i18n("fr", localStorage.getItem("locale") || "fr", { en }).instance)
   .use(store)
+  .use(PiniaColada, {
+    plugins: [
+      PiniaColadaNormalizer({
+        entities: normalizerEntities,
+      }),
+      PiniaColadaCachePersister({
+        key: "pinia-colada-cache",
+        debounce: 1000,
+        storage: sessionStorage,
+      }),
+    ],
+  })
   .use(createBootstrap())
   .use(contextmenu)
   .use(head)
