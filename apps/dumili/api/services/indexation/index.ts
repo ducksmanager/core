@@ -1,5 +1,6 @@
 import "~group-by";
 
+import { v2 as cloudinary } from "cloudinary";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import {
@@ -15,6 +16,7 @@ import type {
   entry,
   indexation,
   issueSuggestion,
+  page,
   Prisma,
   storyKindSuggestion,
   storySuggestion,
@@ -27,12 +29,84 @@ import { RequiredAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
-import { getStoriesFromImage, getFullStoriesFromKeywords } from "./story-search";
+import {
+  getStoriesFromImage,
+  getFullStoriesFromKeywords,
+} from "./story-search";
 import { SocketClient } from "socket-call-client";
 
+import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf'
+
+// @ts-expect-error - TS1323
+await definePDFJSModule(() => import('pdfjs-dist'))
+
+// @ts-expect-error - TS1323
+const canvasImport = () => import('@napi-rs/canvas');
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
+
+const MAX_PDF_FILE_SIZE = 50 * 1024 * 1024;
+const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = new Set<string>([
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+]);
+
+const inferMimeType = (value?: string) => {
+  const lowerValue = value?.toLowerCase();
+  if (!lowerValue) {
+    return undefined;
+  }
+  if (lowerValue.endsWith(".pdf")) return "application/pdf";
+  if (lowerValue.endsWith(".png")) return "image/png";
+  if (lowerValue.endsWith(".jpg") || lowerValue.endsWith(".jpeg")) {
+    return "image/jpeg";
+  }
+  return undefined;
+};
+
+const uploadToCloudinary = async ({ services, folder, context, page, ...params }: {
+  services: IndexationServices;
+  folder: string;
+  context: Record<string, string>;
+  page: page;
+  buffer: Buffer
+}) => new Promise<void>(
+  (resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        context,
+        folder,
+        resource_type: "image",
+        upload_preset: "dumili_signed",
+      },
+      async (error, result) => {
+        if (error || !result) {
+          reject(
+            error ??
+            new Error(
+              "Cloudinary upload failed: " + JSON.stringify(result),
+            ),
+          );
+        }
+        else {
+          console.log(`Uploaded page ${page.pageNumber} to Cloudinary:`, result.secure_url);
+
+          await setPageUrl(
+            services,
+            page.id,
+            result.secure_url,
+          );
+          resolve();
+        }
+      },
+    );
+    stream.end(params.buffer);
+  },
+);
 
 const indexationPayloadInclude = {
   user: true,
@@ -79,13 +153,54 @@ const indexationPayloadInclude = {
       acceptedStory: true,
       acceptedStoryKind: { include: { storyKindRows: true } },
       storyKindSuggestions: { include: { storyKindRows: true } },
-      storySuggestions: { include: { aiStorySuggestion: {
+      storySuggestions: {
         include: {
-          aiStorySearchPossibleStory: true
-      } }}},
+          aiStorySuggestion: {
+            include: {
+              aiStorySearchPossibleStory: true
+            }
+          }
+        }
+      },
     },
   },
 } as const;
+
+const setPageUrl = async (services: IndexationServices, id: number, url: string | null) => {
+  if (
+    !services._socket.data.indexation.pages.some(
+      ({ id: pageId }) => pageId === id,
+    )
+  ) {
+    return {
+      error: "This indexation does not have any page with this ID",
+    };
+  }
+  return prisma.page
+    .update({
+      data: {
+        image: url
+          ? {
+            connectOrCreate: {
+              create: {
+                url,
+              },
+              where: {
+                url,
+              },
+            },
+          }
+          : { disconnect: true },
+      },
+      where: {
+        id,
+      },
+    })
+    .then(async () => {
+      await refreshIndexation(services);
+      return "OK" as const;
+    });
+};
 
 export type FullIndexation = Prisma.indexationGetPayload<{
   include: typeof indexationPayloadInclude;
@@ -99,6 +214,8 @@ export type IndexationServerSentStartEvents = {
   reportCreateAiStorySuggestions: (entryId: number) => void;
   reportRunOcrOnImage: (imageId: number) => void;
   reportRunStorySearchOnImage: (imageId: number) => void;
+  reportPdfAnalyzed: (numberOfUploadablePages: number) => void;
+  reportPdfPageUploaded: (pageNumber: number) => void;
 };
 
 export type IndexationServerSentStartEndEvents =
@@ -162,8 +279,12 @@ const createAiStorySuggestions = async (
   services: IndexationServices,
   indexation: FullIndexation,
 ) => {
-  const languagecode = indexation.acceptedIssueSuggestion?.publicationcode ? (await coaEvents.getPublicationLanguagecode(indexation.acceptedIssueSuggestion.publicationcode)) || 'en' : 'en';
-  
+  const languagecode = indexation.acceptedIssueSuggestion?.publicationcode
+    ? (await coaEvents.getPublicationLanguagecode(
+      indexation.acceptedIssueSuggestion.publicationcode,
+    )) || "en"
+    : "en";
+
   for (const entry of indexation.entries) {
     if (
       [STORY, COVER].includes(
@@ -196,27 +317,27 @@ const createAiStorySuggestions = async (
       ] as const) {
         const cachedResults:
           | {
-              type: typeof _storySuggestionRelationship;
-              storycode: string;
-            }[]
+            type: typeof _storySuggestionRelationship;
+            storycode: string;
+          }[]
           | undefined = undefined; /*firstPageOfEntry.image[field]?.stories
-          .filter(
-            (
-              story
-            ): story is typeof story & {
-              aiStorySuggestion: { storycode: string };
-            } => !!story.aiStorySuggestion
-          )
-          .map(
-            ({
-              aiStorySuggestion: {
-                storySuggestion: { storycode },
-              },
-            }) => ({
-              type: storySuggestionRelationship,
-              storycode,
-            })
-          );*/
+      .filter(
+        (
+          story
+        ): story is typeof story & {
+          aiStorySuggestion: { storycode: string };
+        } => !!story.aiStorySuggestion
+      )
+      .map(
+        ({
+          aiStorySuggestion: {
+            storySuggestion: { storycode },
+          },
+        }) => ({
+          type: storySuggestionRelationship,
+          storycode,
+        })
+      );*/
 
         if (cachedResults) {
           // if (cachedResults.length) {
@@ -234,19 +355,19 @@ const createAiStorySuggestions = async (
           const results =
             field === "aiStorySearchResult"
               ? await getStoriesFromImage(
-                  firstPageOfEntry.image,
-                  entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
-                )
+                firstPageOfEntry.image,
+                entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
+              )
               : await getFullStoriesFromKeywords(
-                  (
-                    await runOcrOnImage(
-                      services,
-                      entry.position,
-                      firstPageOfEntry.image,
-                      languagecode
-                    )
-                  ).map(({ text }) => text),
-                );
+                (
+                  await runOcrOnImage(
+                    services,
+                    entry.position,
+                    firstPageOfEntry.image,
+                    languagecode,
+                  )
+                ).map(({ text }) => text),
+              );
           if ("error" in results) {
             console.error(results.error);
           } else {
@@ -334,10 +455,16 @@ const createAiStorySuggestions = async (
                 },
               });
 
-              const storiesWithScores = results.stories.groupBy("storycode", "score[]");
+              const storiesWithScores = results.stories.groupBy(
+                "storycode",
+                "score[]",
+              );
 
               for (const storycode of Object.keys(storiesWithScores)) {
-                console.log("Creating story suggestion for storycode", storycode);
+                console.log(
+                  "Creating story suggestion for storycode",
+                  storycode,
+                );
                 const data = {
                   aiStorySuggestion: {
                     create: {
@@ -350,7 +477,9 @@ const createAiStorySuggestions = async (
                               id: aiResultId,
                             },
                           },
-                          score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
+                          score: storiesWithScores[storycode].sort(
+                            (a, b) => b - a,
+                          )[0],
                         },
                       },
                     },
@@ -542,40 +671,80 @@ export type IndexationServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = (services: IndexationServices) => ({
-  setPageUrl: async (id: number, url: string | null) => {
-    if (
-      !services._socket.data.indexation.pages.some(
-        ({ id: pageId }) => pageId === id,
-      )
-    ) {
+  setPageUrl: async (id: number, url: string | null) => setPageUrl(services, id, url),
+
+  uploadFileToCloudinary: async ({ dataBase64, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber }: {
+    dataBase64: string;
+    fileName: string;
+    mimeType: string;
+    firstPageNumber: number;
+    firstOutOfRangePageNumber: number;
+  }) => {
+    try {
+      const { indexation, user } = services._socket.data;
+      const effectiveMimeType = mimeType || inferMimeType(fileName);
+      if (!effectiveMimeType || !ALLOWED_MIME_TYPES.has(effectiveMimeType)) {
+        return {
+          error: "Unsupported file type",
+        };
+      }
+
+      const maxSize =
+        mimeType === "application/pdf" ? MAX_PDF_FILE_SIZE : MAX_IMAGE_FILE_SIZE;
+
+      const buffer = Buffer.from(dataBase64, "base64")
+      if (buffer.byteLength > maxSize) {
+        throw new Error(
+          mimeType === "application/pdf"
+            ? "PDF file too large (max 50 MB)"
+            : "Image file too large (max 5 MB)",
+        );
+      }
+
+      const folder = `dumili/${user.username}/${indexation.id}`
+      const context = {
+        indexation: indexation.id,
+        user: user.username,
+      }
+
+      if (effectiveMimeType === "application/pdf") {
+        const pdf = await getDocumentProxy(new Uint8Array(Buffer.from(dataBase64, "base64")));
+        const numberOfUploadablePages = Math.min(pdf.numPages, firstOutOfRangePageNumber - firstPageNumber);
+        services.reportPdfAnalyzed(numberOfUploadablePages);
+        
+        for (let idx = 0; idx < numberOfUploadablePages; idx++) {
+          await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport }).then((dataUrl) =>
+            uploadToCloudinary({
+              services,
+              buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
+              page: indexation.pages.find(({ pageNumber }) => pageNumber === firstPageNumber + idx)!,
+              folder,
+              context,
+            }).then(() => services.reportPdfPageUploaded(idx))
+          );
+        }
+      }
+      else {
+        await uploadToCloudinary({
+          services,
+          buffer,
+          page: indexation.pages.find(({ pageNumber }) => pageNumber === firstPageNumber)!,
+          folder,
+          context,
+        });
+      }
+      return { status: "OK" as const };
+    } catch (error) {
+      const returnedError =
+        error instanceof Error
+          ? error.message
+          : "Cloudinary upload failed: " + JSON.stringify(error);
+
+      console.error(returnedError);
       return {
-        error: "This indexation does not have any page with this ID",
+        error: returnedError,
       };
     }
-    return prisma.page
-      .update({
-        data: {
-          image: url
-            ? {
-                connectOrCreate: {
-                  create: {
-                    url,
-                  },
-                  where: {
-                    url,
-                  },
-                },
-              }
-            : { disconnect: true },
-        },
-        where: {
-          id,
-        },
-      })
-      .then(async () => {
-        await refreshIndexation(services);
-        return "OK" as const;
-      });
   },
 
   deleteIndexation: async () => {
@@ -703,11 +872,11 @@ const listenEvents = (services: IndexationServices) => ({
             suggestionId === null
               ? { disconnect: true }
               : {
-                  connect: {
-                    id: suggestionId,
-                    indexationId: services._socket.data.indexation.id,
-                  },
+                connect: {
+                  id: suggestionId,
+                  indexationId: services._socket.data.indexation.id,
                 },
+              },
         },
         where: {
           id: services._socket.data.indexation.id,

@@ -26,6 +26,7 @@ dist-ssr
 *.traineddata
 .eslintcache
 auto-imports.d.ts
+!src/auto-imports.d.ts
 components.d.ts
 api/prisma/client_*
 

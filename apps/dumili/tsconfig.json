@@ -62,7 +62,7 @@
     }
   },
   "include": [
-    "auto-imports.d.ts",
+    "src/auto-imports.d.ts",
     "cloudinary-widget.d.ts",
     "components.d.ts",
     "src/**/*.ts",
