@@ -79,6 +79,7 @@ const uploadToCloudinary = async ({ services, folder, context, page, ...params }
     const stream = cloudinary.uploader.upload_stream(
       {
         context,
+        overwrite: false,
         folder,
         resource_type: "image",
         upload_preset: "dumili_signed",
@@ -214,7 +215,7 @@ export type IndexationServerSentStartEvents = {
   reportCreateAiStorySuggestions: (entryId: number) => void;
   reportRunOcrOnImage: (imageId: number) => void;
   reportRunStorySearchOnImage: (imageId: number) => void;
-  reportPdfAnalyzed: (numberOfUploadablePages: number) => void;
+  reportPdfAnalyzed: (pageNumbers: number[]) => void;
   reportPdfPageUploaded: (pageNumber: number) => void;
 };
 
@@ -709,18 +710,18 @@ const listenEvents = (services: IndexationServices) => ({
 
       if (effectiveMimeType === "application/pdf") {
         const pdf = await getDocumentProxy(new Uint8Array(Buffer.from(dataBase64, "base64")));
-        const numberOfUploadablePages = Math.min(pdf.numPages, firstOutOfRangePageNumber - firstPageNumber);
-        services.reportPdfAnalyzed(numberOfUploadablePages);
+        const pagesToOverwrite = indexation.pages.filter(({ pageNumber }) => pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber);
+        services.reportPdfAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
         
-        for (let idx = 0; idx < numberOfUploadablePages; idx++) {
+        for (const [idx, page] of pagesToOverwrite.entries()) {
           await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport }).then((dataUrl) =>
             uploadToCloudinary({
               services,
               buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
-              page: indexation.pages.find(({ pageNumber }) => pageNumber === firstPageNumber + idx)!,
+              page,
               folder,
               context,
-            }).then(() => services.reportPdfPageUploaded(idx))
+            }).then(() => services.reportPdfPageUploaded(page.pageNumber))
           );
         }
       }

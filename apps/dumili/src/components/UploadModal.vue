@@ -82,7 +82,6 @@
       </template>
     </b-alert>
     <div class="d-flex flex-column align-items-center">
-      <div class="status">{{ processLog }}</div>
       <b-alert
         variant="info"
         :model-value="uploadFileType === 'PDF'"
@@ -112,7 +111,18 @@
       </b-alert>
     </div>
 
-    <div v-show="showWidget" id="widget-container" class="w-100"></div>
+    <b-progress
+      v-if="pagesToUpload"
+      :max="pagesToUpload.length"
+      class="w-100 text-white"
+      style="min-height: 2rem"
+    >
+      <div class="d-flex w-100 align-items-center justify-content-center">
+        {{ processLog }}
+      </div>
+      <b-progress-bar :value="pagesUploaded.length" />
+    </b-progress>
+    <div id="uppy-container" class="w-100"></div>
   </b-modal>
 </template>
 
@@ -139,6 +149,11 @@ const {
   pagesAllowOverwrite: { id: number; pageNumber: number }[];
 }>();
 
+const emit = defineEmits<{
+  (e: "upload-done"): void;
+  (e: "done"): void;
+}>();
+
 const modal = ref(false);
 
 const pagesWithoutOverwrite = ref(pagesWithoutOverwriteInitial);
@@ -155,8 +170,6 @@ watch(modal, (value) => {
 
 const { t: $t } = useI18n();
 
-const showWidget = ref(true);
-
 const uploadFileType = ref<"Images" | "PDF">("PDF");
 
 const uploadExistingFileAction = ref<"ignore" | "replace">("ignore");
@@ -164,10 +177,40 @@ const uploadExistingFileAction = ref<"ignore" | "replace">("ignore");
 const isUploading = ref(false);
 const processLog = ref("");
 
-const emit = defineEmits<{
-  (e: "upload-done"): void;
-  (e: "done"): void;
-}>();
+const pagesToUpload = ref<number[]>();
+const pagesUploaded = ref<number[]>([]);
+
+watch(
+  pagesToUpload,
+  (value) => {
+    if (value) {
+      pagesUploaded.value = [];
+      processLog.value = $t("Envoi de {pagesToUpload} page(s)...", {
+        pagesToUpload: value,
+      });
+    } else {
+      processLog.value = "";
+    }
+  },
+  { immediate: true },
+);
+
+watch(pagesUploaded, (value) => {
+  processLog.value = $t("Page {currentPageNumber}/{totalPages} envoyée", {
+    currentPageNumber: value.pop(),
+    totalPages: pagesToUpload.value!.length,
+  });
+});
+
+indexationSocket.value!.reportPdfAnalyzed = (
+  reportedPagesToUpload: number[],
+) => {
+  pagesToUpload.value = reportedPagesToUpload;
+};
+
+indexationSocket.value!.reportPdfPageUploaded = (pageNumber: number) => {
+  pagesUploaded.value = [...pagesUploaded.value, pageNumber];
+};
 
 const uppy = shallowRef<Uppy>();
 
@@ -176,7 +219,6 @@ watch(
   (value) => {
     if (value !== undefined) {
       modal.value = true;
-      showWidget.value = true;
     }
   },
   { immediate: true },
@@ -222,6 +264,7 @@ const initUppy = () => {
     restrictions: {
       allowedFileTypes: getFileTypes(),
       maxFileSize,
+      maxNumberOfFiles: uploadFileType.value === "PDF" ? 1 : 50,
     },
   });
 
@@ -230,7 +273,7 @@ const initUppy = () => {
     autoOpen: "imageEditor",
     inline: true,
     proudlyDisplayPoweredByUppy: false,
-    target: "#widget-container",
+    target: "#uppy-container",
   });
 
   if (uploadFileType.value === "Images") {
@@ -249,7 +292,6 @@ const initUppy = () => {
         continue;
       }
 
-      processLog.value = `Uploading ${file.name}...`;
       try {
         const result = await indexationSocket.value!.uploadFileToCloudinary({
           dataBase64: await fileToBase64(file.data),
@@ -301,11 +343,7 @@ onBeforeUnmount(() => {
   height: calc(100% - 5rem) !important;
 }
 
-#widget-container {
-  min-height: 460px;
-}
-
-#widget-container :deep(.uppy-Dashboard-inner) {
+.uppy-Dashboard-inner {
   width: 100% !important;
 }
 </style>
