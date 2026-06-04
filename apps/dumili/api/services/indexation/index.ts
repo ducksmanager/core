@@ -740,13 +740,13 @@ const listenEvents = (services: IndexationServices) => ({
             services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
             for (const [idx, page] of pagesToOverwrite.entries()) {
               console.info(`Uploading page ${page.pageNumber} from file ${files[idx].fileHeader.name}...`);
-              await uploadToCloudinary({
+              uploadToCloudinary({
                 services,
                 buffer: Buffer.from(files[idx].extraction!),
                 page,
                 folder,
                 context,
-              });
+              }).then(() => services.reportDocumentPageUploaded(page.pageNumber))
             }
           }
             break;
