@@ -26,9 +26,9 @@
     "@napi-rs/canvas": "^1.0.0",
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@prisma/client": "^7.8.0",
-    "@sentry/node": "^10.55.0",
-    "@sentry/profiling-node": "^10.55.0",
-    "axios": "^1.16.1",
+    "@sentry/node": "^10.56.0",
+    "@sentry/profiling-node": "^10.56.0",
+    "axios": "^1.17.0",
     "axios-cache-interceptor": "^1.12.0",
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
@@ -46,17 +46,17 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
-    "@sentry/cli": "^3.4.3",
+    "@sentry/cli": "^3.5.0",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^24.12.4",
-    "concurrently": "^9.2.1",
+    "@types/node": "^24.13.0",
+    "concurrently": "^10.0.3",
     "eslint": "^10.4.1",
     "eslint-config-prettier": "^10.1.8",
     "prisma": "^7.8.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0"
+    "typescript-eslint": "^8.60.1"
   }
 }
