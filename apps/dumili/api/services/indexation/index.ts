@@ -731,7 +731,7 @@ const listenEvents = (services: IndexationServices) => ({
 
         switch (effectiveMimeType) {
           case "application/x-rar": case "application/octet-stream": {
-            const extractor = await createExtractorFromData({ data: new Uint8Array(Buffer.from(dataBase64, "base64")).buffer });
+            const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer });
             const extracted = extractor.extract();
             const files = [...extracted.files]
               .filter(f => !f.fileHeader.flags.directory && f.extraction && f.extraction.length > 0)
@@ -740,32 +740,35 @@ const listenEvents = (services: IndexationServices) => ({
             services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
             for (const [idx, page] of pagesToOverwrite.entries()) {
               console.info(`Uploading page ${page.pageNumber} from file ${files[idx].fileHeader.name}...`);
-              uploadToCloudinary({
+              await uploadToCloudinary({
                 services,
                 buffer: Buffer.from(files[idx].extraction!),
                 page,
                 folder,
                 context,
-              }).then(() => services.reportDocumentPageUploaded(page.pageNumber))
+              });
+              services.reportDocumentPageUploaded(page.pageNumber);
             }
           }
             break;
 
           case "application/pdf": {
-            const pdf = await getDocumentProxy(new Uint8Array(Buffer.from(dataBase64, "base64")));
+            const pdf = await getDocumentProxy(new Uint8Array(buffer));
             const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, pdf.numPages);
             services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
 
             for (const [idx, page] of pagesToOverwrite.entries()) {
-              await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport }).then((dataUrl) =>
-                uploadToCloudinary({
-                  services,
-                  buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
-                  page,
-                  folder,
-                  context,
-                }).then(() => services.reportDocumentPageUploaded(page.pageNumber))
-              );
+              console.info(`Rendering page ${page.pageNumber} from PDF file...`);
+              const dataUrl = await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport });
+              console.info(`Uploading page ${page.pageNumber} from PDF file...`);
+              await uploadToCloudinary({
+                services,
+                buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
+                page,
+                folder,
+                context,
+              });
+              services.reportDocumentPageUploaded(page.pageNumber);
             }
           }
         }
