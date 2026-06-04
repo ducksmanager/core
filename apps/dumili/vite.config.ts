@@ -9,7 +9,6 @@ import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
-import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 import getViteAliases from "../../vite-aliases";
@@ -21,7 +20,6 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    mkcert(),
     Icons({
       autoInstall: true,
       customCollections: {
@@ -50,7 +48,7 @@ export default defineConfig({
       enforce: "post",
     },
     AutoImport({
-      dts: true,
+      dts: "src/auto-imports.d.ts",
       imports: ["vue", "vue-router", "vue-i18n", "pinia", "@vueuse/core"],
       vueTemplate: true,
       eslintrc: {

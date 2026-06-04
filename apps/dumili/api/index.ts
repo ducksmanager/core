@@ -3,6 +3,11 @@ dotenv.config({
   path: ".env",
 });
 
+dotenv.config({
+  path: ".env.local",
+  override: true,
+});
+
 import { v2 as cloudinary } from "cloudinary";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -13,13 +18,7 @@ import type { FullIndexation } from "./services/indexation";
 import { server as indexation } from "./services/indexation";
 import { server as indexations } from "./services/indexations";
 
-const [, API_KEY, API_SECRET, CLOUD_NAME] =
-  process.env.CLOUDINARY_URL?.match(/cloudinary:\/\/(\d+):(\w+)@(\w+)/) ?? [];
-cloudinary.config({
-  cloud_name: CLOUD_NAME,
-  api_key: API_KEY,
-  api_secret: API_SECRET,
-});
+cloudinary.config(true);
 
 export type SessionDataWithIndexation = {
   user: SessionUser;

@@ -28,11 +28,6 @@ if (typeof window !== "undefined") {
       _options: unknown,
       callback: (error: unknown, result: unknown) => void,
     ) => ({
-      close: () => {
-        if (import.meta.env.DEV) {
-          console.log("[MockCloudinary] Widget closed");
-        }
-      },
       _simulateUpload: (fileCount: number = 1, isPdf: boolean = false) => {
         for (let i = 0; i < fileCount; i++) {
           callback(null, {

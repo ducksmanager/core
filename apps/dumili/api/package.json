@@ -23,6 +23,7 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili-api ./dist"
   },
   "dependencies": {
+    "@napi-rs/canvas": "^1.0.0",
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@prisma/client": "^7.8.0",
     "@sentry/node": "^10.56.0",
@@ -33,10 +34,13 @@
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
     "jsonwebtoken": "^9.0.3",
+    "node-unrar-js": "^2.0.2",
+    "pdfjs-dist": "^6.0.227",
     "sharp": "^0.33.5",
     "socket-call-client": "^0.7.7",
     "socket-call-server": "^0.7.7",
     "socket.io": "^4.8.3",
+    "unpdf": "^1.6.2",
     "~api": "workspace:*",
     "~prisma-schemas": "workspace:*"
   },
