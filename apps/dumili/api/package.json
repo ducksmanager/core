@@ -34,6 +34,7 @@
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
     "jsonwebtoken": "^9.0.3",
+    "node-unrar-js": "^2.0.2",
     "pdfjs-dist": "^6.0.227",
     "sharp": "^0.33.5",
     "socket-call-client": "^0.7.7",

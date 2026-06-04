@@ -12,8 +12,8 @@
     body-class="d-flex flex-column align-items-start overflow-auto"
   >
     <label>{{ $t("Type de fichier") }}</label>
-    <b-form-radio v-model="uploadFileType" name="file-type" value="PDF"
-      >{{ $t("PDF") }}
+    <b-form-radio v-model="uploadFileType" name="file-type" value="Document"
+      >{{ $t("Document (PDF, RAR, CBR)") }}
     </b-form-radio>
     <b-form-radio v-model="uploadFileType" name="file-type" value="Images"
       >{{ $t("Images") }}
@@ -54,12 +54,12 @@
         )
       }}
       <template v-if="pagesWithoutOverwrite.length === pages.length" />
-      <template v-else-if="uploadFileType === 'PDF'"
+      <template v-else-if="uploadFileType === 'Document'"
         >{{
           $t(
             uploadExistingFileAction === "ignore"
-              ? "Si votre PDF fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront ignorées."
-              : "Si votre PDF fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront remplacées.",
+              ? "Si votre document fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront ignorées."
+              : "Si votre document fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront remplacées.",
             {
               maxPages: pagesWithoutOverwrite.length,
               firstOutOfRangePageNumber,
@@ -81,41 +81,35 @@
         }}
       </template>
     </b-alert>
-    <div class="d-flex flex-column align-items-center">
-      <b-alert
-        variant="info"
-        :model-value="uploadFileType === 'PDF'"
-        :dismissible="false"
-        class="w-100"
-        ><i18n-t
-          keypath="Assurez-vous que le fichier PDF ait une taille de fichier de 50 MB au maximum. Si ce n'est pas le cas, vous pouvez utiliser un outil tel que {link} pour compresser votre fichier de telle sorte qu'il fasse moins de 50 MB."
-        >
-          <template #link
-            ><a
-              href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-50mb"
-              >11zon.com</a
-            ></template
-          >
-        </i18n-t></b-alert
-      >
-      <b-alert
-        variant="info"
-        :model-value="uploadFileType === 'Images'"
-        :dismissible="false"
-        class="w-100"
-        >{{
-          $t(
-            "Vous aurez la possibilité de rogner les images avant de les envoyer.",
-          )
-        }}
-      </b-alert>
-    </div>
+    <b-alert
+      variant="info"
+      :model-value="uploadFileType === 'Document'"
+      :dismissible="false"
+      class="w-100"
+      >{{
+        $t(
+          "Assurez-vous que le document ait une taille de fichier de 50 MB au maximum.",
+        )
+      }}</b-alert
+    >
+    <b-alert
+      variant="info"
+      :model-value="uploadFileType === 'Images'"
+      :dismissible="false"
+      class="w-100"
+      >{{
+        $t(
+          "Vous aurez la possibilité de rogner les images avant de les envoyer.",
+        )
+      }}
+    </b-alert>
 
     <b-progress
-      v-if="pagesToUpload"
-      :max="pagesToUpload.length"
+      v-if="processLog"
+      :max="pagesToUpload?.length || 1"
       class="w-100 text-white"
       style="min-height: 2rem"
+      :class="{ 'bg-primary': pagesToUpload, 'bg-danger': !pagesToUpload }"
     >
       <b-progress-bar :value="pagesUploaded.length">
         <div
@@ -173,7 +167,7 @@ watch(modal, (value) => {
 
 const { t: $t } = useI18n();
 
-const uploadFileType = ref<"Images" | "PDF">("PDF");
+const uploadFileType = ref<"Images" | "Document">("Document");
 
 const uploadExistingFileAction = ref<"ignore" | "replace">("ignore");
 
@@ -205,13 +199,13 @@ watch(pagesUploaded, (value) => {
   });
 });
 
-indexationSocket.value!.reportPdfAnalyzed = (
+indexationSocket.value!.reportDocumentAnalyzed = (
   reportedPagesToUpload: number[],
 ) => {
   pagesToUpload.value = reportedPagesToUpload;
 };
 
-indexationSocket.value!.reportPdfPageUploaded = (pageNumber: number) => {
+indexationSocket.value!.reportDocumentPageUploaded = (pageNumber: number) => {
   pagesUploaded.value = [...pagesUploaded.value, pageNumber];
 };
 
@@ -250,8 +244,15 @@ const fileToBase64 = async (file: Blob) => {
 };
 
 const getFileTypes = () =>
-  uploadFileType.value === "PDF"
-    ? [".pdf"]
+  uploadFileType.value === "Document"
+    ? [
+        ".pdf",
+        ".rar",
+        ".cbr",
+        "application/x-rar",
+        "application/pdf",
+        "application/octet-stream",
+      ]
     : [".png", ".jpeg", ".jpg", "image/png", "image/jpeg"];
 
 const initUppy = () => {
@@ -261,13 +262,13 @@ const initUppy = () => {
   }
 
   const maxFileSize =
-    uploadFileType.value === "PDF" ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
+    uploadFileType.value === "Document" ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
 
   const instance = new Uppy({
     restrictions: {
       allowedFileTypes: getFileTypes(),
       maxFileSize,
-      maxNumberOfFiles: uploadFileType.value === "PDF" ? 1 : 50,
+      maxNumberOfFiles: uploadFileType.value === "Document" ? 1 : 50,
     },
   });
 
@@ -289,6 +290,8 @@ const initUppy = () => {
 
   instance.addUploader(async (fileIds) => {
     isUploading.value = true;
+    processLog.value = "";
+    let isError = false;
     for (const [uploadedFileIndex, fileId] of fileIds.entries()) {
       const file = instance.getFile(fileId);
       if (!file?.data || !(file.data instanceof Blob)) {
@@ -308,25 +311,21 @@ const initUppy = () => {
           throw new Error(result.error);
         }
       } catch (error) {
-        isUploading.value = false;
+        isError = true;
         processLog.value =
           typeof error === "object" && error !== null && "error" in error
             ? (error.error as string)
             : String(error);
-        return;
       }
     }
-  });
 
-  instance.on("complete", () => {
     isUploading.value = false;
-    modal.value = false;
-    emit("upload-done");
-  });
-
-  instance.on("error", (error) => {
-    isUploading.value = false;
-    processLog.value = error.message;
+    if (isError) {
+      instance.cancelAll();
+    } else {
+      modal.value = false;
+      emit("upload-done");
+    }
   });
 
   uppy.value = instance;

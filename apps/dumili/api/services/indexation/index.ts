@@ -37,6 +37,8 @@ import { SocketClient } from "socket-call-client";
 
 import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf'
 
+import { createExtractorFromData } from "node-unrar-js";
+
 // @ts-expect-error - TS1323
 await definePDFJSModule(() => import('pdfjs-dist'))
 
@@ -46,24 +48,35 @@ const canvasImport = () => import('@napi-rs/canvas');
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
 
-const MAX_PDF_FILE_SIZE = 50 * 1024 * 1024;
+const MAX_DOCUMENT_FILE_SIZE = 50 * 1024 * 1024;
 const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = new Set<string>([
+const ALLOWED_DOCUMENT_MIME_TYPES = new Set<string>([
   "application/pdf",
+  "application/x-rar",
+  "application/octet-stream",
+]);
+const ALLOWED_IMAGE_MIME_TYPES = new Set<string>([
   "image/png",
   "image/jpeg",
   "image/jpg",
 ]);
+const ALLOWED_MIME_TYPES = new Set<string>([...ALLOWED_DOCUMENT_MIME_TYPES, ...ALLOWED_IMAGE_MIME_TYPES]);
 
 const inferMimeType = (value?: string) => {
-  const lowerValue = value?.toLowerCase();
-  if (!lowerValue) {
+  const extension = value?.toLowerCase()?.split('.')?.pop();
+  if (!extension) {
     return undefined;
   }
-  if (lowerValue.endsWith(".pdf")) return "application/pdf";
-  if (lowerValue.endsWith(".png")) return "image/png";
-  if (lowerValue.endsWith(".jpg") || lowerValue.endsWith(".jpeg")) {
-    return "image/jpeg";
+
+  switch (extension) {
+    case "pdf":
+      return "application/pdf";
+    case "rar": case "cbr":
+      return "application/x-rar";
+    case "png":
+      return "image/png";
+    case "jpg": case "jpeg":
+      return "image/jpeg";
   }
   return undefined;
 };
@@ -215,8 +228,8 @@ export type IndexationServerSentStartEvents = {
   reportCreateAiStorySuggestions: (entryId: number) => void;
   reportRunOcrOnImage: (imageId: number) => void;
   reportRunStorySearchOnImage: (imageId: number) => void;
-  reportPdfAnalyzed: (pageNumbers: number[]) => void;
-  reportPdfPageUploaded: (pageNumber: number) => void;
+  reportDocumentAnalyzed: (pageNumbers: number[]) => void;
+  reportDocumentPageUploaded: (pageNumber: number) => void;
 };
 
 export type IndexationServerSentStartEndEvents =
@@ -690,14 +703,17 @@ const listenEvents = (services: IndexationServices) => ({
         };
       }
 
-      const maxSize =
-        mimeType === "application/pdf" ? MAX_PDF_FILE_SIZE : MAX_IMAGE_FILE_SIZE;
+      const isDocument = ALLOWED_DOCUMENT_MIME_TYPES.has(effectiveMimeType);
+
+      const maxSize = isDocument
+        ? MAX_DOCUMENT_FILE_SIZE
+        : MAX_IMAGE_FILE_SIZE;
 
       const buffer = Buffer.from(dataBase64, "base64")
       if (buffer.byteLength > maxSize) {
         throw new Error(
-          mimeType === "application/pdf"
-            ? "PDF file too large (max 50 MB)"
+          isDocument
+            ? "Document file too large (max 50 MB)"
             : "Image file too large (max 5 MB)",
         );
       }
@@ -708,21 +724,50 @@ const listenEvents = (services: IndexationServices) => ({
         user: user.username,
       }
 
-      if (effectiveMimeType === "application/pdf") {
-        const pdf = await getDocumentProxy(new Uint8Array(Buffer.from(dataBase64, "base64")));
-        const pagesToOverwrite = indexation.pages.filter(({ pageNumber }) => pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber);
-        services.reportPdfAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
-        
-        for (const [idx, page] of pagesToOverwrite.entries()) {
-          await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport }).then((dataUrl) =>
-            uploadToCloudinary({
-              services,
-              buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
-              page,
-              folder,
-              context,
-            }).then(() => services.reportPdfPageUploaded(page.pageNumber))
-          );
+      if (isDocument) {
+        const pagesToPotentiallyOverwrite = indexation.pages.filter(({ pageNumber }) =>
+          pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber
+        );
+
+        switch (effectiveMimeType) {
+          case "application/x-rar": case "application/octet-stream": {
+            const extractor = await createExtractorFromData({ data: new Uint8Array(Buffer.from(dataBase64, "base64")).buffer });
+            const extracted = extractor.extract();
+            const files = [...extracted.files]
+              .filter(f => !f.fileHeader.flags.directory && f.extraction && f.extraction.length > 0)
+              .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
+            const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, files.length);
+            services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
+            for (const [idx, page] of pagesToOverwrite.entries()) {
+              console.info(`Uploading page ${page.pageNumber} from file ${files[idx].fileHeader.name}...`);
+              await uploadToCloudinary({
+                services,
+                buffer: Buffer.from(files[idx].extraction!),
+                page,
+                folder,
+                context,
+              });
+            }
+          }
+            break;
+
+          case "application/pdf": {
+            const pdf = await getDocumentProxy(new Uint8Array(Buffer.from(dataBase64, "base64")));
+            const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, pdf.numPages);
+            services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
+
+            for (const [idx, page] of pagesToOverwrite.entries()) {
+              await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport }).then((dataUrl) =>
+                uploadToCloudinary({
+                  services,
+                  buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
+                  page,
+                  folder,
+                  context,
+                }).then(() => services.reportDocumentPageUploaded(page.pageNumber))
+              );
+            }
+          }
         }
       }
       else {
@@ -734,6 +779,7 @@ const listenEvents = (services: IndexationServices) => ({
           context,
         });
       }
+
       return { status: "OK" as const };
     } catch (error) {
       const returnedError =
