@@ -117,10 +117,13 @@
       class="w-100 text-white"
       style="min-height: 2rem"
     >
-      <div class="d-flex w-100 align-items-center justify-content-center">
-        {{ processLog }}
-      </div>
-      <b-progress-bar :value="pagesUploaded.length" />
+      <b-progress-bar :value="pagesUploaded.length">
+        <div
+          class="position-absolute d-flex w-100 align-items-center justify-content-center"
+        >
+          {{ processLog }}
+        </div>
+      </b-progress-bar>
     </b-progress>
     <div id="uppy-container" class="w-100"></div>
   </b-modal>
@@ -196,8 +199,8 @@ watch(
 );
 
 watch(pagesUploaded, (value) => {
-  processLog.value = $t("Page {currentPageNumber}/{totalPages} envoyée", {
-    currentPageNumber: value.pop(),
+  processLog.value = $t("Page {pagesUploaded}/{totalPages} envoyée", {
+    pagesUploaded: value.length,
     totalPages: pagesToUpload.value!.length,
   });
 });

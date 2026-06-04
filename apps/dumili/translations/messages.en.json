@@ -63,7 +63,7 @@
   "Numéro inconnu": "Unknown issue",
   "Oui, supprimer l'entrée": "Yes, delete this entry",
   "Page": "Page",
-  "Page {currentPageNumber}/{totalPages} envoyée": "Uploaded page {currentPageNumber} of {totalPages}",
+  "Page {pagesUploaded}/{totalPages} envoyée": "Uploaded page {pagesUploaded} of {totalPages}",
   "Page {pageNumber}": "Page {pageNumber}",
   "Par code histoire": "By story code",
   "Par titre d'histoire": "By story title",

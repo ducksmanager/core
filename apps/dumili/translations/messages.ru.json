@@ -58,7 +58,7 @@
     "Oui, supprimer l'entrée": "Да, удалить запись",
     "Page {pageNumber}": "Страница {pageNumber}",
     "Page": "Страница",
-    "Page {currentPageNumber}/{totalPages} envoyée": "Страница {currentPageNumber} из {totalPages} отправлена",
+    "Page {pagesUploaded}/{totalPages} envoyée": "Страница {pagesUploaded} из {totalPages} отправлена",
     "partie": "часть",
     "Par code histoire": "По коду истории",
     "Par titre d'histoire": "По названию истории",

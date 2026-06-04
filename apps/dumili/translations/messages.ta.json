@@ -34,7 +34,7 @@
   "Nouvelle indexation": "புதிய குறியீட்டு",
   "Numéro inconnu": "தெரியாத எண்",
   "Page": "பக்கம்",
-  "Page {currentPageNumber}/{totalPages} envoyée": "பக்கம் {currentPageNumber}/{totalPages} அனுப்பப்பட்டது",
+  "Page {pagesUploaded}/{totalPages} envoyée": "பக்கம் {pagesUploaded}/{totalPages} அனுப்பப்பட்டது",
   "Page {pageNumber}": "பக்கம் {pageNumber}",
   "partie": "பகுதி",
   "Pas de résultats OCR": "OCR முடிவுகள் இல்லை",
