@@ -36,10 +36,15 @@ const io = new Server(httpServer, {
   cors: {
     origin: "*",
   },
+  maxHttpBufferSize: 100 * 1024 * 1024,
 });
 
 indexations(io);
 indexation(io);
+
+io.engine.on("connection_error", (err) => {
+  console.error("socket.io connection_error", err.code, err.message, err.context);
+});
 
 httpServer.listen(3003);
 console.log("Dumili API open on port 3003");

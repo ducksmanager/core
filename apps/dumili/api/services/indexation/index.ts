@@ -695,6 +695,7 @@ const listenEvents = (services: IndexationServices) => ({
     firstOutOfRangePageNumber: number;
   }) => {
     try {
+      console.log('uploadFileToCloudinary')
       const { indexation, user } = services._socket.data;
       const effectiveMimeType = mimeType || inferMimeType(fileName);
       if (!effectiveMimeType || !ALLOWED_MIME_TYPES.has(effectiveMimeType)) {
