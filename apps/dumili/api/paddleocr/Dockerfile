@@ -8,4 +8,4 @@ RUN pip3 install -r requirements.txt
 COPY apps/dumili/api/paddleocr/recognition_model_rules.json ./
 COPY --chmod=777 apps/dumili/api/paddleocr/server.py ./
 
-ENTRYPOINT ["python3", "-u", "./server.py"]
+ENTRYPOINT ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8081"]

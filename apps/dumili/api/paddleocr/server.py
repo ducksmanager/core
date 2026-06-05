@@ -3,14 +3,17 @@
 from paddle import utils
 utils.run_check()
 from paddleocr import PaddleOCR
-from http.server import BaseHTTPRequestHandler, HTTPServer
+
 import base64
 import json
 import os
 import tempfile
-from urllib.parse import parse_qs, urlparse
+from typing import Optional
 
-import numpy as np
+from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel
+
+import uvicorn
 
 _DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -49,7 +52,6 @@ def is_language_code_supported(code: str) -> bool:
     return bool(c) and c in _LANGUAGE_TO_RECOGNITION_MODEL
 
 
-# One PaddleOCR instance per recognition model (many language codes share latin / cyrillic / …).
 _OCR_BY_REC_MODEL: dict[str, PaddleOCR] = {}
 
 
@@ -67,123 +69,79 @@ def get_ocr_engine(language_code: str) -> PaddleOCR:
         )
     return _OCR_BY_REC_MODEL[rec]
 
-def convert_numpy_to_python(obj):
-    if isinstance(obj, np.ndarray):
-        return obj.tolist()
-    elif isinstance(obj, dict):
-        return {key: convert_numpy_to_python(value) for key, value in obj.items()}
-    elif isinstance(obj, list):
-        return [convert_numpy_to_python(item) for item in obj]
-    return obj
 
-class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        parsed = urlparse(self.path)
-        if parsed.path != "/supported":
-            self.send_error(404)
-            return
-        qs = parse_qs(parsed.query)
-        raw = (qs.get("languagecode") or [None])[0]
-        if raw is None:
-            body = json.dumps({"error": "missing languagecode query parameter"}).encode("utf-8")
-            self.send_response(400)
-            self.send_header("Content-type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
-        supported = is_language_code_supported(raw)
-        body = json.dumps(supported).encode("utf-8")
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+class OcrRequest(BaseModel):
+    url: str
+    language: str
+    annotated: bool = False
 
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = json.loads(self.rfile.read(content_length))
-        url = post_data['url'].replace('upload/', 'upload/c_limit,h_4000,w_4000/')
-        language = post_data['language']
-        want_annotated = bool(post_data.get('annotated'))
 
-        try:
-            ocr = get_ocr_engine(language)
-        except ValueError as err:
-            body = json.dumps({"error": str(err)}).encode("utf-8")
-            self.send_response(400)
-            self.send_header("Content-type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
+class OcrResult(BaseModel):
+    box: tuple[int, int, int, int]
+    text: str
+    confidence: float
 
-        os.remove("tmp.jpg") if os.path.exists("tmp.jpg") else None
-        predict_out = ocr.predict(url)
-        result = predict_out[0] if predict_out else None
 
-        converted_data = []
-        
-        # Print result as JSON string
-        if result is not None:
-          # Extract texts and scores from the result structure
-          texts = result['rec_texts']
-          scores = result['rec_scores']
-          boxes = result['rec_boxes']
+class OcrAnnotatedResponse(BaseModel):
+    ocr: list[OcrResult]
+    annotated_image_base64: Optional[str]
+    annotated_image_mime: Optional[str]
 
-          for i in range(len(texts)):
-              if texts[i]:  # Only include non-empty texts
-                  # Format box coordinates as [x1, y1, x2, y2]
-                  box = boxes[i]
-                  # The box is a 1D array of 4 values: [x1,y1,x2,y2]
-                  formatted_box = [
-                      int(box[0]),  # x1
-                      int(box[1]),  # y1
-                      int(box[2]),  # x2
-                      int(box[3])   # y2
-                  ]
-                  converted_item = {
-                      "box": formatted_box,
-                      "text": texts[i],
-                      "confidence": float(scores[i])  # Convert numpy float to Python float
-                  }
-                  converted_data.append(converted_item)
 
-        if want_annotated:
-            annotated_b64 = None
-            annotated_mime = None
-            if result is not None and hasattr(result, 'save_to_img'):
-                with tempfile.TemporaryDirectory() as tmpd:
-                    result.save_to_img(tmpd)
-                    for name in sorted(os.listdir(tmpd)):
-                        if name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                            path = os.path.join(tmpd, name)
-                            with open(path, 'rb') as img_f:
-                                annotated_b64 = base64.standard_b64encode(
-                                    img_f.read()
-                                ).decode('ascii')
-                            annotated_mime = (
-                                'image/png' if name.lower().endswith('.png') else 'image/jpeg'
-                            )
-                            break
-            payload = {
-                'ocr': converted_data,
-                'annotated_image_base64': annotated_b64,
-                'annotated_image_mime': annotated_mime,
-            }
-        else:
-            payload = converted_data
+app = FastAPI()
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(payload).encode())
 
-if __name__ == '__main__':
-    host = '0.0.0.0'
-    port = 8081
-    server_address = (host, port)
+@app.get("/supported", response_model=bool)
+def supported(languagecode: str = Query(...)):
+    return is_language_code_supported(languagecode)
 
-    httpd = HTTPServer(server_address, PaddleOCRRequestHandler)
-    print(f"Starting server on {host}:{port}...")
-    httpd.serve_forever()
+
+@app.post("/", response_model=OcrAnnotatedResponse | list[OcrResult])
+def run_ocr(req: OcrRequest):
+    url = req.url.replace("upload/", "upload/c_limit,h_4000,w_4000/")
+
+    try:
+        ocr = get_ocr_engine(req.language)
+    except ValueError as err:
+        raise HTTPException(status_code=400, detail=str(err))
+
+    if os.path.exists("tmp.jpg"):
+        os.remove("tmp.jpg")
+
+    predict_out = ocr.predict(url)
+    result = predict_out[0] if predict_out else None
+
+    items: list[OcrResult] = []
+    if result is not None:
+        texts = result["rec_texts"]
+        scores = result["rec_scores"]
+        boxes = result["rec_boxes"]
+        for i in range(len(texts)):
+            if texts[i]:
+                box = boxes[i]
+                items.append(OcrResult(
+                    box=(int(box[0]), int(box[1]), int(box[2]), int(box[3])),
+                    text=texts[i],
+                    confidence=float(scores[i]),
+                ))
+
+    if req.annotated:
+        annotated_b64 = None
+        annotated_mime = None
+        if result is not None and hasattr(result, "save_to_img"):
+            with tempfile.TemporaryDirectory() as tmpd:
+                result.save_to_img(tmpd)
+                for name in sorted(os.listdir(tmpd)):
+                    if name.lower().endswith((".jpg", ".jpeg", ".png")):
+                        path = os.path.join(tmpd, name)
+                        with open(path, "rb") as img_f:
+                            annotated_b64 = base64.standard_b64encode(img_f.read()).decode("ascii")
+                        annotated_mime = "image/png" if name.lower().endswith(".png") else "image/jpeg"
+                        break
+        return OcrAnnotatedResponse(ocr=items, annotated_image_base64=annotated_b64, annotated_image_mime=annotated_mime)
+
+    return items
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8081)
