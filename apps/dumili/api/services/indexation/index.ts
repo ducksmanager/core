@@ -35,14 +35,24 @@ import {
 } from "./story-search";
 import { SocketClient } from "socket-call-client";
 
+import { readFileSync, existsSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
 import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf'
 
 import { createExtractorFromData } from "node-unrar-js";
 
-// @ts-expect-error - TS1323
 await definePDFJSModule(() => import('pdfjs-dist'))
 
-// @ts-expect-error - TS1323
+// In the production bundle, bun bakes in the CI build path for unrar.wasm.
+// We override it by loading the file explicitly when it's present next to the bundle.
+// In local dev (unbundled), node-unrar-js resolves the path itself so we leave it undefined.
+const bundleSideWasm = join(dirname(fileURLToPath(import.meta.url)), "unrar.wasm");
+const unrarWasmBinary = existsSync(bundleSideWasm)
+  ? (() => { const buf = readFileSync(bundleSideWasm); return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength); })()
+  : undefined;
+
 const canvasImport = () => import('@napi-rs/canvas');
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
@@ -732,7 +742,7 @@ const listenEvents = (services: IndexationServices) => ({
 
         switch (effectiveMimeType) {
           case "application/x-rar": case "application/octet-stream": {
-            const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer });
+            const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer, ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }) });
             const extracted = extractor.extract();
             const files = [...extracted.files]
               .filter(f => !f.fileHeader.flags.directory && f.extraction && f.extraction.length > 0)
