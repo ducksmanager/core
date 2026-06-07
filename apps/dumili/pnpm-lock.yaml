@@ -39,7 +39,7 @@ importers:
         specifier: 5.1.0
         version: 5.1.0(@uppy/core@5.2.0)
       '@uppy/xhr-upload':
-        specifier: 5.2.0
+        specifier: ^5.2.0
         version: 5.2.0(@uppy/core@5.2.0)
       '@vueuse/components':
         specifier: ^14.3.0
