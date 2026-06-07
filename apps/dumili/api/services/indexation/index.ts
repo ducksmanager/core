@@ -750,7 +750,13 @@ const uploadCore = async (services: IndexationServices, {
           const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer, ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }) });
           const extracted = extractor.extract();
           const files = [...extracted.files]
-            .filter(f => !f.fileHeader.flags.directory && f.extraction && f.extraction.length > 0)
+            .filter(f => 
+              !f.fileHeader.flags.directory && 
+              f.extraction?.length &&
+              f.fileHeader.name.split('/').length === 1 && // only keep files at the root of the archive
+              inferMimeType(f.fileHeader.name) &&
+              ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(f.fileHeader.name)!)
+            ) // only keep files at the root of the archive with content
             .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
           const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, files.length);
           services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
