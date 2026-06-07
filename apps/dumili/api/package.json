@@ -7,7 +7,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node $source --outdir dist; done && pnpm run copy-wasm && pnpm sentry:sourcemaps",
+    "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node --external @napi-rs/canvas $source --outdir dist; done && pnpm run copy-wasm && pnpm sentry:sourcemaps",
     "copy-wasm": "cp node_modules/node-unrar-js/dist/js/unrar.wasm dist/ && cp node_modules/pdfjs-dist/build/pdf.worker.mjs dist/",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",

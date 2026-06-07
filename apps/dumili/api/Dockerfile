@@ -10,9 +10,9 @@ COPY apps/dumili/api/dist/instrument.mjs /app/instrument.mjs
 COPY apps/dumili/api/dist/unrar.wasm /app/unrar.wasm
 COPY apps/dumili/api/dist/pdf.worker.mjs /app/pdf.worker.mjs
 
-# @napi-rs/canvas ships platform-specific native bindings that cannot be bundled;
-# installing here lets npm pick the correct Linux x64 binary for this image.
-RUN npm install @napi-rs/canvas@1.0.0 --no-save
+# @napi-rs/canvas ships platform-specific native bindings that cannot be bundled.
+# Both packages are installed explicitly to avoid npm's optional-dependency bug (#4828).
+RUN npm install @napi-rs/canvas@1.0.0 @napi-rs/canvas-linux-x64-gnu@1.0.0 --no-save
 
 EXPOSE 3003
 CMD ["node", "--import", "./instrument.mjs", "bundle.mjs"]
