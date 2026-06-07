@@ -53,9 +53,10 @@
     "eslint.config.mjs",
     "index.ts",
     "instrument.ts",
-    "services/**/*.ts",
-    "prisma/client.ts",
+    "prisma.config.ts",
     "prisma/client_dumili/**/*.ts",
-    "prisma.config.ts"
+    "prisma/client.ts",
+    "scripts/**/*.mjs",
+    "services/**/*.ts",
   ]
 }
