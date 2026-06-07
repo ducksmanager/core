@@ -35,6 +35,7 @@
     "@uppy/dashboard": "5.1.1",
     "@uppy/image-editor": "4.2.0",
     "@uppy/webcam": "5.1.0",
+    "@uppy/xhr-upload": "^5.2.0",
     "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/integrations": "^14.3.0",

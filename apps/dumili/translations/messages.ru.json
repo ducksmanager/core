@@ -37,6 +37,7 @@
     "Entrez le numéro": "Введите номер",
     "Envoi d'images de pages": "Отправка изображений страниц",
     "Envoi de {pagesToUpload} page(s)...": "Отправка {pagesToUpload} страницы(ы)...",
+    "Envoi du fichier...": "Отправка файла...",
     "Étendre cette entrée à {originalPagesCount} page|Étendre cette entrée à {originalPagesCount} pages": "Расширить эту запись до {originalPagesCount} страниц|Расширить эту запись до {originalPagesCount} страниц",
     "Galerie des pages": "Галерея страниц",
     "Histoires potentielles": "Возможные истории",

@@ -40,6 +40,7 @@
   "Entrez le numéro": "Type the number",
   "Envoi d'images de pages": "Upload page files",
   "Envoi de {pagesToUpload} page(s)...": "Uploading {pagesToUpload} page(s)...",
+  "Envoi du fichier...": "Sending file...",
   "Étendre cette entrée à {originalPagesCount} page|Étendre cette entrée à {originalPagesCount} pages": "Extend this entry to {originalPagesCount} page|Extend this entry to {originalPagesCount} pages",
   "Galerie des pages": "Gallery",
   "Histoires potentielles": "Potential stories:",

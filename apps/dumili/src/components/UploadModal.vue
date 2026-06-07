@@ -6,7 +6,7 @@
     align="center"
     no-footer
     centered
-    :class="{ 'pe-none': isUploading || processLog }"
+    :class="{ 'pe-none': isUploading }"
     content-class="h-100 "
     dialog-class="h-100"
     body-class="d-flex flex-column align-items-start overflow-auto"
@@ -105,17 +105,17 @@
     </b-alert>
 
     <b-progress
-      v-if="processLog"
-      :max="pagesToUpload?.length || 1"
+      v-if="isUploading"
+      :max="100"
       class="w-100 text-white"
       style="min-height: 2rem"
-      :class="{ 'bg-primary': pagesToUpload, 'bg-danger': !pagesToUpload }"
+      :class="{ 'bg-danger': errorMessage }"
     >
-      <b-progress-bar :value="pagesUploaded.length">
+      <b-progress-bar :value="overallProgress">
         <div
           class="position-absolute d-flex w-100 align-items-center justify-content-center"
         >
-          {{ processLog }}
+          {{ progressLabel }}
         </div>
       </b-progress-bar>
     </b-progress>
@@ -128,13 +128,14 @@ import Uppy from "@uppy/core";
 import Dashboard from "@uppy/dashboard";
 import ImageEditor from "@uppy/image-editor";
 import Webcam from "@uppy/webcam";
+import XHRUpload from "@uppy/xhr-upload";
 import "@uppy/core/css/style.min.css";
 import "@uppy/dashboard/css/style.min.css";
 import "@uppy/image-editor/css/style.min.css";
 import "@uppy/webcam/css/style.min.css";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket, options } = inject(dumiliSocketInjectionKey)!;
 
 const {
   pagesWithoutOverwrite: pagesWithoutOverwriteInitial,
@@ -151,13 +152,17 @@ const emit = defineEmits<{
   (e: "done"): void;
 }>();
 
+const route = useRoute();
+
 const modal = ref(false);
+const authToken = ref<string | null>(null);
 
 const pagesWithoutOverwrite = ref(pagesWithoutOverwriteInitial);
 const pagesAllowOverwrite = ref(pagesAllowOverwriteInitial);
 
-watch(modal, (value) => {
+watch(modal, async (value) => {
   if (value) {
+    authToken.value = (await options.session.getToken()) ?? null;
     pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
     pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
   } else {
@@ -172,30 +177,27 @@ const uploadFileType = ref<"Images" | "Document">("Document");
 const uploadExistingFileAction = ref<"ignore" | "replace">("ignore");
 
 const isUploading = ref(false);
-const processLog = ref("");
+const errorMessage = ref("");
 
 const pagesToUpload = ref<number[]>();
 const pagesUploaded = ref<number[]>([]);
+const httpUploadProgress = ref(0);
 
-watch(
-  pagesToUpload,
-  (value) => {
-    if (value) {
-      pagesUploaded.value = [];
-      processLog.value = $t("Envoi de {pagesToUpload} page(s)...", {
-        pagesToUpload: value,
-      });
-    } else {
-      processLog.value = "";
-    }
-  },
-  { immediate: true },
-);
+const overallProgress = computed(() => {
+  const httpPart = httpUploadProgress.value / 2;
+  const cloudinaryPart = pagesToUpload.value?.length
+    ? (pagesUploaded.value.length / pagesToUpload.value.length) * 50
+    : 0;
+  return httpPart + cloudinaryPart;
+});
 
-watch(pagesUploaded, (value) => {
-  processLog.value = $t("Page {pagesUploaded}/{totalPages} envoyée", {
-    pagesUploaded: value.length,
-    totalPages: pagesToUpload.value!.length,
+const progressLabel = computed(() => {
+  if (errorMessage.value) return errorMessage.value;
+  if (httpUploadProgress.value < 100) return $t("Envoi du fichier...");
+  if (!pagesToUpload.value?.length) return "";
+  return $t("Page {pagesUploaded}/{totalPages} envoyée", {
+    pagesUploaded: pagesUploaded.value.length,
+    totalPages: pagesToUpload.value.length,
   });
 });
 
@@ -232,16 +234,6 @@ const firstOutOfRangePageNumber = computed(
     pagesWithoutOverwrite.value[pagesWithoutOverwrite.value.length - 1]
       .pageNumber + 1,
 );
-
-const fileToBase64 = async (file: Blob) => {
-  const arrayBuffer = await file.arrayBuffer();
-  let binary = "";
-  const bytes = new Uint8Array(arrayBuffer);
-  for (let idx = 0; idx < bytes.length; idx++) {
-    binary += String.fromCharCode(bytes[idx]);
-  }
-  return btoa(binary);
-};
 
 const getFileTypes = () =>
   uploadFileType.value === "Document"
@@ -288,44 +280,66 @@ const initUppy = () => {
     instance.use(ImageEditor);
   }
 
-  instance.addUploader(async (fileIds) => {
+  let fileAddCount = 0;
+  instance.on("file-added", (file) => {
+    const idx = fileAddCount++;
+    instance.setFileMeta(file.id, {
+      firstPageNumber: uploadPageNumber + idx,
+    });
+  });
+
+  const indexationId = route.params.id as string;
+
+  instance.use(XHRUpload, {
+    endpoint: `${import.meta.env.VITE_DUMILI_SOCKET_URL}/upload/indexation/${indexationId}`,
+    formData: false,
+    method: "POST",
+    limit: 1,
+    headers: (file) => ({
+      Authorization: `Bearer ${authToken.value ?? ""}`,
+      "X-File-Name": encodeURIComponent(file.name ?? ""),
+      "X-First-Page-Number": String(
+        (file.meta.firstPageNumber as number | undefined) ?? uploadPageNumber,
+      ),
+      "X-First-Out-Of-Range-Page-Number": String(
+        firstOutOfRangePageNumber.value,
+      ),
+    }),
+  });
+
+  instance.on("upload", () => {
     isUploading.value = true;
-    processLog.value = "";
-    let isError = false;
-    for (const [uploadedFileIndex, fileId] of fileIds.entries()) {
-      const file = instance.getFile(fileId);
-      if (!file?.data || !(file.data instanceof Blob)) {
-        continue;
-      }
-
-      try {
-        const result = await indexationSocket.value!.uploadFileToCloudinary({
-          dataBase64: await fileToBase64(file.data),
-          mimeType: file.type,
-          fileName: file.name,
-          firstPageNumber: uploadPageNumber + uploadedFileIndex,
-          firstOutOfRangePageNumber: firstOutOfRangePageNumber.value,
-        });
-
-        if ("error" in result) {
-          throw new Error(result.error);
-        }
-      } catch (error) {
-        isError = true;
-        processLog.value =
-          typeof error === "object" && error !== null && "error" in error
-            ? (error.error as string)
-            : String(error);
-      }
+    httpUploadProgress.value = 0;
+    pagesUploaded.value = [];
+    pagesToUpload.value = undefined;
+    errorMessage.value = "";
+    if (uploadFileType.value === "Images") {
+      const files = instance.getFiles();
+      pagesToUpload.value = files.map((_, i) => uploadPageNumber + i);
     }
+  });
 
+  instance.on("progress", (percent) => {
+    httpUploadProgress.value = percent;
+  });
+
+  instance.on("upload-error", (_file, _error, response) => {
+    let msg = _error.message;
+    try {
+      const body = response?.body;
+      if (body?.error) msg = body.error;
+    } catch {}
+    errorMessage.value = msg;
+    instance.cancelAll();
     isUploading.value = false;
-    if (isError) {
-      instance.cancelAll();
-    } else {
+  });
+
+  instance.on("complete", (result) => {
+    if (result.failed?.length === 0 && !errorMessage.value) {
       modal.value = false;
       emit("upload-done");
     }
+    isUploading.value = false;
   });
 
   uppy.value = instance;

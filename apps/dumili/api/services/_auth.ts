@@ -3,7 +3,7 @@ import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
+export const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
   new Promise((resolve, reject) => {
     if (!token) {
       reject("No token provided");
