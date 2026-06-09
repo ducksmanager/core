@@ -14,7 +14,7 @@
         button
         class="ion-align-items-center ion-text-nowrap"
         @click="
-          (fab?.$el as HTMLIonFabElement).close();
+          (fab?.$el as HTMLIonFabElement | undefined)?.close();
           emit('show-camera-preview');
         "
       >
@@ -33,7 +33,7 @@
         button
         class="ion-align-items-center ion-text-nowrap"
         @click="
-          (fab?.$el as HTMLIonFabElement).close();
+          (fab?.$el as HTMLIonFabElement | undefined)?.close();
           isCoaView = true;
           selectedIssuecodes = undefined;
         "
