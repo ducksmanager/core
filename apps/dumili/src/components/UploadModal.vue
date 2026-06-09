@@ -105,7 +105,7 @@
     </b-alert>
 
     <b-progress
-      v-if="isUploading"
+      v-if="isUploading || errorMessage"
       :max="100"
       class="w-100 text-white"
       style="min-height: 2rem"
@@ -327,12 +327,12 @@ const initUppy = () => {
   });
 
   instance.on("upload-error", (_file, _error, response) => {
-    let msg = _error.message;
     try {
-      const body = response?.body;
-      if (body?.error) msg = body.error;
+      const responseObject = JSON.parse(
+        (response as { response?: string })?.response || "{}",
+      );
+      errorMessage.value = responseObject?.error || _error.message || "";
     } catch {}
-    errorMessage.value = msg;
     instance.cancelAll();
     isUploading.value = false;
   });

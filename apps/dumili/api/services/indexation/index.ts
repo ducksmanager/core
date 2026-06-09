@@ -750,6 +750,9 @@ const uploadPages = async (services: IndexationServices, {
       );
 
       const uploadDocumentPages = async (items: { name: string; getData: () => Promise<Buffer> }[]) => {
+        if (!items.length) {
+          throw new Error("No valid pages found in the document");
+        }
         const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, items.length);
         services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
         for (const [idx, page] of pagesToOverwrite.entries()) {
