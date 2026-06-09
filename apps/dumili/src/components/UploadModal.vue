@@ -13,7 +13,7 @@
   >
     <label>{{ $t("Type de fichier") }}</label>
     <b-form-radio v-model="uploadFileType" name="file-type" value="Document"
-      >{{ $t("Document (PDF, RAR, CBR)") }}
+      >{{ $t("Document (PDF, RAR, CBR, ZIP, CBZ)") }}
     </b-form-radio>
     <b-form-radio v-model="uploadFileType" name="file-type" value="Images"
       >{{ $t("Images") }}
