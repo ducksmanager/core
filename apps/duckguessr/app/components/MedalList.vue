@@ -48,7 +48,10 @@
 import { MEDAL_LEVELS, playerStore } from "~/stores/player";
 import type { MedalLevelAndProgress } from "~duckguessr-types/playerStats";
 import { getDuckguessrId } from "~/composables/user";
-import type { dataset, userMedalPoints } from "~duckguessr-prisma-browser";
+import type {
+  dataset as datasetType,
+  userMedalPoints,
+} from "~duckguessr-prisma-browser";
 import type { ColsNumbers } from "bootstrap-vue-next";
 
 const DATASET_WITH_MEDALS: string[] = ["published-fr-recent", "it", "us"];
@@ -62,7 +65,7 @@ const {
   cols = null,
   colsLg = 3,
 } = defineProps<{
-  dataset?: dataset | null;
+  dataset?: datasetType | null;
   withDetails: boolean;
   statsOverride?: userMedalPoints[] | null;
   cols?: ColsNumbers;

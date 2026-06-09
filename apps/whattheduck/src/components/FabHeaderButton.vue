@@ -12,7 +12,7 @@
         :class="{ selected: value?.id === option.id }"
         @click="
           value = option;
-          (fab?.$el as HTMLIonFabElement).close();
+          (fab?.$el as HTMLIonFabElement | undefined)?.close();
         "
       >
         <ion-label>{{ option.label }}</ion-label>

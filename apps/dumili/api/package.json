@@ -3,11 +3,12 @@
   "type": "module",
   "version": "1.0.0",
   "engines": {
-    "node": ">=24.0.0 <25.0.0"
+    "node": ">=26.0.0 <27.0.0"
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node $source --outdir dist; done && pnpm sentry:sourcemaps",
+    "build": "prisma generate && for source in index.ts instrument.ts; do bun build --entry-naming [dir]/[name].mjs --sourcemap=linked --target node --external @napi-rs/canvas $source --outdir dist; done && pnpm run copy-wasm && pnpm sentry:sourcemaps",
+    "copy-wasm": "cp node_modules/node-unrar-js/dist/js/unrar.wasm dist/ && cp node_modules/pdfjs-dist/build/pdf.worker.mjs dist/",
     "prisma-pull-generate": "prisma db pull && prisma generate",
     "prisma-generate": "prisma generate",
     "lint": "eslint --fix .",
@@ -33,6 +34,7 @@
     "busboy": "^1.6.0",
     "cloudinary": "^1.41.3",
     "dotenv": "^16.6.1",
+    "fflate": "^0.8.3",
     "jsonwebtoken": "^9.0.3",
     "node-unrar-js": "^2.0.2",
     "pdfjs-dist": "^6.0.227",
@@ -52,7 +54,7 @@
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^24.13.0",
+    "@types/node": "^25.0.0",
     "concurrently": "^10.0.3",
     "eslint": "^10.4.1",
     "eslint-config-prettier": "^10.1.8",

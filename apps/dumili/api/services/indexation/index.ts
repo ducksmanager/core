@@ -1,7 +1,7 @@
 import "~group-by";
 
 import { v2 as cloudinary } from "cloudinary";
-import type { Socket } from "socket.io";
+import type { Server, Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import {
   type ServerSentStartEndEvents,
@@ -35,14 +35,25 @@ import {
 } from "./story-search";
 import { SocketClient } from "socket-call-client";
 
+import { readFileSync, existsSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
 import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf'
 
 import { createExtractorFromData } from "node-unrar-js";
+import { unzipSync } from "fflate";
 
-// @ts-expect-error - TS1323
 await definePDFJSModule(() => import('pdfjs-dist'))
 
-// @ts-expect-error - TS1323
+// In the production bundle, bun bakes in the CI build path for unrar.wasm.
+// We override it by loading the file explicitly when it's present next to the bundle.
+// In local dev (unbundled), node-unrar-js resolves the path itself so we leave it undefined.
+const bundleSideWasm = join(dirname(fileURLToPath(import.meta.url)), "unrar.wasm");
+const unrarWasmBinary = existsSync(bundleSideWasm)
+  ? (() => { const buf = readFileSync(bundleSideWasm); return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength); })()
+  : undefined;
+
 const canvasImport = () => import('@napi-rs/canvas');
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
@@ -54,6 +65,7 @@ const ALLOWED_DOCUMENT_MIME_TYPES = new Set<string>([
   "application/pdf",
   "application/x-rar",
   "application/octet-stream",
+  "application/zip",
 ]);
 const ALLOWED_IMAGE_MIME_TYPES = new Set<string>([
   "image/png",
@@ -73,6 +85,8 @@ const inferMimeType = (value?: string) => {
       return "application/pdf";
     case "rar": case "cbr":
       return "application/x-rar";
+    case "zip": case "cbz":
+      return "application/zip";
     case "png":
       return "image/png";
     case "jpg": case "jpeg":
@@ -684,118 +698,154 @@ export type IndexationServices = NamespaceProxyTarget<
   IndexationServerSentStartEndEvents
 >;
 
-const listenEvents = (services: IndexationServices) => ({
-  setPageUrl: async (id: number, url: string | null) => setPageUrl(services, id, url),
+const makeServicesProxy = (io: Server, indexationId: string, user: SessionDataWithIndexation["user"], initialIndexation: FullIndexation): IndexationServices => {
+  const data = { user, indexation: initialIndexation } as const;
+  const ns = `/indexation/${indexationId}`;
+  const socket = {
+    data,
+    nsp: { name: ns },
+    emit: (event: string, ...args: unknown[]) => io.of(ns).emit(event, ...args),
+  };
+  return new Proxy({} as IndexationServices, {
+    get(_, prop: string) {
+      if (prop === '_socket') return socket;
+      return (...args: unknown[]) => socket.emit(prop, ...args);
+    }
+  });
+};
 
-  uploadFileToCloudinary: async ({ dataBase64, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber }: {
-    dataBase64: string;
+const uploadPages = async (services: IndexationServices, {
+  buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber,
+}: {
+  buffer: Buffer;
+  fileName: string;
+  mimeType: string;
+  firstPageNumber: number;
+  firstOutOfRangePageNumber: number;
+}) => {
+  try {
+    const { indexation, user } = services._socket.data;
+    const effectiveMimeType = mimeType || inferMimeType(fileName);
+    if (!effectiveMimeType || !ALLOWED_MIME_TYPES.has(effectiveMimeType)) {
+      return { error: "Unsupported file type" };
+    }
+
+    const isDocument = ALLOWED_DOCUMENT_MIME_TYPES.has(effectiveMimeType);
+    const maxSize = isDocument ? MAX_DOCUMENT_FILE_SIZE : MAX_IMAGE_FILE_SIZE;
+
+    if (buffer.byteLength > maxSize) {
+      throw new Error(
+        isDocument
+          ? "Document file too large (max 50 MB)"
+          : "Image file too large (max 5 MB)",
+      );
+    }
+
+    const folder = `dumili/${user.username}/${indexation.id}`;
+    const context = { indexation: indexation.id, user: user.username };
+
+    if (isDocument) {
+      const pagesToPotentiallyOverwrite = indexation.pages.filter(({ pageNumber }) =>
+        pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber
+      );
+
+      const uploadDocumentPages = async (items: { name: string; getData: () => Promise<Buffer> }[]) => {
+        if (!items.length) {
+          throw new Error("No valid pages found in the document");
+        }
+        const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, items.length);
+        services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
+        for (const [idx, page] of pagesToOverwrite.entries()) {
+          const { name, getData } = items[idx];
+          console.info(`Uploading page ${page.pageNumber} from file ${name}...`);
+          await uploadToCloudinary({ services, buffer: await getData(), page, folder, context });
+          services.reportDocumentPageUploaded(page.pageNumber);
+        }
+      };
+
+      switch (effectiveMimeType) {
+        case "application/x-rar": case "application/octet-stream": {
+          const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer, ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }) });
+          const extracted = extractor.extract();
+          const files = [...extracted.files]
+            .filter(f =>
+              f.extraction?.length &&
+              f.fileHeader.name.split('/').length === 1 &&
+              inferMimeType(f.fileHeader.name) &&
+              ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(f.fileHeader.name)!)
+            )
+            .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
+          await uploadDocumentPages(files.map(f => ({ name: f.fileHeader.name, getData: async () => Buffer.from(f.extraction!) })));
+          break;
+        }
+
+        case "application/zip": {
+          const files = Object.entries(unzipSync(new Uint8Array(buffer)))
+            .filter(([name]) =>
+              name.split('/').length === 1 &&
+              inferMimeType(name) &&
+              ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(name)!)
+            )
+            .sort(([a], [b]) => a.localeCompare(b));
+          await uploadDocumentPages(files.map(([name, data]) => ({ name, getData: async () => Buffer.from(data) })));
+          break;
+        }
+
+        case "application/pdf": {
+          const pdf = await getDocumentProxy(new Uint8Array(buffer));
+          await uploadDocumentPages(
+            Array.from({ length: pdf.numPages }, (_, i) => ({
+              name: `page ${i + 1}`,
+              getData: async () => {
+                const dataUrl = await renderPageAsImage(pdf, i + 1, { toDataURL: true, canvasImport });
+                return Buffer.from(dataUrl.split(",")[1], "base64");
+              },
+            }))
+          );
+          break;
+        }
+      }
+    } else {
+      const page = indexation.pages.find(({ pageNumber }) => pageNumber === firstPageNumber)!;
+      await uploadToCloudinary({ services, buffer, page, folder, context });
+      services.reportDocumentPageUploaded(page.pageNumber);
+    }
+
+    return { status: "OK" };
+  } catch (error) {
+    const returnedError =
+      error instanceof Error
+        ? error.message
+        : "Cloudinary upload failed: " + JSON.stringify(error);
+    console.error(returnedError);
+    return { error: returnedError };
+  }
+};
+
+export const handleHttpFileUpload = async (
+  io: Server,
+  { indexationId, user, buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber }: {
+    indexationId: string;
+    user: SessionDataWithIndexation["user"];
+    buffer: Buffer;
     fileName: string;
     mimeType: string;
     firstPageNumber: number;
     firstOutOfRangePageNumber: number;
-  }) => {
-    try {
-      const { indexation, user } = services._socket.data;
-      const effectiveMimeType = mimeType || inferMimeType(fileName);
-      if (!effectiveMimeType || !ALLOWED_MIME_TYPES.has(effectiveMimeType)) {
-        return {
-          error: "Unsupported file type",
-        };
-      }
-
-      const isDocument = ALLOWED_DOCUMENT_MIME_TYPES.has(effectiveMimeType);
-
-      const maxSize = isDocument
-        ? MAX_DOCUMENT_FILE_SIZE
-        : MAX_IMAGE_FILE_SIZE;
-
-      const buffer = Buffer.from(dataBase64, "base64")
-      if (buffer.byteLength > maxSize) {
-        throw new Error(
-          isDocument
-            ? "Document file too large (max 50 MB)"
-            : "Image file too large (max 5 MB)",
-        );
-      }
-
-      const folder = `dumili/${user.username}/${indexation.id}`
-      const context = {
-        indexation: indexation.id,
-        user: user.username,
-      }
-
-      if (isDocument) {
-        const pagesToPotentiallyOverwrite = indexation.pages.filter(({ pageNumber }) =>
-          pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber
-        );
-
-        switch (effectiveMimeType) {
-          case "application/x-rar": case "application/octet-stream": {
-            const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer });
-            const extracted = extractor.extract();
-            const files = [...extracted.files]
-              .filter(f => !f.fileHeader.flags.directory && f.extraction && f.extraction.length > 0)
-              .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
-            const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, files.length);
-            services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
-            for (const [idx, page] of pagesToOverwrite.entries()) {
-              console.info(`Uploading page ${page.pageNumber} from file ${files[idx].fileHeader.name}...`);
-              await uploadToCloudinary({
-                services,
-                buffer: Buffer.from(files[idx].extraction!),
-                page,
-                folder,
-                context,
-              });
-              services.reportDocumentPageUploaded(page.pageNumber);
-            }
-          }
-            break;
-
-          case "application/pdf": {
-            const pdf = await getDocumentProxy(new Uint8Array(buffer));
-            const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, pdf.numPages);
-            services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
-
-            for (const [idx, page] of pagesToOverwrite.entries()) {
-              console.info(`Rendering page ${page.pageNumber} from PDF file...`);
-              const dataUrl = await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport });
-              console.info(`Uploading page ${page.pageNumber} from PDF file...`);
-              await uploadToCloudinary({
-                services,
-                buffer: Buffer.from(dataUrl.split(",")[1], "base64"),
-                page,
-                folder,
-                context,
-              });
-              services.reportDocumentPageUploaded(page.pageNumber);
-            }
-          }
-        }
-      }
-      else {
-        await uploadToCloudinary({
-          services,
-          buffer,
-          page: indexation.pages.find(({ pageNumber }) => pageNumber === firstPageNumber)!,
-          folder,
-          context,
-        });
-      }
-
-      return { status: "OK" as const };
-    } catch (error) {
-      const returnedError =
-        error instanceof Error
-          ? error.message
-          : "Cloudinary upload failed: " + JSON.stringify(error);
-
-      console.error(returnedError);
-      return {
-        error: returnedError,
-      };
-    }
   },
+) => {
+  const indexation = await prisma.indexation.findUnique({
+    where: { id: indexationId, dmUserId: user.id },
+    include: indexationPayloadInclude,
+  });
+  if (!indexation) return { error: "Indexation not found" };
+  indexation.entries = indexation.entries.sort((a, b) => a.position - b.position);
+  const services = makeServicesProxy(io, indexationId, user, indexation);
+  return uploadPages(services, { buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber });
+};
+
+const listenEvents = (services: IndexationServices) => ({
+  setPageUrl: async (id: number, url: string | null) => setPageUrl(services, id, url),
 
   deleteIndexation: async () => {
     const { id: indexationId } = services._socket.data.indexation;

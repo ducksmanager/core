@@ -116,5 +116,10 @@
     "vue-tsc": "^3.3.3"
   },
   "description": "What The Duck",
-  "prettier": "@ionic/prettier-config"
+  "prettier": "@ionic/prettier-config",
+  "pnpm": {
+    "overrides": {
+      "rolldown": "1.0.1"
+    }
+  }
 }

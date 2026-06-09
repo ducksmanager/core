@@ -84,5 +84,10 @@
     "vite": "^8.0.16",
     "vue-tsc": "^3.3.3",
     "wait-on": "^9.0.10"
+  },
+  "pnpm": {
+    "overrides": {
+      "rolldown": "1.0.1"
+    }
   }
 }

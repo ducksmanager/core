@@ -63,7 +63,7 @@ import useDumiliSocket, {
 } from "./composables/useDumiliSocket";
 
 import { buildWebStorage } from "socket-call-client";
-import type { user } from "~prisma/client_dumili/client";
+import type { user as userType } from "~prisma/client_dumili/client";
 import { suggestions } from "./stores/suggestions";
 
 const { t: $t } = useI18n();
@@ -117,7 +117,7 @@ const loginUrl = computed(
 
 const { isLoadingUser, user } = storeToRefs(collection());
 const { loadUser } = collection();
-const dumiliUser = ref<user>();
+const dumiliUser = ref<userType>();
 
 const updateUser = async () => {
   const { indexationsSocket } = dumiliSocket;
