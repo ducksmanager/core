@@ -77,11 +77,11 @@
 </template>
 
 <script setup lang="ts">
-import { subscription } from "~prisma-schemas/schemas/dm";
+import { type subscription as subscriptionType } from "~prisma-schemas/schemas/dm";
 
 const { isEdit, subscription } = defineProps<{
   isEdit?: boolean;
-  subscription: subscription;
+  subscription: subscriptionType;
 }>();
 
 const editSubscription = $ref(subscription);
@@ -111,7 +111,7 @@ watch($$(endDateAsString), (newValue) => {
 
 defineEmits<{
   (e: "delete"): void;
-  (e: "edit", editSubscription: subscription): void;
+  (e: "edit", editSubscription: subscriptionType): void;
   (e: "start-edit"): void;
   (e: "cancel-edit"): void;
 }>();
