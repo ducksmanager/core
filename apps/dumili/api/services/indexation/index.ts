@@ -42,6 +42,7 @@ import { dirname, join } from "path";
 import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf'
 
 import { createExtractorFromData } from "node-unrar-js";
+import { unzipSync } from "fflate";
 
 await definePDFJSModule(() => import('pdfjs-dist'))
 
@@ -64,6 +65,7 @@ const ALLOWED_DOCUMENT_MIME_TYPES = new Set<string>([
   "application/pdf",
   "application/x-rar",
   "application/octet-stream",
+  "application/zip",
 ]);
 const ALLOWED_IMAGE_MIME_TYPES = new Set<string>([
   "image/png",
@@ -83,6 +85,8 @@ const inferMimeType = (value?: string) => {
       return "application/pdf";
     case "rar": case "cbr":
       return "application/x-rar";
+    case "zip": case "cbz":
+      return "application/zip";
     case "png":
       return "image/png";
     case "jpg": case "jpeg":
@@ -710,7 +714,7 @@ const makeServicesProxy = (io: Server, indexationId: string, user: SessionDataWi
   });
 };
 
-const uploadCore = async (services: IndexationServices, {
+const uploadPages = async (services: IndexationServices, {
   buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber,
 }: {
   buffer: Buffer;
@@ -745,40 +749,56 @@ const uploadCore = async (services: IndexationServices, {
         pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber
       );
 
+      const uploadDocumentPages = async (items: { name: string; getData: () => Promise<Buffer> }[]) => {
+        const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, items.length);
+        services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
+        for (const [idx, page] of pagesToOverwrite.entries()) {
+          const { name, getData } = items[idx];
+          console.info(`Uploading page ${page.pageNumber} from file ${name}...`);
+          await uploadToCloudinary({ services, buffer: await getData(), page, folder, context });
+          services.reportDocumentPageUploaded(page.pageNumber);
+        }
+      };
+
       switch (effectiveMimeType) {
         case "application/x-rar": case "application/octet-stream": {
           const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer, ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }) });
           const extracted = extractor.extract();
           const files = [...extracted.files]
-            .filter(f => 
-              !f.fileHeader.flags.directory && 
+            .filter(f =>
               f.extraction?.length &&
-              f.fileHeader.name.split('/').length === 1 && // only keep files at the root of the archive
+              f.fileHeader.name.split('/').length === 1 &&
               inferMimeType(f.fileHeader.name) &&
               ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(f.fileHeader.name)!)
-            ) // only keep files at the root of the archive with content
+            )
             .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
-          const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, files.length);
-          services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
-          for (const [idx, page] of pagesToOverwrite.entries()) {
-            console.info(`Uploading page ${page.pageNumber} from file ${files[idx].fileHeader.name}...`);
-            await uploadToCloudinary({ services, buffer: Buffer.from(files[idx].extraction!), page, folder, context });
-            services.reportDocumentPageUploaded(page.pageNumber);
-          }
+          await uploadDocumentPages(files.map(f => ({ name: f.fileHeader.name, getData: async () => Buffer.from(f.extraction!) })));
+          break;
+        }
+
+        case "application/zip": {
+          const files = Object.entries(unzipSync(new Uint8Array(buffer)))
+            .filter(([name]) =>
+              name.split('/').length === 1 &&
+              inferMimeType(name) &&
+              ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(name)!)
+            )
+            .sort(([a], [b]) => a.localeCompare(b));
+          await uploadDocumentPages(files.map(([name, data]) => ({ name, getData: async () => Buffer.from(data) })));
           break;
         }
 
         case "application/pdf": {
           const pdf = await getDocumentProxy(new Uint8Array(buffer));
-          const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, pdf.numPages);
-          services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
-          for (const [idx, page] of pagesToOverwrite.entries()) {
-            console.info(`Rendering page ${page.pageNumber} from PDF file...`);
-            const dataUrl = await renderPageAsImage(pdf, idx + 1, { toDataURL: true, canvasImport });
-            console.info(`Uploading page ${page.pageNumber} from PDF file...`);
-            await uploadToCloudinary({ services, buffer: Buffer.from(dataUrl.split(",")[1], "base64"), page, folder, context });
-            services.reportDocumentPageUploaded(page.pageNumber);
-          }
+          await uploadDocumentPages(
+            Array.from({ length: pdf.numPages }, (_, i) => ({
+              name: `page ${i + 1}`,
+              getData: async () => {
+                const dataUrl = await renderPageAsImage(pdf, i + 1, { toDataURL: true, canvasImport });
+                return Buffer.from(dataUrl.split(",")[1], "base64");
+              },
+            }))
+          );
           break;
         }
       }
@@ -818,7 +838,7 @@ export const handleHttpFileUpload = async (
   if (!indexation) return { error: "Indexation not found" };
   indexation.entries = indexation.entries.sort((a, b) => a.position - b.position);
   const services = makeServicesProxy(io, indexationId, user, indexation);
-  return uploadCore(services, { buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber });
+  return uploadPages(services, { buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber });
 };
 
 const listenEvents = (services: IndexationServices) => ({

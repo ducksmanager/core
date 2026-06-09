@@ -241,9 +241,12 @@ const getFileTypes = () =>
         ".pdf",
         ".rar",
         ".cbr",
+        ".zip",
+        ".cbz",
         "application/x-rar",
         "application/pdf",
         "application/octet-stream",
+        "application/zip",
       ]
     : [".png", ".jpeg", ".jpg", "image/png", "image/jpeg"];
 
