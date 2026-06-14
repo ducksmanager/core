@@ -79,8 +79,8 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
     "unplugin-auto-import": "^21.0.0",
-    "unplugin-icons": "^22.5.0",
-    "unplugin-vue-components": "^31.1.0",
+    "unplugin-icons": "^23.0.1",
+    "unplugin-vue-components": "^32.1.0",
     "vite": "^8.0.16",
     "vue-tsc": "^3.3.5",
     "wait-on": "^9.0.10"
