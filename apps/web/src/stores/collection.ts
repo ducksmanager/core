@@ -39,6 +39,9 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
 };
 
 export const collection = defineStore("collection", () => {
+  const route = useRoute<
+    "/collection/user/[username]/[[...all]]" | "/bookcase/show/[username]"
+  >();
   const {
     collection: collectionEvents,
     stats: statsEvents,
@@ -92,6 +95,7 @@ export const collection = defineStore("collection", () => {
     user = shallowRef<
       SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
     >(),
+    isPublicCollection = computed(() => route.params.username !== undefined),
     userPermissions =
       shallowRef<EventOutput<CollectionServices, "getUserPermissions">>(),
     previousVisit = ref<Date>(),
@@ -413,6 +417,7 @@ export const collection = defineStore("collection", () => {
     isLoadingUser,
     copiesPerIssuecode,
     isLoadingSuggestions,
+    isPublicCollection,
     issuecodesPerPublication,
     labelIdFilters,
     labelFiltersQueryParams,
