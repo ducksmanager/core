@@ -3,4 +3,10 @@ export interface SimilarImagesResult {
   scores: number[];
   tags: string[];
   type: string;
+  bounding_rects: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }[];
 }

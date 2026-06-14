@@ -12,11 +12,11 @@
   "license": "ISC",
   "dependencies": {
     "csv-parse": "^6.2.1",
-    "mariadb": "^3.5.2"
+    "mariadb": "^3.5.3"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/node": "^24.13.0",
+    "@types/node": "^24.13.2",
     "typescript": "^6.0.3"
   },
   "module": "index.ts",

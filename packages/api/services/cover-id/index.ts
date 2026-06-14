@@ -81,6 +81,11 @@ const listenEvents = () => ({
         issuecode,
         fullUrl,
         score,
+        boundingRect: pastecResponse.bounding_rects[
+          pastecResponse.image_ids.indexOf(
+            coversByIssuecode.find((cover) => cover.issuecode === issuecode)!.id,
+          )
+        ],
       })),
     };
   },
