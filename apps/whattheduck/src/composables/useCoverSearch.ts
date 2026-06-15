@@ -5,11 +5,7 @@ import { toastController } from '@ionic/vue';
 import type { Router } from 'vue-router';
 import { app } from '~/stores/app';
 
-export default (
-  router: Router,
-  coverIdEvents: ReturnType<typeof useDmSocket>['coverId'],
-  storySearchEvents: ReturnType<typeof useDmSocket>['storySearch'],
-) => {
+export default (router: Router, coverIdEvents: ReturnType<typeof useDmSocket>['coverId']) => {
   const isSearching = ref(false);
   const { t } = useI18n();
 
@@ -18,15 +14,12 @@ export default (
 
   const searchFromCover = async (base64: string) => {
     isSearching.value = true;
-    return (
-      app().isFastCoverSearchEnabled
-        ? storySearchEvents
-            .findSimilarImages(base64, true)
-            .then((results) => ('results' in results ? results.results : null))
-        : coverIdEvents.searchFromCover(base64, 1).then((results) => ('covers' in results ? results.covers : null))
-    ).finally(() => {
-      isSearching.value = false;
-    });
+    return coverIdEvents
+      .searchFromCover(base64, app().isFastCoverSearchEnabled ? 1 : 0)
+      .then((results) => ('covers' in results ? results.covers : null))
+      .finally(() => {
+        isSearching.value = false;
+      });
   };
 
   let results: Awaited<ReturnType<typeof searchFromCover>> = null;

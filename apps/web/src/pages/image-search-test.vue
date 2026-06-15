@@ -71,12 +71,22 @@ meta:
     </table>
     <b-table
       :items="models"
-      :fields="['model', 'modelData', 'indexSize', 'time', 'results']"
+      :fields="[
+        'selected',
+        'model',
+        'modelData',
+        'indexSize',
+        'time',
+        'results',
+      ]"
       hover
       small
       caption-top
       responsive
     >
+      <template #cell(selected)="row">
+        <b-form-checkbox v-model="row.item.isSelected" />
+      </template>
       <template #cell(results)="row">
         <template v-if="row.item.results">
           <div v-if="'error' in row.item.results">
@@ -184,6 +194,7 @@ const examples = [
 ] as const;
 const models = ref<
   {
+    isSelected: boolean;
     model: string;
     modelData: "covers" | "story first pages";
     indexSize?: number | { error: string };
@@ -196,6 +207,7 @@ const models = ref<
   ...[0, 1].map(
     (pastecIndex) =>
       ({
+        isSelected: true,
         model: `Legacy (WTD 2-3) - Pastec server ${pastecIndex}`,
         modelData: "covers",
         getIndexSize: () =>
@@ -220,16 +232,22 @@ const models = ref<
           } catch (error) {
             return typeof error === "object" && "errorDetails" in error!
               ? { error: (error.errorDetails as string) || "Error" }
-              : { error: "Error" };
+              : {
+                  error:
+                    typeof error === "object" && "error" in error!
+                      ? (error.error as string)
+                      : "Error",
+                };
           }
         },
       }) as const,
   ),
   {
+    isSelected: true,
     model: "Experimental",
     modelData: "covers",
     getIndexSize: () => storySearchEvents.getIndexSize(true),
-    run: async (base64: string) => {
+    run: async (base64) => {
       const searchResults = await storySearchEvents.findSimilarImages(
         base64,
         true,
@@ -240,10 +258,11 @@ const models = ref<
     },
   },
   {
+    isSelected: true,
     model: "Experimental",
     modelData: "story first pages",
     getIndexSize: () => storySearchEvents.getIndexSize(false),
-    run: async (base64: string) => {
+    run: async (base64) => {
       const searchResults = await storySearchEvents.findSimilarImages(
         base64,
         false,
@@ -403,8 +422,9 @@ watch(currentBase64, (base64) => {
     }
     nextTick(async () => {
       const relevantModels = models.value.filter(
-        ({ modelData }) =>
-          modelData === (isCover.value ? "covers" : "story first pages"),
+        ({ modelData, isSelected }) =>
+          modelData === (isCover.value ? "covers" : "story first pages") &&
+          isSelected,
       );
       await Promise.all(
         relevantModels.map(async (model) => {

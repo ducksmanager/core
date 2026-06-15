@@ -33,19 +33,26 @@ services:
       - dm-api-network
       - dm-db-network
 
-  pastec:
-    container_name: pastec
-    image: "bperel/pastec-ubuntu-1704-timestamps"
+  pastec-improved:
+    container_name: pastec-improved
+    image: "bperel/pastec:improved"
     restart: always
-    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    command:
+      [
+        "-p",
+        "4212",
+        "-i",
+        "/pastec-index-last.dat",
+        "/pastec/visualWordsORB.dat",
+      ]
     volumes:
       - ./pastec-index-last.dat:/pastec-index-last.dat:ro
     networks:
       - dm-api-network
 
-  pastec-improved:
-    container_name: pastec-improved
-    image: "bperel/pastec:improved"
+  pastec-kp1000-flann200:
+    container_name: pastec-kp1000-flann200
+    image: "bperel/pastec:kp1000-flann200"
     restart: always
     command:
       [

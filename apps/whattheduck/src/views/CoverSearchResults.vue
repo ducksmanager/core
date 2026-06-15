@@ -100,9 +100,9 @@ const setWidth = (event: Event) => {
   slideWidths.value.push((event.target as HTMLImageElement).clientWidth + 32);
 };
 
-const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 
-const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
+const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents);
 
 const route = useRoute();
 
