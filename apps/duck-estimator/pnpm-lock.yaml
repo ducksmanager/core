@@ -12,8 +12,8 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0
       csv-parse:
-        specifier: ^6.2.1
-        version: 6.2.1
+        specifier: ^7.0.0
+        version: 7.0.0
       csv-writer:
         specifier: ^1.6.0
         version: 1.6.0
@@ -336,8 +336,8 @@ packages:
     resolution: {integrity: sha512-u/O3vwbptzhMs3L1fQE82ZSLHQQfto5gyZzwteVIEyeaY5Fc7R4dapF/BvRoSYFeqfBk4m0V1Vafq5Pjv25wvA==}
     engines: {node: '>= 6'}
 
-  csv-parse@6.2.1:
-    resolution: {integrity: sha512-LRLMV+UCyfMokp8Wb411duBf1gaBKJfOfBWU9eHMJ+b+cJYZsNu3AFmjJf3+yPGd59Exz1TsMjaSFyxnYB9+IQ==}
+  csv-parse@7.0.0:
+    resolution: {integrity: sha512-CSssqPAK5us09FhMI9juM0jnqXUJP+rtWeIfivTYBLNH/8rnxkQlZvoRemF6MAyfNov9XU8mN2wwF/pP68sxTA==}
 
   csv-writer@1.6.0:
     resolution: {integrity: sha512-NOx7YDFWEsM/fTRAJjRpPp8t+MKRVvniAg9wQlUKx20MFrPs73WLJhFf5iteqrxNYnsy924K3Iroh3yNHeYd2g==}
@@ -1310,7 +1310,7 @@ snapshots:
 
   css-what@6.2.2: {}
 
-  csv-parse@6.2.1: {}
+  csv-parse@7.0.0: {}
 
   csv-writer@1.6.0: {}
 

@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",
-    "csv-parse": "^6.2.1",
+    "csv-parse": "^7.0.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^17.4.2",
     "electron": "^32.3.3",
