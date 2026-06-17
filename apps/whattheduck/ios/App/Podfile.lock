@@ -30,12 +30,12 @@ PODS:
     - Capacitor
     - Version (= 0.8.0)
     - ZIPFoundation (~> 0.9)
-  - Sentry (9.8.0):
-    - Sentry/Core (= 9.8.0)
-  - Sentry/Core (9.8.0)
-  - SentryCapacitor (3.2.1):
+  - Sentry (9.16.1):
+    - Sentry/Core (= 9.16.1)
+  - Sentry/Core (9.16.1)
+  - SentryCapacitor (4.1.0):
     - Capacitor
-    - Sentry (= 9.8.0)
+    - Sentry (= 9.16.1)
   - Version (0.8.0)
   - ZIPFoundation (0.9.20)
 
@@ -53,7 +53,7 @@ DEPENDENCIES:
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.0.2_@capacitor+core@8.4.0/node_modules/@capawesome/capacitor-file-picker`)"
   - "CapgoCameraPreview (from `../../node_modules/.pnpm/@capgo+camera-preview@8.4.4_@capacitor+core@8.4.0/node_modules/@capgo/camera-preview`)"
   - "CapgoCapacitorUpdater (from `../../node_modules/.pnpm/@capgo+capacitor-updater@8.49.1_@capacitor+core@8.4.0/node_modules/@capgo/capacitor-updater`)"
-  - "SentryCapacitor (from `../../node_modules/.pnpm/@sentry+capacitor@3.2.1_@capacitor+core@8.4.0_@sentry+vue@10.43.0_pinia@3.0.4_typescript@6.0._ro5gi7pgmlfl5herbo4t3lfk5e/node_modules/@sentry/capacitor`)"
+  - "SentryCapacitor (from `../../node_modules/.pnpm/@sentry+capacitor@4.1.0_@capacitor+core@8.4.0_@sentry+vue@10.52.0_pinia@3.0.4_typescript@6.0._eo5w66rjro4wbi3qxjl4zps7xm/node_modules/@sentry/capacitor`)"
 
 SPEC REPOS:
   trunk:
@@ -91,7 +91,7 @@ EXTERNAL SOURCES:
   CapgoCapacitorUpdater:
     :path: "../../node_modules/.pnpm/@capgo+capacitor-updater@8.49.1_@capacitor+core@8.4.0/node_modules/@capgo/capacitor-updater"
   SentryCapacitor:
-    :path: "../../node_modules/.pnpm/@sentry+capacitor@3.2.1_@capacitor+core@8.4.0_@sentry+vue@10.43.0_pinia@3.0.4_typescript@6.0._ro5gi7pgmlfl5herbo4t3lfk5e/node_modules/@sentry/capacitor"
+    :path: "../../node_modules/.pnpm/@sentry+capacitor@4.1.0_@capacitor+core@8.4.0_@sentry+vue@10.52.0_pinia@3.0.4_typescript@6.0._eo5w66rjro4wbi3qxjl4zps7xm/node_modules/@sentry/capacitor"
 
 SPEC CHECKSUMS:
   Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
@@ -109,11 +109,11 @@ SPEC CHECKSUMS:
   CapawesomeCapacitorFilePicker: eb29fb54c59614fede51e0e0fe25070dda9d024c
   CapgoCameraPreview: 12d1a6b97b716cd7be86b6dd1a128ba8839f299e
   CapgoCapacitorUpdater: c2a36674cfee2840bbc110daccad3f4505b382db
-  Sentry: 88746bf877eff714bc45315a39ad1d1efea2cdda
-  SentryCapacitor: 179536d84866b2ffde1ecd8ed1ded541caf3e950
+  Sentry: e5d82a3c1f2d951f75c04c57215a0abb1facbd51
+  SentryCapacitor: 3034f9cfcbdcda9a2a002a9d88a1a08df01d5fc3
   Version: de5907f2c5d0f3cf21708db7801d1d5401139486
   ZIPFoundation: dfd3d681c4053ff7e2f7350bc4e53b5dba3f5351
 
-PODFILE CHECKSUM: e5b4485edb6ca7de8e654b29339ee846a1a59a4f
+PODFILE CHECKSUM: cbd267b4129bf5c3f5cabfe705f1bb0f95259260
 
 COCOAPODS: 1.16.2

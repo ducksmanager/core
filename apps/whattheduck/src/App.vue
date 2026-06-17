@@ -1,5 +1,5 @@
 <template>
-  <ion-app :class="{ 'camera-preview-active': isCameraPreviewShown }">
+  <ion-app>
     <ion-progress-bar v-if="bundleDownloadProgress" :value="bundleDownloadProgress"></ion-progress-bar>
     <OfflineBanner v-if="isOfflineMode === 'offline_no_cache'" />
 
@@ -34,6 +34,7 @@ const { isOfflineMode, token, socket, offlineBannerHeight, isCameraPreviewShown 
 
 watch(isCameraPreviewShown, (active) => {
   document.body.classList.toggle('camera-preview-active', active);
+  document.querySelector('ion-app')?.classList.toggle('camera-preview-active', active);
 });
 console.log('token after storeToRefs', token.value);
 
