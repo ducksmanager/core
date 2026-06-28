@@ -82,8 +82,8 @@ import { closeOutline, closeSharp, pencilOutline, pencilSharp } from 'ionicons/i
 import { app } from '~/stores/app';
 
 defineSlots<{
-  'default'(): unknown;
-  'empty'?(): unknown;
+  default(): unknown;
+  empty?(): unknown;
   'fill-bar'(props: { item: Item }): unknown;
   'row-prefix'(props: { item: Item }): unknown;
   'row-label'(props: { item: Item }): unknown;

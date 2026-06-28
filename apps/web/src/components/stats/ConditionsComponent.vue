@@ -44,35 +44,33 @@ const chartData = computed(() => ({
     },
   ],
 }));
-const options = computed(
-  (): ChartOptions<"pie"> => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        labels: {
-          color: "white",
-        },
+const options = computed((): ChartOptions<"pie"> => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: "white",
       },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem: TooltipItem<"pie">) => {
-            const { dataset, parsed: currentValue } = tooltipItem;
-            const total = dataset.data.reduce(
-              (acc, value) => acc + value || 0,
-              0,
-            );
-            const percentage = parseFloat(
-              ((currentValue / total) * 100).toFixed(1),
-            );
-            return `${currentValue} (${percentage}%)`;
-          },
+    },
+    tooltip: {
+      callbacks: {
+        label: (tooltipItem: TooltipItem<"pie">) => {
+          const { dataset, parsed: currentValue } = tooltipItem;
+          const total = dataset.data.reduce(
+            (acc, value) => acc + value || 0,
+            0,
+          );
+          const percentage = parseFloat(
+            ((currentValue / total) * 100).toFixed(1),
+          );
+          return `${currentValue} (${percentage}%)`;
         },
       },
     },
-  }),
-);
+  },
+}));
 </script>
 
 <style scoped lang="scss">

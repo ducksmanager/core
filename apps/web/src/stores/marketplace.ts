@@ -47,9 +47,13 @@ export const marketplace = defineStore("marketplace", () => {
     ),
     sellerUserNames = computed(() =>
       sellerUserIds.value
-        ?.reduce<
-          { value: number; text: string }[]
-        >((acc, userId) => [...acc, { value: userId, text: users().stats[userId]?.username }], [])
+        ?.reduce<{ value: number; text: string }[]>(
+          (acc, userId) => [
+            ...acc,
+            { value: userId, text: users().stats[userId]?.username },
+          ],
+          [],
+        )
         .sort(({ text: text1 }, { text: text2 }) => text1.localeCompare(text2)),
     ),
     requestIssueIdsBySellerId = computed(

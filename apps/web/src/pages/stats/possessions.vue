@@ -68,13 +68,11 @@ const { t: $t } = useI18n(),
       ),
   ),
   values = $computed(() => {
-    if (
-      !(
-        totalPerPublicationUniqueIssuecodesSorted.value &&
-        coaIssueCountsByPublicationcode.value &&
-        hasCoaData
-      )
-    ) {
+    if (!(
+      totalPerPublicationUniqueIssuecodesSorted.value &&
+      coaIssueCountsByPublicationcode.value &&
+      hasCoaData
+    )) {
       return null;
     }
     let possessedIssues = totalPerPublicationUniqueIssuecodesSorted.value.map(

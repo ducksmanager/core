@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=24.0.0 <25.0.0"
+    "node": ">=26.0.0 <27.0.0"
   },
   "author": {
     "email": "brunoperel@gmail.com",
@@ -26,7 +26,7 @@
     "dotenv": "^17.4.2",
     "electron": "^32.3.3",
     "playwright-firefox": "~1.47.2",
-    "yargs": "^17.7.2",
+    "yargs": "^17.7.3",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
@@ -34,9 +34,9 @@
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.2",
     "@types/yargs": "^17.0.35",
-    "eslint": "^10.5.0",
+    "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.0"
+    "typescript-eslint": "^8.62.0"
   }
 }

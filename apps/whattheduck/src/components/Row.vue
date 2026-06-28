@@ -31,10 +31,10 @@ const {
 
 defineSlots<{
   'fill-bar'(): unknown;
-  'checkbox'(): unknown;
-  'prefix'(): unknown;
-  'label'(): unknown;
-  'suffix'(): unknown;
+  checkbox(): unknown;
+  prefix(): unknown;
+  label(): unknown;
+  suffix(): unknown;
 }>();
 
 const { isOfflineMode, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());

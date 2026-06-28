@@ -2,14 +2,14 @@
   "name": "ducksmanager",
   "packageManager": "pnpm@9.8.0",
   "engines": {
-    "node": ">=24.0.0 <25.0.0"
+    "node": ">=26.0.0 <27.0.0"
   },
   "type": "module",
   "dependencies": {
     "husky": "^9.1.7"
   },
   "devDependencies": {
-    "turbo": "^2.9.18"
+    "turbo": "^2.10.0"
   },
   "scripts": {
     "prepare": "husky",

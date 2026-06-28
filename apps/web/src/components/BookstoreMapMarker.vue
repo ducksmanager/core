@@ -38,8 +38,7 @@ const markerRef = ref<InstanceType<typeof MapboxMarker>>();
 
 const syncPopupOpen = () => {
   const m = markerRef.value as
-    | (InstanceType<typeof MapboxMarker> & { marker: Marker })
-    | null;
+    (InstanceType<typeof MapboxMarker> & { marker: Marker }) | null;
   const marker = m?.marker;
   if (!marker) return;
   const popup = marker.getPopup();

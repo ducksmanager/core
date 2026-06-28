@@ -1,7 +1,7 @@
 {
   "name": "~prisma-schemas",
   "engines": {
-    "node": ">=24.0.0 <25.0.0"
+    "node": ">=26.0.0 <27.0.0"
   },
   "type": "module",
   "files": [
@@ -30,9 +30,9 @@
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.2",
-    "@typescript-eslint/eslint-plugin": "^8.61.0",
+    "@typescript-eslint/eslint-plugin": "^8.62.0",
     "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.1",
     "prettier-plugin-prisma": "^5.0.0",
     "typescript": "^6.0.3"
   }

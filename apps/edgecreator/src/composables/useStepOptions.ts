@@ -75,8 +75,7 @@ export const useStepOptions = () => {
     ["fill", "stroke"].includes(optionName);
 
   type EitherOr<T, U> =
-    | (T & { [K in keyof U]?: never })
-    | (U & { [K in keyof T]?: never });
+    (T & { [K in keyof U]?: never }) | (U & { [K in keyof T]?: never });
 
   interface OnMoveHandlerParams {
     currentTarget: SVGElement | HTMLElement;

@@ -416,8 +416,7 @@ const emit = defineEmits<{
 }>();
 
 let contextMenuComponent:
-  | typeof ContextMenuOnSaleByOthers
-  | typeof ContextMenuOwnCollection;
+  typeof ContextMenuOnSaleByOthers | typeof ContextMenuOwnCollection;
 switch (contextMenuComponentName) {
   case "context-menu-on-sale-by-others":
     contextMenuComponent = ContextMenuOnSaleByOthers;

@@ -64,9 +64,8 @@ const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 const { overlay } = storeToRefs(ui());
 
 const pages = computed(() =>
-  getEntryPages(indexation.value!, entry.id).map(
-    ({ id: pageId }) =>
-      indexation.value!.pages.find(({ id }) => id === pageId)!,
+  getEntryPages(indexation.value!, entry.id).map(({ id: pageId }) =>
+    indexation.value!.pages.find(({ id }) => id === pageId)!,
   ),
 );
 
