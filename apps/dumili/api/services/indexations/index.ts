@@ -26,18 +26,11 @@ const listenEvents = ({ _socket }: IndexationsServices) => ({
           return prisma.user.create({
             data: {
               dmId: _socket.data.user.id,
-              inducksUsername: "change me",
             },
           });
         }
         return user;
       }),
-
-  updateUser: async (input: Pick<user, "inducksUsername">) =>
-    prisma.user.update({
-      where: { dmId: _socket.data.user.id },
-      data: input,
-    }),
 
   create: async (id: string, numberOfPages: number) =>
     prisma.indexation

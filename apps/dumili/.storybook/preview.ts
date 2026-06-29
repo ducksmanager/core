@@ -193,7 +193,6 @@ setup((app) => {
     user: ref({
       id: 1,
       username: "storybook-user",
-      inducksUsername: "storybook-user",
     }),
     isLoadingUser: ref(false),
     loadUser: async () => {},

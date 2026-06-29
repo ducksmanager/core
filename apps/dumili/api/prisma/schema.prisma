@@ -215,7 +215,6 @@ model aiStorySuggestion {
 
 model user {
   dmId            Int          @id @map("dm_id")
-  inducksUsername String?      @map("inducks_username") @db.VarChar(64)
   indexation      indexation[]
 }
 

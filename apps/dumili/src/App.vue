@@ -3,26 +3,6 @@
     fluid
     class="position-relative d-flex flex-row align-items-center justify-content-center p-2"
   >
-    <b-dropdown
-      v-if="dumiliUser"
-      id="user-dropdown"
-      :auto-close="false"
-      variant="light"
-    >
-      <template #button-content><i-bi-person-fill /></template>
-      <b-form @submit.prevent="updateUser">
-        <b-dropdown-item
-          >{{ $t("Nom d'utilisateur Inducks") }}
-          <input
-            v-model="dumiliUser.inducksUsername"
-            type="text"
-            @click.stop="() => {}"
-        /></b-dropdown-item>
-        <b-dropdown-item>
-          <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
-        </b-dropdown-item>
-      </b-form>
-    </b-dropdown>
     <div class="flex-grow-1">
       <router-link class="display-6" to="/">DuMILi</router-link>
       <div class="small">DUcksManager Inducks LIttle helper</div>
@@ -63,8 +43,6 @@ import useDumiliSocket, {
 } from "./composables/useDumiliSocket";
 
 import { buildWebStorage } from "socket-call-client";
-import type { user as userType } from "~prisma/client_dumili/client";
-import { suggestions } from "./stores/suggestions";
 
 const { t: $t } = useI18n();
 
@@ -117,26 +95,6 @@ const loginUrl = computed(
 
 const { isLoadingUser, user } = storeToRefs(collection());
 const { loadUser } = collection();
-const dumiliUser = ref<userType>();
-
-const updateUser = async () => {
-  const { indexationsSocket } = dumiliSocket;
-  await indexationsSocket.value!.updateUser(dumiliUser.value!);
-  if (dumiliSocket.indexationSocket) {
-    suggestions().loadIndexation();
-  }
-};
-
-watch(
-  user,
-  async (newUser, oldUser) => {
-    if (newUser && !oldUser) {
-      const { indexationsSocket } = dumiliSocket;
-      dumiliUser.value = await indexationsSocket.value!.getUser();
-    }
-  },
-  { immediate: true },
-);
 
 watch(
   isSocketConnected,
@@ -151,10 +109,6 @@ watch(
 <style lang="scss">
 @use "./style.scss";
 @import "vue-draggable-resizable/style.css";
-
-.dropdown {
-  margin-left: calc(var(--bs-gutter-x) * 0.5);
-}
 
 :deep(#flags) {
   right: 0 !important;

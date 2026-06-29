@@ -20,7 +20,6 @@ export const createMockIndexation = (
     price: null,
     user: {
       dmId: 1,
-      inducksUsername: "mock-user",
     },
     issueSuggestions: [],
     acceptedIssueSuggestion: null,
