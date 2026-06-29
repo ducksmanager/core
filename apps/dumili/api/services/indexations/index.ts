@@ -4,7 +4,7 @@ import { useSocketEvents } from "socket-call-server";
 
 import { COVER } from "~dumili-types/storyKinds";
 import prisma from "~prisma/client";
-import type { Prisma, user } from "~prisma/client_dumili/client";
+import type { Prisma } from "~prisma/client_dumili/client";
 
 import type { SessionData } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
