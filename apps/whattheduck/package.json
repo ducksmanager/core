@@ -86,7 +86,7 @@
     "@sentry/cli": "^3.6.0",
     "@types/imagemin": "9.0.1",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^24.13.2",
+    "@types/node": "^26.0.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue-macros/reactivity-transform": "^3.1.2",
     "@vue/eslint-config-typescript": "^14.9.0",

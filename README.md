@@ -1,6 +1,6 @@
 ## DucksManager
 
-[Official website](https://www.ducksmanager.net)
+[Official website](https://ducksmanager.net)
 
 DucksManager is a free and open-source website enabling comic book collectors to manage their Disney collection.
 
@@ -86,5 +86,5 @@ flowchart LR
 
 - [PNPM](https://pnpm.io/)
 - [Bun](https://bun.sh/)
-- [Node.js](https://nodejs.org/en/) 24
+- [Node.js](https://nodejs.org/en/) 26
 - [Docker](https://www.docker.com/)
