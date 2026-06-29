@@ -1,4 +1,4 @@
-import * as ejs from "ejs";
+import ejs from "ejs";
 import { I18n } from "i18n";
 import type { Transporter, TransportOptions } from "nodemailer";
 import nodemailer from "nodemailer";

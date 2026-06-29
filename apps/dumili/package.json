@@ -22,7 +22,6 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili ./dist",
     "storybook": "NODE_ENV=development storybook dev -p 6006",
     "test-storybook": "test-storybook --config-dir .storybook --ci --failOnConsole --testTimeout=30000",
-    "test-storybook:prebuild": "start-server-and-test \"NODE_ENV=development storybook dev -p 6006 --no-open --ci --quiet\" http://127.0.0.1:6006 \"pnpm test-storybook\"",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -80,7 +79,6 @@
     "eslint-plugin-vue": "^10.9.2",
     "prettier": "^3.9.1",
     "sass": "^1.101.0",
-    "start-server-and-test": "^2.1.5",
     "storybook": "^10.4.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.0",
