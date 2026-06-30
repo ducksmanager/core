@@ -4,7 +4,7 @@
       {{ $t("Indexations en cours") }}
     </h4>
     <template v-if="currentIndexations">
-      <b-row align-h="center">
+      <b-row align-h="center" class="pb-10">
         <b-col
           v-for="{ id, acceptedIssueSuggestion, pages } of currentIndexations"
           :key="id"

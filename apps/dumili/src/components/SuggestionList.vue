@@ -1,7 +1,7 @@
 <template>
   <div :class="classes">
     <b-dropdown
-      class="position-relative z-1"
+      class="position-relative"
       style="width: calc(100% - 40px)"
       :menu-class="['border-white', 'min-w-100', ...extraMenuClass]"
       :contenteditable="textEditable || null"
@@ -78,7 +78,7 @@
     <slot v-if="showCustomizeForm" name="customize-form" />
   </div>
 </template>
-<script setup lang="ts" generic="S extends {id: number|string}">
+<script setup lang="ts" generic="S extends { id: number | string }">
 const $slots = useSlots();
 
 defineSlots<{

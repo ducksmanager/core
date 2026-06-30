@@ -16,7 +16,7 @@
         style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
-        <b-form @submit.prevent="updateIndexation">
+        <b-form class="text-black" @submit.prevent="updateIndexation">
           <b-alert
             v-if="indexation.acceptedIssueSuggestion === null"
             variant="warning"
@@ -53,12 +53,16 @@
           >
             <b-form-input
               id="release-date"
-              :value="(indexationEdit.releaseDate as unknown as string)?.split('T')[0]"
+              :value="
+                (indexationEdit.releaseDate as unknown as string)?.split('T')[0]
+              "
               type="date"
               v-bind="getInputProps()"
               @input="
                 if ($event.target) {
-                  indexationEdit.releaseDate = (($event.target as HTMLInputElement).value);
+                  indexationEdit.releaseDate = (
+                    $event.target as HTMLInputElement
+                  ).value;
                 }
               "
               @click.stop="() => {}"
