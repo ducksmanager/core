@@ -10,7 +10,7 @@
     "name": "Bruno Perel"
   },
   "scripts": {
-    "build": "bun build --target node index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
+    "build": "bun build --target node --external electron index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "lint": "eslint --fix .",
     "start": "bun --inspect run --watch index.ts",
     "dev": "PWDEBUG=1 bun --inspect run --watch index.ts",
