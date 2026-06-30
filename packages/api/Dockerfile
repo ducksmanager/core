@@ -14,7 +14,9 @@ COPY ./packages/api/node_modules/.pnpm/onnxruntime-node@*/node_modules/onnxrunti
 # ONNX model is downloaded during CI/CD from GitHub release
 COPY ./packages/api/services/story-search/model/efficientnet_b0_comic_embedding.onnx /app/services/story-search/model/efficientnet_b0_comic_embedding.onnx
 
-RUN npm install --os=linux --cpu=x64 sharp
+# story-search bundles sharp@0.34 (the sharp-0-34 alias), so install its
+# matching linux/x64 native binaries (@img/sharp-linux-x64).
+RUN npm install --os=linux --cpu=x64 sharp@0.34.5
 
 COPY packages/api/.env /app/
 
