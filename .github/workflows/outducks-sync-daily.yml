@@ -5,7 +5,7 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 jobs:
-  ducksmanager-daily:
+  outducks-sync:
     runs-on: ubuntu-latest
     environment: production
     env:
@@ -31,6 +31,8 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
         run: |
           pnpm -r i
 
