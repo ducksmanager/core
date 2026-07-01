@@ -86,6 +86,16 @@ export type IndexationServerSentStartEndEvents =
     indexationUpdated: (indexation: FullIndexation) => void;
   };
 
+// The "start" events whose handler receives a single numeric id (i.e. every one
+// except reportDocumentAnalyzed, which receives a number[]).
+export type IndexationNumberIdEvent = {
+  [K in keyof IndexationServerSentStartEvents]: IndexationServerSentStartEvents[K] extends (
+    id: number,
+  ) => void
+    ? K
+    : never;
+}[keyof IndexationServerSentStartEvents];
+
 export type IndexationSocket = Socket<
   object,
   IndexationServerSentStartEndEvents,

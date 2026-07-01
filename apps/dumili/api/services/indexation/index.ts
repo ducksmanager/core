@@ -155,7 +155,13 @@ const setPageUrl = async (
   return "OK" as const;
 };
 
-export type { FullIndexation, FullEntry } from "./context";
+export type {
+  FullIndexation,
+  FullEntry,
+  IndexationServerSentStartEvents,
+  IndexationServerSentStartEndEvents,
+  IndexationNumberIdEvent,
+} from "./context";
 
 // Enqueues an AI run for the current indexation (deduplicated + coalesced).
 const enqueueAi = (services: IndexationServices) =>

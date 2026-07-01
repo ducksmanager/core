@@ -21,9 +21,9 @@
     />
   </div>
 </template>
-<script setup lang="ts" generic="LoadingEventStart extends keyof IndexationServerSentStartEvents">
+<script setup lang="ts" generic="LoadingEventStart extends IndexationNumberIdEvent">
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import type { IndexationServerSentStartEvents } from "~dumili-services/indexation";
+import type { IndexationNumberIdEvent } from "~dumili-services/indexation";
 
 const { status, loadingEvents = [] } = defineProps<{
   id: string;
