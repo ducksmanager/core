@@ -22,6 +22,12 @@ services:
     build:
       context: ../../..
       dockerfile: apps/dumili/api/paddleocr/Dockerfile
+  redis:
+    container_name: dumili-redis
+    restart: always
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
   db:
     container_name: dumili-db
     restart: always

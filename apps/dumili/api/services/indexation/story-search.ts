@@ -16,6 +16,11 @@ const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
   dmNamespaces.STORY_SEARCH,
 );
 
+export const getPublicationLanguagecode = (publicationcode: string) =>
+  coaEvents
+    .getPublicationLanguagecode(publicationcode)
+    .then((languagecode) => languagecode || "en");
+
 export const getFullStoriesFromKeywords = async (keywords: string[]) => {
   const response = await coaEvents.getFullStoriesFromKeywords(keywords);
   if ("error" in response) {

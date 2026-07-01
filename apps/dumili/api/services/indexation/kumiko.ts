@@ -5,8 +5,7 @@ import { getEntryFromPage } from "~dumili-utils/entryPages";
 import prisma from "~prisma/client";
 import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili/client";
 
-import type { IndexationServices } from ".";
-import { type FullIndexation, refreshIndexation } from ".";
+import { type IndexationAiContext, refreshIndexation } from "./context";
 
 type KumikoResult = {
   filename: string;
@@ -29,7 +28,7 @@ const inferStoryKindFromAiResults = (
 
 const getPanelRows = (
   panels: Awaited<ReturnType<typeof runKumiko>>[number],
-): number => {
+) => {
   if (!panels.length) {
     return 0;
   }
@@ -53,7 +52,7 @@ const getPanelRows = (
 };
 
 const runKumikoOnPage = async (
-  indexationServices: IndexationServices,
+  ctx: IndexationAiContext,
   page: Prisma.pageGetPayload<{
     include: { image: { include: { aiKumikoResult: true } } };
   }>,
@@ -64,7 +63,7 @@ const runKumikoOnPage = async (
   } else if (page.image.aiKumikoResult && !force) {
     console.info(`Kumiko: page ${page.pageNumber}: already inferred`);
   } else {
-    indexationServices.reportSetKumikoInferredPageStoryKinds(page.id);
+    ctx.events.reportSetKumikoInferredPageStoryKinds(page.id);
     const panelsPerPage = await runKumiko([page.image.url]);
     const panelsOfPage = panelsPerPage[0] || [];
     console.info(
@@ -127,29 +126,32 @@ const runKumikoOnPage = async (
       },
     });
 
-    await refreshIndexation(indexationServices);
+    ctx.indexation = await refreshIndexation(
+      ctx.events,
+      ctx.userId,
+      ctx.indexation.id,
+    );
 
-    indexationServices.reportSetKumikoInferredPageStoryKindsEnd(page.id);
+    ctx.events.reportSetKumikoInferredPageStoryKindsEnd(page.id);
     return true;
   }
   return false;
 };
 
 export const runKumikoOnPages = async (
-  services: IndexationServices,
-  indexation: FullIndexation,
+  ctx: IndexationAiContext,
   force = false,
 ) => {
   const updatedImageIds = [];
-  for (const page of indexation.pages) {
-    if (await runKumikoOnPage(services, page, force)) {
+  for (const page of ctx.indexation.pages) {
+    if (await runKumikoOnPage(ctx, page, force)) {
       updatedImageIds.push(page.id);
     }
   }
 
   const outdatedEntryIds = new Set(
     updatedImageIds
-      .map((id) => getEntryFromPage(indexation, id)?.id)
+      .map((id) => getEntryFromPage(ctx.indexation, id)?.id)
       .filter((id) => !!id)
       .map((id) => id!),
   );
@@ -159,9 +161,7 @@ export const runKumikoOnPages = async (
   }
 };
 
-export const runKumiko = async (
-  urls: (string | null)[],
-): Promise<KumikoProcessedResult[][]> =>
+export const runKumiko = async (urls: (string | null)[]) =>
   axios
     .get(
       `${process.env.KUMIKO_HOST}?i=${urls.filter((url) => !!url).join(",")}`,
