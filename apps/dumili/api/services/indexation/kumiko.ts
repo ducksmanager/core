@@ -28,7 +28,7 @@ const inferStoryKindFromAiResults = (
 
 const getPanelRows = (
   panels: Awaited<ReturnType<typeof runKumiko>>[number],
-): number => {
+) => {
   if (!panels.length) {
     return 0;
   }
@@ -161,9 +161,7 @@ export const runKumikoOnPages = async (
   }
 };
 
-export const runKumiko = async (
-  urls: (string | null)[],
-): Promise<KumikoProcessedResult[][]> =>
+export const runKumiko = async (urls: (string | null)[]) =>
   axios
     .get(
       `${process.env.KUMIKO_HOST}?i=${urls.filter((url) => !!url).join(",")}`,

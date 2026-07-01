@@ -93,31 +93,23 @@ export type IndexationSocket = Socket<
   SessionDataWithIndexation
 >;
 
-// The services proxy only ever *emits* server-sent events and reads `_socket`,
-// so it does not need the client->server listenEvents type. Keeping it out of
-// this type is what lets the worker process reuse the proxy without importing
-// the socket server registration.
 export type IndexationServices = NamespaceProxyTarget<
   IndexationSocket,
   IndexationServerSentStartEndEvents
 >;
 
-// The server-sent events, as an emit-only proxy (built by the library's
-// `getServerSentEvents` around a Socket, a Namespace, or a Redis emitter). This
-// is all the AI pipeline and the HTTP-upload path need — no fake socket.
 export type IndexationEvents = IndexationServerSentStartEndEvents;
 
-// Everything the AI pipeline needs, threaded explicitly instead of hidden on a
-// socket's `data`. `indexation` is the current snapshot, refreshed as the
-// pipeline persists results.
+export type UserId = SessionDataWithIndexation["user"]["id"]
+
 export type IndexationAiContext = {
   events: IndexationEvents;
-  userId: SessionDataWithIndexation["user"]["id"];
+  userId: UserId;
   indexation: FullIndexation;
 };
 
 export const fetchFullIndexation = async (
-  userId: SessionDataWithIndexation["user"]["id"],
+  userId: UserId,
   id: string,
 ) => {
   const indexation = await prisma.indexation.findUnique({
@@ -134,12 +126,12 @@ export const fetchFullIndexation = async (
 
 // Re-fetches the indexation from the DB and pushes it to connected clients,
 // returning the fresh snapshot. AI processing is not triggered from here:
-// mutations enqueue an AI job separately (see queue/indexation-ai.queue.ts).
+// mutations enqueue an AI job separately.
 export const refreshIndexation = async (
   events: IndexationEvents,
-  userId: SessionDataWithIndexation["user"]["id"],
+  userId: UserId,
   indexationId: string,
-): Promise<FullIndexation> => {
+) => {
   const indexation = (await fetchFullIndexation(userId, indexationId))!;
   events.indexationUpdated(indexation);
   return indexation;

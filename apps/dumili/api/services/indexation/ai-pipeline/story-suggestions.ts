@@ -16,14 +16,8 @@ import {
 
 type EntryImage = NonNullable<FullIndexation["pages"][number]["image"]>;
 
-type StorySearchStrategy = {
-  name: string;
-  field: "aiStorySearchResult" | "aiOcrResult";
-  storyField: "aiStorySearchPossibleStory" | "aiOcrPossibleStory";
-};
-
 // The two strategies are tried in order; the first one that produces matches wins.
-const STRATEGIES: StorySearchStrategy[] = [
+const STRATEGIES = [
   {
     name: "image-based story search",
     field: "aiStorySearchResult",
@@ -34,7 +28,9 @@ const STRATEGIES: StorySearchStrategy[] = [
     field: "aiOcrResult",
     storyField: "aiOcrPossibleStory",
   },
-];
+] as const;
+
+type StorySearchStrategy = typeof STRATEGIES[number]
 
 const runStorySearch = async (
   ctx: IndexationAiContext,
