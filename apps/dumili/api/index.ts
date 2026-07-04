@@ -42,8 +42,6 @@ const io = new Server(httpServer, {
   maxHttpBufferSize: 100 * 1024 * 1024,
 });
 
-// The Redis adapter lets the worker process emit indexation progress and
-// updates into these namespaces from outside this process (see worker.ts).
 const pubClient = createRedisClient();
 io.adapter(createAdapter(pubClient, pubClient.duplicate()));
 

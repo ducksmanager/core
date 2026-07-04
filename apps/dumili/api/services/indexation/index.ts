@@ -163,15 +163,12 @@ export type {
   IndexationNumberIdEvent,
 } from "./context";
 
-// Enqueues an AI run for the current indexation (deduplicated + coalesced).
 const enqueueAi = (services: IndexationServices) =>
   enqueueIndexationAi(
     services._socket.data.indexation.id,
     services._socket.data.user.id,
   );
 
-// Connection-path refresh: re-fetch, emit `indexationUpdated`, and keep the
-// socket's snapshot current for subsequent handler calls.
 const refreshConnection = async (services: IndexationServices) => {
   services._socket.data.indexation = await refreshIndexation(
     services,

@@ -33,7 +33,7 @@ const STRATEGIES = [
 type StorySearchStrategy = typeof STRATEGIES[number]
 
 const runStorySearch = async (
-  ctx: IndexationAiContext,
+  indexationEvents: IndexationAiContext['events'],
   entry: FullEntry,
   image: EntryImage,
   strategy: StorySearchStrategy,
@@ -44,14 +44,10 @@ const runStorySearch = async (
     ? getStoriesFromImage(image, isCover)
     : getFullStoriesFromKeywords(
         (
-          await runOcrOnImage(ctx, entry.position, image, languagecode)
+          await runOcrOnImage(indexationEvents, entry.position, image, languagecode)
         ).map(({ text }) => text),
       );
 
-// Ensures the ai*Result row exists and is linked to the image, clearing any
-// previous suggestions for the strategy, then (if there are matches) creates the
-// new story suggestions and re-accepts the previously accepted story if present.
-// Returns true when matches were persisted.
 const persistStorySuggestions = async ({
   entry,
   image,
@@ -173,7 +169,7 @@ const persistStorySuggestions = async ({
         include: {
           aiStorySuggestion: {
             include: {
-              [storyField]: true, // ocrDetails or storySearchDetails
+              [storyField]: true,
             },
           },
         },
@@ -205,23 +201,23 @@ const persistStorySuggestions = async ({
 };
 
 const createEntryStorySuggestions = async (
-  ctx: IndexationAiContext,
+  {indexation, events}: IndexationAiContext,
   entry: FullEntry,
   languagecode: string,
 ) => {
   const currentlyAcceptedStorycode = entry.acceptedStory?.storycode;
-  const firstPageOfEntry = getEntryPages(ctx.indexation, entry.id)[0];
+  const firstPageOfEntry = getEntryPages(indexation, entry.id)[0];
   if (!firstPageOfEntry.image) {
     return;
   }
   const image = firstPageOfEntry.image;
   const isCover = entry.acceptedStoryKind?.storyKindRows?.kind === COVER;
 
-  ctx.events.reportCreateAiStorySuggestions(entry.id);
+  events.reportCreateAiStorySuggestions(entry.id);
 
   for (const strategy of STRATEGIES) {
     const results = await runStorySearch(
-      ctx,
+      events,
       entry,
       image,
       strategy,
@@ -244,7 +240,7 @@ const createEntryStorySuggestions = async (
     }
   }
 
-  ctx.events.reportCreateAiStorySuggestionsEnd(entry.id);
+  events.reportCreateAiStorySuggestionsEnd(entry.id);
 };
 
 export const createAiStorySuggestions = async (ctx: IndexationAiContext) => {

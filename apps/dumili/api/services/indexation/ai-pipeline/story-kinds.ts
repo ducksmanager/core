@@ -2,19 +2,16 @@ import { getEntryPages } from "~dumili-utils/entryPages";
 import prisma from "~prisma/client";
 import type { aiKumikoResult } from "~prisma/client_dumili/client";
 
-import type { FullIndexation, IndexationAiContext } from "../context";
+import type { IndexationAiContext } from "../context";
 
 export const setInferredEntriesStoryKinds = async (
-  ctx: IndexationAiContext,
-  entries: FullIndexation["entries"],
-  force?: boolean,
+  { indexation, events }: IndexationAiContext
 ) => {
-  for (const entry of entries) {
+  for (const entry of indexation.entries) {
     if (
       entry.storyKindSuggestions.some(
         ({ aiKumikoResultId }) => aiKumikoResultId,
-      ) &&
-      !force
+      )
     ) {
       console.log(
         `Entry starting at page ${entry.position}: already has an inferred story kind`,
@@ -22,8 +19,7 @@ export const setInferredEntriesStoryKinds = async (
       continue;
     }
 
-    ctx.events.reportSetInferredEntryStoryKind(entry.id);
-    const { indexation } = ctx;
+    events.reportSetInferredEntryStoryKind(entry.id);
     const pagesInferredStoryKinds = await prisma.image.findMany({
       include: {
         aiKumikoResult: true,
@@ -55,7 +51,7 @@ export const setInferredEntriesStoryKinds = async (
           .groupBy("inferredStoryKindRowsStr", "id[]"),
       ).sort((a, b) => b[1].length - a[1].length)[0][0];
 
-      const entryIdx = ctx.indexation.entries.findIndex(
+      const entryIdx = indexation.entries.findIndex(
         ({ id }) => id === entry.id,
       );
       console.log(
@@ -108,6 +104,6 @@ export const setInferredEntriesStoryKinds = async (
       }
     }
 
-    ctx.events.reportSetInferredEntryStoryKindEnd(entry.id);
+    events.reportSetInferredEntryStoryKindEnd(entry.id);
   }
 };

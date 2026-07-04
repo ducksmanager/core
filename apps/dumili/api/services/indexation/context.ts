@@ -134,9 +134,6 @@ export const fetchFullIndexation = async (
   return indexation;
 };
 
-// Re-fetches the indexation from the DB and pushes it to connected clients,
-// returning the fresh snapshot. AI processing is not triggered from here:
-// mutations enqueue an AI job separately.
 export const refreshIndexation = async (
   events: IndexationEvents,
   userId: UserId,

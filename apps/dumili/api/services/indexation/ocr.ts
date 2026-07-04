@@ -12,7 +12,7 @@ type OcrResult = {
 };
 
 export const runOcrOnImage = async (
-  ctx: IndexationAiContext,
+  indexationEvents: IndexationAiContext['events'],
   pageNumber: number,
   image: NonNullable<FullIndexation["pages"][number]["image"]>,
   languagecode: string,
@@ -26,7 +26,7 @@ export const runOcrOnImage = async (
     console.log(`Page ${pageNumber}: This page already has OCR results`);
     return image.aiOcrResult.matches;
   }
-  ctx.events.reportRunOcrOnImage(image.id);
+  indexationEvents.reportRunOcrOnImage(image.id);
   const firstPanelUrl = image.url.replace(
     "/pg_",
     `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
@@ -69,7 +69,7 @@ export const runOcrOnImage = async (
     },
   });
 
-  ctx.events.reportRunOcrOnImageEnd(image.id);
+  indexationEvents.reportRunOcrOnImageEnd(image.id);
   return matches;
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */
