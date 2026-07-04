@@ -21,10 +21,8 @@
         )
       }}</b-alert
     >
-    <b-alert v-else-if="!csv" variant="warning" :model-value="true">
-      {{
-        $t("Vous devez identifier au moins une histoire pour continuer")
-      }}</b-alert
+    <b-alert v-else-if="csvError" variant="warning" :model-value="true">
+      {{ csvError }}</b-alert
     >
     <template v-else>
       <b-alert variant="info" :model-value="true">
@@ -76,7 +74,11 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-import { getCsvEntries, getCsvMetadata } from "~/composables/useCsvExport";
+import {
+  getCsvEntries,
+  getCsvError,
+  getCsvMetadata,
+} from "~/composables/useCsvExport";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { type storySuggestion } from "~prisma/client_dumili/client";
@@ -86,6 +88,8 @@ const { indexation } = storeToRefs(suggestions());
 const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
+
+const { t } = useI18n();
 
 const acceptedStories = computed(() =>
   indexation.value?.entries
@@ -122,7 +126,11 @@ const storiesWithDetails = computedAsync(() =>
 );
 
 const csv = computed(() =>
-  getCsvEntries(indexation.value!, storiesWithDetails.value),
+  getCsvEntries(indexation.value!, storiesWithDetails.value!, t),
+);
+
+const csvError = computed(() =>
+  getCsvError(indexation.value!, storiesWithDetails.value, t),
 );
 const csvMetadata = computed(() => getCsvMetadata(indexation.value!));
 </script>

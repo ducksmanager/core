@@ -61,44 +61,65 @@ export const getCsvMetadata = (indexation: FullIndexation) =>
     issue_comment?: string;
   };
 
-export const getCsvEntries = (
+export const getCsvError = (
   indexation: FullIndexation,
   storiesWithDetails: StoriesWithDetails | undefined,
+  t: ReturnType<typeof useI18n>["t"],
 ) => {
   if (!storiesWithDetails || !Object.keys(storiesWithDetails).length) {
-    return undefined;
-  } else {
-    const data = indexation.entries.map((entry, idx) => {
-      const storyWithDetails =
-        storiesWithDetails[entry.acceptedStory?.storycode || ""];
-      const { storyKindRows } = entry.acceptedStoryKind!;
-
-      return {
-        entrycode: entrycodesWithPageNumbers(indexation)[idx],
-        storycode: entry.acceptedStory?.storycode || "",
-        hero: storyWithDetails?.heroCharacter || "",
-        pages: String(getEntryPages(indexation, entry.id).length),
-
-        ...(Object.fromEntries(
-          (["plot", "writ", "art", "ink"] as const).map((job) => [
-            job,
-            storyWithDetails?.storyjobs?.find(
-              ({ plotwritartink }) => plotwritartink === job,
-            )?.personcode,
-          ]),
-        ) as { plot: string; writ: string; art: string; ink: string }),
-
-        pagel:
-          storyKindRows.kind === "n"
-            ? storyKindRows.numberOfRows
-            : storyKindRows.kind,
-
-        title: entry.title || "",
-      };
-    });
-
-    return [Object.keys(data[0]), ...data.map((row) => Object.values(row))]
-      .map((row) => row.join(";"))
-      .join("\n");
+    return t("Vous devez identifier au moins une histoire pour continuer");
   }
+  const firstEntryWithoutStoryKind = indexation.entries.find(
+    (entry) => !entry.acceptedStoryKind,
+  );
+  if (firstEntryWithoutStoryKind) {
+    return t(
+      "Toutes les entrées doivent avoir un type. L'entrée à la page {entry} n'a pas de type.",
+      {
+        entry: firstEntryWithoutStoryKind.position,
+      },
+    );
+  }
+};
+
+export const getCsvEntries = (
+  indexation: FullIndexation,
+  storiesWithDetails: StoriesWithDetails,
+  t: ReturnType<typeof useI18n>["t"],
+) => {
+  if (getCsvError(indexation, storiesWithDetails, t)) {
+    return undefined;
+  }
+  const data = indexation.entries.map((entry, idx) => {
+    const storyWithDetails =
+      storiesWithDetails[entry.acceptedStory?.storycode || ""];
+    const { storyKindRows } = entry.acceptedStoryKind!;
+
+    return {
+      entrycode: entrycodesWithPageNumbers(indexation)[idx],
+      storycode: entry.acceptedStory?.storycode || "",
+      hero: storyWithDetails?.heroCharacter || "",
+      pages: String(getEntryPages(indexation, entry.id).length),
+
+      ...(Object.fromEntries(
+        (["plot", "writ", "art", "ink"] as const).map((job) => [
+          job,
+          storyWithDetails?.storyjobs?.find(
+            ({ plotwritartink }) => plotwritartink === job,
+          )?.personcode,
+        ]),
+      ) as { plot: string; writ: string; art: string; ink: string }),
+
+      pagel:
+        storyKindRows.kind === "n"
+          ? storyKindRows.numberOfRows
+          : storyKindRows.kind,
+
+      title: entry.title || "",
+    };
+  });
+
+  return [Object.keys(data[0]), ...data.map((row) => Object.values(row))]
+    .map((row) => row.join(";"))
+    .join("\n");
 };

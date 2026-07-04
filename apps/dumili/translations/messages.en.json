@@ -95,6 +95,7 @@
   "Titre": "Title",
   "Titre de l'histoire": "Story title",
   "Titre inconnu": "Unknown title",
+  "Toutes les entrées doivent avoir un type. L'entrée à la page {entry} n'a pas de type.": "All entries need to have a story kind. The entry at page {entry} doesn't have a type.",
   "Type d'entrée déduit": "Inferred story kind",
   "Type d'histoire": "Story kind",
   "Type d'entrée déduit pour la page": "Inferred page story kind",

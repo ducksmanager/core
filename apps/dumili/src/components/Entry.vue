@@ -6,6 +6,7 @@
         ? { height: `${entry.entirepages * 50}px` }
         : undefined
     "
+    @dblclick.stop="showEditModal = true"
   >
     <b-col
       col
@@ -77,7 +78,7 @@
     v-model="showEditModal"
     :title="$t('Détails de l\'entrée')"
     lazy
-    hide-footer
+    no-footer
   >
     <b-form @submit.prevent>
       <b-form-group class="mb-3" :label="$t('Type d\'histoire')">
