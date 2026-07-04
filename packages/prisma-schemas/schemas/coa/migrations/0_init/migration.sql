@@ -154,7 +154,7 @@ create table inducks_entryurl_vector (
     constraint inducks_entryurl_vector_entrycode_uindex unique (entrycode)
 );
 create index inducks_entryurl_vector_is_cover_index on inducks_entryurl_vector (is_cover);
-create index v on inducks_entryurl_vector (v) using vector;
+create vector index v on inducks_entryurl_vector (v);
 create table inducks_equiv (
     issuecode varchar(15) null,
     equivid int(7) null,
@@ -765,9 +765,38 @@ create table induckspriv_story (
     storycomment varchar(4098) null
 );
 create index pk0 on induckspriv_story (storycode);
-create definer = root @`%` view duckguessr_published_fr_recent_artists as
-select distinct `duckguessr_published_fr_recent_game`.`personcode` AS `personcode`
-from `coa`.`duckguessr_published_fr_recent_game`;
+create definer = root @`%` view duckguessr_published_fr_recent_game_all as
+select distinct `entryurl`.`id` AS `entryurl_id`,
+    `storyjob`.`personcode` AS `personcode`
+from (
+        (
+            (
+                (
+                    `coa`.`inducks_issue` `issue`
+                    join `coa`.`inducks_entry` `entry` on (`issue`.`issuecode` = `entry`.`issuecode`)
+                )
+                join `coa`.`inducks_entryurl` `entryurl` on (`entry`.`entrycode` = `entryurl`.`entrycode`)
+            )
+            join `coa`.`inducks_storyversion` `storyversion` on (
+                `entry`.`storyversioncode` = `storyversion`.`storyversioncode`
+            )
+        )
+        join `coa`.`inducks_storyjob` `storyjob` on (
+            `storyversion`.`storyversioncode` = `storyjob`.`storyversioncode`
+        )
+    )
+where `issue`.`publicationcode` in ('fr/MP', 'fr/PM', 'fr/SPG', 'fr/JM')
+    and `issue`.`oldestdate` >= '2001'
+    and `entryurl`.`sitecode` = 'thumbnails3'
+    and `storyversion`.`kind` = 'n'
+    and `storyjob`.`plotwritartink` = 'a'
+    and 1 = (
+        select count(distinct `coa`.`inducks_storyjob`.`personcode`)
+        from `coa`.`inducks_storyjob`
+        where `storyversion`.`storyversioncode` = `coa`.`inducks_storyjob`.`storyversioncode`
+            and `coa`.`inducks_storyjob`.`plotwritartink` in ('a', 'i')
+    )
+    and `storyjob`.`personcode` <> '?';
 create definer = root @`%` view duckguessr_published_fr_recent_game as
 select distinct `storyjob`.`personcode` AS `personcode`,
     `entryurl`.`sitecode` AS `sitecode`,
@@ -810,38 +839,9 @@ from (
             `artist_with_at_least_20_entries`.`personcode` = `storyjob`.`personcode`
         )
     );
-create definer = root @`%` view duckguessr_published_fr_recent_game_all as
-select distinct `entryurl`.`id` AS `entryurl_id`,
-    `storyjob`.`personcode` AS `personcode`
-from (
-        (
-            (
-                (
-                    `coa`.`inducks_issue` `issue`
-                    join `coa`.`inducks_entry` `entry` on (`issue`.`issuecode` = `entry`.`issuecode`)
-                )
-                join `coa`.`inducks_entryurl` `entryurl` on (`entry`.`entrycode` = `entryurl`.`entrycode`)
-            )
-            join `coa`.`inducks_storyversion` `storyversion` on (
-                `entry`.`storyversioncode` = `storyversion`.`storyversioncode`
-            )
-        )
-        join `coa`.`inducks_storyjob` `storyjob` on (
-            `storyversion`.`storyversioncode` = `storyjob`.`storyversioncode`
-        )
-    )
-where `issue`.`publicationcode` in ('fr/MP', 'fr/PM', 'fr/SPG', 'fr/JM')
-    and `issue`.`oldestdate` >= '2001'
-    and `entryurl`.`sitecode` = 'thumbnails3'
-    and `storyversion`.`kind` = 'n'
-    and `storyjob`.`plotwritartink` = 'a'
-    and 1 = (
-        select count(distinct `coa`.`inducks_storyjob`.`personcode`)
-        from `coa`.`inducks_storyjob`
-        where `storyversion`.`storyversioncode` = `coa`.`inducks_storyjob`.`storyversioncode`
-            and `coa`.`inducks_storyjob`.`plotwritartink` in ('a', 'i')
-    )
-    and `storyjob`.`personcode` <> '?';
+create definer = root @`%` view duckguessr_published_fr_recent_artists as
+select distinct `duckguessr_published_fr_recent_game`.`personcode` AS `personcode`
+from `coa`.`duckguessr_published_fr_recent_game`;
 create definer = root @`%` view inducks_issue_sorted as
 select `coa`.`inducks_issue`.`issuecode` AS `issuecode`,
     `coa`.`inducks_issue`.`issuerangecode` AS `issuerangecode`,
