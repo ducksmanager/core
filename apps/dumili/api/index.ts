@@ -8,12 +8,14 @@ dotenv.config({
   override: true,
 });
 
+import { createAdapter } from "@socket.io/redis-adapter";
 import { v2 as cloudinary } from "cloudinary";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { Server } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
+import { createRedisClient } from "./queue/connection";
 import { authenticateUser } from "./services/_auth";
 import type { FullIndexation } from "./services/indexation";
 import { handleHttpFileUpload, server as indexation } from "./services/indexation";
@@ -39,6 +41,9 @@ const io = new Server(httpServer, {
   },
   maxHttpBufferSize: 100 * 1024 * 1024,
 });
+
+const pubClient = createRedisClient();
+io.adapter(createAdapter(pubClient, pubClient.duplicate()));
 
 indexations(io);
 indexation(io);

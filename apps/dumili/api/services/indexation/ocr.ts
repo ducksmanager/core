@@ -3,7 +3,7 @@ import axios from "axios";
 import prisma from "~prisma/client";
 import type { aiKumikoResultPanel } from "~prisma/client_dumili/client";
 
-import { type FullIndexation, type IndexationServices } from ".";
+import { type FullIndexation, type IndexationAiContext } from "./context";
 
 type OcrResult = {
   box: [number /* x1 */, number /* y1 */, number /* x2 */, number /* y2 */];
@@ -12,7 +12,7 @@ type OcrResult = {
 };
 
 export const runOcrOnImage = async (
-  services: IndexationServices,
+  indexationEvents: IndexationAiContext['events'],
   pageNumber: number,
   image: NonNullable<FullIndexation["pages"][number]["image"]>,
   languagecode: string,
@@ -26,7 +26,7 @@ export const runOcrOnImage = async (
     console.log(`Page ${pageNumber}: This page already has OCR results`);
     return image.aiOcrResult.matches;
   }
-  services.reportRunOcrOnImage(image.id);
+  indexationEvents.reportRunOcrOnImage(image.id);
   const firstPanelUrl = image.url.replace(
     "/pg_",
     `/c_crop,h_${firstPanel.height},w_${firstPanel.width},x_${firstPanel.x},y_${firstPanel.y},pg_`,
@@ -69,7 +69,7 @@ export const runOcrOnImage = async (
     },
   });
 
-  services.reportRunOcrOnImageEnd(image.id);
+  indexationEvents.reportRunOcrOnImageEnd(image.id);
   return matches;
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */

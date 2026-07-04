@@ -22,6 +22,15 @@ services:
     build:
       context: ../../..
       dockerfile: apps/dumili/api/paddleocr/Dockerfile
+  redis:
+    container_name: dumili-redis
+    restart: always
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
   db:
     container_name: dumili-db
     restart: always
@@ -35,3 +44,6 @@ services:
     environment:
       MYSQL_DATABASE: dumili
       MARIADB_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+
+volumes:
+  redis-data:
