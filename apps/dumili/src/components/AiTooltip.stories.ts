@@ -4,7 +4,6 @@ import AiTooltip from "./AiTooltip.vue";
 type AiTooltipArgs = {
   id: string;
   status: "success" | "failure" | "idle";
-  topCenter?: boolean;
   loadingEvents?: Array<{
     eventName: string;
     checkMatch: (id: number) => boolean;
@@ -25,10 +24,6 @@ const meta = preview.type<{ args: AiTooltipArgs }>().meta({
       options: ["success", "failure", "idle"],
       description: "The status of the AI suggestion",
     },
-    topCenter: {
-      control: "boolean",
-      description: "Position tooltip at top center instead of end",
-    },
     loadingEvents: {
       control: false,
       description: "Array of loading events to watch",
@@ -46,7 +41,6 @@ const renderTooltip = (content: string) => (args: AiTooltipArgs) => ({
       <AiTooltip
         :id="args.id"
         :status="args.status"
-        :top-center="args.topCenter"
         :loading-events="args.loadingEvents"
       >
         <div style="padding: 10px;">
@@ -61,7 +55,6 @@ export const Success = meta.story({
   args: {
     id: "ai-tooltip-success",
     status: "success",
-    topCenter: false,
   },
   render: renderTooltip(`
     <strong>AI Results</strong>
@@ -73,7 +66,6 @@ export const Failure = meta.story({
   args: {
     id: "ai-tooltip-failure",
     status: "failure",
-    topCenter: false,
   },
   render: renderTooltip(`
     <strong>Error</strong>
@@ -85,7 +77,6 @@ export const Idle = meta.story({
   args: {
     id: "ai-tooltip-idle",
     status: "idle",
-    topCenter: false,
   },
   render: renderTooltip(`
     <strong>Waiting</strong>
@@ -93,23 +84,10 @@ export const Idle = meta.story({
   `),
 });
 
-export const TopCenter = meta.story({
-  args: {
-    id: "ai-tooltip-top-center",
-    status: "success",
-    topCenter: true,
-  },
-  render: renderTooltip(`
-    <strong>AI Results</strong>
-    <p>Tooltip positioned at top center.</p>
-  `),
-});
-
 export const WithLoadingEvents = meta.story({
   args: {
     id: "ai-tooltip-loading",
     status: "idle",
-    topCenter: false,
     loadingEvents: [
       {
         eventName: "reportSetInferredEntryStoryKind" as const,

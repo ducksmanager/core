@@ -124,7 +124,7 @@
           :key="indexation.entries[idx].id"
         >
           <div
-            class="position-absolute w-100 opacity-50 d-flex align-items-center justify-content-center"
+            class="position-absolute w-100 d-flex align-items-center justify-content-center"
             :style="{
               borderTop: '1px solid rgba(0,0,0,0.5)',
               height: `${pageHeight}px`,

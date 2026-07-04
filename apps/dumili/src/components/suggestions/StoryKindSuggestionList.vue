@@ -92,7 +92,7 @@ watch(
 
 @mixin storyKindBackground($bg) {
   background-color: $bg;
-  color: color.invert($bg);
+  color: black;
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 10%);
   }

@@ -174,7 +174,7 @@ button:hover {
 
 @mixin storyKindBackground($bg) {
   background-color: $bg !important;
-  color: color.invert($bg);
+  color: black;
 
   &.striped {
     background: repeating-linear-gradient(
@@ -184,16 +184,6 @@ button:hover {
       white 1px,
       white 10px
     ) !important;
-    
-    &.bg-transparent {
-      background: repeating-linear-gradient(
-        -45deg,
-        rgba($bg, 0.8),
-        rgba($bg, 0.8) 1px,
-        transparent 1px,
-        transparent 10px
-      ) !important;
-    }
   }
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 5%) !important;

@@ -43,7 +43,7 @@
         <b-button
           v-if="image"
           variant="danger"
-          class="position-absolute top-0 mt-2 text-center opacity-50 opacity-100-hover"
+          class="position-absolute top-0 mt-2 text-center"
           @click="disconnectPageUrl(id)"
         >
           {{ $t("Désassocier l'image") }}

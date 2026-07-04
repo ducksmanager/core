@@ -2,7 +2,7 @@
   <b-row
     class="d-flex w-100 align-items-center"
     :style="
-      entry.entirepages > 0 && !editable
+      entry.entirepages > 0
         ? { height: `${entry.entirepages * 50}px` }
         : undefined
     "
@@ -12,17 +12,14 @@
       cols="3"
       class="position-relative d-flex flex-column justify-content-center align-items-center h-100"
     >
-      <story-kind-suggestion-list
-        v-model="entry.acceptedStoryKind"
-        v-bind="{ entry, editable }"
-      /> </b-col
+      <story-kind-badge
+        :kind="entry.acceptedStoryKind?.storyKindRows.kind" /></b-col
     ><b-col
       col
       cols="4"
       class="d-flex flex-column align-items-center justify-content-center position-relative h-100 text-normal"
     >
-      <StorySuggestionList v-if="editable" v-model="entry" />
-      <template v-else-if="urlEncodedStorycode">
+      <template v-if="urlEncodedStorycode">
         {{
           storyDetails[entry.acceptedStory!.storycode].title ||
           $t("(Sans titre)")
@@ -30,40 +27,18 @@
         &nbsp;<inducks-link
           :storycode="entry.acceptedStory!.storycode" /></template
       ><template v-else>{{ $t("Contenu inconnu") }}</template>
-      <StorySuggestionsTooltip :entry="entry" />
     </b-col>
     <b-col
       col
       cols="4"
       class="position-relative d-flex flex-column align-items-center justify-content-center h-100"
     >
-      <suggestion-list
-        v-if="editable"
-        class="w-100"
-        text-editable
-        :model-value="{ id: entry.title || '', category: 'user' as const }"
-        :category="({ category }) => category"
-        :suggestions="[
-          ...previousTitles.map((title) => ({
-            id: title,
-            category: 'previous' as const,
-          })),
-          { id: '&nbsp;', category: 'user' as const },
-        ]"
-        @update:model-value="entry.title = $event!.id"
+      {{ title || $t("(Sans titre)") }}
+      <template v-if="entry.part">
+        &nbsp;-&nbsp;{{ $t("partie") }} {{ entry.part }}</template
       >
-        <template #default="{ suggestion }">
-          {{ suggestion.id || "&nbsp;" }}
-        </template>
-      </suggestion-list>
-      <template v-else>
-        {{ title || $t("(Sans titre)") }}
-        <template v-if="entry.part">
-          &nbsp;-&nbsp;{{ $t("partie") }} {{ entry.part }}</template
-        >
-        <br />
-        <small>{{ entry.entrycomment }}</small>
-      </template></b-col
+      <br />
+      <small>{{ entry.entrycomment }}</small></b-col
     >
     <b-col
       col
@@ -85,6 +60,12 @@
         >
       </b-modal>
       <b-button
+        variant="primary"
+        class="d-flex justify-content-center mb-1"
+        @click.stop="showEditModal = true"
+        ><i-bi-pencil
+      /></b-button>
+      <b-button
         v-if="!(isFirst && isLast)"
         variant="danger"
         class="d-flex justify-content-center"
@@ -92,6 +73,47 @@
         ><i-bi-trash3 /></b-button
     ></b-col>
   </b-row>
+  <b-modal
+    v-model="showEditModal"
+    :title="$t('Détails de l\'entrée')"
+    lazy
+    hide-footer
+  >
+    <b-form @submit.prevent>
+      <b-form-group class="mb-3" :label="$t('Type d\'histoire')">
+        <story-kind-suggestion-list
+          v-model="entry.acceptedStoryKind"
+          v-bind="{ entry, editable: true }"
+        />
+      </b-form-group>
+      <b-form-group class="mb-3" :label="$t('Histoire')">
+        <div class="position-relative">
+          <StorySuggestionList v-model="entry" />
+          <StorySuggestionsTooltip :entry="entry" />
+        </div>
+      </b-form-group>
+      <b-form-group class="mb-3" :label="$t('Titre')">
+        <suggestion-list
+          class="w-100"
+          text-editable
+          :model-value="{ id: entry.title || '', category: 'user' as const }"
+          :category="({ category }) => category"
+          :suggestions="[
+            ...previousTitles.map((title) => ({
+              id: title,
+              category: 'previous' as const,
+            })),
+            { id: '&nbsp;', category: 'user' as const },
+          ]"
+          @update:model-value="entry.title = $event!.id"
+        >
+          <template #default="{ suggestion }">
+            {{ suggestion.id || "&nbsp;" }}
+          </template>
+        </suggestion-list>
+      </b-form-group>
+    </b-form>
+  </b-modal>
 </template>
 <script setup lang="ts">
 import { watchDebounced } from "@vueuse/core";
@@ -101,9 +123,6 @@ import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { t } = useI18n();
-defineProps<{
-  editable: boolean;
-}>();
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
@@ -124,6 +143,8 @@ if (
 }
 
 const showDeleteEntryModal = ref(false);
+
+const showEditModal = ref(false);
 
 const isFirst = computed(
   () => entry.value.id === indexation.value.entries[0].id,
@@ -199,12 +220,6 @@ watch(
 <style scoped lang="scss">
 @use "sass:color";
 
-.row .col {
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  &:last-child {
-    border-right: none;
-  }
-}
 .badge,
 :deep(.dropdown-item) {
   width: max(100%, max-content);
