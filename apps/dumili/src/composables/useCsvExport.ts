@@ -66,6 +66,16 @@ export const getCsvError = (
   storiesWithDetails: StoriesWithDetails | undefined,
   t: ReturnType<typeof useI18n>["t"],
 ) => {
+  if (!indexation.acceptedIssueSuggestion) {
+    return t(
+      'Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement "Numéro inconnu")',
+    );
+  }
+  if (!indexation.releaseDate) {
+    return t(
+      'Vous devez spécifier la date de sortie du numéro dans "Méta-données" pour continuer',
+    );
+  }
   if (!storiesWithDetails || !Object.keys(storiesWithDetails).length) {
     return t("Vous devez identifier au moins une histoire pour continuer");
   }

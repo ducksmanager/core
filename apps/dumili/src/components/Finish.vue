@@ -3,25 +3,7 @@
     fluid
     class="d-flex flex-grow-1 h-100 flex-column align-items-center justify-content-center overflow-y-auto"
   >
-    <b-alert v-if="!issue" variant="warning" :model-value="true">
-      {{
-        $t(
-          'Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement "Numéro inconnu")',
-        )
-      }}</b-alert
-    >
-    <b-alert
-      v-if="!indexation!.releaseDate"
-      variant="warning"
-      :model-value="true"
-    >
-      {{
-        $t(
-          'Vous devez spécifier la date de sortie du numéro dans "Méta-données" pour continuer',
-        )
-      }}</b-alert
-    >
-    <b-alert v-else-if="csvError" variant="warning" :model-value="true">
+    <b-alert v-if="csvError" variant="warning" :model-value="true">
       {{ csvError }}</b-alert
     >
     <template v-else>
@@ -85,7 +67,6 @@ import { type storySuggestion } from "~prisma/client_dumili/client";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { indexation } = storeToRefs(suggestions());
-const { acceptedIssue: issue } = storeToRefs(suggestions());
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
