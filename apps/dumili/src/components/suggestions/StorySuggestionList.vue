@@ -2,7 +2,7 @@
   <suggestion-list
     v-model="entry.acceptedStory"
     v-model:show-customize-form="showEntrySelect"
-    class="position-absolute top-0 d-flex flex-column justify-content-center align-items-start w-100 h-100"
+    class="top-0 d-flex flex-column justify-content-center align-items-start w-100 h-100"
     :suggestions="entry.storySuggestions"
     :category="
       ({ aiStorySuggestionId }) =>

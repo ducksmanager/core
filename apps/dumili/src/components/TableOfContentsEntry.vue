@@ -1,10 +1,9 @@
 <template>
   <vue-draggable-resizable
-    :active="isCurrentEntry"
+    :active="!isCurrentEntry"
     :parent="true"
-    prevent-deactivation
-    :resizable="showVerticalResizeHandle"
-    :draggable="true"
+    :resizable="!isCurrentEntry && showVerticalResizeHandle"
+    :draggable="!isCurrentEntry"
     :handles="['bm']"
     :grid="[1000, pageHeight]"
     :h="height"
@@ -13,7 +12,7 @@
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showVerticalResizeHandle && 'up-and-down') || ''}`"
+    :class-name="`entry position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showVerticalResizeHandle && 'up-and-down') || ''}`"
     @resize-stop="
       (_left: number, _top: number, _width: number, height: number) => {
         emit('onEntryResizeStop', height);
@@ -103,9 +102,8 @@ const onDrag = (_x: number, y: number) =>
 .striped {
   opacity: 1;
 }
-.draggable {
+.entry {
   border-top: 1px solid black !important;
-  z-index: 2 !important;
 
   &:last-child::after {
     content: "";
@@ -116,8 +114,15 @@ const onDrag = (_x: number, y: number) =>
     border-bottom: 1px solid black !important;
   }
 
-  &.active {
-    z-index: 3 !important;
+  &.draggable {
+    z-index: 4 !important;
+    opacity: 0.5;
+  }
+
+  &:not(.draggable) {
+    z-index: 5 !important;
+    height: initial !important;
+    min-height: 50px;
     box-shadow:
       inset 0 5px 5px -5px black,
       inset 0 -5px 5px -5px black;

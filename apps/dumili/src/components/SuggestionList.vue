@@ -79,6 +79,7 @@
   </div>
 </template>
 <script setup lang="ts" generic="S extends { id: number | string }">
+import type { ClassValue } from "vue";
 const $slots = useSlots();
 
 defineSlots<{
@@ -103,7 +104,7 @@ const {
   extraMenuClass = [],
   textEditable = false,
 } = defineProps<{
-  class?: string;
+  class?: ClassValue;
   itemLinkClasses?: string[];
   suggestions: S[];
   category?: (suggestion: S) => "ai" | "user" | "previous";

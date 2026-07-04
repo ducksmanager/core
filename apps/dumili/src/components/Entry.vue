@@ -1,9 +1,8 @@
 <template>
   <b-row
-    class="d-flex w-100 align-items-start sticky-top"
-    :class="{ 'opacity-50': !editable }"
+    class="d-flex w-100 align-items-center"
     :style="
-      entry.entirepages > 0
+      entry.entirepages > 0 && !editable
         ? { height: `${entry.entirepages * 50}px` }
         : undefined
     "
@@ -24,7 +23,10 @@
     >
       <StorySuggestionList v-if="editable" v-model="entry" />
       <template v-else-if="urlEncodedStorycode">
-        {{ storyDetails[entry.acceptedStory!.storycode].title || $t("(Sans titre)") }}
+        {{
+          storyDetails[entry.acceptedStory!.storycode].title ||
+          $t("(Sans titre)")
+        }}
         &nbsp;<inducks-link
           :storycode="entry.acceptedStory!.storycode" /></template
       ><template v-else>{{ $t("Contenu inconnu") }}</template>

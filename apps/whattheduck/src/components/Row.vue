@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import { ClassValue } from 'vue';
 import { app } from '~/stores/app';
 
 const {
@@ -26,7 +27,7 @@ const {
 } = defineProps<{
   id: string;
   type: 'countrycode' | 'publicationcode' | 'issuecode';
-  class: Record<string, boolean> | '';
+  class: ClassValue;
 }>();
 
 defineSlots<{
