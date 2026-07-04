@@ -10,6 +10,8 @@
   "scripts": {
     "build": "pnpm prisma-generate",
     "prisma-format": "bun scripts/prisma-all.ts format",
+    "prisma-migrate": "bun scripts/prisma-all.ts 'migrate dev'",
+    "prisma-migrate-deploy": "bun scripts/prisma-all.ts 'migrate deploy'",
     "prisma-pull-generate": "bun scripts/prisma-all.ts 'db pull' && pnpm prisma-generate",
     "prisma-generate": "bun scripts/prisma-all.ts generate && rm -rf dist",
     "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
