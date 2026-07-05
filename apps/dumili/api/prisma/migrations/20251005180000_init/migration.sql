@@ -7,7 +7,7 @@ CREATE TABLE `entry` (
     `position` INTEGER NOT NULL,
     `entrycomment` VARCHAR(2009) NULL,
     `part` VARCHAR(5) NULL,
-    `title` VARCHAR(100) NULL,
+    `title` VARCHAR(284) NULL,
     `entirepages` INTEGER NOT NULL,
     `brokenpagenumerator` INTEGER NOT NULL DEFAULT 0,
     `brokenpagedenominator` INTEGER NOT NULL DEFAULT 1,
@@ -50,6 +50,7 @@ CREATE TABLE `indexation` (
     `id` VARCHAR(20) NOT NULL,
     `accepted_issue_suggestion_id` INTEGER NULL,
     `dm_user_id` INTEGER NOT NULL,
+    `title` VARCHAR(158) NULL,
     `price` VARCHAR(150) NULL,
     `release_date` VARCHAR(10) NULL,
 
@@ -108,7 +109,7 @@ CREATE TABLE `ai_story_search_result` (
 CREATE TABLE `ai_story_search_possible_story` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `result_id` INTEGER NOT NULL,
-    `score` SMALLINT NOT NULL,
+    `score` FLOAT NOT NULL,
 
     INDEX `ai_story_search_possible_story_ai_story_search_result_id_fk`(`result_id`),
     PRIMARY KEY (`id`)
@@ -117,7 +118,7 @@ CREATE TABLE `ai_story_search_possible_story` (
 -- CreateTable
 CREATE TABLE `ai_ocr_possible_story` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `score` SMALLINT NOT NULL,
+    `score` FLOAT NOT NULL,
     `result_id` INTEGER NOT NULL,
 
     INDEX `ai_ocr_possible_story_ai_ocr_result_id_fk`(`result_id`),
@@ -182,7 +183,6 @@ CREATE TABLE `ai_story_suggestion` (
 -- CreateTable
 CREATE TABLE `user` (
     `dm_id` INTEGER NOT NULL,
-    `inducks_username` VARCHAR(64) NULL,
 
     PRIMARY KEY (`dm_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -201,10 +201,10 @@ CREATE TABLE `story_kind_rows` (
 ALTER TABLE `entry` ADD CONSTRAINT `entry_indexation_id_fk` FOREIGN KEY (`indexation_id`) REFERENCES `indexation`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `entry` ADD CONSTRAINT `entry_story_kind_suggestion_id_fk` FOREIGN KEY (`accepted_story_kind_suggested_id`) REFERENCES `story_kind_suggestion`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `entry` ADD CONSTRAINT `entry_story_kind_suggestion_id_fk` FOREIGN KEY (`accepted_story_kind_suggested_id`) REFERENCES `story_kind_suggestion`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `entry` ADD CONSTRAINT `entry_story_suggestion_id_fk` FOREIGN KEY (`accepted_story_suggested_id`) REFERENCES `story_suggestion`(`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `entry` ADD CONSTRAINT `entry_story_suggestion_id_fk` FOREIGN KEY (`accepted_story_suggested_id`) REFERENCES `story_suggestion`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT;
 
 -- AddForeignKey
 ALTER TABLE `image` ADD CONSTRAINT `image_ai_kumiko_result_id_fk` FOREIGN KEY (`ai_kumiko_result_id`) REFERENCES `ai_kumiko_result`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
