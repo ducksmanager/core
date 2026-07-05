@@ -136,6 +136,22 @@ const uploadToCloudinary = async ({ services, folder, context, page, ...params }
   },
 );
 
+const entryInclude = {
+  acceptedStory: true,
+  acceptedStoryKind: { include: { storyKindRows: true } },
+  storyKindSuggestions: { include: { storyKindRows: true } },
+  storySuggestions: {
+    include: {
+      aiStorySuggestion: {
+        include: {
+          aiStorySearchPossibleStory: true
+        }
+      }
+    }
+  },
+  includedInEntry: true,
+} as const;
+
 const indexationPayloadInclude = {
   user: true,
   pages: {
@@ -178,17 +194,9 @@ const indexationPayloadInclude = {
   issueSuggestions: true,
   entries: {
     include: {
-      acceptedStory: true,
-      acceptedStoryKind: { include: { storyKindRows: true } },
-      storyKindSuggestions: { include: { storyKindRows: true } },
-      storySuggestions: {
-        include: {
-          aiStorySuggestion: {
-            include: {
-              aiStorySearchPossibleStory: true
-            }
-          }
-        }
+      ...entryInclude,
+      includedEntries: {
+        include: entryInclude,
       },
     },
   },
@@ -230,11 +238,22 @@ const setPageUrl = async (services: IndexationServices, id: number, url: string 
     });
 };
 
-export type FullIndexation = Prisma.indexationGetPayload<{
-  include: typeof indexationPayloadInclude;
+type EntryWithoutIncludedEntries = Prisma.entryGetPayload<{
+  include: typeof entryInclude;
 }>;
 
-export type FullEntry = FullIndexation["entries"][number];
+export type FullEntry = EntryWithoutIncludedEntries & {
+  includedEntries?: EntryWithoutIncludedEntries[];
+};
+
+export type FullIndexation = Omit<
+  Prisma.indexationGetPayload<{
+    include: typeof indexationPayloadInclude;
+  }>,
+  "entries"
+> & {
+  entries: FullEntry[];
+};
 
 export type IndexationServerSentStartEvents = {
   reportSetKumikoInferredPageStoryKinds: (pageId: number) => void;
@@ -1205,8 +1224,8 @@ const listenEvents = (services: IndexationServices) => ({
     return { status: "OK" };
   },
 
-  createEntry: async (position: number) =>
-    createEntry(services._socket.data.indexation.id, position)
+  createEntry: async (position: number, includedInEntryId: number|undefined = undefined) =>
+    createEntry(services._socket.data.indexation.id, position, includedInEntryId)
       .then(() => refreshIndexation(services))
       .then(() => ({ status: "OK" })),
 });
@@ -1237,7 +1256,7 @@ export const { client, server } = useSocketEvents<
 export type ClientEmitEvents = (typeof client)["emitEvents"];
 export type ClientListenEvents = (typeof client)["listenEventsInterfaces"];
 
-export const createEntry = async (indexationId: string, position: number) =>
+export const createEntry = async (indexationId: string, position: number, includedInEntryId: number|undefined = undefined) =>
   prisma.entry.create({
     include: {
       storyKindSuggestions: true,
@@ -1245,6 +1264,11 @@ export const createEntry = async (indexationId: string, position: number) =>
     data: {
       position,
       entirepages: 1,
+      includedInEntry: includedInEntryId ? {
+        connect: {
+          id: includedInEntryId,
+        },
+      } : undefined,
       indexation: {
         connect: {
           id: indexationId,

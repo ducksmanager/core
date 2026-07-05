@@ -51,6 +51,8 @@ export const createMockEntry = (
     acceptedStoryKind: null,
     acceptedStory: null,
     storySuggestions: [],
+    includedInEntry: null,
+    includedInEntryId: null,
   };
   return Object.assign(base, overrides);
 };

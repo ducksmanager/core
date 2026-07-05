@@ -133,7 +133,7 @@
           >
             <b-button
               v-if="showCreateEntryAfter(idx)"
-              class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
+              class="fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
               variant="success"
               @click="createEntry(entry.position + entry.entirepages)"
               >{{ $t("Ajouter une entrée") }}</b-button

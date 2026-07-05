@@ -107,7 +107,6 @@
 </template>
 
 <script lang="ts" setup>
-import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { suggestions } from "~/stores/suggestions";
 import type { storySuggestion } from "~prisma/client_dumili/client";
@@ -119,7 +118,6 @@ const entry = defineModel<FullEntry>({
   required: true,
 });
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 
 const showEntrySelect = ref(false);
@@ -136,42 +134,41 @@ const getStorycodePageCount = (storycode: string) =>
     ]?.entirepages) ||
   null;
 
-const acceptStory = async (storycode: storySuggestion["storycode"] | null) => {
-  let storySuggestion: Pick<storySuggestion, "id" | "storycode"> | undefined =
-    entry.value.storySuggestions.find((s) => s.storycode === storycode);
-  if (!storySuggestion && storycode) {
-    const result = await indexationSocket.value!.createStorySuggestion({
-      entryId: entry.value.id,
-      storycode,
-    });
-    storySuggestion = result.createdStorySuggestion;
+const acceptStory = (storycode: storySuggestion["storycode"] | null) => {
+  if (!storycode) {
+    entry.value.acceptedStory = null;
+    return;
   }
-  await indexationSocket.value!.acceptStorySuggestion(
-    entry.value.id,
-    storySuggestion?.id || null,
+  const storySuggestion = entry.value.storySuggestions.find(
+    (s) => s.storycode === storycode,
   );
-  if (storySuggestion?.id) {
-    const correspondingStoryKindId = entry.value.storyKindSuggestions.find(
-      ({ storyKindRows }) =>
-        storyKindRows.kind ===
-        storyversionDetails.value[
-          storyDetails.value[storySuggestion.storycode]
-            .originalstoryversioncode!
-        ].kind,
-    )?.id;
-    if (correspondingStoryKindId) {
-      await indexationSocket.value!.acceptStoryKindSuggestion(
-        entry.value.id,
-        correspondingStoryKindId,
-      );
-    }
-  }
+  entry.value.acceptedStory = storySuggestion ?? {
+    id: 0,
+    storycode,
+    entryId: entry.value.id,
+    aiStorySuggestionId: null,
+  };
 };
 
 watch(
   () => entry.value.acceptedStory?.storycode || null,
   (storycode) => {
-    acceptStory(storycode);
+    if (!storycode) {
+      return;
+    }
+    const originalstoryversioncode =
+      storyDetails.value[storycode]?.originalstoryversioncode;
+    if (!originalstoryversioncode) {
+      return;
+    }
+    const correspondingStoryKind = entry.value.storyKindSuggestions.find(
+      ({ storyKindRows }) =>
+        storyKindRows.kind ===
+        storyversionDetails.value[originalstoryversioncode]?.kind,
+    );
+    if (correspondingStoryKind) {
+      entry.value.acceptedStoryKind = correspondingStoryKind;
+    }
   },
 );
 </script>

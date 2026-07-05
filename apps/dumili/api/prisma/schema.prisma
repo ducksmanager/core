@@ -11,6 +11,7 @@ model entry {
   id                            Int                   @id @default(autoincrement())
   acceptedStorySuggestionId     Int?                  @map("accepted_story_suggested_id")
   acceptedStoryKindSuggestionId Int?                  @map("accepted_story_kind_suggested_id")
+  includedInEntryId             Int?                  @map("included_in_entry_id")
   indexationId                  String                @map("indexation_id") @db.VarChar(20)
   position                      Int
   entrycomment                  String?               @db.VarChar(2009)
@@ -19,6 +20,8 @@ model entry {
   entirepages                   Int
   brokenpagenumerator           Int                   @default(0)
   brokenpagedenominator         Int                   @default(1)
+  includedInEntry               entry?                @relation("entry_included_in_entry", fields: [includedInEntryId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_included_in_entry_id_fk")
+  includedEntries               entry[]               @relation("entry_included_in_entry")
   indexation                    indexation            @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_indexation_id_fk")
   acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
   acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
@@ -28,6 +31,7 @@ model entry {
   @@index([acceptedStoryKindSuggestionId], map: "entry_story_kind_suggestion_id_fk")
   @@index([acceptedStorySuggestionId], map: "entry_story_suggestion_id_fk")
   @@index([indexationId], map: "entry_indexation_id_fk")
+  @@index([includedInEntryId], map: "entry_included_in_entry_id_fk")
 }
 
 model image {

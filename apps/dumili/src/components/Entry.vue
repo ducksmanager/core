@@ -14,7 +14,13 @@
       class="position-relative d-flex flex-column justify-content-center align-items-center h-100"
     >
       <story-kind-badge
-        :kind="entry.acceptedStoryKind?.storyKindRows.kind" /></b-col
+        :kind="entry.acceptedStoryKind?.storyKindRows.kind"
+        :included-entry-kinds="
+          (entry.includedEntries ?? []).map(
+            ({ acceptedStoryKind: includedAcceptedStoryKind }) =>
+              includedAcceptedStoryKind?.storyKindRows.kind,
+          )
+        " /></b-col
     ><b-col
       col
       cols="4"
@@ -74,66 +80,21 @@
         ><i-bi-trash3 /></b-button
     ></b-col>
   </b-row>
-  <b-modal
-    v-model="showEditModal"
-    :title="$t('Détails de l\'entrée')"
-    lazy
-    no-footer
-  >
-    <b-form @submit.prevent>
-      <b-form-group class="mb-3" :label="$t('Type d\'histoire')">
-        <story-kind-suggestion-list
-          v-model="entry.acceptedStoryKind"
-          v-bind="{ entry, editable: true }"
-        />
-      </b-form-group>
-      <b-form-group class="mb-3" :label="$t('Histoire')">
-        <div class="position-relative">
-          <StorySuggestionList v-model="entry" />
-          <StorySuggestionsTooltip :entry="entry" />
-        </div>
-      </b-form-group>
-      <b-form-group class="mb-3" :label="$t('Titre')">
-        <suggestion-list
-          class="w-100"
-          text-editable
-          :model-value="{ id: entry.title || '', category: 'user' as const }"
-          :category="({ category }) => category"
-          :suggestions="[
-            ...previousTitles.map((title) => ({
-              id: title,
-              category: 'previous' as const,
-            })),
-            { id: '&nbsp;', category: 'user' as const },
-          ]"
-          @update:model-value="entry.title = $event!.id"
-        >
-          <template #default="{ suggestion }">
-            {{ suggestion.id || "&nbsp;" }}
-          </template>
-        </suggestion-list>
-      </b-form-group>
-    </b-form>
-  </b-modal>
+  <entry-edit-modal v-model="entry" v-model:show="showEditModal" />
 </template>
 <script setup lang="ts">
 import { watchDebounced } from "@vueuse/core";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import { suggestions } from "~/stores/suggestions";
 import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
-import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
 const { t } = useI18n();
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-const { languagecode } = storeToRefs(suggestions());
-
-const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
 const { storyDetails } = storeToRefs(coa());
 
-const previousTitles = ref<string[]>([]);
 const entry = defineModel<FullEntry>({ required: true });
 
 if (
@@ -159,16 +120,9 @@ const deleteEntry = async () => {
   await indexationSocket.value!.deleteEntry(entry.value.id);
 };
 
-watch(
-  () => entry.value.acceptedStoryKind?.id,
-  (storyKindId) => {
-    indexationSocket.value!.acceptStoryKindSuggestion(
-      entry.value.id,
-      storyKindId || null,
-    );
-  },
-);
-
+// Position and page geometry are edited directly by drag/resize in the table of
+// contents, so they persist as they change. Title, story and story kind are
+// edited in the modal and only persist when its OK button is clicked.
 watchDebounced(
   () =>
     JSON.stringify([
@@ -176,17 +130,17 @@ watchDebounced(
       entry.value.entirepages,
       entry.value.brokenpagenumerator,
       entry.value.brokenpagedenominator,
-      entry.value.title,
     ]),
   async () => {
     const {
-      position,
-      entirepages,
-      brokenpagenumerator,
       brokenpagedenominator,
+      brokenpagenumerator,
+      entirepages,
+      id,
+      position,
       title,
     } = entry.value;
-    await indexationSocket.value!.updateEntry(entry.value.id, {
+    await indexationSocket.value!.updateEntry(id, {
       position,
       entirepages,
       brokenpagenumerator,
@@ -202,19 +156,6 @@ const title = computed(() => entry.value.title || t("(Sans titre)"));
 
 const urlEncodedStorycode = computed(
   () => storycode.value && encodeURIComponent(storycode.value),
-);
-
-watch(
-  () => entry.value.acceptedStory?.storycode,
-  async (storycode) => {
-    if (storycode && languagecode.value) {
-      previousTitles.value = await coaEvents.getStoryPreviousTitles(
-        storycode,
-        languagecode.value,
-      );
-    }
-  },
-  { immediate: true },
 );
 </script>
 
@@ -234,19 +175,7 @@ watch(
   }
 }
 
-textarea {
-  background: rgb(222, 222, 222) !important;
-}
-
 .dark {
   color: black;
-}
-:deep(.tooltip.show) {
-  opacity: 1 !important;
-}
-
-:deep(.tooltip-inner) {
-  max-width: initial;
-  white-space: nowrap;
 }
 </style>
