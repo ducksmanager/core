@@ -19,7 +19,9 @@ import { suggestions } from "~/stores/suggestions";
 import type { FullEntry } from "~dumili-services/indexation";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const entry = defineModel<FullEntry>({ required: true });
+const entry = defineModel<FullEntry>({
+  required: true,
+});
 const show = defineModel<boolean>("show", { required: true });
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
@@ -54,19 +56,18 @@ watch(
 
 const save = async () => {
   const socket = indexationSocket.value!;
-
+  debugger;
   for (const entry of [draft.value, ...(draft.value.includedEntries ?? [])]) {
     const {
       acceptedStory,
       acceptedStoryKind,
-      brokenpagedenominator,
-      brokenpagenumerator,
       entirepages,
       id,
       position,
       storySuggestions,
       title,
     } = entry;
+
     await socket.acceptStoryKindSuggestion(id, acceptedStoryKind?.id ?? null);
 
     let storySuggestionId: number | null = null;
@@ -85,8 +86,6 @@ const save = async () => {
     await socket.acceptStorySuggestion(id, storySuggestionId);
 
     await socket.updateEntry(id, {
-      brokenpagedenominator,
-      brokenpagenumerator,
       entirepages,
       position,
       title,

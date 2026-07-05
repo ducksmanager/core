@@ -95,7 +95,9 @@ const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 
 const { storyDetails } = storeToRefs(coa());
 
-const entry = defineModel<FullEntry>({ required: true });
+const entry = defineModel<FullEntry>({
+  required: true,
+});
 
 if (
   entry.value.acceptedStory &&
@@ -124,27 +126,12 @@ const deleteEntry = async () => {
 // contents, so they persist as they change. Title, story and story kind are
 // edited in the modal and only persist when its OK button is clicked.
 watchDebounced(
-  () =>
-    JSON.stringify([
-      entry.value.position,
-      entry.value.entirepages,
-      entry.value.brokenpagenumerator,
-      entry.value.brokenpagedenominator,
-    ]),
+  () => JSON.stringify([entry.value.position, entry.value.entirepages]),
   async () => {
-    const {
-      brokenpagedenominator,
-      brokenpagenumerator,
-      entirepages,
-      id,
-      position,
-      title,
-    } = entry.value;
+    const { entirepages, id, position, title } = entry.value;
     await indexationSocket.value!.updateEntry(id, {
       position,
       entirepages,
-      brokenpagenumerator,
-      brokenpagedenominator,
       title,
     });
   },

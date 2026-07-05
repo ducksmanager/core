@@ -1,9 +1,13 @@
 <template>
   <b-badge
-    :size="isIncluded ? 'md' : 'xl'"
-    :class="{ [`kind-${kind}`]: true }"
-    class="text-black fw-normal fs-6"
-    >{{ (kind && storyKinds[kind]) || $t("Type inconnu") }}
+    v-if="isIncluded"
+    size="md"
+    :class="`border border-secondary kind-${kind}`"
+    :title="text"
+    >&nbsp;</b-badge
+  >
+  <b-badge v-else size="xl" :class="`text-black fw-normal fs-6 kind-${kind}`"
+    >{{ text }}
     <div v-if="includedEntryKinds?.length" class="text-secondary">
       {{ $t("includes") }}&nbsp;<story-kind-badge
         v-for="(includedKind, includedKindIndex) in includedEntryKinds"
@@ -30,4 +34,14 @@ const {
 }>();
 
 const { t: $t } = useI18n();
+
+const text = computed(() => (kind && storyKinds[kind]) || $t("Type inconnu"));
 </script>
+
+<style lang="scss" scoped>
+.border {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.2rem;
+}
+</style>

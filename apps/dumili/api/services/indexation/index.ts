@@ -1161,19 +1161,21 @@ const listenEvents = (services: IndexationServices) => ({
     storyKindSuggestionId: storyKindSuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
-      ({ storyKindSuggestions }) =>
-        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
+      ({ id }) =>  id === entryId
     );
     if (!entry) {
       return {
-        error: `This indexation does not have any entry with this story kind suggestion`,
-        errorDetails: JSON.stringify({ storyKindSuggestionId }),
-      };
-    }
-    if (entry.id !== entryId) {
-      return {
         error: `This indexation does not have any entry with this ID`,
         errorDetails: JSON.stringify({ entryId }),
+      };
+    }
+    const suggestion = entry.storyKindSuggestions.find(
+      ({ id }) => id === storyKindSuggestionId,
+    );
+    if (storyKindSuggestionId && !suggestion) {
+      return {
+        error: `This indexation does not have any entry with this story kind suggestion`,
+        errorDetails: JSON.stringify({ storyKindSuggestionId }),
       };
     }
 
@@ -1196,8 +1198,6 @@ const listenEvents = (services: IndexationServices) => ({
     data: Pick<
       entry,
       | "entirepages"
-      | "brokenpagenumerator"
-      | "brokenpagedenominator"
       | "title"
       | "position"
     >,
@@ -1219,15 +1219,24 @@ const listenEvents = (services: IndexationServices) => ({
       },
     });
 
-    await refreshIndexation(services);
+    if (!entry.includedInEntryId) {
+      await refreshIndexation(services);
+    }
 
     return { status: "OK" };
   },
 
   createEntry: async (position: number, includedInEntryId: number|undefined = undefined) =>
     createEntry(services._socket.data.indexation.id, position, includedInEntryId)
-      .then(() => refreshIndexation(services))
-      .then(() => ({ status: "OK" })),
+      .then(async ({ id, includedInEntryId }) => {
+        if (!includedInEntryId) {
+          await refreshIndexation(services);
+        }
+        return { 
+          entry: services._socket.data.indexation.entries.find(({id: entryId}) => entryId === id)!, 
+          status: "OK"
+        };
+      }),
 });
 
 export const { client, server } = useSocketEvents<
