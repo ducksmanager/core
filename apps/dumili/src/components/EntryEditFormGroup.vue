@@ -41,18 +41,20 @@
       <b-form-group
         v-for="includedEntryIndex of Object.keys(entry.includedEntries || [])"
         :key="includedEntryIndex"
-        class="my-3"
+        class="my-3 p-3 border border-secondary rounded"
       >
         <entry-edit-form-group
           v-model="entry.includedEntries![includedEntryIndex as unknown as number]"
         />
       </b-form-group>
-      <b-button
-        class="fw-bold mx-md-n5 d-flex justify-content-center align-items-center"
-        variant="success"
-        @click="createEntry()"
-        >{{ $t("Ajouter une entrée") }}</b-button
-      >
+      <div class="d-flex justify-content-center align-items-center">
+        <b-button
+          class="fw-bold mx-md-n5 d-flex justify-content-center align-items-center"
+          variant="success"
+          @click="createEntry()"
+          >{{ $t("Ajouter une entrée") }}</b-button
+        >
+      </div>
     </div>
   </b-form-group>
 </template>

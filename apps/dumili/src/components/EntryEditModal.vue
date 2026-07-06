@@ -1,15 +1,7 @@
 <template>
-  <b-modal
-    v-model="show"
-    :title="$t('Détails de l\'entrée')"
-    lazy
-    :ok-title="$t('Valider')"
-    :cancel-title="$t('Annuler')"
-    footer-class="d-flex justify-content-between"
-    @ok="save"
-  >
+  <b-modal v-model="show" :title="$t('Détails de l\'entrée')" lazy no-footer>
     <b-form @submit.prevent>
-      <entry-edit-form-group v-model="entry" allow-included-entries />
+      <entry-edit-form-group v-model="draft" allow-included-entries />
     </b-form>
   </b-modal>
 </template>
@@ -33,6 +25,28 @@ const cloneEntry = () => JSON.parse(JSON.stringify(entry.value)) as FullEntry;
 
 const draft = ref<FullEntry>(cloneEntry());
 
+const draftUpdates = computed(() =>
+  [draft.value, ...(draft.value.includedEntries ?? [])].map(
+    ({
+      acceptedStory,
+      acceptedStoryKind,
+      entirepages,
+      id,
+      position,
+      storySuggestions,
+      title,
+    }) => ({
+      acceptedStory,
+      acceptedStoryKind,
+      entirepages,
+      id,
+      position,
+      storySuggestions,
+      title,
+    }),
+  ),
+);
+
 watch(show, (isOpen) => {
   if (isOpen) {
     draft.value = cloneEntry();
@@ -54,11 +68,14 @@ watch(
   { immediate: true },
 );
 
-const save = async () => {
-  const socket = indexationSocket.value!;
-  debugger;
-  for (const entry of [draft.value, ...(draft.value.includedEntries ?? [])]) {
-    const {
+watchDebounced(
+  draftUpdates,
+  async (entryUpdates, oldEntryUpdates) => {
+    if (JSON.stringify(entryUpdates) === JSON.stringify(oldEntryUpdates)) {
+      return;
+    }
+    const socket = indexationSocket.value!;
+    for (const {
       acceptedStory,
       acceptedStoryKind,
       entirepages,
@@ -66,32 +83,35 @@ const save = async () => {
       position,
       storySuggestions,
       title,
-    } = entry;
+    } of entryUpdates) {
+      await socket.acceptStoryKindSuggestion(id, acceptedStoryKind?.id ?? null);
 
-    await socket.acceptStoryKindSuggestion(id, acceptedStoryKind?.id ?? null);
-
-    let storySuggestionId: number | null = null;
-    if (acceptedStory) {
-      storySuggestionId =
-        storySuggestions.find((s) => s.storycode === acceptedStory.storycode)
-          ?.id ?? null;
-      if (storySuggestionId === null) {
-        const { createdStorySuggestion } = await socket.createStorySuggestion({
-          entryId: id,
-          storycode: acceptedStory.storycode,
-        });
-        storySuggestionId = createdStorySuggestion.id;
+      let storySuggestionId: number | null = null;
+      if (acceptedStory) {
+        storySuggestionId =
+          storySuggestions.find((s) => s.storycode === acceptedStory.storycode)
+            ?.id ?? null;
+        if (storySuggestionId === null) {
+          const { createdStorySuggestion } = await socket.createStorySuggestion(
+            {
+              entryId: id,
+              storycode: acceptedStory.storycode,
+            },
+          );
+          storySuggestionId = createdStorySuggestion.id;
+        }
       }
-    }
-    await socket.acceptStorySuggestion(id, storySuggestionId);
+      await socket.acceptStorySuggestion(id, storySuggestionId);
 
-    await socket.updateEntry(id, {
-      entirepages,
-      position,
-      title,
-    });
-  }
-};
+      await socket.updateEntry(id, {
+        entirepages,
+        position,
+        title,
+      });
+    }
+  },
+  { deep: true },
+);
 </script>
 
 <style scoped lang="scss">
