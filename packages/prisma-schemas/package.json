@@ -31,10 +31,10 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.62.0",
+    "@types/node": "^26.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
     "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.9.1",
+    "prettier": "^3.9.4",
     "prettier-plugin-prisma": "^5.0.0",
     "typescript": "^6.0.3"
   }

@@ -24,11 +24,11 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project dumili-api ./dist && sentry-cli sourcemaps upload --org bruno-perel --project dumili-api ./dist"
   },
   "dependencies": {
-    "@napi-rs/canvas": "^1.0.1",
+    "@napi-rs/canvas": "^1.0.2",
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@prisma/client": "^7.8.0",
-    "@sentry/node": "^10.62.0",
-    "@sentry/profiling-node": "^10.62.0",
+    "@sentry/node": "^10.63.0",
+    "@sentry/profiling-node": "^10.63.0",
     "axios": "^1.18.1",
     "axios-cache-interceptor": "^1.12.0",
     "busboy": "^1.6.0",
@@ -60,6 +60,6 @@
     "eslint-config-prettier": "^10.1.8",
     "prisma": "^7.8.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.0"
+    "typescript-eslint": "^8.63.0"
   }
 }
