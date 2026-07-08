@@ -1,8 +1,10 @@
 <template>
   <div :class="classes">
     <b-dropdown
-      class="position-relative"
-      style="width: calc(100% - 40px)"
+      class="position-relative w-100"
+      :style="
+        showTooltips ? { width: 'calc(100% - 4rem) !important' } : undefined
+      "
       :menu-class="['border-white', 'min-w-100', ...extraMenuClass]"
       :contenteditable="textEditable || null"
       :toggle-class="[
@@ -103,6 +105,7 @@ const {
   selectedItemClass = () => ["selected"],
   extraMenuClass = [],
   textEditable = false,
+  showTooltips = true,
 } = defineProps<{
   class?: ClassValue;
   itemLinkClasses?: string[];
@@ -112,6 +115,7 @@ const {
   selectedItemClass?: (suggestion: S) => string[];
   extraMenuClass?: string[];
   textEditable?: boolean;
+  showTooltips?: boolean;
 }>();
 
 const { t: $t } = useI18n();

@@ -9,7 +9,7 @@
     <b-form-group class="mb-3" :label="$t('Histoire')">
       <div class="position-relative">
         <StorySuggestionList v-model="entry" />
-        <StorySuggestionsTooltip :entry="entry" />
+        <StorySuggestionsTooltip v-if="!entry.includedInEntry" :entry="entry" />
       </div>
     </b-form-group>
     <b-form-group class="mb-3" :label="$t('Titre')">
@@ -18,6 +18,7 @@
         text-editable
         :model-value="{ id: entry.title || '', category: 'user' as const }"
         :category="({ category }) => category"
+        :show-tooltips="false"
         :suggestions="[
             ...previousTitles.map((title) => ({
               id: title,
@@ -38,15 +39,31 @@
       $t("Cette entrée inclut d'autres entrées")
     }}</b-form-checkbox>
     <div v-if="showIncludesOtherEntriesSection" class="ms-5">
-      <b-form-group
-        v-for="includedEntryIndex of Object.keys(entry.includedEntries || [])"
+      <b-row
+        v-for="includedEntryIndex of Object.keys(entry.includedEntries!).map(
+          Number,
+        )"
         :key="includedEntryIndex"
-        class="my-3 p-3 border border-secondary rounded"
-      >
-        <entry-edit-form-group
-          v-model="entry.includedEntries![includedEntryIndex as unknown as number]"
-        />
-      </b-form-group>
+        class="flex-wrap align-items-center"
+        ><b-col cols="11"
+          ><b-form-group class="my-3 p-3 border border-secondary rounded"
+            ><entry-edit-form-group
+              v-model="
+                entry.includedEntries![includedEntryIndex]
+              " /></b-form-group
+        ></b-col>
+        <b-col>
+          <delete-entry-modal
+            :show="showDeleteEntryModal"
+            @confirm="
+              deleteEntry(entry.includedEntries![includedEntryIndex].id)
+            " /><b-button
+            variant="danger"
+            class="d-flex justify-content-center"
+            @click.stop="showDeleteEntryModal = true"
+            ><i-bi-trash3 /></b-button
+        ></b-col>
+      </b-row>
       <div class="d-flex justify-content-center align-items-center">
         <b-button
           class="fw-bold mx-md-n5 d-flex justify-content-center align-items-center"
@@ -73,6 +90,9 @@ const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
 const { languagecode } = storeToRefs(suggestions());
+const { deleteEntry } = suggestions();
+
+const showDeleteEntryModal = ref(false);
 
 const previousTitles = ref<string[]>([]);
 const showIncludesOtherEntriesSection = ref(

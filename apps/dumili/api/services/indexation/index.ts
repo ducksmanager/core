@@ -136,7 +136,7 @@ const uploadToCloudinary = async ({ services, folder, context, page, ...params }
   },
 );
 
-const entryInclude = {
+const entryStoryInclude = {
   acceptedStory: true,
   acceptedStoryKind: { include: { storyKindRows: true } },
   storyKindSuggestions: { include: { storyKindRows: true } },
@@ -193,12 +193,12 @@ const indexationPayloadInclude = {
   acceptedIssueSuggestion: true,
   issueSuggestions: true,
   entries: {
-    include: {
-      ...entryInclude,
-      includedEntries: {
-        include: entryInclude,
-      },
-    },
+    include:  {
+  ...entryStoryInclude,
+  includedEntries: {
+    include: entryStoryInclude,
+  },
+},
   },
 } as const;
 
@@ -239,7 +239,7 @@ const setPageUrl = async (services: IndexationServices, id: number, url: string 
 };
 
 type EntryWithoutIncludedEntries = Prisma.entryGetPayload<{
-  include: typeof entryInclude;
+  include: typeof entryStoryInclude;
 }>;
 
 export type FullEntry = EntryWithoutIncludedEntries & {

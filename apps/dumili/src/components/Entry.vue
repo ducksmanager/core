@@ -51,21 +51,9 @@
       col
       cols="1"
       class="position-relative d-flex flex-column align-items-center justify-content-center h-100"
-      ><b-modal
-        v-model="showDeleteEntryModal"
-        :title="$t('Confirmation')"
-        footer-class="d-flex justify-content-between"
-      >
-        {{ $t("Voulez-vous vraiment supprimer cette entrée ?") }}
-        <template #footer
-          ><b-button @click="deleteEntry()">{{
-            $t("Oui, supprimer l'entrée")
-          }}</b-button>
-          <b-button @click="showDeleteEntryModal = false">{{
-            $t("Non, annuler la suppression")
-          }}</b-button></template
-        >
-      </b-modal>
+      ><delete-entry-modal
+        v-model:show="showDeleteEntryModal"
+        @confirm="deleteEntry(entry.id)" />
       <b-button
         variant="primary"
         class="d-flex justify-content-center mb-1"
@@ -92,6 +80,7 @@ const { t } = useI18n();
 
 const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
 const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
+const { deleteEntry } = suggestions();
 
 const { storyDetails } = storeToRefs(coa());
 
@@ -118,13 +107,6 @@ const isLast = computed(
   () => entry.value.id === [...indexation.value.entries].pop()!.id,
 );
 
-const deleteEntry = async () => {
-  await indexationSocket.value!.deleteEntry(entry.value.id);
-};
-
-// Position and page geometry are edited directly by drag/resize in the table of
-// contents, so they persist as they change. Title, story and story kind are
-// edited in the modal and only persist when its OK button is clicked.
 watchDebounced(
   () => JSON.stringify([entry.value.position, entry.value.entirepages]),
   async () => {

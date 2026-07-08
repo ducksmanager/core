@@ -2,7 +2,7 @@
   <div
     class="position-relative d-flex flex-column justify-content-center align-items-center w-100 h-100"
   >
-    <EntryStoryKindTooltip :entry="entry" />
+    <EntryStoryKindTooltip v-if="!entry.includedInEntry" :entry="entry" />
     <suggestion-list
       v-model="acceptedStoryKind"
       :class="{ 'w-100': true }"
@@ -11,6 +11,7 @@
         ({ aiKumikoResultId }) => (aiKumikoResultId !== null ? 'ai' : 'user')
       "
       :item-class="(suggestion) => [`kind-${suggestion.storyKindRows.kind}`]"
+      :show-tooltips="!entry.includedInEntry"
     >
       <template #default="{ suggestion, location }">
         {{ storyKinds[suggestion.storyKindRows.kind]
