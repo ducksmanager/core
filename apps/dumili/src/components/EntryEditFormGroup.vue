@@ -12,7 +12,7 @@
         <StorySuggestionsTooltip v-if="!entry.includedInEntry" :entry="entry" />
       </div>
     </b-form-group>
-    <b-form-group class="mb-3" :label="$t('Titre')">
+    <b-form-group class="mb-3 title" :label="$t('Titre')">
       <suggestion-list
         class="w-100"
         text-editable
@@ -20,17 +20,34 @@
         :category="({ category }) => category"
         :show-tooltips="false"
         :suggestions="[
-            ...previousTitles.map((title) => ({
-              id: title,
-              category: 'previous' as const,
-            })),
-            { id: '&nbsp;', category: 'user' as const },
-          ]"
+          ...previousTitles.map((title) => ({
+            id: title,
+            category: 'previous' as const,
+          })),
+          ...(previousTitles.length
+            ? []
+            : [
+                {
+                  id: $t('No previous title in this language'),
+                  category: 'previous' as const,
+                  isDisabled: true,
+                },
+              ]),
+          { id: entry.title || '', category: 'user' as const },
+        ]"
         @update:model-value="entry.title = $event!.id"
       >
-        <template #default="{ suggestion }">
-          {{ suggestion.id || "&nbsp;" }}
-        </template>
+        <template #default="{ suggestion, location }">
+          <input
+            v-if="location === 'button'"
+            v-model="entry.title"
+            type="text"
+            class="form-control bg-transparent"
+          />
+          <template v-else>
+            {{ suggestion.id || "&nbsp;" }}
+          </template></template
+        >
       </suggestion-list>
     </b-form-group>
   </b-form-group>
@@ -128,5 +145,9 @@ textarea {
 :deep(.tooltip-inner) {
   max-width: initial;
   white-space: nowrap;
+}
+
+.title :deep(.dropdown-toggle) {
+  padding: 0 !important;
 }
 </style>

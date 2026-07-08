@@ -110,7 +110,7 @@ watchDebounced(
       });
     }
   },
-  { deep: true },
+  { deep: true, maxWait: 1000 },
 );
 </script>
 

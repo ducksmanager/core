@@ -6,7 +6,6 @@
         showTooltips ? { width: 'calc(100% - 4rem) !important' } : undefined
       "
       :menu-class="['border-white', 'min-w-100', ...extraMenuClass]"
-      :contenteditable="textEditable || null"
       :toggle-class="[
         'text-wrap',
         'w-100',
@@ -27,6 +26,8 @@
         <b-dropdown-item
           v-for="(suggestion, idx) of groupSuggestions"
           :key="`suggestion-${idx}`"
+          :disabled="'isDisabled' in suggestion && suggestion.isDisabled"
+          :contenteditable="textEditable || null"
           :link-class="[
             'd-flex',
             'justify-content-between',
@@ -41,6 +42,7 @@
             current = suggestion;
             showCustomizeForm = false;
           "
+          @input.stop.prevent
         >
           <slot v-bind="{ suggestion, location: 'dropdown' }" />
           <AiSuggestionIcon
@@ -80,7 +82,7 @@
     <slot v-if="showCustomizeForm" name="customize-form" />
   </div>
 </template>
-<script setup lang="ts" generic="S extends { id: number | string }">
+<script setup lang="ts" generic="S extends { id: number | string; isDisabled?: boolean;  }">
 import type { ClassValue } from "vue";
 const $slots = useSlots();
 

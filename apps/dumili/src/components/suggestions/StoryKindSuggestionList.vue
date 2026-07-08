@@ -22,30 +22,16 @@
             })
           }}</template
         >
-        <span
-          v-if="
-            location === 'button' &&
-            getEntryPages(indexation, entry.id)[0].pageNumber === 1 &&
-            acceptedStoryKind?.storyKindRows.kind !== COVER
-          "
-          class="d-flex ms-1"
-          :title="
-            $t('La première page est généralement une page de couverture')
-          "
-        >
-          <i-bi-exclamation-triangle-fill
-        /></span>
-        <span
-          v-if="
-            location === 'button' &&
-            getEntryPages(indexation, entry.id).length > 1 &&
-            acceptedStoryKind?.storyKindRows.kind === COVER
-          "
-          class="d-flex ms-1"
-          :title="$t('La couverture ne devrait faire qu\'une page')"
-        >
-          <i-bi-exclamation-triangle-fill
-        /></span>
+        <FirstPageCoverHint
+          :entry="entry"
+          :accepted-story-kind="acceptedStoryKind"
+          :location="location"
+        />
+        <CoverPageCountHint
+          :entry="entry"
+          :accepted-story-kind="acceptedStoryKind"
+          :location="location"
+        />
       </template>
       <template #unknown-text>{{ $t("Type inconnu") }}</template>
     </suggestion-list>
@@ -53,16 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import { suggestions } from "~/stores/suggestions";
-import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
-import { COVER, storyKinds } from "~dumili-types/storyKinds";
-import { getEntryPages } from "~dumili-utils/entryPages";
+import type { FullEntry } from "~dumili-services/indexation";
+import { storyKinds } from "~dumili-types/storyKinds";
 
 defineProps<{
   entry: FullEntry;
 }>();
-
-const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
 
 const acceptedStoryKind = defineModel<FullEntry["acceptedStoryKind"]>();
 </script>

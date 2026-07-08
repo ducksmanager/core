@@ -1,7 +1,6 @@
 import axios from "axios";
 
 import prisma from "~prisma/client";
-import type { aiKumikoResultPanel } from "~prisma/client_dumili/client";
 
 import { type FullIndexation, type IndexationServices } from ".";
 
@@ -73,17 +72,17 @@ export const runOcrOnImage = async (
   return matches;
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */
-export const extendBoundaries = (
-  { x, y, width, height }: aiKumikoResultPanel,
-  extendBy: number,
-) => ({
-  left: x,
-  top: y,
-  width: width + extendBy,
-  height: height + extendBy,
-});
+// export const extendBoundaries = (
+//   { x, y, width, height }: aiKumikoResultPanel,
+//   extendBy: number,
+// ) => ({
+//   left: x,
+//   top: y,
+//   width: width + extendBy,
+//   height: height + extendBy,
+// });
 
-export const runOcr = async (url: string, languagecode: string): Promise<OcrResult[]> =>
+const runOcr = async (url: string, languagecode: string): Promise<OcrResult[]> =>
   axios
     .post(process.env.OCR_HOST!, { url, language: languagecode })
     .then(({ data }) => data);

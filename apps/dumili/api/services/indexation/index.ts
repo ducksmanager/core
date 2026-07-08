@@ -270,15 +270,8 @@ export type IndexationServerSentStartEndEvents =
     indexationUpdated: (indexation: FullIndexation) => void;
   };
 
-export type IndexationSocket = Socket<
-  object,
-  IndexationServerSentStartEndEvents,
-  object,
-  SessionDataWithIndexation
->;
-
 const isAiRunning: Record<string, boolean> = {};
-export const getFullIndexation = (
+const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
   runAi = true,
@@ -1218,10 +1211,6 @@ const listenEvents = (services: IndexationServices) => ({
         id: entryId,
       },
     });
-
-    if (!entry.includedInEntryId) {
-      await refreshIndexation(services);
-    }
 
     return { status: "OK" };
   },

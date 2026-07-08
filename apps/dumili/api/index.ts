@@ -26,10 +26,6 @@ export type SessionDataWithIndexation = {
   indexation: FullIndexation;
 };
 
-export type SessionDataWithIndexationId = {
-  user: SessionUser;
-  indexationId: string;
-};
 export type SessionData = { user: SessionUser };
 
 const httpServer = createServer();

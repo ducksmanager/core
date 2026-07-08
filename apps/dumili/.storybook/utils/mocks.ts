@@ -95,7 +95,7 @@ export const createMockImage = (
 /**
  * Sets up the indexation store with a mock indexation
  */
-export const setupIndexationStore = (
+const setupIndexationStore = (
   indexationOverrides: Partial<FullIndexation> = {},
 ) => {
   const suggestionsStore = suggestions();

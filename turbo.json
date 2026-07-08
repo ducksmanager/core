@@ -82,12 +82,14 @@
       ]
     },
     "dev": {
+      "cache": false,
       "persistent": true,
       "dependsOn": [
         "^dev:blocking-up"
       ]
     },
     "dev:bun": {
+      "cache": false,
       "persistent": true,
       "dependsOn": [
         "^dev:blocking-up"
