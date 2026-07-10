@@ -1,0 +1,9 @@
+modules:
+  http_2xx:
+    prober: http
+    timeout: 10s
+    http:
+      method: GET
+      valid_status_codes: [] # defaults to 2xx
+      preferred_ip_protocol: ip4
+      follow_redirects: true

@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+  # External availability probes. These run on the (healthy) monitoring server,
+  # so they keep reporting even when the app server is down — that is how the
+  # outage itself is detected and alerted on.
+  - job_name: blackbox-http
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://ducksmanager.net
+          - https://dumili.ducksmanager.net
+          - https://api.ducksmanager.net/app/updates
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  - job_name: pastec-index
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [pastec]
+    static_configs:
+      - targets:
+          - https://api.ducksmanager.net/status/pastec
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: json-exporter:7979
+
+# Host, container, Caddy and custom metrics are NOT scraped here — the app-server
+# Alloy agent pushes them via the remote-write receiver
+# (--web.enable-remote-write-receiver), so they land with the labels Alloy sets.

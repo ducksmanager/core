@@ -1,0 +1,12 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: email-admin
+    receivers:
+      - uid: email-admin
+        type: email
+        settings:
+          # SMTP itself is configured via GF_SMTP_* env vars (see .env).
+          addresses: admin@ducksmanager.net
+          singleEmail: false

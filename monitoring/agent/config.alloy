@@ -1,0 +1,111 @@
+// ---------------------------------------------------------------------------
+// Host metrics (node_exporter equivalent) + custom textfile metrics
+// ---------------------------------------------------------------------------
+prometheus.exporter.unix "host" {
+  procfs_path = "/host/proc"
+  sysfs_path  = "/host/sys"
+
+  // Disk usage is NOT collected here: node_exporter's filesystem collector would
+  // have to enumerate host mounts, which means bind-mounting the host root and
+  // exposing every file on it. Instead the disk-metrics sidecar reports free space for the /data volume via a .prom file
+  // shipped by the textfile collector below.
+  disable_collectors = ["filesystem"]
+
+  // Ships any *.prom file in this directory (the sidecar's disk metrics, plus
+  // any other host-level custom metrics dropped here).
+  textfile {
+    directory = "/textfile"
+  }
+}
+
+prometheus.scrape "node" {
+  targets    = prometheus.exporter.unix.host.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+  job_name   = "node"
+}
+
+// ---------------------------------------------------------------------------
+// Container metrics (cAdvisor equivalent)
+// ---------------------------------------------------------------------------
+prometheus.exporter.cadvisor "containers" {
+  docker_host      = "unix:///var/run/docker.sock"
+  storage_duration = "5m"
+
+  // Only emit metrics for Docker containers (which carry a friendly `name`
+  // label), not every host cgroup (system.slice, init.scope, mounts, ...). This
+  // is what the container dashboards filter on (name=~".+") and it sharply cuts
+  // metric cardinality / remote-write volume.
+  // NB: under rootless podman (local dev) cadvisor can't resolve Docker names,
+  // so container metrics are empty locally; on the Docker app server they populate.
+  docker_only = true
+}
+
+prometheus.scrape "cadvisor" {
+  targets    = prometheus.exporter.cadvisor.containers.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+  job_name   = "cadvisor"
+}
+
+// ---------------------------------------------------------------------------
+// Caddy / HTTP metrics (Caddy admin endpoint, reachable over public-network)
+// ---------------------------------------------------------------------------
+prometheus.scrape "caddy" {
+  targets      = [{ __address__ = "caddy:2019", instance = "app-server" }]
+  metrics_path = "/metrics"
+  forward_to   = [prometheus.remote_write.default.receiver]
+  job_name     = "caddy"
+}
+
+// ---------------------------------------------------------------------------
+// Remote-write metrics to the monitoring server
+// ---------------------------------------------------------------------------
+prometheus.remote_write "default" {
+  external_labels = {
+    instance = "app-server",
+  }
+
+  endpoint {
+    url = sys.env("PROM_WRITE_URL")
+    basic_auth {
+      username = sys.env("INGEST_USER")
+      password = sys.env("INGEST_PASSWORD")
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Container logs -> Loki
+// ---------------------------------------------------------------------------
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.containers.output
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  external_labels = {
+    host = "app-server",
+  }
+
+  endpoint {
+    url = sys.env("LOKI_WRITE_URL")
+    basic_auth {
+      username = sys.env("INGEST_USER")
+      password = sys.env("INGEST_PASSWORD")
+    }
+  }
+}
