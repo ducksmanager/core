@@ -6,6 +6,13 @@
 		format json
 		include http.log.access
 	}
+	# Expose the admin API (and its /metrics endpoint) on the container network so
+	# the monitoring agent can scrape caddy:2019/metrics. Not published to the
+	# host — only reachable by containers on the shared Docker networks.
+	admin 0.0.0.0:2019
+	servers {
+		metrics
+	}
 }
 
 import /etc/caddy/apps/*/Caddyfile

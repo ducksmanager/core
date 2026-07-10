@@ -1,0 +1,6 @@
+modules:
+  pastec:
+    metrics:
+      - name: pastec_index_images
+        help: "Number of images currently in the Pastec index"
+        path: "{ .numberOfImages }"
