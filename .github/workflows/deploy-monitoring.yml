@@ -25,6 +25,8 @@ jobs:
       PRODUCTION_SSH_HOST: ${{ secrets.MONITORING_SSH_HOST }}
       PRODUCTION_SSH_USER: ${{ secrets.MONITORING_SSH_USER }}
       PRODUCTION_SSH_KEY: ${{ secrets.MONITORING_SSH_KEY }}
+      CR_PAT: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+      CR_USER: bperel
     steps:
       - uses: actions/checkout@v6
 
