@@ -40,7 +40,7 @@
     "pdfjs-dist": "^6.1.200",
     "sharp": "^0.33.5",
     "socket-call-client": "^0.7.7",
-    "socket-call-server": "^0.7.7",
+    "socket-call-server": "^0.9.0",
     "socket.io": "^4.8.3",
     "unpdf": "^1.6.2",
     "~api": "workspace:*",
