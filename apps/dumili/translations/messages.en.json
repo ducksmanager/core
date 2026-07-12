@@ -47,6 +47,7 @@
   "Histoire": "Story",
   "Histoires potentielles": "Potential stories:",
   "Ignorer les pages existantes": "Ignore existing pages",
+  "Il n'y a pas assez de pages disponibles après cette entrée pour ajuster le nombre de pages ({extraPagesNeeded} pages supplémentaires nécessaires).": "There are not enough pages available after this entry to adjust the number of pages ({extraPagesNeeded} extra pages needed).",
   "Images": "Images",
   "Indexations en cours": "Ongoing indexations",
   "Installer l'extension Dumili pour {extensionName}": "Install the Dumili extension for {extensionName}",
