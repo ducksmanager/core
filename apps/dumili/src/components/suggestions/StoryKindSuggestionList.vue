@@ -2,84 +2,51 @@
   <div
     class="position-relative d-flex flex-column justify-content-center align-items-center w-100 h-100"
   >
-    <EntryStoryKindTooltip :entry="entry" />
-    <template v-if="editable">
-      <suggestion-list
-        v-model="acceptedStoryKind"
-        :class="{ 'position-absolute': !editable, 'w-100': true }"
-        :suggestions="entry.storyKindSuggestions"
-        :category="
-          ({ aiKumikoResultId }) => (aiKumikoResultId !== null ? 'ai' : 'user')
-        "
-        :item-class="(suggestion) => [`kind-${suggestion.storyKindRows.kind}`]"
-      >
-        <template #default="{ suggestion, location }">
-          {{ storyKinds[suggestion.storyKindRows.kind]
-          }}<template v-if="suggestion.storyKindRows.kind === 'n'"
-            >&nbsp;{{
-              $t("({rowsPerPage} lignes / page)", {
-                rowsPerPage: suggestion.storyKindRows.numberOfRows,
-              })
-            }}</template
-          >
-          <span
-            v-if="
-              location === 'button' &&
-              getEntryPages(indexation, entry.id)[0].pageNumber === 1 &&
-              acceptedStoryKind?.storyKindRows.kind !== COVER
-            "
-            class="d-flex ms-1"
-            :title="
-              $t('La première page est généralement une page de couverture')
-            "
-          >
-            <i-bi-exclamation-triangle-fill
-          /></span>
-          <span
-            v-if="
-              location === 'button' &&
-              getEntryPages(indexation, entry.id).length > 1 &&
-              acceptedStoryKind?.storyKindRows.kind === COVER
-            "
-            class="d-flex ms-1"
-            :title="$t('La couverture ne devrait faire qu\'une page')"
-          >
-            <i-bi-exclamation-triangle-fill
-          /></span>
-        </template>
-        <template #unknown-text>{{ $t("Type inconnu") }}</template>
-      </suggestion-list>
-    </template>
-    <story-kind-badge v-else :kind="acceptedStoryKind?.storyKindRows.kind" />
+    <EntryStoryKindTooltip v-if="!entry.includedInEntry" :entry="entry" />
+    <suggestion-list
+      v-model="acceptedStoryKind"
+      :class="{ 'w-100': true }"
+      :suggestions="entry.storyKindSuggestions"
+      :category="
+        ({ aiKumikoResultId }) => (aiKumikoResultId !== null ? 'ai' : 'user')
+      "
+      :item-class="(suggestion) => [`kind-${suggestion.storyKindRows.kind}`]"
+      :show-tooltips="!entry.includedInEntry"
+    >
+      <template #default="{ suggestion, location }">
+        {{ storyKinds[suggestion.storyKindRows.kind]
+        }}<template v-if="suggestion.storyKindRows.kind === 'n'"
+          >&nbsp;{{
+            $t("({rowsPerPage} lignes / page)", {
+              rowsPerPage: suggestion.storyKindRows.numberOfRows,
+            })
+          }}</template
+        >
+        <FirstPageCoverHint
+          :entry="entry"
+          :accepted-story-kind="acceptedStoryKind"
+          :location="location"
+        />
+        <CoverPageCountHint
+          :entry="entry"
+          :accepted-story-kind="acceptedStoryKind"
+          :location="location"
+        />
+      </template>
+      <template #unknown-text>{{ $t("Type inconnu") }}</template>
+    </suggestion-list>
   </div>
 </template>
 
 <script setup lang="ts">
-import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { suggestions } from "~/stores/suggestions";
-import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
-import { COVER, storyKinds } from "~dumili-types/storyKinds";
-import { getEntryPages } from "~dumili-utils/entryPages";
+import type { FullEntry } from "~dumili-services/indexation";
+import { storyKinds } from "~dumili-types/storyKinds";
 
-const props = defineProps<{
+defineProps<{
   entry: FullEntry;
-  editable: boolean;
 }>();
 
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
-const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-
 const acceptedStoryKind = defineModel<FullEntry["acceptedStoryKind"]>();
-
-watch(
-  () => acceptedStoryKind.value?.id,
-  (storyKindId) => {
-    indexationSocket.value?.acceptStoryKindSuggestion(
-      props.entry.id,
-      storyKindId || null,
-    );
-  },
-);
 </script>
 
 <style scoped lang="scss">

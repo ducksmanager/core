@@ -57,8 +57,8 @@ importers:
         specifier: ^0.7.7
         version: 0.7.7(axios-cache-interceptor@1.12.0(axios@1.18.1))(typescript@6.0.3)(vue@3.5.22(typescript@6.0.3))
       socket-call-server:
-        specifier: ^0.7.7
-        version: 0.7.7
+        specifier: ^0.9.0
+        version: 0.9.0
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1742,9 +1742,9 @@ packages:
       axios-cache-interceptor:
         optional: true
 
-  socket-call-server@0.7.7:
-    resolution: {integrity: sha512-znkJ4/guRtgQhn4+jjJn3yZCBUni5453CunWc7ON/qkSLKws+rPT7SU+JaOdEXJFf/wqd8iJUHPurKIX02KZ8A==}
-    engines: {node: '>=22.0.0 <23.0.0'}
+  socket-call-server@0.9.0:
+    resolution: {integrity: sha512-yh3KIhXlp0jaE5x/XYs+vG5sZjZbsyzTBL9jyJqa2SXJoVhnqjiqk0l6LVtxagpjeMvhTa/UgQYx1L36TShavg==}
+    engines: {node: '>=22.0.0'}
 
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
@@ -3559,7 +3559,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket-call-server@0.7.7:
+  socket-call-server@0.9.0:
     dependencies:
       socket.io: 4.8.3
     transitivePeerDependencies:

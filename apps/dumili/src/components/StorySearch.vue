@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-items-top w-100">
-    <b-dropdown variant="dark">
+    <b-dropdown variant="dark" class="col col-2">
       <b-dropdown-item @click="searchType = 'byStoryTitle'">{{
         $t("Par titre d'histoire")
       }}</b-dropdown-item>
@@ -15,31 +15,33 @@
         }}
       </template>
     </b-dropdown>
-    <ul class="navbar-nav mw-100 z-4">
-      <b-form-input
-        v-model="search"
-        autofocus
-        list="search"
-        :placeholder="$t('Rechercher une histoire')"
-      />
-      <datalist v-if="storyResults && !isSearching">
-        <option v-if="!storyResults.length">
-          {{ $t("Aucun résultat.") }}
-        </option>
-        <b-dropdown-item
-          v-for="searchResult in storyResults"
-          :key="searchResult.storycode"
-          link-class="h-100p"
-          class="d-flex align-items-center"
-          @click="emit('story-selected', searchResult.storycode)"
-        >
-          <StoryWithImage :storycode="searchResult.storycode">
-            <template #prefix>
-              <story-kind-badge :kind="searchResult.kind as storyKind" />
-            </template>
-          </StoryWithImage>
-        </b-dropdown-item>
-      </datalist>
+    <ul class="position-relative navbar-nav z-4 col col-10">
+      <div class="position-absolute w-100">
+        <b-form-input
+          v-model="search"
+          autofocus
+          list="search"
+          :placeholder="$t('Rechercher une histoire')"
+        />
+        <datalist v-if="storyResults && !isSearching">
+          <option v-if="!storyResults.length">
+            {{ $t("Aucun résultat.") }}
+          </option>
+          <b-dropdown-item
+            v-for="searchResult in storyResults"
+            :key="searchResult.storycode"
+            link-class="h-100p"
+            class="d-flex align-items-center"
+            @click="emit('story-selected', searchResult.storycode)"
+          >
+            <StoryWithImage :storycode="searchResult.storycode">
+              <template #prefix>
+                <story-kind-badge :kind="searchResult.kind as storyKind" />
+              </template>
+            </StoryWithImage>
+          </b-dropdown-item>
+        </datalist>
+      </div>
     </ul>
   </div>
 </template>
@@ -77,6 +79,7 @@ const searchType = ref<"byStoryTitle" | "byStoryCode">("byStoryTitle");
 
 watch(searchType, () => {
   search.value = "";
+  storyResults.value = undefined;
 });
 
 const { t: $t } = useI18n();

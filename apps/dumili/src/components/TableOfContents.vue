@@ -120,8 +120,8 @@
       </b-col>
       <b-col :cols="11" class="position-relative p-0">
         <template
-          v-for="(entry, idx) in indexation.entries"
-          :key="indexation.entries[idx].id"
+          v-for="(entry, idx) in nonIncludedEntries"
+          :key="nonIncludedEntries[idx].id"
         >
           <div
             class="position-absolute w-100 d-flex align-items-center justify-content-center"
@@ -133,14 +133,14 @@
           >
             <b-button
               v-if="showCreateEntryAfter(idx)"
-              class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
+              class="fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
               variant="success"
               @click="createEntry(entry.position + entry.entirepages)"
               >{{ $t("Ajouter une entrée") }}</b-button
             >
           </div>
           <TableOfContentsEntry
-            v-model="indexation.entries[idx]"
+            v-model="nonIncludedEntries[idx]"
             @on-entry-resize-stop="($event) => onEntryResizeStop(idx, $event)"
             @on-entry-drag-stop="($event) => onEntryDragStop(idx, $event)"
           />
@@ -187,6 +187,12 @@ const { t: $t } = useI18n();
 
 const hasAcceptedIssueSuggestion = computed(
   () => indexation.value.acceptedIssueSuggestion !== null,
+);
+
+const nonIncludedEntries = computed(() =>
+  indexation.value.entries.filter(
+    ({ includedInEntryId }) => !includedInEntryId,
+  ),
 );
 
 const getInputProps = () => ({

@@ -11,7 +11,7 @@ import { RequiredAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
-export type IndexationsServices = NamespaceProxyTarget<
+type IndexationsServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SessionData>,
   Record<string, never>
 >;

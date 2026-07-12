@@ -159,7 +159,7 @@ export const runKumikoOnPages = async (
   }
 };
 
-export const runKumiko = async (
+const runKumiko = async (
   urls: (string | null)[],
 ): Promise<KumikoProcessedResult[][]> =>
   axios

@@ -1,10 +1,11 @@
 import "~group-by";
 
 import { v2 as cloudinary } from "cloudinary";
-import type { Server, Socket } from "socket.io";
+import type { Server } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import {
   type ServerSentStartEndEvents,
+  getServerSentEvents,
   useSocketEvents,
 } from "socket-call-server";
 
@@ -39,22 +40,28 @@ import { readFileSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
-import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from 'unpdf'
+import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from "unpdf";
 
 import { createExtractorFromData } from "node-unrar-js";
 import { unzipSync } from "fflate";
 
-await definePDFJSModule(() => import('pdfjs-dist'))
+await definePDFJSModule(() => import("pdfjs-dist"));
 
 // In the production bundle, bun bakes in the CI build path for unrar.wasm.
 // We override it by loading the file explicitly when it's present next to the bundle.
 // In local dev (unbundled), node-unrar-js resolves the path itself so we leave it undefined.
-const bundleSideWasm = join(dirname(fileURLToPath(import.meta.url)), "unrar.wasm");
+const bundleSideWasm = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "unrar.wasm",
+);
 const unrarWasmBinary = existsSync(bundleSideWasm)
-  ? (() => { const buf = readFileSync(bundleSideWasm); return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength); })()
+  ? (() => {
+      const buf = readFileSync(bundleSideWasm);
+      return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+    })()
   : undefined;
 
-const canvasImport = () => import('@napi-rs/canvas');
+const canvasImport = () => import("@napi-rs/canvas");
 
 const socket = new SocketClient(process.env.DM_SOCKET_URL!);
 const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
@@ -72,10 +79,13 @@ const ALLOWED_IMAGE_MIME_TYPES = new Set<string>([
   "image/jpeg",
   "image/jpg",
 ]);
-const ALLOWED_MIME_TYPES = new Set<string>([...ALLOWED_DOCUMENT_MIME_TYPES, ...ALLOWED_IMAGE_MIME_TYPES]);
+const ALLOWED_MIME_TYPES = new Set<string>([
+  ...ALLOWED_DOCUMENT_MIME_TYPES,
+  ...ALLOWED_IMAGE_MIME_TYPES,
+]);
 
 const inferMimeType = (value?: string) => {
-  const extension = value?.toLowerCase()?.split('.')?.pop();
+  const extension = value?.toLowerCase()?.split(".")?.pop();
   if (!extension) {
     return undefined;
   }
@@ -83,26 +93,35 @@ const inferMimeType = (value?: string) => {
   switch (extension) {
     case "pdf":
       return "application/pdf";
-    case "rar": case "cbr":
+    case "rar":
+    case "cbr":
       return "application/x-rar";
-    case "zip": case "cbz":
+    case "zip":
+    case "cbz":
       return "application/zip";
     case "png":
       return "image/png";
-    case "jpg": case "jpeg":
+    case "jpg":
+    case "jpeg":
       return "image/jpeg";
   }
   return undefined;
 };
 
-const uploadToCloudinary = async ({ services, folder, context, page, ...params }: {
+const uploadToCloudinary = async ({
+  services,
+  folder,
+  context,
+  page,
+  ...params
+}: {
   services: IndexationServices;
   folder: string;
   context: Record<string, string>;
   page: page;
-  buffer: Buffer
-}) => new Promise<void>(
-  (resolve, reject) => {
+  buffer: Buffer;
+}) =>
+  new Promise<void>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         context,
@@ -115,26 +134,37 @@ const uploadToCloudinary = async ({ services, folder, context, page, ...params }
         if (error || !result) {
           reject(
             error ??
-            new Error(
-              "Cloudinary upload failed: " + JSON.stringify(result),
-            ),
+              new Error("Cloudinary upload failed: " + JSON.stringify(result)),
           );
-        }
-        else {
-          console.log(`Uploaded page ${page.pageNumber} to Cloudinary:`, result.secure_url);
-
-          await setPageUrl(
-            services,
-            page.id,
+        } else {
+          console.log(
+            `Uploaded page ${page.pageNumber} to Cloudinary:`,
             result.secure_url,
           );
+
+          await setPageUrl(services, page.id, result.secure_url);
           resolve();
         }
       },
     );
     stream.end(params.buffer);
+  });
+
+const entryStoryInclude = {
+  acceptedStory: true,
+  acceptedStoryKind: { include: { storyKindRows: true } },
+  storyKindSuggestions: { include: { storyKindRows: true } },
+  storySuggestions: {
+    include: {
+      aiStorySuggestion: {
+        include: {
+          aiStorySearchPossibleStory: true,
+        },
+      },
+    },
   },
-);
+  includedInEntry: true,
+} as const;
 
 const indexationPayloadInclude = {
   user: true,
@@ -178,23 +208,19 @@ const indexationPayloadInclude = {
   issueSuggestions: true,
   entries: {
     include: {
-      acceptedStory: true,
-      acceptedStoryKind: { include: { storyKindRows: true } },
-      storyKindSuggestions: { include: { storyKindRows: true } },
-      storySuggestions: {
-        include: {
-          aiStorySuggestion: {
-            include: {
-              aiStorySearchPossibleStory: true
-            }
-          }
-        }
+      ...entryStoryInclude,
+      includedEntries: {
+        include: entryStoryInclude,
       },
     },
   },
 } as const;
 
-const setPageUrl = async (services: IndexationServices, id: number, url: string | null) => {
+const setPageUrl = async (
+  services: IndexationServices,
+  id: number,
+  url: string | null,
+) => {
   if (
     !services._socket.data.indexation.pages.some(
       ({ id: pageId }) => pageId === id,
@@ -209,15 +235,15 @@ const setPageUrl = async (services: IndexationServices, id: number, url: string 
       data: {
         image: url
           ? {
-            connectOrCreate: {
-              create: {
-                url,
+              connectOrCreate: {
+                create: {
+                  url,
+                },
+                where: {
+                  url,
+                },
               },
-              where: {
-                url,
-              },
-            },
-          }
+            }
           : { disconnect: true },
       },
       where: {
@@ -230,11 +256,22 @@ const setPageUrl = async (services: IndexationServices, id: number, url: string 
     });
 };
 
-export type FullIndexation = Prisma.indexationGetPayload<{
-  include: typeof indexationPayloadInclude;
+type EntryWithoutIncludedEntries = Prisma.entryGetPayload<{
+  include: typeof entryStoryInclude;
 }>;
 
-export type FullEntry = FullIndexation["entries"][number];
+export type FullEntry = EntryWithoutIncludedEntries & {
+  includedEntries?: EntryWithoutIncludedEntries[];
+};
+
+export type FullIndexation = Omit<
+  Prisma.indexationGetPayload<{
+    include: typeof indexationPayloadInclude;
+  }>,
+  "entries"
+> & {
+  entries: FullEntry[];
+};
 
 export type IndexationServerSentStartEvents = {
   reportSetKumikoInferredPageStoryKinds: (pageId: number) => void;
@@ -251,15 +288,8 @@ export type IndexationServerSentStartEndEvents =
     indexationUpdated: (indexation: FullIndexation) => void;
   };
 
-export type IndexationSocket = Socket<
-  object,
-  IndexationServerSentStartEndEvents,
-  object,
-  SessionDataWithIndexation
->;
-
 const isAiRunning: Record<string, boolean> = {};
-export const getFullIndexation = (
+const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
   runAi = true,
@@ -309,11 +339,13 @@ const createAiStorySuggestions = async (
 ) => {
   const languagecode = indexation.acceptedIssueSuggestion?.publicationcode
     ? (await coaEvents.getPublicationLanguagecode(
-      indexation.acceptedIssueSuggestion.publicationcode,
-    )) || "en"
+        indexation.acceptedIssueSuggestion.publicationcode,
+      )) || "en"
     : "en";
 
-  for (const entry of indexation.entries) {
+  for (const entry of indexation.entries.filter(
+    ({ includedInEntryId }) => !includedInEntryId,
+  )) {
     if (
       [STORY, COVER].includes(
         entry.acceptedStoryKind?.storyKindRows?.kind ?? "",
@@ -345,9 +377,9 @@ const createAiStorySuggestions = async (
       ] as const) {
         const cachedResults:
           | {
-            type: typeof _storySuggestionRelationship;
-            storycode: string;
-          }[]
+              type: typeof _storySuggestionRelationship;
+              storycode: string;
+            }[]
           | undefined = undefined; /*firstPageOfEntry.image[field]?.stories
       .filter(
         (
@@ -383,19 +415,19 @@ const createAiStorySuggestions = async (
           const results =
             field === "aiStorySearchResult"
               ? await getStoriesFromImage(
-                firstPageOfEntry.image,
-                entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
-              )
+                  firstPageOfEntry.image,
+                  entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
+                )
               : await getFullStoriesFromKeywords(
-                (
-                  await runOcrOnImage(
-                    services,
-                    entry.position,
-                    firstPageOfEntry.image,
-                    languagecode,
-                  )
-                ).map(({ text }) => text),
-              );
+                  (
+                    await runOcrOnImage(
+                      services,
+                      entry.position,
+                      firstPageOfEntry.image,
+                      languagecode,
+                    )
+                  ).map(({ text }) => text),
+                );
           if ("error" in results) {
             console.error(results.error);
           } else {
@@ -585,7 +617,9 @@ const setInferredEntriesStoryKinds = async (
   entries: FullIndexation["entries"],
   force?: boolean,
 ) => {
-  for (const entry of entries) {
+  for (const entry of entries.filter(
+    ({ includedInEntryId }) => !includedInEntryId,
+  )) {
     if (
       entry.storyKindSuggestions.some(
         ({ aiKumikoResultId }) => aiKumikoResultId,
@@ -689,40 +723,43 @@ const setInferredEntriesStoryKinds = async (
 };
 
 export type IndexationServices = NamespaceProxyTarget<
-  Socket<
-    typeof listenEvents,
-    IndexationServerSentStartEndEvents,
-    object,
-    SessionDataWithIndexation
-  >,
+  {
+    data: SessionDataWithIndexation;
+    nsp: { name: string };
+  },
   IndexationServerSentStartEndEvents
 >;
 
-const makeServicesProxy = (io: Server, indexationId: string, user: SessionDataWithIndexation["user"], initialIndexation: FullIndexation): IndexationServices => {
-  const data = { user, indexation: initialIndexation } as const;
-  const ns = `/indexation/${indexationId}`;
-  const socket = {
-    data,
-    nsp: { name: ns },
-    emit: (event: string, ...args: unknown[]) => io.of(ns).emit(event, ...args),
-  };
-  return new Proxy({} as IndexationServices, {
-    get(_, prop: string) {
-      if (prop === '_socket') return socket;
-      return (...args: unknown[]) => socket.emit(prop, ...args);
-    }
+const makeServicesProxy = (
+  io: Server,
+  indexationId: string,
+  user: SessionDataWithIndexation["user"],
+  initialIndexation: FullIndexation,
+): IndexationServices =>
+  getServerSentEvents<
+    IndexationServerSentStartEndEvents,
+    IndexationServices["_socket"]
+  >(io.of(`/indexation/${indexationId}`), {
+    data: { user, indexation: initialIndexation },
+    nsp: { name: `/indexation/${indexationId}` },
   });
-};
 
-const uploadPages = async (services: IndexationServices, {
-  buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber,
-}: {
-  buffer: Buffer;
-  fileName: string;
-  mimeType: string;
-  firstPageNumber: number;
-  firstOutOfRangePageNumber: number;
-}) => {
+const uploadPages = async (
+  services: IndexationServices,
+  {
+    buffer,
+    fileName,
+    mimeType,
+    firstPageNumber,
+    firstOutOfRangePageNumber,
+  }: {
+    buffer: Buffer;
+    fileName: string;
+    mimeType: string;
+    firstPageNumber: number;
+    firstOutOfRangePageNumber: number;
+  },
+) => {
   try {
     const { indexation, user } = services._socket.data;
     const effectiveMimeType = mimeType || inferMimeType(fileName);
@@ -745,49 +782,82 @@ const uploadPages = async (services: IndexationServices, {
     const context = { indexation: indexation.id, user: user.username };
 
     if (isDocument) {
-      const pagesToPotentiallyOverwrite = indexation.pages.filter(({ pageNumber }) =>
-        pageNumber >= firstPageNumber && pageNumber < firstOutOfRangePageNumber
+      const pagesToPotentiallyOverwrite = indexation.pages.filter(
+        ({ pageNumber }) =>
+          pageNumber >= firstPageNumber &&
+          pageNumber < firstOutOfRangePageNumber,
       );
 
-      const uploadDocumentPages = async (items: { name: string; getData: () => Promise<Buffer> }[]) => {
+      const uploadDocumentPages = async (
+        items: { name: string; getData: () => Promise<Buffer> }[],
+      ) => {
         if (!items.length) {
           throw new Error("No valid pages found in the document");
         }
-        const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(0, items.length);
-        services.reportDocumentAnalyzed(pagesToOverwrite.map(({ pageNumber }) => pageNumber));
+        const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(
+          0,
+          items.length,
+        );
+        services.reportDocumentAnalyzed(
+          pagesToOverwrite.map(({ pageNumber }) => pageNumber),
+        );
         for (const [idx, page] of pagesToOverwrite.entries()) {
           const { name, getData } = items[idx];
-          console.info(`Uploading page ${page.pageNumber} from file ${name}...`);
-          await uploadToCloudinary({ services, buffer: await getData(), page, folder, context });
+          console.info(
+            `Uploading page ${page.pageNumber} from file ${name}...`,
+          );
+          await uploadToCloudinary({
+            services,
+            buffer: await getData(),
+            page,
+            folder,
+            context,
+          });
           services.reportDocumentPageUploaded(page.pageNumber);
         }
       };
 
       switch (effectiveMimeType) {
-        case "application/x-rar": case "application/octet-stream": {
-          const extractor = await createExtractorFromData({ data: new Uint8Array(buffer).buffer, ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }) });
+        case "application/x-rar":
+        case "application/octet-stream": {
+          const extractor = await createExtractorFromData({
+            data: new Uint8Array(buffer).buffer,
+            ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }),
+          });
           const extracted = extractor.extract();
           const files = [...extracted.files]
-            .filter(f =>
-              f.extraction?.length &&
-              f.fileHeader.name.split('/').length === 1 &&
-              inferMimeType(f.fileHeader.name) &&
-              ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(f.fileHeader.name)!)
+            .filter(
+              (f) =>
+                f.extraction?.length &&
+                f.fileHeader.name.split("/").length === 1 &&
+                inferMimeType(f.fileHeader.name) &&
+                ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(f.fileHeader.name)!),
             )
             .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
-          await uploadDocumentPages(files.map(f => ({ name: f.fileHeader.name, getData: async () => Buffer.from(f.extraction!) })));
+          await uploadDocumentPages(
+            files.map((f) => ({
+              name: f.fileHeader.name,
+              getData: async () => Buffer.from(f.extraction!),
+            })),
+          );
           break;
         }
 
         case "application/zip": {
           const files = Object.entries(unzipSync(new Uint8Array(buffer)))
-            .filter(([name]) =>
-              name.split('/').length === 1 &&
-              inferMimeType(name) &&
-              ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(name)!)
+            .filter(
+              ([name]) =>
+                name.split("/").length === 1 &&
+                inferMimeType(name) &&
+                ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(name)!),
             )
             .sort(([a], [b]) => a.localeCompare(b));
-          await uploadDocumentPages(files.map(([name, data]) => ({ name, getData: async () => Buffer.from(data) })));
+          await uploadDocumentPages(
+            files.map(([name, data]) => ({
+              name,
+              getData: async () => Buffer.from(data),
+            })),
+          );
           break;
         }
 
@@ -797,16 +867,21 @@ const uploadPages = async (services: IndexationServices, {
             Array.from({ length: pdf.numPages }, (_, i) => ({
               name: `page ${i + 1}`,
               getData: async () => {
-                const dataUrl = await renderPageAsImage(pdf, i + 1, { toDataURL: true, canvasImport });
+                const dataUrl = await renderPageAsImage(pdf, i + 1, {
+                  toDataURL: true,
+                  canvasImport,
+                });
                 return Buffer.from(dataUrl.split(",")[1], "base64");
               },
-            }))
+            })),
           );
           break;
         }
       }
     } else {
-      const page = indexation.pages.find(({ pageNumber }) => pageNumber === firstPageNumber)!;
+      const page = indexation.pages.find(
+        ({ pageNumber }) => pageNumber === firstPageNumber,
+      )!;
       await uploadToCloudinary({ services, buffer, page, folder, context });
       services.reportDocumentPageUploaded(page.pageNumber);
     }
@@ -824,7 +899,15 @@ const uploadPages = async (services: IndexationServices, {
 
 export const handleHttpFileUpload = async (
   io: Server,
-  { indexationId, user, buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber }: {
+  {
+    indexationId,
+    user,
+    buffer,
+    fileName,
+    mimeType,
+    firstPageNumber,
+    firstOutOfRangePageNumber,
+  }: {
     indexationId: string;
     user: SessionDataWithIndexation["user"];
     buffer: Buffer;
@@ -839,13 +922,22 @@ export const handleHttpFileUpload = async (
     include: indexationPayloadInclude,
   });
   if (!indexation) return { error: "Indexation not found" };
-  indexation.entries = indexation.entries.sort((a, b) => a.position - b.position);
+  indexation.entries = indexation.entries.sort(
+    (a, b) => a.position - b.position,
+  );
   const services = makeServicesProxy(io, indexationId, user, indexation);
-  return uploadPages(services, { buffer, fileName, mimeType, firstPageNumber, firstOutOfRangePageNumber });
+  return uploadPages(services, {
+    buffer,
+    fileName,
+    mimeType,
+    firstPageNumber,
+    firstOutOfRangePageNumber,
+  });
 };
 
 const listenEvents = (services: IndexationServices) => ({
-  setPageUrl: async (id: number, url: string | null) => setPageUrl(services, id, url),
+  setPageUrl: async (id: number, url: string | null) =>
+    setPageUrl(services, id, url),
 
   deleteIndexation: async () => {
     const { id: indexationId } = services._socket.data.indexation;
@@ -972,11 +1064,11 @@ const listenEvents = (services: IndexationServices) => ({
             suggestionId === null
               ? { disconnect: true }
               : {
-                connect: {
-                  id: suggestionId,
-                  indexationId: services._socket.data.indexation.id,
+                  connect: {
+                    id: suggestionId,
+                    indexationId: services._socket.data.indexation.id,
+                  },
                 },
-              },
         },
         where: {
           id: services._socket.data.indexation.id,
@@ -1142,19 +1234,21 @@ const listenEvents = (services: IndexationServices) => ({
     storyKindSuggestionId: storyKindSuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
-      ({ storyKindSuggestions }) =>
-        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
+      ({ id }) => id === entryId,
     );
     if (!entry) {
       return {
-        error: `This indexation does not have any entry with this story kind suggestion`,
-        errorDetails: JSON.stringify({ storyKindSuggestionId }),
-      };
-    }
-    if (entry.id !== entryId) {
-      return {
         error: `This indexation does not have any entry with this ID`,
         errorDetails: JSON.stringify({ entryId }),
+      };
+    }
+    const suggestion = entry.storyKindSuggestions.find(
+      ({ id }) => id === storyKindSuggestionId,
+    );
+    if (storyKindSuggestionId && !suggestion) {
+      return {
+        error: `This indexation does not have any entry with this story kind suggestion`,
+        errorDetails: JSON.stringify({ storyKindSuggestionId }),
       };
     }
 
@@ -1174,14 +1268,7 @@ const listenEvents = (services: IndexationServices) => ({
 
   updateEntry: async (
     entryId: entry["id"],
-    data: Pick<
-      entry,
-      | "entirepages"
-      | "brokenpagenumerator"
-      | "brokenpagedenominator"
-      | "title"
-      | "position"
-    >,
+    data: Pick<entry, "entirepages" | "title" | "position">,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id }) => id === entryId,
@@ -1200,15 +1287,28 @@ const listenEvents = (services: IndexationServices) => ({
       },
     });
 
-    await refreshIndexation(services);
-
     return { status: "OK" };
   },
 
-  createEntry: async (position: number) =>
-    createEntry(services._socket.data.indexation.id, position)
-      .then(() => refreshIndexation(services))
-      .then(() => ({ status: "OK" })),
+  createEntry: async (
+    position: number,
+    includedInEntryId: number | undefined = undefined,
+  ) =>
+    createEntry(
+      services._socket.data.indexation.id,
+      position,
+      includedInEntryId,
+    ).then(async ({ id, includedInEntryId }) => {
+      if (!includedInEntryId) {
+        await refreshIndexation(services);
+      }
+      return {
+        entry: services._socket.data.indexation.entries.find(
+          ({ id: entryId }) => entryId === id,
+        )!,
+        status: "OK",
+      };
+    }),
 });
 
 export const { client, server } = useSocketEvents<
@@ -1237,7 +1337,11 @@ export const { client, server } = useSocketEvents<
 export type ClientEmitEvents = (typeof client)["emitEvents"];
 export type ClientListenEvents = (typeof client)["listenEventsInterfaces"];
 
-export const createEntry = async (indexationId: string, position: number) =>
+export const createEntry = async (
+  indexationId: string,
+  position: number,
+  includedInEntryId: number | undefined = undefined,
+) =>
   prisma.entry.create({
     include: {
       storyKindSuggestions: true,
@@ -1245,6 +1349,13 @@ export const createEntry = async (indexationId: string, position: number) =>
     data: {
       position,
       entirepages: 1,
+      includedInEntry: includedInEntryId
+        ? {
+            connect: {
+              id: includedInEntryId,
+            },
+          }
+        : undefined,
       indexation: {
         connect: {
           id: indexationId,
