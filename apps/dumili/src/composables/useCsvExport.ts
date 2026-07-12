@@ -24,7 +24,7 @@ export const buildStoriesWithDetails = (
 
 export type StoriesWithDetails = ReturnType<typeof buildStoriesWithDetails>;
 
-const issuenumberWithoutCountry = (
+const getIssuenumberWithoutCountry = (
   acceptedIssueSuggestion: NonNullable<
     FullIndexation["acceptedIssueSuggestion"]
   >,
@@ -42,19 +42,33 @@ export default (
   const pageNumberPadding = computed(
     () => String(indexation.pages.length).length,
   );
-  const entrycodesWithPageNumbers = computed(() =>
-    indexation.entries.map(
-      (entry, i) =>
-        `${issuenumberWithoutCountry(indexation.acceptedIssueSuggestion!)}${
-          i === 0
-            ? String.fromCharCode(97 + i)
-            : `p${String(entry.position).padStart(pageNumberPadding.value, "0")}`
-        }`,
-    ),
+  const entrycodesPageNumbers = computed(() =>
+    indexation.entries.map((entry, i) => {
+      if (i === 0) {
+        return String.fromCharCode(97 + i);
+      } else {
+        const paddedPosition = `p${String(entry.position).padStart(pageNumberPadding.value, "0")}`;
+        let subEntryPosition = "";
+        if (entry.includedInEntryId) {
+          const superEntry = indexation.entries.find(
+            (e) => e.id === entry.includedInEntryId,
+          );
+          const subEntryIndex = superEntry!.includedEntries!.findIndex(
+            (subEntry) => subEntry.id === entry.id,
+          );
+          subEntryPosition = String.fromCharCode(97 + subEntryIndex);
+        } else if (entry.includedEntries?.length) {
+          subEntryPosition = "a";
+        }
+        return `${paddedPosition}${subEntryPosition}`;
+      }
+    }),
   );
 
   const csvMetadata = computed(() => ({
-    issuecode: issuenumberWithoutCountry(indexation.acceptedIssueSuggestion!),
+    issuecode: getIssuenumberWithoutCountry(
+      indexation.acceptedIssueSuggestion!,
+    ),
     issdate: indexation.releaseDate,
     price: indexation.price || undefined,
     issue_comment:
@@ -80,12 +94,19 @@ export default (
       (entry) => !entry.acceptedStoryKind,
     );
     if (firstEntryWithoutStoryKind) {
-      return t(
-        "Toutes les entrées doivent avoir un type. L'entrée à la page {entry} n'a pas de type.",
-        {
-          entry: firstEntryWithoutStoryKind.position,
-        },
-      );
+      return firstEntryWithoutStoryKind.includedInEntry
+        ? t(
+            "Toutes les entrées doivent avoir un type. Une sous-entrée à la page {position} n'a pas de type.",
+            {
+              position: firstEntryWithoutStoryKind.position,
+            },
+          )
+        : t(
+            "Toutes les entrées doivent avoir un type. L'entrée à la page {position} n'a pas de type.",
+            {
+              position: firstEntryWithoutStoryKind.position,
+            },
+          );
     }
   });
 
@@ -103,11 +124,13 @@ export default (
         : undefined;
       const includedIn =
         includedInIdx !== undefined
-          ? entrycodesWithPageNumbers.value[includedInIdx]
+          ? entrycodesPageNumbers.value[includedInIdx]
           : undefined;
 
       return {
-        entrycode: entrycodesWithPageNumbers.value[idx],
+        entrycode: `${getIssuenumberWithoutCountry(indexation.acceptedIssueSuggestion!)}${
+          entrycodesPageNumbers.value[idx]
+        }`,
         storycode: entry.acceptedStory?.storycode || "",
         hero: storyWithDetails?.heroCharacter || "",
         pages: String(getEntryPages(indexation, entry.id).length),
@@ -127,7 +150,7 @@ export default (
             : storyKindRows.kind,
 
         title: entry.title || "",
-        ...(entry.includedInEntry ? { includedIn } : {}),
+        includedin: includedIn || "",
       };
     });
 

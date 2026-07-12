@@ -71,13 +71,13 @@
         ></b-col>
         <b-col>
           <delete-entry-modal
-            :show="showDeleteEntryModal"
+            :show="deleteEntryModalId === entry.includedEntries![includedEntryIndex].id"
             @confirm="
               deleteEntry(entry.includedEntries![includedEntryIndex].id)
             " /><b-button
             variant="danger"
             class="d-flex justify-content-center"
-            @click.stop="showDeleteEntryModal = true"
+            @click.stop="deleteEntryModalId = entry.includedEntries![includedEntryIndex].id"
             ><i-bi-trash3 /></b-button
         ></b-col>
       </b-row>
@@ -86,7 +86,7 @@
           class="fw-bold mx-md-n5 d-flex justify-content-center align-items-center"
           variant="success"
           @click="createEntry()"
-          >{{ $t("Ajouter une entrée") }}</b-button
+          >{{ $t("Ajouter une sous-entrée") }}</b-button
         >
       </div>
     </div>
@@ -109,7 +109,7 @@ const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 const { languagecode } = storeToRefs(suggestions());
 const { deleteEntry } = suggestions();
 
-const showDeleteEntryModal = ref(false);
+const deleteEntryModalId = ref();
 
 const previousTitles = ref<string[]>([]);
 const showIncludesOtherEntriesSection = ref(
