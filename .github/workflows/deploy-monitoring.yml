@@ -1,0 +1,63 @@
+name: deploy-monitoring
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "monitoring/grafana/**"
+      - ".github/workflows/deploy-monitoring.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    name: deploy-monitoring
+    # The ~ci scripts read PRODUCTION_SSH_*; map the monitoring-host secrets onto
+    # those names so the same transfer + docker-compose primitives target the
+    # separate monitoring server instead of the app server.
+    env:
+      REMOTE_ROOT: apps/dm
+      PRODUCTION_SSH_HOST: ${{ secrets.MONITORING_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.MONITORING_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.MONITORING_SSH_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9.8.0
+
+      - name: Use Node.js 26
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26
+          cache: "pnpm"
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install ci dependencies
+        run: pnpm install --filter '~ci...'
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: bperel
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN_DM }}
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build and push images (config baked in)
+        run: pnpm -F '~monitoring-grafana' prod:build-docker
+
+      - name: Transfer docker-compose.yml
+        run: pnpm -F '~monitoring-grafana' prod:transfer-files-post
+
+      - name: Deploy
+        run: pnpm -F '~monitoring-grafana' prod:deploy

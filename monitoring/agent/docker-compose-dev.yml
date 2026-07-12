@@ -1,0 +1,41 @@
+# Runs the Alloy agent locally against the monitoring/grafana dev stack
+# (docker-compose-dev.yml). Pushes to the host-published Prometheus (9090) and
+# Loki (3100) with no auth, and scrapes the local Docker daemon + host, so the
+# full collect -> push -> store -> visualize path can be exercised on one machine.
+services:
+  alloy:
+    container_name: monitoring-alloy-dev
+    image: grafana/alloy:latest
+    command:
+      - run
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # privileged + cgroup mount are only needed to run cAdvisor locally under
+    # rootless podman / a VM; a real Linux + Docker app server does not need them.
+    privileged: true
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      # Shares the disk-metrics sidecar's output (prod uses the host /data/metrics
+      # dir; locally a named volume stands in) so the textfile collector has data.
+      - disk_metrics:/textfile:ro
+      - alloy_data:/var/lib/alloy/data
+
+  disk-metrics:
+    container_name: monitoring-disk-metrics-dev
+    image: busybox:latest
+    command: ["sh", "/disk-metrics.sh"]
+    volumes:
+      - ./disk-metrics.sh:/disk-metrics.sh:ro
+      - disk_metrics:/out
+
+volumes:
+  alloy_data:
+  disk_metrics:

@@ -1,0 +1,71 @@
+# Reverse proxy / TLS is handled by the EXISTING host-level Caddy (see
+# grafana.conf, mounted into its /etc/caddy/sites-enabled/). grafana, prometheus
+# and loki publish to 127.0.0.1 so that host Caddy can reverse_proxy them over
+# the loopback; nothing is exposed beyond localhost.
+services:
+  grafana:
+    container_name: monitoring-grafana
+    image: ghcr.io/bperel/monitoring-grafana
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitoring-network
+
+  prometheus:
+    container_name: monitoring-prometheus
+    image: ghcr.io/bperel/monitoring-prometheus
+    restart: always
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-remote-write-receiver
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring-network
+
+  loki:
+    container_name: monitoring-loki
+    image: ghcr.io/bperel/monitoring-loki
+    restart: always
+    command: -config.file=/etc/loki/loki-config.yaml
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - loki_data:/loki
+    networks:
+      - monitoring-network
+
+  blackbox:
+    container_name: monitoring-blackbox
+    image: ghcr.io/bperel/monitoring-blackbox
+    restart: always
+    command:
+      - --config.file=/etc/blackbox/blackbox.yml
+    networks:
+      - monitoring-network
+
+  json-exporter:
+    container_name: monitoring-json-exporter
+    image: ghcr.io/bperel/monitoring-json-exporter
+    restart: always
+    command:
+      - --config.file=/etc/json-exporter/config.yml
+    networks:
+      - monitoring-network
+
+volumes:
+  grafana_data:
+  prometheus_data:
+  loki_data:
+
+networks:
+  monitoring-network:
+    name: monitoring-network

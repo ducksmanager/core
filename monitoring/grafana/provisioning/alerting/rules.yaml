@@ -1,0 +1,87 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: availability
+    folder: DucksManager
+    interval: 1m
+    rules:
+      # Core outage signal. probe_success is produced by the blackbox scrape that
+      # runs on THIS (monitoring) server, so this fires even when the app server
+      # is completely unreachable.
+      - uid: app-unreachable
+        title: App endpoint unreachable
+        condition: C
+        for: 1m
+        noDataState: Alerting
+        execErrState: Alerting
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.instance }} is unreachable"
+          description: "External probe to {{ $labels.instance }} has been failing."
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              refId: A
+              editorMode: code
+              expr: probe_success
+              instant: true
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+
+  - orgId: 1
+    name: forwarded-from-prometheus
+    folder: DucksManager
+    interval: 1m
+    rules:
+      # Forwards every firing Prometheus rule (resource alerts in
+      # prometheus/rules/alerts.yml) into a Grafana notification. Conditions stay
+      # defined once, in Prometheus; Grafana only handles delivery.
+      - uid: prometheus-alerts-forwarded
+        title: Prometheus alert firing
+        condition: C
+        for: 0m
+        noDataState: OK
+        execErrState: OK
+        labels:
+          severity: forwarded
+        annotations:
+          summary: "{{ $labels.alertname }} is firing"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              refId: A
+              editorMode: code
+              expr: ALERTS{alertstate="firing"}
+              instant: true
+              intervalMs: 1000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]

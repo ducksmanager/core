@@ -1,0 +1,71 @@
+# Local test rig for the monitoring server stack. No Caddy / TLS / auth: services
+# are published straight to localhost so the exact same provisioning + config
+# files can be validated at http://localhost:3000 before deploying.
+services:
+  grafana:
+    container_name: monitoring-grafana-dev
+    image: grafana/grafana:latest
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - ./provisioning:/etc/grafana/provisioning
+      - ./dashboards:/var/lib/grafana/dashboards
+    networks:
+      - monitoring-network
+
+  prometheus:
+    container_name: monitoring-prometheus-dev
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-remote-write-receiver
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+    networks:
+      - monitoring-network
+
+  loki:
+    container_name: monitoring-loki-dev
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/loki-config.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml
+    networks:
+      - monitoring-network
+
+  blackbox:
+    container_name: monitoring-blackbox-dev
+    image: prom/blackbox-exporter:latest
+    command:
+      - --config.file=/etc/blackbox/blackbox.yml
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox/blackbox.yml
+    networks:
+      - monitoring-network
+
+  json-exporter:
+    container_name: monitoring-json-exporter-dev
+    image: quay.io/prometheuscommunity/json-exporter:latest
+    command:
+      - --config.file=/etc/json-exporter/config.yml
+    ports:
+      - "7979:7979"
+    volumes:
+      - ./json-exporter/config.yml:/etc/json-exporter/config.yml
+    networks:
+      - monitoring-network
+
+networks:
+  monitoring-network:
+    name: monitoring-network
