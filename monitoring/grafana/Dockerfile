@@ -23,7 +23,3 @@ COPY monitoring/grafana/blackbox/blackbox.yml /etc/blackbox/blackbox.yml
 FROM quay.io/prometheuscommunity/json-exporter:latest AS json-exporter
 LABEL org.opencontainers.image.authors="Bruno Perel"
 COPY monitoring/grafana/json-exporter/config.yml /etc/json-exporter/config.yml
-
-FROM caddy:latest AS caddy
-LABEL org.opencontainers.image.authors="Bruno Perel"
-COPY monitoring/grafana/Caddyfile /etc/caddy/Caddyfile
