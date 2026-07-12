@@ -9,9 +9,8 @@
     "prod:build-docker-loki": "REPO_NAME=ghcr.io/bperel/monitoring-loki pnpm -F '~ci' prod:build-docker --target loki -f monitoring/grafana/Dockerfile",
     "prod:build-docker-blackbox": "REPO_NAME=ghcr.io/bperel/monitoring-blackbox pnpm -F '~ci' prod:build-docker --target blackbox -f monitoring/grafana/Dockerfile",
     "prod:build-docker-json-exporter": "REPO_NAME=ghcr.io/bperel/monitoring-json-exporter pnpm -F '~ci' prod:build-docker --target json-exporter -f monitoring/grafana/Dockerfile",
-    "prod:build-docker-caddy": "REPO_NAME=ghcr.io/bperel/monitoring-caddy pnpm -F '~ci' prod:build-docker --target caddy -f monitoring/grafana/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod:build-docker-/'",
-    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files monitoring/grafana/docker-compose.yml:@monitoring/grafana/docker-compose.yml",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files monitoring/grafana/docker-compose.yml:@monitoring/grafana/docker-compose.yml monitoring/grafana/grafana.conf:@monitoring/grafana/grafana.conf",
     "prod:deploy": "DIR=monitoring/grafana pnpm -F '~ci' prod:docker-compose-up"
   }
 }

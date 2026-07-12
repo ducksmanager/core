@@ -1,25 +1,16 @@
+# Reverse proxy / TLS is handled by the EXISTING host-level Caddy (see
+# grafana.conf, mounted into its /etc/caddy/sites-enabled/). grafana, prometheus
+# and loki publish to 127.0.0.1 so that host Caddy can reverse_proxy them over
+# the loopback; nothing is exposed beyond localhost.
 services:
-  caddy:
-    container_name: monitoring-caddy
-    image: ghcr.io/bperel/monitoring-caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    env_file:
-      - .env
-    volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - monitoring-network
-
   grafana:
     container_name: monitoring-grafana
     image: ghcr.io/bperel/monitoring-grafana
     restart: always
     env_file:
       - .env
+    ports:
+      - "127.0.0.1:3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
     networks:
@@ -33,6 +24,8 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=30d
       - --web.enable-remote-write-receiver
+    ports:
+      - "127.0.0.1:9090:9090"
     volumes:
       - prometheus_data:/prometheus
     networks:
@@ -43,6 +36,8 @@ services:
     image: ghcr.io/bperel/monitoring-loki
     restart: always
     command: -config.file=/etc/loki/loki-config.yaml
+    ports:
+      - "127.0.0.1:3100:3100"
     volumes:
       - loki_data:/loki
     networks:
@@ -67,8 +62,6 @@ services:
       - monitoring-network
 
 volumes:
-  caddy_data:
-  caddy_config:
   grafana_data:
   prometheus_data:
   loki_data:
