@@ -102,7 +102,7 @@ export const getPastecSearchStatus = async (): Promise<
   try {
     const response = (
       await axios.post(
-        `http://${process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[0]}/searcher`,
+        `http://${process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[0]}/index/searcher`,
         `${process.env.INDUCKS_COVERS_ROOT}/au/bp/001/au_bp_001a_001.jpg`,
       )
     ).data;
