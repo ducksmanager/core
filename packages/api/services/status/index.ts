@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
@@ -9,8 +10,20 @@ import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgec
 export const getDbStatus = async () => {
   const checks = [
     { name: "userCount", db: "dm", check: prismaDm.user.count() },
-    { name: "processList", db: "dm", check: prismaDm.$queryRaw<{ count: number }[]>`SELECT COUNT(*) AS count FROM information_schema.PROCESSLIST`.then((result) => result[0].count) },
-    { name: "coverInfo", db: "coverInfo", check: prismaCoverInfo.cover.count() },
+    {
+      name: "processList",
+      db: "dm",
+      check: prismaDm.$queryRaw<
+        { count: number }[]
+      >`SELECT COUNT(*) AS count FROM information_schema.PROCESSLIST`.then(
+        (result) => result[0].count,
+      ),
+    },
+    {
+      name: "coverInfo",
+      db: "coverInfo",
+      check: prismaCoverInfo.cover.count(),
+    },
     {
       db: "dmStats",
       name: "missingStoryForUser",
@@ -23,7 +36,7 @@ export const getDbStatus = async () => {
     },
   ] as const;
 
-  const checkResults = {} as Record<typeof checks[number]["name"], number>;
+  const checkResults = {} as Record<(typeof checks)[number]["name"], number>;
   const failedChecks = [];
   for (const { name, db, check } of checks) {
     const checkResult = await check;
@@ -96,21 +109,21 @@ export const getPastecStatus = async (): Promise<
   }
 };
 
-export const getPastecSearchStatus = async (): Promise<
-  { numberOfImages: number } | { error: string }
-> => {
+export const getPastecSearchStatus = async (
+  serverIndex: number,
+): Promise<SimilarImagesResult | { error: string }> => {
   try {
     const response = (
-      await axios.post(
-        `http://${process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[0]}/index/searcher`,
-        `${process.env.INDUCKS_COVERS_ROOT}/au/bp/001/au_bp_001a_001.jpg`,
+      await axios.post<SimilarImagesResult>(
+        `http://${process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[serverIndex]}/index/searcher`,
+        `{"url": "${process.env.INDUCKS_COVERS_ROOT}/au/bp/001/au_bp_001a_001.jpg"}`,
       )
     ).data;
     if (response) {
-      const imageIds: number[] = JSON.parse(response)?.imageIds;
-      if (imageIds) {
-        if (imageIds.length) {
-          return { numberOfImages: imageIds.length };
+      console.log("Pastec /searcher response:", response);
+      if (response?.image_ids) {
+        if (response?.image_ids.length) {
+          return response;
         } else {
           return { error: "Pastec search returned no image" };
         }

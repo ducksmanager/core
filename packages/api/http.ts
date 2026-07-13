@@ -21,15 +21,24 @@ export default () =>
         break;
       case "/status/db": {
         const dbStatus = await getDbStatus();
-        if ('checkResults' in dbStatus) {
-          Sentry.metrics.gauge("processlist", dbStatus.checkResults!.processList)
+        if ("checkResults" in dbStatus) {
+          Sentry.metrics.gauge(
+            "processlist",
+            dbStatus.checkResults!.processList,
+          );
         }
         data = dbStatus;
         break;
       }
+      
       case "/status/pastecsearch":
-        data = await getPastecSearchStatus();
-        break;
+      case "/status/pastecsearch/0":
+      data = await getPastecSearchStatus(0);
+      break;
+      case "/status/pastecsearch/1":
+      data = await getPastecSearchStatus(1);
+      break;
+
       case "/status/pastec":
         data = await getPastecStatus();
         break;
