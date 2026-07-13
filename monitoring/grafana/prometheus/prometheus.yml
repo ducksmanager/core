@@ -42,6 +42,23 @@ scrape_configs:
       - target_label: __address__
         replacement: json-exporter:7979
 
+  - job_name: pastec-search-latency
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - https://api.ducksmanager.net/status/pastecsearch/0
+          - https://api.ducksmanager.net/status/pastecsearch/1
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
 # Host, container, Caddy and custom metrics are NOT scraped here — the app-server
 # Alloy agent pushes them via the remote-write receiver
 # (--web.enable-remote-write-receiver), so they land with the labels Alloy sets.
