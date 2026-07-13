@@ -50,7 +50,7 @@ prometheus.scrape "cadvisor" {
 // Caddy / HTTP metrics (Caddy admin endpoint, reachable over public-network)
 // ---------------------------------------------------------------------------
 prometheus.scrape "caddy" {
-  targets      = [{ __address__ = "caddy:2019", instance = "app-server" }]
+  targets      = [{ __address__ = "caddy:2020", instance = "app-server" }]
   metrics_path = "/metrics"
   forward_to   = [prometheus.remote_write.default.receiver]
   job_name     = "caddy"

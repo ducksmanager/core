@@ -6,13 +6,16 @@
 		format json
 		include http.log.access
 	}
-	# Expose the admin API (and its /metrics endpoint) on the container network so
-	# the monitoring agent can scrape caddy:2019/metrics. Not published to the
-	# host — only reachable by containers on the shared Docker networks.
-	admin 0.0.0.0:2019
+	# Collect per-server HTTP metrics (opt-in because of the overhead).
 	servers {
 		metrics
 	}
+}
+
+# Prometheus metrics
+# 2020 is not published to the host — only reachable by containers on the shared Docker networks, which is where the agent scrapes caddy:2020/metrics.
+:2020 {
+	metrics /metrics
 }
 
 import /etc/caddy/apps/*/Caddyfile

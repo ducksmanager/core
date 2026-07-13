@@ -3,7 +3,6 @@ services:
     container_name: monitoring-alloy
     image: grafana/alloy:latest
     restart: always
-    # cAdvisor needs the HOST cgroup namespace to see every container's cgroup
     cgroup: host
     command:
       - run
@@ -14,22 +13,16 @@ services:
     volumes:
       - ./config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # CPU / memory / load come from /proc and /sys only. The host root is
-      # deliberately NOT mounted, so the agent can't read host secrets (SSH keys,
-      # other apps' .env, etc.). Disk usage arrives as a textfile metric written
-      # by the disk-metrics sidecar below.
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker/:/var/lib/docker:ro
       - /data/metrics:/textfile:ro
       - alloy_data:/var/lib/alloy/data
     networks:
-      - public-network # reach the Caddy admin metrics endpoint (caddy:2019)
-      - dm-api-network # reach pastec, if a custom exporter is added later
+      - public-network
+      - dm-api-network
 
-  # Reports free/total space for the /data volume without exposing the host root.
-  # It only mounts /data/metrics (which lives on /data), so `df` there measures
-  # the /data filesystem; output is picked up by the agent's textfile collector.
   disk-metrics:
     container_name: monitoring-disk-metrics
     image: busybox:latest
