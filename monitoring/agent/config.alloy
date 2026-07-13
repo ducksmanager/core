@@ -60,15 +60,16 @@ prometheus.scrape "caddy" {
 // Remote-write metrics to the monitoring server
 // ---------------------------------------------------------------------------
 prometheus.remote_write "default" {
-  external_labels = {
-    instance = "app-server",
-  }
-
   endpoint {
     url = sys.env("PROM_WRITE_URL")
     basic_auth {
       username = sys.env("INGEST_USER")
       password = sys.env("INGEST_PASSWORD")
+    }
+
+    write_relabel_config {
+      target_label = "instance"
+      replacement  = "app-server"
     }
   }
 }

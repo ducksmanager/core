@@ -3,6 +3,8 @@ services:
     container_name: monitoring-alloy
     image: grafana/alloy:latest
     restart: always
+    # cAdvisor needs the HOST cgroup namespace to see every container's cgroup
+    cgroup: host
     command:
       - run
       - --storage.path=/var/lib/alloy/data
@@ -18,6 +20,7 @@ services:
       # by the disk-metrics sidecar below.
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /data/metrics:/textfile:ro
       - alloy_data:/var/lib/alloy/data
     networks:
