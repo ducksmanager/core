@@ -28,7 +28,7 @@
             ? []
             : [
                 {
-                  id: $t('No previous title in this language'),
+                  id: $t('Aucun titre précédent trouvé pour cette histoire dans cette langue'),
                   category: 'previous' as const,
                   isDisabled: true,
                 },

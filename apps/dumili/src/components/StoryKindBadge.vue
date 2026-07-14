@@ -9,7 +9,7 @@
   <b-badge v-else size="xl" :class="`text-black fw-normal fs-6 kind-${kind}`"
     >{{ text }}
     <div v-if="includedEntryKinds?.length" class="text-secondary">
-      {{ $t("includes") }}&nbsp;<story-kind-badge
+      {{ $t("inclut") }}&nbsp;<story-kind-badge
         v-for="(includedKind, includedKindIndex) in includedEntryKinds"
         :key="`included-${includedKindIndex}`"
         is-included
