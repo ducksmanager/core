@@ -137,8 +137,16 @@ import "cropperjs/dist/cropper.css";
 
 import type Cropper from "cropperjs";
 import { nextTick } from "vue";
-import VueCropper from "vue-cropperjs";
+import VueCropperModule from "vue-cropperjs";
 import { useI18n } from "vue-i18n";
+
+// vue-cropperjs ships as CommonJS; depending on the bundler's interop the
+// default import can be the { __esModule, default } wrapper instead of the
+// component itself. Rendering the wrapper yields an empty instance whose
+// cropper methods (getData, getCroppedCanvas, …) are missing, so unwrap it.
+const VueCropper =
+  (VueCropperModule as unknown as { default?: typeof VueCropperModule })
+    .default ?? VueCropperModule;
 
 import { edgecreatorSocketInjectionKey } from "~/composables/useEdgecreatorSocket";
 import useSaveEdge from "~/composables/useSaveEdge";
