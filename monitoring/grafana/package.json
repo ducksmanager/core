@@ -4,10 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "docker compose -f docker-compose-dev.yml up --force-recreate",
-    "dashboards:pull": "gcx resources pull dashboards/dm-overview -p resources",
-    "dashboards:diff": "gcx resources push dashboards/dm-overview -p resources --dry-run",
-    "dashboards:push": "gcx resources push dashboards/dm-overview -p resources",
-    "prod:push-dashboards": "GRAFANA_SERVER=https://grafana.ducksmanager.net GRAFANA_ORG_ID=1 gcx resources push dashboards/dm-overview -p resources",
+    "dashboards:pull": "bash bin/dashboards-pull.sh",
     "prod:build-docker-grafana": "REPO_NAME=ghcr.io/bperel/monitoring-grafana pnpm -F '~ci' prod:build-docker --target grafana -f monitoring/grafana/Dockerfile",
     "prod:build-docker-prometheus": "REPO_NAME=ghcr.io/bperel/monitoring-prometheus pnpm -F '~ci' prod:build-docker --target prometheus -f monitoring/grafana/Dockerfile",
     "prod:build-docker-loki": "REPO_NAME=ghcr.io/bperel/monitoring-loki pnpm -F '~ci' prod:build-docker --target loki -f monitoring/grafana/Dockerfile",

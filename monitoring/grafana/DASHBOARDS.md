@@ -1,78 +1,52 @@
 # Dashboards
 
-Two mechanisms coexist in this stack:
+All dashboards are managed by Grafana **file provisioning**: the JSON files in
+`dashboards/` are baked into the image (`Dockerfile`) and provisioned from
+`/etc/grafana/dashboards` (see `provisioning/dashboards/dashboards.yaml`). On
+every deploy the committed files are the source of truth.
 
-| Dashboard | Managed by | Where it lives |
-| --- | --- | --- |
-| `ducksmanager-overview` | **gcx** (as code) | `resources/dashboards/dm-overview.json` |
-| `cadvisor`, `node-exporter-full` | Grafana **file provisioning** | `dashboards/*.json` |
+| Dashboard                        | Notes                                             |
+| -------------------------------- | ------------------------------------------------- |
+| `ducksmanager-overview`          | The one we hand-edit — has the editing loop below |
+| `cadvisor`, `node-exporter-full` | Static upstream community dashboards              |
 
-`ducksmanager-overview` is the one we hand-edit, so it uses [gcx](https://github.com/grafana/gcx)
-to get an *edit-in-UI → see-the-diff → commit* loop. The other two are static
-upstream community dashboards, so plain file provisioning is simpler.
+## The editing loop (ducksmanager-overview)
 
-## The editing loop
+`allowUiUpdates: true` lets you edit in the UI; a small script pulls your changes
+back into the repo so you can diff and commit them.
 
 1. Edit `DucksManager Overview` in the Grafana UI and **Save**.
 2. Pull the live state back into the repo:
    ```sh
    cd monitoring/grafana
-   GRAFANA_SERVER=https://grafana.ducksmanager.net GRAFANA_TOKEN=<sa-token> pnpm dashboards:pull
+   # dev (localhost:3000, admin/admin) — nothing to set:
+   pnpm dashboards:pull
+   # prod:
+   GRAFANA_URL=https://grafana.ducksmanager.net GRAFANA_TOKEN=<sa-token> pnpm dashboards:pull
    ```
-3. `git diff resources/` shows exactly what changed → commit.
-4. On the next push to `master` touching `monitoring/grafana/**`, the
-   `deploy-monitoring` workflow runs `gcx resources push`, so the committed
-   file becomes the source of truth again.
+3. `git diff dashboards/ducksmanager-overview.json` shows exactly what changed → commit.
+4. The next push to `master` touching `monitoring/grafana/**` triggers
+   `deploy-monitoring`, which rebuilds the image and re-provisions the file — so
+   the commit wins over any lingering UI state.
 
-Preview what a push *would* change without applying it:
-```sh
-pnpm dashboards:diff   # gcx resources push ... --dry-run
-```
+The pull script (`bin/dashboards-pull.sh`) uses Grafana's classic API
+(`GET /api/dashboards/uid/dm-overview`), strips the DB-local `id` and the
+UI save-counter `version`, and sorts keys so diffs stay clean.
 
-## Authentication
+## Auth for the pull script
 
-gcx reads a single context from env vars (best for CI and one-off commands):
+| Var             | Value                                                                               |
+| --------------- | ----------------------------------------------------------------------------------- |
+| `GRAFANA_URL`   | `https://grafana.ducksmanager.net` (prod) or `http://localhost:3000` (dev, default) |
+| `GRAFANA_TOKEN` | a Grafana **service-account token** (Editor role) — Bearer auth                     |
+| `GRAFANA_AUTH`  | alternative `user:password` basic auth (default `admin:admin` for dev)              |
 
-| Var | Value |
-| --- | --- |
-| `GRAFANA_SERVER` | `https://grafana.ducksmanager.net` (or `http://localhost:3000` in dev) |
-| `GRAFANA_TOKEN` | a Grafana **service-account token** with the **Editor** role |
-| `GRAFANA_ORG_ID` | `1` (OSS single-org) |
+Only the pull step needs credentials, and only when pulling from prod. Deploys
+provision the committed files directly — no token required in CI.
 
-Create the token in Grafana under *Administration → Service accounts*. In CI it
-comes from the `MONITORING_GRAFANA_SA_TOKEN` GitHub Actions secret (environment
-`production`). Alternatively, `gcx login` stores contexts in
-`~/.config/gcx/config.yaml` for interactive local use.
+## Note
 
-## One-time bootstrap
-
-The `resources/dashboards/dm-overview.json` manifest was generated from the old
-provisioned JSON, so the repo is already pushable. To make it byte-identical to
-what gcx emits (and guarantee clean future diffs), once the toggle-enabled
-Grafana is deployed:
-
-```sh
-cd monitoring/grafana
-export GRAFANA_SERVER=https://grafana.ducksmanager.net GRAFANA_TOKEN=<sa-token> GRAFANA_ORG_ID=1
-pnpm dashboards:push    # push the bootstrap manifest
-pnpm dashboards:pull    # re-pull the canonical form
-git diff resources/     # commit any normalization
-```
-
-## Requirements
-
-- Grafana **12+** with the `kubernetesDashboards` feature toggle (set in
-  `grafana.ini`) — this exposes the `dashboard.grafana.app` API gcx uses.
-- [gcx](https://github.com/grafana/gcx) on your PATH (currently *public preview*):
-  ```sh
-  brew install grafana/grafana/gcx
-  # or: curl -fsSL https://raw.githubusercontent.com/grafana/gcx/main/scripts/install.sh | sh
-  ```
-  CI installs it via the same official script.
-
-## Folder note
-
-The gcx-managed dashboard currently lands in Grafana's **General** folder (the
-manifest has no folder reference), whereas file provisioning put everything in a
-`DucksManager` folder. To restore the folder, add a `Folder` manifest under
-`resources/` and set `spec.folderUID` (Grafana pushes folders before dashboards).
+The first `pnpm dashboards:pull` will produce a large one-time diff: Grafana's
+API returns the full ("fat") dashboard model with every panel default filled in,
+replacing the minimal hand-written JSON. After that first commit, diffs are
+clean and meaningful.
