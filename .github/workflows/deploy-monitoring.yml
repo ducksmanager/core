@@ -61,3 +61,11 @@ jobs:
 
       - name: Deploy
         run: pnpm -F '~monitoring-grafana' prod:deploy
+
+      - name: Install gcx
+        run: curl -fsSL https://raw.githubusercontent.com/grafana/gcx/main/scripts/install.sh | INSTALL_DIR=/usr/local/bin sh
+
+      - name: Push dashboards
+        env:
+          GRAFANA_TOKEN: ${{ secrets.MONITORING_GRAFANA_SA_TOKEN }}
+        run: pnpm -F '~monitoring-grafana' prod:push-dashboards

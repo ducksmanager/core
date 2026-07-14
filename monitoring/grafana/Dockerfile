@@ -6,7 +6,7 @@ FROM grafana/grafana:latest AS grafana
 LABEL org.opencontainers.image.authors="Bruno Perel"
 COPY monitoring/grafana/grafana.ini /etc/grafana/grafana.ini
 COPY monitoring/grafana/provisioning /etc/grafana/provisioning
-COPY monitoring/grafana/dashboards /var/lib/grafana/dashboards
+COPY monitoring/grafana/dashboards /etc/grafana/dashboards
 
 FROM prom/prometheus:latest AS prometheus
 LABEL org.opencontainers.image.authors="Bruno Perel"
