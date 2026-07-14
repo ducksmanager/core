@@ -6,6 +6,7 @@ import { useSocketEvents } from "socket-call-server";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import namespaces from "../namespaces";
+import { getPrefixedEntryurl } from "../coa/issue-details";
 
 let session: InferenceSession | undefined = undefined;
 
@@ -232,7 +233,8 @@ export const findSimilarImages = async (
         storyversioncode: string;
         storycode: string;
         score: number;
-        fullUrl: string;
+        sitecode: string;
+        url: string;
       }[]
     >`
     WITH 
@@ -249,7 +251,8 @@ export const findSimilarImages = async (
         e.issuecode,
         sv.storyversioncode,
         sv.storycode,
-        CONCAT('webusers/webusers/', eu.url) as fullUrl
+        eu.sitecode,
+        eu.url
       FROM vector_similarity
       INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
       INNER JOIN inducks_entryurl eu ON (eu.entrycode = e.entrycode AND eu.sitecode = 'webusers')
@@ -259,7 +262,10 @@ export const findSimilarImages = async (
       LIMIT 5
     `;
     console.log("Query done, results:", results);
-    return { results } as const;
+    return { results: results.map(({ sitecode, url, ...rest }) => ({
+      ...rest,
+      fullUrl: getPrefixedEntryurl(url, sitecode)
+    })) } as const;
   } catch (error) {
     console.error("Error finding similar images:", error);
     return {

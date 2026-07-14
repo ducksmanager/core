@@ -4,6 +4,7 @@ import type { StorySearchResults } from "~dm-types/StorySearchResults";
 import type { inducks_story } from "~prisma-schemas/schemas/coa";
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
+import { getPrefixedEntryurl } from "../issue-details";
 
 const getStoryAndStoryversionDetails = async (
   searchResults: StorySearchResults<false>["results"],
@@ -37,19 +38,21 @@ const getStoryAndStoryversionDetails = async (
   return searchResults
     .filter(
       ({ storycode }) =>
-        storyDetails[storycode].originalstoryversioncode && storyDetails[storycode].originalstoryversioncode in storyversionDetails
+        storyDetails[storycode].originalstoryversioncode &&
+        storyDetails[storycode].originalstoryversioncode in storyversionDetails,
     )
     .map(({ storycode, score }) => {
-      const storyversion = storyversionDetails[storyDetails[storycode].originalstoryversioncode!];
-    return ({
-      ...storyDetails[storycode],
-      ...storyversion,
-      kind: storyversion.kind!,
-      score,
-      storycode,
-      url: storyUrls[storycode],
+      const storyversion =
+        storyversionDetails[storyDetails[storycode].originalstoryversioncode!];
+      return {
+        ...storyDetails[storycode],
+        ...storyversion,
+        kind: storyversion.kind!,
+        score,
+        storycode,
+        url: storyUrls[storycode],
+      };
     });
-  });
 };
 
 const getFullStoriesFromKeywords = async (keywords: string[]) => {
@@ -83,10 +86,13 @@ const getStoryDetails = async (storycodes: string[]) =>
             storycode: { in: storycodes },
           },
         }),
-        prismaCoa.$queryRaw<{ storycode: string; url: string }[]>`
-            SELECT storycode, CONCAT('webusers/webusers/', url) AS url
+        prismaCoa.$queryRaw<
+          { storycode: string; sitecodeAndUrl: `${string}|${string}` }[]
+        >`
+            SELECT storycode, CONCAT(sitecode,'|', url) AS sitecodeAndUrl
             FROM (
               SELECT s.storycode,
+                    eu.sitecode,
                     eu.url,
                     i.oldestdate,
                     ROW_NUMBER() OVER (
@@ -109,7 +115,12 @@ const getStoryDetails = async (storycodes: string[]) =>
       ])
         .then(([stories, storyUrls]) => ({
           stories: stories.groupBy("storycode"),
-          storyUrls: storyUrls.groupBy("storycode", "url"),
+          storyUrls: storyUrls
+            .map(({ sitecodeAndUrl, storycode }) => {
+              const [sitecode, urlPart] = sitecodeAndUrl.split("|");
+              return { storycode, url: getPrefixedEntryurl(urlPart, sitecode) };
+            })
+            .groupBy("storycode", "url"),
         }))
         .catch((e) => ({ error: "Error", errorDetails: e }));
 
@@ -123,8 +134,11 @@ const getStoryversionsDetails = (storyversioncodes: string[]) =>
     .then((data) => ({ storyversions: data.groupBy("storyversioncode") }))
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
-  const getStoryPreviousTitles = async (storycode: string, languagecode: string) =>
-    prismaCoa.$queryRaw<{ title: string }[]>`
+const getStoryPreviousTitles = async (
+  storycode: string,
+  languagecode: string,
+) =>
+  prismaCoa.$queryRaw<{ title: string }[]>`
       select DISTINCT inducks_entry.title AS title
       from inducks_storyversion
       inner join inducks_entry using (storyversioncode)
@@ -134,7 +148,7 @@ const getStoryversionsDetails = (storyversioncodes: string[]) =>
       where storycode=${storycode}
       and COALESCE(inducks_entry.languagecode, inducks_publication.languagecode, inducks_country.defaultlanguage) = ${languagecode}
       order by oldestdate desc;
-    `.then((data) => data.map(({ title }) => ( title )));
+    `.then((data) => data.map(({ title }) => title));
 
 const getStoriesStoryjobs = (storyversioncodes: string[]) =>
   prismaCoa.inducks_storyjob
@@ -152,7 +166,7 @@ const getStoriesStoryjobs = (storyversioncodes: string[]) =>
     .catch((e) => ({ error: "Error", errorDetails: e }));
 
 const getStoriesHeroCharacter = (storycodes: string[]) =>
-  prismaCoa.inducks_herocharacter 
+  prismaCoa.inducks_herocharacter
     .findMany({
       select: {
         storycode: true,
