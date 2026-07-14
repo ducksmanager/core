@@ -82,7 +82,10 @@ export const runOcrOnImage = async (
 //   height: height + extendBy,
 // });
 
-const runOcr = async (url: string, languagecode: string): Promise<OcrResult[]> =>
+const runOcr = async (
+  url: string,
+  languagecode: string,
+): Promise<OcrResult[]> =>
   axios
     .post(process.env.OCR_HOST!, { url, language: languagecode })
     .then(({ data }) => data);

@@ -16,7 +16,10 @@ import type { SessionUser } from "~dm-types/SessionUser";
 
 import { authenticateUser } from "./services/_auth";
 import type { FullIndexation } from "./services/indexation";
-import { handleHttpFileUpload, server as indexation } from "./services/indexation";
+import {
+  handleHttpFileUpload,
+  server as indexation,
+} from "./services/indexation";
 import { server as indexations } from "./services/indexations";
 
 cloudinary.config(true);
@@ -40,7 +43,12 @@ indexations(io);
 indexation(io);
 
 io.engine.on("connection_error", (err) => {
-  console.error("socket.io connection_error", err.code, err.message, err.context);
+  console.error(
+    "socket.io connection_error",
+    err.code,
+    err.message,
+    err.context,
+  );
 });
 
 httpServer.on("request", async (req: IncomingMessage, res: ServerResponse) => {
@@ -57,8 +65,7 @@ httpServer.on("request", async (req: IncomingMessage, res: ServerResponse) => {
   }
 
   const match =
-    req.method === "POST" &&
-    req.url?.match(/^\/upload\/indexation\/([^?/]+)/);
+    req.method === "POST" && req.url?.match(/^\/upload\/indexation\/([^?/]+)/);
   if (!match) {
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Not found" }));

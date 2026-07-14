@@ -1,6 +1,7 @@
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import prettierConfig from "eslint-config-prettier";
+import prettierPlugin from "eslint-plugin-prettier/recommended";
 import tseslint from "typescript-eslint";
 import apiRules from "../../../util/lint/api-rules.mjs";
 
@@ -8,6 +9,7 @@ export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.recommended,
   prettierConfig,
+  prettierPlugin,
   {
     ignores: [
       "**/node_modules",

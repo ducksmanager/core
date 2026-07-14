@@ -3,7 +3,9 @@ import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-export const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
+export const authenticateUser = async (
+  token?: string | null,
+): Promise<SessionUser> =>
   new Promise((resolve, reject) => {
     if (!token) {
       reject("No token provided");
@@ -19,8 +21,7 @@ export const authenticateUser = async (token?: string | null): Promise<SessionUs
           reject(`Invalid token: ${err}`);
         } else {
           const user = payload as
-            | Omit<SessionUser, "token">
-            | { data?: Omit<SessionUser, "token"> };
+            Omit<SessionUser, "token"> | { data?: Omit<SessionUser, "token"> };
           if ("data" in user) {
             resolve(user.data as SessionUser);
           } else if ("id" in user) {
