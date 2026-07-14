@@ -43,7 +43,7 @@ scrape_configs:
         replacement: json-exporter:7979
 
   - job_name: pastec-search-latency
-    scrape_interval: 60s
+    scrape_interval: 300s
     metrics_path: /probe
     params:
       module: [http_2xx]
