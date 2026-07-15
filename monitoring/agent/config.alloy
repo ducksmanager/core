@@ -110,3 +110,40 @@ loki.write "default" {
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Traces: receive OTLP from the app services and
+// forward to Tempo on the monitoring server. The apps push to this agent over
+// the shared Docker network; the agent adds auth
+// and ships them out, mirroring the metrics/logs push model.
+// ---------------------------------------------------------------------------
+otelcol.receiver.otlp "in" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.processor.batch.traces.input]
+  }
+}
+
+otelcol.processor.batch "traces" {
+  output {
+    traces = [otelcol.exporter.otlphttp.tempo.input]
+  }
+}
+
+otelcol.auth.basic "ingest" {
+  username = sys.env("INGEST_USER")
+  password = sys.env("INGEST_PASSWORD")
+}
+
+otelcol.exporter.otlphttp "tempo" {
+  client {
+    endpoint = sys.env("TRACES_WRITE_URL")
+    auth     = otelcol.auth.basic.ingest.handler
+  }
+}

@@ -23,6 +23,9 @@ services:
     container_name: dumili-api
     image: ghcr.io/bperel/dumili-api
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=dumili-api
     networks:
       - public-network
       - dumili-network

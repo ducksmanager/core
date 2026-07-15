@@ -3,6 +3,9 @@ services:
     container_name: ducksmanager-api
     image: ghcr.io/bperel/ducksmanager-api
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=ducksmanager-api
     networks:
       - public-network
       - dm-api-network
@@ -12,6 +15,9 @@ services:
     container_name: ducksmanager-api-websocket
     image: ghcr.io/bperel/ducksmanager-api:websocket
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=ducksmanager-api-websocket
     volumes:
       - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
       - /data/covers:${ENTRYURLS_DIR}
@@ -25,6 +31,9 @@ services:
     container_name: ducksmanager-api-story-search
     image: ghcr.io/bperel/ducksmanager-api:story-search
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=ducksmanager-api-story-search
     volumes:
       - /data/covers:${ENTRYURLS_DIR}
       - /data/covers-by-storycode:${ENTRYURLS_DIR}-by-storycode

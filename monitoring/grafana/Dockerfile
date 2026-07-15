@@ -23,3 +23,7 @@ COPY monitoring/grafana/blackbox/blackbox.yml /etc/blackbox/blackbox.yml
 FROM quay.io/prometheuscommunity/json-exporter:latest AS json-exporter
 LABEL org.opencontainers.image.authors="Bruno Perel"
 COPY monitoring/grafana/json-exporter/config.yml /etc/json-exporter/config.yml
+
+FROM grafana/tempo:2.10.7 AS tempo
+LABEL org.opencontainers.image.authors="Bruno Perel"
+COPY monitoring/grafana/tempo/tempo.yaml /etc/tempo/tempo.yaml

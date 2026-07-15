@@ -61,10 +61,27 @@ services:
     networks:
       - monitoring-network
 
+  tempo:
+    container_name: monitoring-tempo
+    image: ghcr.io/bperel/monitoring-tempo
+    restart: always
+    command:
+      - -config.file=/etc/tempo/tempo.yaml
+    # OTLP/HTTP published on loopback so the host Caddy can route
+    # ingest.ducksmanager.net/v1/traces -> here. Grafana queries Tempo over the
+    # monitoring-network (tempo:3200), so the query port isn't published.
+    ports:
+      - "127.0.0.1:4318:4318"
+    volumes:
+      - tempo_data:/var/tempo
+    networks:
+      - monitoring-network
+
 volumes:
   grafana_data:
   prometheus_data:
   loki_data:
+  tempo_data:
 
 networks:
   monitoring-network:

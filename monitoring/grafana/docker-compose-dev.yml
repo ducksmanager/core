@@ -66,6 +66,20 @@ services:
     networks:
       - monitoring-network
 
+  tempo:
+    container_name: monitoring-tempo-dev
+    image: grafana/tempo:2.10.7
+    command:
+      - -config.file=/etc/tempo/tempo.yaml
+    ports:
+      - "3200:3200" # query API
+      - "4318:4318" # OTLP HTTP (send test spans here)
+      - "4317:4317" # OTLP gRPC
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml
+    networks:
+      - monitoring-network
+
 networks:
   monitoring-network:
     name: monitoring-network

@@ -15,3 +15,37 @@ datasources:
     access: proxy
     uid: loki
     url: http://loki:3100
+    jsonData:
+      # Turn a trace_id in a log line into a link to the trace in Tempo.
+      derivedFields:
+        - name: trace_id
+          matcherType: label
+          matcherRegex: trace_id
+          datasourceUid: tempo
+          url: "$${__value.raw}"
+          urlDisplayLabel: "View trace"
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    uid: tempo
+    url: http://tempo:3200
+    jsonData:
+      # Span -> the matching Loki logs (by trace_id, plus the container label).
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        filterBySpanID: false
+        tags:
+          - key: service.name
+            value: container
+      # Span -> RED metrics from the span-metrics generator.
+      tracesToMetrics:
+        datasourceUid: prometheus
+      # Service map / node graph, powered by the metrics generator's output.
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true
+      streamingEnabled:
+        search: true

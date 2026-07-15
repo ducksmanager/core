@@ -14,6 +14,9 @@ services:
       - .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    ports:
+      - "4319:4318" # OTLP HTTP receiver (dev Tempo already owns host :4318)
+      - "4327:4317" # OTLP gRPC receiver
     # privileged + cgroup mount are only needed to run cAdvisor locally under
     # rootless podman / a VM; a real Linux + Docker app server does not need them.
     privileged: true

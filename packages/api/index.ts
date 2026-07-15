@@ -12,6 +12,7 @@ import type { NamespaceProxyTarget } from "socket-call-server";
 import type { SessionUser } from "~dm-types/SessionUser";
 
 import createHttpServer from "./http";
+import { otlpSpanProcessors } from "./instrument-otlp";
 import { server as app } from "./services/app";
 import { server as auth } from "./services/auth";
 import { server as bookcase } from "./services/bookcase";
@@ -67,11 +68,16 @@ for (const envVar of requiredEnvVars) {
 }
 
 if (process.env.SENTRY_DSN) {
-  Sentry.init({
+  const client = Sentry.init({
     dsn: process.env.SENTRY_DSN,
     tracesSampleRate: 1.0,
     openTelemetryInstrumentations: [new SocketIoInstrumentation()],
+    skipOpenTelemetrySetup: true,
   });
+  // Run Sentry's own OTel setup, plus our OTLP exporter to Tempo (when set).
+  if (client) {
+    Sentry.initOpenTelemetry(client, { spanProcessors: otlpSpanProcessors() });
+  }
 }
 
 const io = createSocketServer(3001, createHttpServer());
