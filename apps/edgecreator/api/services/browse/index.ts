@@ -35,14 +35,15 @@ const getSvgMetadata = (
 
 const findPublishedEdges = async (publicationcode: string) => {
   const [countrycode, magazinecode] = publicationcode.split("/");
-  const coaIssues = await prismaCoa.inducks_issue.findMany({
+  const coaIssues = (await prismaCoa.inducks_issue.findMany({
     select: {
       issuecode: true,
+      issuenumber: true,
     },
     where: {
       publicationcode,
     },
-  });
+  })).groupBy('issuecode', 'issuenumber');
   const existingEdges = (
     await prismaDm.edge.findMany({
       select: {
@@ -51,27 +52,14 @@ const findPublishedEdges = async (publicationcode: string) => {
       },
       where: {
         issuecode: {
-          in: coaIssues.map((issue) => issue.issuecode),
+          in: Object.keys(coaIssues)
         },
       },
     })
-  ).groupBy("issuecode");
-
-  const coaIssuecodesByShortIssuecode = (
-    await prismaCoa.inducks_issue.findMany({
-      select: {
-        issuecode: true,
-      },
-      where: {
-        publicationcode,
-      },
-    })
-  )
-    .map((issue) => ({
-      ...issue,
-      shortIssuecode: issue.issuecode.replace(/[ ]+/, " "),
-    }))
-    .groupBy("shortIssuecode", "issuecode");
+  ).map((issue) => ({
+    ...issue,
+    fileName: `${publicationcode.split('/')[1]}.${coaIssues[issue.issuecode].replace(/[ ]+/, "")}.png`,
+  })).groupBy("fileName");
 
   const genDir = `${getEdgesPath()}/${countrycode}/gen`;
   if (!existsSync(genDir)) {
@@ -85,17 +73,14 @@ const findPublishedEdges = async (publicationcode: string) => {
     .filter((file) => new RegExp(`^${magazinecode}..+.png$`).test(file.name))
     .flatMap((file) => {
       const filePath = path.join(file.parentPath, file.name);
-      const [magazinecode, issuenumberShort] = file.name.split(".");
-      const publicationcode = `${countrycode}/${magazinecode}`;
-      const shortIssuecode = `${publicationcode} ${issuenumberShort}`;
 
-      let svgUrl: string | undefined;
-      const edge = existingEdges[`${publicationcode} ${issuenumberShort}`];
+      const edge = existingEdges[file.name];
       if (!edge) {
         // Auto-generated edge image
         return [];
       }
 
+      let svgUrl: string | undefined;
       const potentialSvgPath = filePath.replace(".png", ".svg");
       if (existsSync(potentialSvgPath)) {
         svgUrl = potentialSvgPath.replace(/^.+\/edges\//, "");
@@ -103,7 +88,7 @@ const findPublishedEdges = async (publicationcode: string) => {
 
       return {
         id: edge.id,
-        issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
+        issuecode: edge.issuecode,
         publicationcode,
         url: filePath.replace(/^.+\/edges\//, ""),
         svgUrl,
