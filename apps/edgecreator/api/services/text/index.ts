@@ -2,6 +2,8 @@ import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import { useSocketEvents } from "socket-call-server";
 
+cloudinary.config(true);
+
 const sessionHashes: Record<string, string> = {};
 
 const generateImage = (parameters: {
@@ -30,16 +32,18 @@ const generateImage = (parameters: {
     })
 
     .catch((response: Error) => Promise.reject(response))
-    .then(() =>
-      cloudinary.uploader.upload(
-        `${process.env.FONT_IMAGE_GEN_URL!}${sessionHashes[parameters.font]}?${new URLSearchParams(
-          {
-            rbe: "fixed",
-            rt: parameters.text,
-            fg: parameters.color,
-            bg: parameters.colorBackground,
-          },
-        ).toString()}`,
+    .then(() => {
+      const url = `${process.env.FONT_IMAGE_GEN_URL!}${sessionHashes[parameters.font]}?${new URLSearchParams(
+        {
+          rbe: "fixed",
+          rt: parameters.text,
+          fg: parameters.color,
+          bg: parameters.colorBackground,
+        },
+      ).toString()}`;
+      console.log(`Generating text image: url=${url}`);
+      return cloudinary.uploader.upload(
+        url,
         {
           folder: "texts",
           async: false,
@@ -53,8 +57,8 @@ const generateImage = (parameters: {
           const { width, height, secure_url: url } = result!;
           Promise.resolve({ width, height, url });
         },
-      ),
-    );
+      );
+    });
 
 const listenEvents = () => ({
   getText: (parameters: {
