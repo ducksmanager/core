@@ -67,7 +67,6 @@ meta:
               )
             "
           />
-          {{ JSON.stringify({ publicationcode }) }}
           <Publication
             :publicationcode="publicationcode"
             :publicationname="publicationcode"
