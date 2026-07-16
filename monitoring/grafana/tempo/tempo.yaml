@@ -30,6 +30,9 @@ metrics_generator:
         send_exemplars: true
   traces_storage:
     path: /var/tempo/generator/traces
+  processor:
+    local_blocks:
+      flush_to_storage: true
 
 storage:
   trace:
@@ -42,4 +45,4 @@ storage:
 overrides:
   defaults:
     metrics_generator:
-      processors: [service-graphs, span-metrics]
+      processors: [service-graphs, span-metrics, local-blocks]
