@@ -26,13 +26,22 @@
       cols="4"
       class="d-flex flex-column align-items-center justify-content-center position-relative h-100 text-normal"
     >
-      <template v-if="urlEncodedStorycode">
+      <template v-if="entry.acceptedStory && urlEncodedStorycode">
         {{
-          storyDetails[entry.acceptedStory!.storycode].title ||
+          storyDetails[entry.acceptedStory.storycode].title ||
           $t("(Sans titre)")
         }}
-        &nbsp;<inducks-link
-          :storycode="entry.acceptedStory!.storycode" /></template
+        <div>
+          <inducks-link :storycode="entry.acceptedStory!.storycode" />
+          <StoryKindMismatchHint
+            :entry="entry"
+            :suggestion="entry.acceptedStory"
+          />
+          <StoryPageCountMismatchHint
+            v-model="entry"
+            :suggestion="entry.acceptedStory"
+            location="toc"
+          /></div></template
       ><template v-else>{{ $t("Contenu inconnu") }}</template>
     </b-col>
     <b-col

@@ -269,7 +269,6 @@ watch(
 .table-of-contents {
   background-color: #eee;
   color: black;
-  white-space: nowrap;
   user-select: none;
 
   :deep(.card-header) {

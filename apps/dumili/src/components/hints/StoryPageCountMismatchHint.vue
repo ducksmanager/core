@@ -9,7 +9,7 @@
     <Teleport to="body">
       <b-popover
         lazy
-        :target="`page-mismatch-${suggestion.storycode.replace(/[ \t]/g, '-')}-${location}`"
+        :target="`page-mismatch-entry-${suggestion.entryId}-${location}`"
         interactive
         ><div>
           {{
@@ -24,10 +24,7 @@
         </div>
         <template v-if="location === 'button'">
           <b-button
-            v-if="
-              originalPagesCount <
-              Math.max(entry.entirepages, pagesAvailableCount)
-            "
+            v-if="originalPagesCount <= pagesAvailableCount"
             class="mt-2"
             variant="success"
             size="sm"
@@ -47,7 +44,7 @@
             $t(
               "Il n'y a pas assez de pages disponibles après cette entrée pour ajuster le nombre de pages ({extraPagesNeeded} pages supplémentaires nécessaires).",
               {
-                extraPagesNeeded: originalPagesCount - pagesAvailableCount,
+                extraPagesNeeded: pagesAvailableCount - entry.entirepages,
               },
             )
           }}</b-alert></template
@@ -55,7 +52,7 @@
       >
     </Teleport>
     <i-bi-exclamation-triangle-fill
-      :id="`page-mismatch-${suggestion.storycode.replace(/[ \t]/g, '-')}-${location}`"
+      :id="`page-mismatch-entry-${suggestion.entryId}-${location}`"
       class="mx-1"
   /></template>
 </template>
@@ -67,7 +64,7 @@ import { getEntryPages } from "~dumili-utils/entryPages";
 
 const { suggestion } = defineProps<{
   suggestion: { storycode: string; entryId: number };
-  location: "button" | "dropdown";
+  location: "button" | "dropdown" | "toc";
 }>();
 
 const entry = defineModel<FullEntry>({
