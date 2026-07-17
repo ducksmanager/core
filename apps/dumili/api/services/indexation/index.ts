@@ -1268,7 +1268,7 @@ const listenEvents = (services: IndexationServices) => ({
 
   updateEntry: async (
     entryId: entry["id"],
-    data: Pick<entry, "entirepages" | "title" | "position">,
+    data: Partial<Pick<entry, "entirepages" | "title" | "position">>,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id }) => id === entryId,

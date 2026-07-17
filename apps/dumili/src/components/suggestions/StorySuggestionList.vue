@@ -9,6 +9,7 @@
         aiStorySuggestionId !== null ? 'ai' : 'user'
     "
     :item-link-classes="['h-100p']"
+    :extra-button-class="['h-100p']"
     :show-tooltips="!entry.includedInEntry"
   >
     <template #default="{ suggestion, location }">

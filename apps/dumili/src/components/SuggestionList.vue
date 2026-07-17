@@ -67,6 +67,7 @@
         <div
           v-else
           class="d-flex w-100 justify-content-between align-items-center"
+          :class="extraButtonClass"
         >
           <slot
             v-if="current"
@@ -106,6 +107,7 @@ const {
   itemClass = () => [],
   selectedItemClass = () => ["selected"],
   extraMenuClass = [],
+  extraButtonClass = [],
   textEditable = false,
   showTooltips = true,
 } = defineProps<{
@@ -116,6 +118,7 @@ const {
   itemClass?: (suggestion: S) => string[];
   selectedItemClass?: (suggestion: S) => string[];
   extraMenuClass?: string[];
+  extraButtonClass?: string[];
   textEditable?: boolean;
   showTooltips?: boolean;
 }>();

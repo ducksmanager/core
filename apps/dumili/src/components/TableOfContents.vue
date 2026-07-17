@@ -141,8 +141,8 @@
           </div>
           <TableOfContentsEntry
             v-model="nonIncludedEntries[idx]"
-            @on-entry-resize-stop="($event) => onEntryResizeStop(idx, $event)"
-            @on-entry-drag-stop="($event) => onEntryDragStop(idx, $event)"
+            @on-entry-resize-stop="($event) => onEntryResizeStop(entry, $event)"
+            @on-entry-drag-stop="($event) => onEntryDragStop(entry, $event)"
           />
         </template>
       </b-col>
@@ -213,15 +213,16 @@ const showCreateEntryAfter = (entryIdx: number) => {
   );
 };
 
-const onEntryResizeStop = (entryIdx: number, height: number) => {
-  indexation.value!.entries[entryIdx].entirepages = Math.max(
-    0,
-    Math.round(height / pageHeight.value),
-  );
+const onEntryResizeStop = (entry: { id: number }, height: number) => {
+  indexationSocket.value!.updateEntry(entry.id, {
+    entirepages: Math.max(0, Math.round(height / pageHeight.value)),
+  });
 };
 
-const onEntryDragStop = (entryIdx: number, y: number) => {
-  indexation.value!.entries[entryIdx].position = 1 + y / pageHeight.value;
+const onEntryDragStop = (entry: { id: number }, y: number) => {
+  indexationSocket.value!.updateEntry(entry.id, {
+    position: 1 + Math.round(y / pageHeight.value),
+  });
 };
 
 const createEntry = (position: number) =>
