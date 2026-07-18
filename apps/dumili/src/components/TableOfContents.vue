@@ -1,4 +1,20 @@
 <template>
+  <DefineCreateEntryButton v-slot="{ sourceEntryIdx, createAfter }">
+    <div
+      class="position-absolute w-100 d-flex align-items-center justify-content-center"
+      :style="{
+        height: `${pageHeight}px`,
+        top: `${pageHeight * (createAfter ? indexation.entries[sourceEntryIdx].position + indexation.entries[sourceEntryIdx].entirepages - 1 : indexation.entries[sourceEntryIdx].position - 2)}px`,
+      }"
+    >
+      <b-button
+        class="fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
+        variant="success"
+        @click="createEntry(sourceEntryIdx, createAfter)"
+        >{{ $t("Ajouter une entrée") }}</b-button
+      >
+    </div>
+  </DefineCreateEntryButton>
   <b-card
     no-body
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
@@ -123,26 +139,22 @@
           v-for="(entry, idx) in nonIncludedEntries"
           :key="nonIncludedEntries[idx].id"
         >
-          <div
-            class="position-absolute w-100 d-flex align-items-center justify-content-center"
-            :style="{
-              borderTop: '1px solid rgba(0,0,0,0.5)',
-              height: `${pageHeight}px`,
-              top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
-            }"
-          >
-            <b-button
-              v-if="showCreateEntryAfter(idx)"
-              class="fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
-              variant="success"
-              @click="createEntry(entry.position + entry.entirepages)"
-              >{{ $t("Ajouter une entrée") }}</b-button
-            >
-          </div>
+          <CreateEntryButton
+            v-if="showCreateEntry(idx, false)"
+            :source-entry-idx="idx"
+            :create-after="false"
+          />
+
           <TableOfContentsEntry
             v-model="nonIncludedEntries[idx]"
             @on-entry-resize-stop="($event) => onEntryResizeStop(entry, $event)"
             @on-entry-drag-stop="($event) => onEntryDragStop(entry, $event)"
+          />
+
+          <CreateEntryButton
+            v-if="showCreateEntry(idx, true)"
+            :source-entry-idx="idx"
+            :create-after="true"
           />
         </template>
       </b-col>
@@ -167,6 +179,12 @@ const indexationEdit = ref() as Ref<
     numberOfPages: number;
   }
 >;
+
+const { define: DefineCreateEntryButton, reuse: CreateEntryButton } =
+  createReusableTemplate<{
+    sourceEntryIdx: number;
+    createAfter: boolean;
+  }>();
 
 watch(
   indexation,
@@ -202,15 +220,25 @@ const getInputProps = () => ({
     : { cursor: "not-allowed" },
 });
 
-const showCreateEntryAfter = (entryIdx: number) => {
+const showCreateEntry = (entryIdx: number, createAfter: boolean) => {
   const entry = indexation.value.entries[entryIdx];
-  const nextEntry = indexation.value.entries[entryIdx + 1];
-  return (
-    (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
-    (!nextEntry &&
-      entry.position + entry.entirepages - 1 <
-        indexationEdit.value.numberOfPages)
+  if (createAfter) {
+    const nextEntry = indexation.value.entries.find(
+      (thisEntry, idx) => idx > entryIdx && !thisEntry.includedInEntryId,
+    );
+    return (
+      (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
+      (!nextEntry &&
+        entry.position + entry.entirepages - 1 <
+          indexationEdit.value.numberOfPages)
+    );
+  }
+  const previousEntry = indexation.value.entries.findLast(
+    (thisEntry, idx) => idx < entryIdx && !thisEntry.includedInEntryId,
   );
+  return previousEntry
+    ? entry.position > previousEntry.position + previousEntry.entirepages
+    : entry.position > 1;
 };
 
 const onEntryResizeStop = (entry: { id: number }, height: number) => {
@@ -225,8 +253,14 @@ const onEntryDragStop = (entry: { id: number }, y: number) => {
   });
 };
 
-const createEntry = (position: number) =>
-  indexationSocket.value!.createEntry(position);
+const createEntry = (entryIdx: number, createAfter: boolean) => {
+  const entry = indexation.value.entries[entryIdx];
+  const position = createAfter
+    ? entry.position + entry.entirepages
+    : entry.position - 1;
+
+  return indexationSocket.value!.createEntry(position);
+};
 
 const updateIndexation = () => {
   if (indexationEdit.value.numberOfPages < indexation.value.pages.length) {
