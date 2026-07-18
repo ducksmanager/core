@@ -253,8 +253,11 @@ watch(
   await loadCollection();
   await fetchCount();
   const rarityData = await userGlobalStatsEvents.getUsersCollectionRarity();
+  if (!rarityData.me) {
+    return;
+  }
   rarityRank = rarityData.me.rank;
-  userIdAboveMe = rarityData.aboveMe.userId;
+  userIdAboveMe = rarityData.aboveMe?.userId ?? null;
 
   const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
   await fetchIssuecodeDetails([rarestIssuecode]);
@@ -266,7 +269,7 @@ watch(
     publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
     issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
   };
-  if (rarityData.aboveMe.userId) {
+  if (rarityData.aboveMe?.userId) {
     await fetchStats([rarityData.aboveMe.userId]);
   }
 })();
