@@ -31,6 +31,7 @@ import en from '~translations/en.json';
 import sv from '~translations/sv.json';
 import i18n from '~web/src/i18n';
 
+import { loadThemePreference } from './composables/useTheme';
 import App from './App.vue';
 import router from './router';
 
@@ -54,6 +55,8 @@ const app = createApp(App)
   .provide('storySearchSocket', new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL));
 
 router.isReady().then(async () => {
+  await loadThemePreference();
+
   if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
     // Lazy load Sentry only when needed
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;

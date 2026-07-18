@@ -1,4 +1,4 @@
-require_relative '../../node_modules/.pnpm/@capacitor+ios@8.4.0_@capacitor+core@8.4.0/node_modules/@capacitor/ios/scripts/pods_helpers'
+require_relative '../../node_modules/.pnpm/@capacitor+ios@8.4.1_@capacitor+core@8.4.1/node_modules/@capacitor/ios/scripts/pods_helpers'
 
 platform :ios, '15.0'
 use_frameworks!
@@ -9,20 +9,20 @@ use_frameworks!
 install! 'cocoapods', :disable_input_output_paths => true
 
 def capacitor_pods
-  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@8.4.0_@capacitor+core@8.4.0/node_modules/@capacitor/ios'
-  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@8.4.0_@capacitor+core@8.4.0/node_modules/@capacitor/ios'
-  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.4.0/node_modules/@capacitor/app'
-  pod 'CapacitorClipboard', :path => '../../node_modules/.pnpm/@capacitor+clipboard@8.0.1_@capacitor+core@8.4.0/node_modules/@capacitor/clipboard'
-  pod 'CapacitorDevice', :path => '../../node_modules/.pnpm/@capacitor+device@8.0.2_@capacitor+core@8.4.0/node_modules/@capacitor/device'
-  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@8.0.2_@capacitor+core@8.4.0/node_modules/@capacitor/haptics'
-  pod 'CapacitorKeyboard', :path => '../../node_modules/.pnpm/@capacitor+keyboard@8.0.3_@capacitor+core@8.4.0/node_modules/@capacitor/keyboard'
-  pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@8.0.1_@capacitor+core@8.4.0/node_modules/@capacitor/preferences'
-  pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@8.0.2_@capacitor+core@8.4.0/node_modules/@capacitor/status-bar'
-  pod 'CapawesomeCapacitorAppUpdate', :path => '../../node_modules/.pnpm/@capawesome+capacitor-app-update@8.0.3_@capacitor+core@8.4.0/node_modules/@capawesome/capacitor-app-update'
-  pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.0.2_@capacitor+core@8.4.0/node_modules/@capawesome/capacitor-file-picker'
-  pod 'CapgoCameraPreview', :path => '../../node_modules/.pnpm/@capgo+camera-preview@8.4.4_@capacitor+core@8.4.0/node_modules/@capgo/camera-preview'
-  pod 'CapgoCapacitorUpdater', :path => '../../node_modules/.pnpm/@capgo+capacitor-updater@8.49.1_@capacitor+core@8.4.0/node_modules/@capgo/capacitor-updater'
-  pod 'SentryCapacitor', :path => '../../node_modules/.pnpm/@sentry+capacitor@4.1.0_@capacitor+core@8.4.0_@sentry+vue@10.52.0_pinia@3.0.4_typescript@6.0._eo5w66rjro4wbi3qxjl4zps7xm/node_modules/@sentry/capacitor'
+  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@8.4.1_@capacitor+core@8.4.1/node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@8.4.1_@capacitor+core@8.4.1/node_modules/@capacitor/ios'
+  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@8.1.0_@capacitor+core@8.4.1/node_modules/@capacitor/app'
+  pod 'CapacitorClipboard', :path => '../../node_modules/.pnpm/@capacitor+clipboard@8.0.1_@capacitor+core@8.4.1/node_modules/@capacitor/clipboard'
+  pod 'CapacitorDevice', :path => '../../node_modules/.pnpm/@capacitor+device@8.0.2_@capacitor+core@8.4.1/node_modules/@capacitor/device'
+  pod 'CapacitorHaptics', :path => '../../node_modules/.pnpm/@capacitor+haptics@8.0.2_@capacitor+core@8.4.1/node_modules/@capacitor/haptics'
+  pod 'CapacitorKeyboard', :path => '../../node_modules/.pnpm/@capacitor+keyboard@8.0.5_@capacitor+core@8.4.1/node_modules/@capacitor/keyboard'
+  pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@8.0.1_@capacitor+core@8.4.1/node_modules/@capacitor/preferences'
+  pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@8.0.2_@capacitor+core@8.4.1/node_modules/@capacitor/status-bar'
+  pod 'CapawesomeCapacitorAppUpdate', :path => '../../node_modules/.pnpm/@capawesome+capacitor-app-update@8.0.3_@capacitor+core@8.4.1/node_modules/@capawesome/capacitor-app-update'
+  pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.0.3_@capacitor+core@8.4.1/node_modules/@capawesome/capacitor-file-picker'
+  pod 'CapgoCameraPreview', :path => '../../node_modules/.pnpm/@capgo+camera-preview@8.9.0_@capacitor+core@8.4.1/node_modules/@capgo/camera-preview'
+  pod 'CapgoCapacitorUpdater', :path => '../../node_modules/.pnpm/@capgo+capacitor-updater@8.50.2_@capacitor+core@8.4.1/node_modules/@capgo/capacitor-updater'
+  pod 'SentryCapacitor', :path => '../../node_modules/.pnpm/@sentry+capacitor@4.2.0_@capacitor+core@8.4.1_@sentry+vue@10.60.0_pinia@3.0.4_typescript@6.0._3fc6nlsi2ff6fiarxkmekwouvi/node_modules/@sentry/capacitor'
 end
 
 target 'What The Duck' do

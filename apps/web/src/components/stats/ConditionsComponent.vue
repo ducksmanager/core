@@ -24,10 +24,12 @@ const {
   conditions,
   numberPerCondition,
   style = undefined,
+  legendColor = "white",
 } = defineProps<{
   conditions: Condition<boolean>[];
   numberPerCondition: Record<issue_condition, number>;
   style?: Record<string, string>;
+  legendColor?: string;
 }>();
 
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
@@ -51,7 +53,7 @@ const options = computed((): ChartOptions<"pie"> => ({
     legend: {
       display: true,
       labels: {
-        color: "white",
+        color: legendColor,
       },
     },
     tooltip: {
