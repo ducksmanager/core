@@ -1,12 +1,24 @@
 #!/usr/bin/env python
 
-from paddle import utils
-utils.run_check()
+import os
+import platform
+import sys
+
+# Paddle's prebuilt arm64 wheels SIGSEGV; disable PIR (must precede paddle
+# import) and route inference through ONNX Runtime via HPI below. See PR #17824.
+IS_LINUX_AARCH64 = sys.platform == "linux" and platform.machine() in (
+    "aarch64",
+    "arm64",
+)
+if IS_LINUX_AARCH64:
+    os.environ.setdefault("FLAGS_enable_pir_in_executor", "0")
+    os.environ.setdefault("FLAGS_enable_pir_api", "0")
+    os.environ.setdefault("FLAGS_use_mkldnn", "0")
+
 from paddleocr import PaddleOCR
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import base64
 import json
-import os
 import tempfile
 from urllib.parse import parse_qs, urlparse
 
@@ -64,6 +76,9 @@ def get_ocr_engine(language_code: str) -> PaddleOCR:
             use_doc_orientation_classify=False,
             use_doc_unwarping=False,
             use_textline_orientation=False,
+            # oneDNN crashes under Paddle's PIR executor (issue #18204).
+            enable_mkldnn=False,
+            enable_hpi=IS_LINUX_AARCH64,
         )
     return _OCR_BY_REC_MODEL[rec]
 
@@ -103,6 +118,7 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = json.loads(self.rfile.read(content_length))
+        print(f"Received POST data: {post_data}")  # Debugging line
         url = post_data['url'].replace('upload/', 'upload/c_limit,h_4000,w_4000/')
         language = post_data['language']
         want_annotated = bool(post_data.get('annotated'))

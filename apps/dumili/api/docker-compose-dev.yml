@@ -15,13 +15,13 @@ services:
     shm_size: "2gb"
     environment:
       PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
+      PYTHONUNBUFFERED: "1"
     volumes:
-      - /root/.paddlex
       - ./paddleocr/server.py:/server.py
       - ./paddleocr/recognition_model_rules.json:/recognition_model_rules.json
     build:
       context: ../../..
-      dockerfile: apps/dumili/api/paddleocr/Dockerfile
+      dockerfile: apps/dumili/api/paddleocr/Dockerfile.aarch64
   db:
     container_name: dumili-db
     restart: always
