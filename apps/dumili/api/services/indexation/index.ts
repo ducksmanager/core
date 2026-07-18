@@ -63,8 +63,12 @@ const unrarWasmBinary = existsSync(bundleSideWasm)
 
 const canvasImport = () => import("@napi-rs/canvas");
 
-const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
+const createCoaEvents = () =>
+  new SocketClient(process.env.DM_SOCKET_URL!).addNamespace<CoaEvents>(
+    dmNamespaces.COA,
+  );
+let coaEventsInstance: ReturnType<typeof createCoaEvents> | undefined;
+const coaEvents = () => (coaEventsInstance ??= createCoaEvents());
 
 const MAX_DOCUMENT_FILE_SIZE = 50 * 1024 * 1024;
 const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
@@ -186,7 +190,11 @@ const indexationPayloadInclude = {
               matches: true,
               stories: {
                 include: {
-                  aiStorySuggestion: true,
+                  aiStorySuggestion: {
+                    include: {
+                      aiOcrPossibleStory: true,
+                    },
+                  },
                 },
               },
             },
@@ -338,7 +346,7 @@ const createAiStorySuggestions = async (
   indexation: FullIndexation,
 ) => {
   const languagecode = indexation.acceptedIssueSuggestion?.publicationcode
-    ? (await coaEvents.getPublicationLanguagecode(
+    ? (await coaEvents().getPublicationLanguagecode(
         indexation.acceptedIssueSuggestion.publicationcode,
       )) || "en"
     : "en";
@@ -361,246 +369,221 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestions(entry.id);
 
-      for (const { name, field, storyField, _storySuggestionRelationship } of [
+      const sourceDefinitions = [
         {
           name: "image-based story search",
           field: "aiStorySearchResult",
           storyField: "aiStorySearchPossibleStory",
-          _storySuggestionRelationship: "storySearchDetails",
+          fk: "storySearchPossibleStoryId",
+          otherFk: "ocrPossibleStoryId",
         },
         {
           name: "OCR-based story search",
           field: "aiOcrResult",
           storyField: "aiOcrPossibleStory",
-          _storySuggestionRelationship: "ocrDetails",
+          fk: "ocrPossibleStoryId",
+          otherFk: "storySearchPossibleStoryId",
         },
-      ] as const) {
-        const cachedResults:
-          | {
-              type: typeof _storySuggestionRelationship;
-              storycode: string;
-            }[]
-          | undefined = undefined; /*firstPageOfEntry.image[field]?.stories
-      .filter(
-        (
-          story
-        ): story is typeof story & {
-          aiStorySuggestion: { storycode: string };
-        } => !!story.aiStorySuggestion
-      )
-      .map(
-        ({
-          aiStorySuggestion: {
-            storySuggestion: { storycode },
-          },
-        }) => ({
-          type: storySuggestionRelationship,
-          storycode,
-        })
-      );*/
+      ] as const;
 
-        if (cachedResults) {
-          // if (cachedResults.length) {
-          //   console.log(
-          //     `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
-          //   );
-          //   break;
-          // } else {
-          //   console.log(
-          //     `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
-          //   );
-          //   continue;
-          // }
-        } else {
-          const results =
-            field === "aiStorySearchResult"
-              ? await getStoriesFromImage(
-                  firstPageOfEntry.image,
-                  entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
-                )
-              : await getFullStoriesFromKeywords(
-                  (
-                    await runOcrOnImage(
-                      services,
-                      entry.position,
-                      firstPageOfEntry.image,
-                      languagecode,
-                    )
-                  ).map(({ text }) => text),
-                );
-          if ("error" in results) {
-            console.error(results.error);
-          } else {
-            let aiResultId = (
-              await prisma.image.findUnique({
-                where: {
-                  id: firstPageOfEntry.image.id,
-                },
-              })
-            )?.[`${field}Id`];
+      const computedSources: {
+        field: (typeof sourceDefinitions)[number]["field"];
+        storyField: (typeof sourceDefinitions)[number]["storyField"];
+        fk: (typeof sourceDefinitions)[number]["fk"];
+        otherFk: (typeof sourceDefinitions)[number]["otherFk"];
+        scoreByStorycode: Record<string, number>;
+      }[] = [];
+      for (const {
+        name,
+        field,
+        storyField,
+        fk,
+        otherFk,
+      } of sourceDefinitions) {
+        const results =
+          field === "aiStorySearchResult"
+            ? await getStoriesFromImage(
+                firstPageOfEntry.image,
+                entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
+              )
+            : await getFullStoriesFromKeywords(
+                (
+                  await runOcrOnImage(
+                    services,
+                    entry.position,
+                    firstPageOfEntry.image,
+                    languagecode,
+                  )
+                ).map(({ text }) => text),
+              );
+        if ("error" in results) {
+          console.error(results.error);
+          continue;
+        }
+        if (!results.stories.length) {
+          console.info(
+            `Entry starting at page ${entry.position}: No ${name} results found`,
+          );
+          continue;
+        }
+        console.log(
+          `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`,
+        );
+        const storiesWithScores = results.stories.groupBy(
+          "storycode",
+          "score[]",
+        );
+        const scoreByStorycode = Object.fromEntries(
+          Object.keys(storiesWithScores).map((storycode) => [
+            storycode,
+            storiesWithScores[storycode].sort((a, b) => b - a)[0],
+          ]),
+        );
+        computedSources.push({
+          field,
+          storyField,
+          fk,
+          otherFk,
+          scoreByStorycode,
+        });
+      }
 
-            if (aiResultId) {
-              if (field === "aiOcrResult") {
-                await prisma.storySuggestion.deleteMany({
-                  where: {
-                    aiStorySuggestion: {
-                      aiOcrPossibleStory: {
-                        resultId: aiResultId,
-                      },
-                    },
-                  },
-                });
-                await prisma.aiOcrPossibleStory.deleteMany({
-                  where: {
-                    resultId: aiResultId,
-                  },
-                });
-              } else {
-                await prisma.storySuggestion.deleteMany({
-                  where: {
-                    aiStorySuggestion: {
-                      aiStorySearchPossibleStory: {
-                        resultId: aiResultId,
-                      },
-                    },
-                  },
-                });
-                await prisma.aiStorySearchPossibleStory.deleteMany({
-                  where: {
-                    resultId: aiResultId,
-                  },
+      if (computedSources.length) {
+        const firstPageImageId = firstPageOfEntry.image.id;
+        await prisma.$transaction(
+          async (tx) => {
+            for (const {
+              field,
+              storyField,
+              fk,
+              otherFk,
+              scoreByStorycode,
+            } of computedSources) {
+              let aiResultId = (
+                await tx.image.findUnique({
+                  where: { id: firstPageImageId },
+                })
+              )?.[`${field}Id`];
+              if (!aiResultId) {
+                aiResultId =
+                  field === "aiOcrResult"
+                    ? (await tx.aiOcrResult.create({ data: {} })).id
+                    : (await tx.aiStorySearchResult.create({ data: {} })).id;
+                await tx.image.update({
+                  where: { id: firstPageImageId },
+                  data: { [`${field}Id`]: aiResultId },
                 });
               }
-            } else {
-              if (field === "aiOcrResult") {
-                aiResultId = (
-                  await prisma.aiOcrResult.create({
-                    data: {},
-                  })
-                ).id;
-              } else {
-                aiResultId = (
-                  await prisma.aiStorySearchResult.create({
-                    data: {},
-                  })
-                ).id;
-              }
-            }
 
-            await prisma.image.update({
-              where: {
-                id: firstPageOfEntry.image.id,
-              },
-              data: {
-                [`${field}Id`]: aiResultId,
-              },
-            });
-            if (!results.stories.length) {
-              console.info(
-                `Entry starting at page ${entry.position}: No ${name} results found`,
-              );
-            } else {
-              console.log(
-                `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`,
-              );
-              await prisma.storySuggestion.deleteMany({
+              const existing = await tx.storySuggestion.findMany({
                 where: {
-                  aiStorySuggestion: {
-                    [storyField]: {
-                      // aiOcrPossibleStory or aiStorySearchPossibleStory
-                      isNot: null,
-                    },
-                  },
                   entryId: entry.id,
+                  aiStorySuggestion: { [storyField]: { isNot: null } },
+                },
+                select: {
+                  id: true,
+                  aiStorySuggestion: {
+                    select: {
+                      id: true,
+                      ocrPossibleStoryId: true,
+                      storySearchPossibleStoryId: true,
+                    },
+                  },
                 },
               });
+              const possibleStoryIdsToDelete: number[] = [];
+              const aiStorySuggestionIdsToDetach: number[] = [];
+              const storySuggestionIdsToDelete: number[] = [];
+              const aiStorySuggestionIdsToDelete: number[] = [];
+              for (const { id, aiStorySuggestion } of existing) {
+                if (!aiStorySuggestion) continue;
+                const possibleStoryId = aiStorySuggestion?.[fk];
+                if (possibleStoryId == null) continue;
+                possibleStoryIdsToDelete.push(possibleStoryId);
+                if (aiStorySuggestion[otherFk] != null) {
+                  aiStorySuggestionIdsToDetach.push(aiStorySuggestion.id);
+                } else {
+                  storySuggestionIdsToDelete.push(id);
+                  aiStorySuggestionIdsToDelete.push(aiStorySuggestion.id);
+                }
+              }
 
-              const storiesWithScores = results.stories.groupBy(
-                "storycode",
-                "score[]",
-              );
+              if (aiStorySuggestionIdsToDetach.length) {
+                await tx.aiStorySuggestion.updateMany({
+                  where: { id: { in: aiStorySuggestionIdsToDetach } },
+                  data: { [fk]: null },
+                });
+              }
+              if (storySuggestionIdsToDelete.length) {
+                await tx.storySuggestion.deleteMany({
+                  where: { id: { in: storySuggestionIdsToDelete } },
+                });
+              }
+              if (aiStorySuggestionIdsToDelete.length) {
+                await tx.aiStorySuggestion.deleteMany({
+                  where: { id: { in: aiStorySuggestionIdsToDelete } },
+                });
+              }
+              if (possibleStoryIdsToDelete.length) {
+                if (field === "aiOcrResult") {
+                  await tx.aiOcrPossibleStory.deleteMany({
+                    where: { id: { in: possibleStoryIdsToDelete } },
+                  });
+                } else {
+                  await tx.aiStorySearchPossibleStory.deleteMany({
+                    where: { id: { in: possibleStoryIdsToDelete } },
+                  });
+                }
+              }
 
-              for (const storycode of Object.keys(storiesWithScores)) {
-                console.log(
-                  "Creating story suggestion for storycode",
-                  storycode,
-                );
-                const data = {
-                  aiStorySuggestion: {
+              for (const storycode of Object.keys(scoreByStorycode)) {
+                const possibleStory = {
+                  [storyField]: {
                     create: {
-                      [storyField]: {
-                        // aiOcrPossibleStory or aiStorySearchPossibleStory
-                        create: {
-                          [field]: {
-                            // aiOcrResult or aiStorySearchResult
-                            connect: {
-                              id: aiResultId,
-                            },
-                          },
-                          score: storiesWithScores[storycode].sort(
-                            (a, b) => b - a,
-                          )[0],
-                        },
-                      },
-                    },
-                  },
-                  storycode,
-                  entry: {
-                    connect: {
-                      id: entry.id,
+                      [field]: { connect: { id: aiResultId } },
+                      score: scoreByStorycode[storycode],
                     },
                   },
                 };
-                await prisma.storySuggestion.upsert({
+                await tx.storySuggestion.upsert({
                   where: {
-                    entryId_storycode: {
-                      entryId: entry.id,
-                      storycode,
-                    },
+                    entryId_storycode: { entryId: entry.id, storycode },
                   },
-                  create: data,
-                  update: data,
-                });
-              }
-
-              const newEntry = (await prisma.entry.findUnique({
-                include: {
-                  storySuggestions: {
-                    include: {
-                      aiStorySuggestion: {
-                        include: {
-                          [storyField]: true, // ocrDetails or storySearchDetails
-                        },
-                      },
-                    },
+                  create: {
+                    storycode,
+                    entry: { connect: { id: entry.id } },
+                    aiStorySuggestion: { create: possibleStory },
                   },
-                },
-                where: {
-                  id: entry.id,
-                },
-              }))!;
-              const acceptedStorySuggestionId = newEntry.storySuggestions.find(
-                ({ storycode }) => storycode === currentlyAcceptedStorycode,
-              )?.id;
-              // If no story is currently accepted, we accept the first story suggestion
-              if (acceptedStorySuggestionId) {
-                await prisma.entry.update({
-                  where: {
-                    id: entry.id,
-                  },
-                  data: {
-                    acceptedStory: {
-                      connect: {
-                        id: acceptedStorySuggestionId,
-                      },
+                  update: {
+                    aiStorySuggestion: {
+                      upsert: { create: possibleStory, update: possibleStory },
                     },
                   },
                 });
               }
-              break;
             }
-          }
-        }
+
+            // Keep the currently accepted story accepted if it still exists.
+            if (currentlyAcceptedStorycode) {
+              const acceptedStory = await tx.storySuggestion.findFirst({
+                where: {
+                  entryId: entry.id,
+                  storycode: currentlyAcceptedStorycode,
+                },
+                select: { id: true },
+              });
+              if (acceptedStory) {
+                await tx.entry.update({
+                  where: { id: entry.id },
+                  data: {
+                    acceptedStory: { connect: { id: acceptedStory.id } },
+                  },
+                });
+              }
+            }
+          },
+          { maxWait: 10_000, timeout: 30_000 },
+        );
       }
 
       services.reportCreateAiStorySuggestionsEnd(entry.id);
@@ -1287,10 +1270,12 @@ const listenEvents = (services: IndexationServices) => ({
       },
     });
 
+    await refreshIndexation(services);
+
     return { status: "OK" };
   },
 
-  createEntry: async (
+  createEntry: (
     position: number,
     includedInEntryId: number | undefined = undefined,
   ) =>

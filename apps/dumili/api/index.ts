@@ -1,12 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config({
-  path: ".env",
-});
-
-dotenv.config({
-  path: ".env.local",
-  override: true,
-});
+import "./load-env";
 
 import { v2 as cloudinary } from "cloudinary";
 import { createServer, type IncomingMessage, type ServerResponse } from "http";

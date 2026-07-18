@@ -23,7 +23,7 @@ export const runOcrOnImage = async (
   }
   if (image.aiOcrResult) {
     console.log(`Page ${pageNumber}: This page already has OCR results`);
-    return image.aiOcrResult.matches;
+    // return image.aiOcrResult.matches;
   }
   services.reportRunOcrOnImage(image.id);
   const firstPanelUrl = image.url.replace(
@@ -34,16 +34,16 @@ export const runOcrOnImage = async (
   console.log(`Page ${pageNumber}: Running OCR on ${firstPanelUrl}`);
 
   const ocrResults = await runOcr(firstPanelUrl, languagecode);
-  const matches = ocrResults.map(
-    ({ confidence, text, box: [x1, y1, x2, y2] }) => ({
+  const matches = ocrResults
+    .map(({ confidence, text, box: [x1, y1, x2, y2] }) => ({
       confidence,
       text,
       x1,
       y1,
       x2,
       y2,
-    }),
-  );
+    }))
+    .filter(({ confidence }) => confidence > 0.75);
 
   await prisma.image.update({
     where: {
