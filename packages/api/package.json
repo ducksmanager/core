@@ -21,9 +21,9 @@
   "dependencies": {
     "@opentelemetry/exporter-trace-otlp-http": "^0.220.0",
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
-    "@opentelemetry/sdk-trace-base": "^2.9.0",
+    "@opentelemetry/sdk-trace-base": "^2.10.0",
     "@pusher/push-notifications-server": "^1.2.7",
-    "@sentry/node": "^10.63.0",
+    "@sentry/node": "^10.67.0",
     "@socket.io/admin-ui": "^0.5.1",
     "@tensorflow-models/mobilenet": "^2.1.1",
     "@tensorflow/tfjs-node": "^4.22.0",
@@ -38,27 +38,27 @@
     "nodemailer": "^8.0.11",
     "onnxruntime-node": "1.22.0-rev",
     "sharp-0-34": "npm:sharp@0.34.5",
-    "socket-call-server": "^0.7.7",
+    "socket-call-server": "^0.9.0",
     "socket.io": "^4.8.3",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^10.0.1",
-    "@sentry/cli": "^3.6.0",
+    "@sentry/cli": "^3.6.2",
     "@types/ejs": "^3.1.5",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@types/nodemailer": "^8.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
     "concurrently": "^10.0.3",
-    "eslint": "^10.6.0",
+    "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
     "nodemon": "^3.1.14",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.63.0",
-    "wait-on": "^9.0.10"
+    "typescript-eslint": "^8.65.0",
+    "wait-on": "^9.1.0"
   }
 }
