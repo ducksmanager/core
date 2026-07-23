@@ -3,12 +3,11 @@
     class="vw-100 navbar navbar-expand-md navbar-dark flex-row justify-content-between"
   >
     <div class="d-flex w-100 flex-row align-items-center">
-      <b-navbar-brand class="d-md-none d-flex position-absolute vw-100">
+      <b-navbar-brand class="d-md-none d-flex position-absolute">
         <Banner
           small
           :classes="{
             'position-fixed': true,
-            'w-100': true,
             'top-0': true,
           }"
           ><SwitchLocale />
