@@ -34,7 +34,7 @@
     "js-cookie": "^3.0.8",
     "mapbox-gl": "^3.26.0",
     "page-flip": "^2.0.7",
-    "pinia": "^3.0.4",
+    "pinia": "^4.0.2",
     "socket-call-client": "^0.7.7",
     "timeago.js": "^4.0.2",
     "v-contextmenu": "^3.2.0",

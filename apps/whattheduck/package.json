@@ -57,7 +57,7 @@
     "dayjs": "^1.11.21",
     "ionicons": "^8.0.13",
     "js-cookie": "^3.0.8",
-    "pinia": "^3.0.4",
+    "pinia": "^4.0.2",
     "sass": "^1.101.3",
     "socket-call-client": "^0.7.7",
     "universal-cookie": "^7.2.2",
