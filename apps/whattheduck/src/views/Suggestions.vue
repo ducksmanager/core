@@ -22,20 +22,36 @@
           </template>
         </i18n-t>
       </ion-text>
-      <ion-select
-        v-model="showSuggestionsOf"
-        class="ion-padding-top"
-        :label="$t('Montrer les publications de')"
-        label-placement="stacked"
+
+      <ion-button expand="block" @click="setModalOpen(true)"
+        ><Country
+          v-if="showSuggestionsOf !== 'ALL'"
+          :id="showSuggestionsOf"
+          :label="sortedCountryNames?.find(([code]) => code === showSuggestionsOf)?.[1]"
+          :style="'margin-right: 0.5rem'"
+      /></ion-button>
+
+      <ion-modal
+        :is-open="isModalOpen"
+        :initial-breakpoint="0.5"
+        :breakpoints="[0, 0.5]"
+        @did-dismiss="isModalOpen = false"
       >
-        <ion-select-option value="ALL">{{ $t('Tous les pays') }}</ion-select-option>
-        <ion-select-option
-          v-for="[countrycode, countryname] of sortedCountryNames"
-          :key="countrycode"
-          :value="countrycode"
-          >{{ countryname }}</ion-select-option
-        >
-      </ion-select>
+        <ion-content class="ion-padding">
+          <ion-list style="height: 100%; overflow-y: auto">
+            <ion-item
+              v-for="[countrycode, countryname] of sortedCountryNames"
+              :key="countrycode"
+              @click="showSuggestionsOf = countrycode"
+              ><ion-icon
+                v-if="showSuggestionsOf === countrycode"
+                :ios="checkmarkOutline"
+                :md="checkmarkSharp"
+              /><Country :id="countrycode" :label="countryname" :style="'margin-right: 0.5rem'" />
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-modal>
       <ion-item v-if="isLoadingSuggestions">{{ $t('Chargement…') }}</ion-item>
       <div v-else-if="formattedSuggestions && !formattedSuggestions.length" class="ion-padding ion-text-center">
         {{ $t('Aucune suggestion disponible.') }}
@@ -87,13 +103,21 @@
 
 <script setup lang="ts">
 import { toastController } from '@ionic/vue';
-import { calendarOutline, calendarSharp, flameOutline, flameSharp } from 'ionicons/icons';
+import {
+  calendarOutline,
+  calendarSharp,
+  checkmarkOutline,
+  checkmarkSharp,
+  flameOutline,
+  flameSharp,
+} from 'ionicons/icons';
 import InducksStory from '~web/src/components/InducksStory.vue';
 import { coa } from '~web/src/stores/coa';
 
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const sortByScore = ref(false);
+const { t: $t } = useI18n();
 
 const { suggestions, isLoadingSuggestions } = storeToRefs(wtdcollection());
 const { loadSuggestions } = wtdcollection();
@@ -108,15 +132,22 @@ interface FormattedSuggestion {
 
 const showSuggestionsOf = ref('ALL');
 
+const isModalOpen = ref(false);
+
+const setModalOpen = (open: boolean) => (isModalOpen.value = open);
+
 watch(showSuggestionsOf, async (newValue) => {
+  setModalOpen(false);
   await loadSuggestions({ countryCode: newValue, sinceLastVisit: false });
 });
 
 const sortedCountryNames = computed(
   () =>
     countryNames.value &&
-    Object.entries(countryNames.value).sort(([, countryName1], [, countryName2]) =>
-      countryName1.localeCompare(countryName2),
+    [['ALL', $t('Tous les pays')]].concat(
+      Object.entries(countryNames.value).sort(([, countryName1], [, countryName2]) =>
+        countryName1.localeCompare(countryName2),
+      ),
     ),
 );
 
