@@ -27,13 +27,13 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org bruno-perel --project whattheduck ./dist && sentry-cli sourcemaps upload --org bruno-perel --project whattheduck ./dist"
   },
   "dependencies": {
-    "@capacitor/android": "^8.4.2",
+    "@capacitor/android": "^8.5.0",
     "@capacitor/app": "^8.1.1",
     "@capacitor/clipboard": "^8.0.1",
-    "@capacitor/core": "^8.4.2",
+    "@capacitor/core": "^8.5.0",
     "@capacitor/device": "^8.0.3",
     "@capacitor/haptics": "^8.0.2",
-    "@capacitor/ios": "^8.4.2",
+    "@capacitor/ios": "^8.5.0",
     "@capacitor/keyboard": "^8.0.5",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/status-bar": "^8.0.3",
@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.4.2",
+    "@capacitor/cli": "^8.5.0",
     "@capgo/cli": "^7.125.4",
     "@eslint/compat": "^2.1.0",
     "@eslint/eslintrc": "^3.3.6",
