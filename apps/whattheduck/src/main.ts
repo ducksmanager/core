@@ -60,8 +60,8 @@ router.isReady().then(async () => {
   if (Capacitor.isNativePlatform() && !import.meta.env.VITE_DM_SOCKET_URL_NATIVE) {
     // Lazy load Sentry only when needed
     const currentBundleVersion = (await CapacitorUpdater.current())?.bundle.version;
-    const { init: initSentry, browserTracingIntegration } = await import('@sentry/capacitor');
-    const { init: initSentryVue, replayIntegration } = await import('@sentry/vue');
+    const { init: initSentry } = await import('@sentry/capacitor');
+    const { init: initSentryVue, browserTracingIntegration, replayIntegration } = await import('@sentry/vue');
 
     initSentry(
       {
