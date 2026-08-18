@@ -25,7 +25,6 @@
 
       <ion-button expand="block" @click="setModalOpen(true)"
         ><Country
-          v-if="showSuggestionsOf !== 'ALL'"
           :id="showSuggestionsOf"
           :label="sortedCountryNames?.find(([code]) => code === showSuggestionsOf)?.[1]"
           :style="'margin-right: 0.5rem'"
@@ -141,14 +140,12 @@ watch(showSuggestionsOf, async (newValue) => {
   await loadSuggestions({ countryCode: newValue, sinceLastVisit: false });
 });
 
-const sortedCountryNames = computed(
-  () =>
-    countryNames.value &&
-    [['ALL', $t('Tous les pays')]].concat(
-      Object.entries(countryNames.value).sort(([, countryName1], [, countryName2]) =>
-        countryName1.localeCompare(countryName2),
-      ),
+const sortedCountryNames = computed(() =>
+  [['ALL', $t('Tous les pays')]].concat(
+    Object.entries(countryNames.value || []).sort(([, countryName1], [, countryName2]) =>
+      countryName1.localeCompare(countryName2),
     ),
+  ),
 );
 
 const hasIssuecodeDetails = ref(false);
