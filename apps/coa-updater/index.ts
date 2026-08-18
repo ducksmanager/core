@@ -21,9 +21,10 @@ const dataPath = "/tmp/inducks",
       newDatabase = `${database}_new`;
 
 /** Run CLI without a shell so MYSQL_ROOT_PASSWORD is not mangled ($, !, spaces, etc.). */
-const runMariadbCheck = () => Bun.spawn(
+const runMariadbCheck = (mode: "--check" | "--analyze") => Bun.spawn(
   [
     "mariadb-check",
+    mode,
     "-h",
     host,
     "-uroot",
@@ -260,9 +261,18 @@ set sql_log_bin=1`;
   await renameConnection.release();
 
   console.log("mariadb-check...");
-  const checkExit = await runMariadbCheck();
+  const checkExit = await runMariadbCheck("--check");
   if (checkExit !== 0) {
     throw new Error(`mariadb-check exited with code ${checkExit}`);
+  }
+  console.log(" done.");
+
+  // The freshly imported tables have no InnoDB statistics yet, so the first heavy
+  // reader (stats-updater) would otherwise get a plan built on lazy sampling.
+  console.log("mariadb-check --analyze...");
+  const analyzeExit = await runMariadbCheck("--analyze");
+  if (analyzeExit !== 0) {
+    throw new Error(`mariadb-check --analyze exited with code ${analyzeExit}`);
   }
   console.log(" done.");
   await pool.end();
