@@ -38,6 +38,12 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
+// The cache key of a socket call includes its arguments, so passing
+// `{ disableCache: false }` would store the response under a different key than
+// the one a cache-enabled call reads from.
+const cacheControl = (ignoreCache: boolean) =>
+  (ignoreCache ? [{ disableCache: true }] : []) as [{ disableCache: boolean }];
+
 export const collection = defineStore("collection", () => {
   const route = useRoute<
     "/collection/user/[username]/[[...all]]" | "/bookcase/show/[username]"
@@ -197,9 +203,9 @@ export const collection = defineStore("collection", () => {
       if (ignoreCache || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
         const publicationNames: Record<string, string> = {};
-        issues.value = await collectionEvents.getIssues({
-          disableCache: ignoreCache,
-        });
+        issues.value = await collectionEvents.getIssues(
+          ...cacheControl(ignoreCache),
+        );
 
         const collectionPublicationcodes = [
           ...new Set(
@@ -234,9 +240,9 @@ export const collection = defineStore("collection", () => {
             .groupBy("issuecode"),
         );
       } else {
-        issues.value = await collectionEvents.getIssues({
-          disableCache: ignoreCache,
-        });
+        issues.value = await collectionEvents.getIssues(
+          ...cacheControl(ignoreCache),
+        );
       }
 
       Object.assign(
@@ -255,7 +261,7 @@ export const collection = defineStore("collection", () => {
       if (ignoreCache || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
         purchases.value = (
-          await collectionEvents.getPurchases({ disableCache: ignoreCache })
+          await collectionEvents.getPurchases(...cacheControl(ignoreCache))
         ).map((purchase) => ({
           ...purchase,
           date: new Date(purchase.date),
@@ -266,9 +272,9 @@ export const collection = defineStore("collection", () => {
     loadLabels = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingLabels.value && !labels.value)) {
         isLoadingLabels.value = true;
-        labels.value = await collectionEvents.getLabels({
-          disableCache: ignoreCache,
-        });
+        labels.value = await collectionEvents.getLabels(
+          ...cacheControl(ignoreCache),
+        );
         isLoadingLabels.value = false;
       }
     },
@@ -281,7 +287,7 @@ export const collection = defineStore("collection", () => {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = await collectionEvents.getOption(
           "sales_notification_publications",
-          { disableCache: ignoreCache },
+          ...cacheControl(ignoreCache),
         );
         isLoadingWatchedPublicationsWithSales.value = false;
       }
@@ -295,7 +301,7 @@ export const collection = defineStore("collection", () => {
         isLoadingMarketplaceContactMethods.value = true;
         marketplaceContactMethods.value = await collectionEvents.getOption(
           "marketplace_contact_methods",
-          { disableCache: ignoreCache },
+          ...cacheControl(ignoreCache),
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
@@ -331,7 +337,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingSubscriptions.value = true;
         subscriptions.value = (
-          await collectionEvents.getSubscriptions({ disableCache: ignoreCache })
+          await collectionEvents.getSubscriptions(...cacheControl(ignoreCache))
         ).map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -381,9 +387,9 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingUser.value && (ignoreCache || !user.value)) {
         isLoadingUser.value = true;
         try {
-          const response = await collectionEvents.getUser({
-            disableCache: ignoreCache,
-          });
+          const response = await collectionEvents.getUser(
+            ...cacheControl(ignoreCache),
+          );
           if (typeof response === "object" && "error" in response) {
             socketOptions.session.clearSession();
             user.value = null;
