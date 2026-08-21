@@ -40,6 +40,8 @@ jobs:
           cache: "pnpm"
 
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.x
 
       - name: Install ci dependencies
         run: pnpm install --filter '~ci...'
