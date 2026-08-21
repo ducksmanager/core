@@ -1,0 +1,47 @@
+name: "DucksManager backup"
+
+on:
+  workflow_run:
+    workflows: ["DucksManager daily"]
+    types:
+      - completed
+  workflow_dispatch:
+jobs:
+  ducksmanager-backup:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      REMOTE_ROOT: apps/dm
+      PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+      REMOTE_PULL_TIMEOUT: 2m
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          lfs: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9.8.0
+
+      - name: Use Node.js 26
+        uses: actions/setup-node@v6
+        with:
+          node-version: 26
+          cache: "pnpm"
+
+      - name: Install dependencies
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: |
+          pnpm -r i
+
+      - name: Run backup
+        timeout-minutes: 10
+        env:
+          REMOTE_TIMEOUT: 7m
+        run: |
+          pnpm -r -F '~backup' prod:docker-compose-run
