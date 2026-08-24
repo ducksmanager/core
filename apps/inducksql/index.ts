@@ -26,8 +26,8 @@ const { values: options } = parseArgs({
     "no-indexes": { type: "boolean", default: false },
     "no-fts": { type: "boolean", default: false },
     only: { type: "string" },
-    // `turso db upload` rejects anything that is not WAL; sqlite-wasm's OPFS importer rewrites
-    // the header to force WAL off. Pass --journal-mode=wal for Turso, leave it for the browser.
+    // Keep the default: a WAL-mode database cannot be opened read-only, and sqlite-wasm's OPFS
+    // importer rewrites the header to force WAL off anyway. Only set wal if a consumer needs it.
     "journal-mode": { type: "string", default: "delete" },
   },
 });
@@ -182,7 +182,7 @@ try {
     throw new Error(`integrity_check failed: ${integrity_check}`);
   }
   // WAL mode leaves -wal/-shm sidecars behind. Fold them into the main file so the artifact
-  // stays a single uploadable file.
+  // stays a single file.
   if (applied.toLowerCase() === "wal") {
     sqlite.run("PRAGMA wal_checkpoint(TRUNCATE)");
   }

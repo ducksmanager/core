@@ -9,8 +9,7 @@
     "build": "bun build --target bun index.ts --outfile bundle.mjs",
     "lint": "prettier -w .",
     "test:vfs": "bun run vfs/http-vfs.test.ts",
-    "dev": "concurrently -n vite,vue-tsc \"vite --config web/vite.config.ts --port 8009\" \"vue-tsc --noEmit -p web/tsconfig.json --watch\"",
-    "dev:db": "bun run vfs/range-server.ts coa.sqlite 8901",
+    "dev": "concurrently -n vite,vue-tsc,sqlite-serve \"vite --config web/vite.config.ts --port 8009\" \"vue-tsc --noEmit -p web/tsconfig.json --watch\" \"bun run ./vfs/range-server.ts coa.sqlite 8901\"",
     "build:web": "vite build --config web/vite.config.ts"
   },
   "dependencies": {
