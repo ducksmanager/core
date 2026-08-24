@@ -9,3 +9,6 @@
 **/Pods
 docker-compose*
 !**/napi-v6/**
+**/*.sqlite
+**/*.sqlite-wal
+**/*.sqlite-shm

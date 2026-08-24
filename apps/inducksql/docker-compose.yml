@@ -1,0 +1,30 @@
+services:
+  inducksql:
+    container_name: inducksql
+    image: ghcr.io/bperel/inducksql
+    restart: always
+    networks:
+      public-network:
+        aliases:
+          - inducksql
+
+  inducksql-exporter:
+    init: true
+    image: ghcr.io/bperel/inducksql-exporter
+    env_file:
+      - ../../packages/api/.env
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: coa
+      ARTIFACT_PATH: /artifact/coa.sqlite
+    volumes:
+      - /data/inducksql:/artifact
+    networks:
+      - dm-db-network
+
+networks:
+  public-network:
+    external: true
+  dm-db-network:
+    external: true

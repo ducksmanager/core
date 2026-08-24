@@ -1,0 +1,34 @@
+{
+  "name": "~inducksql",
+  "description": "Exports the coa schema to a read-only SQLite file for @sqlite.org/sqlite-wasm",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "export": "bun --env-file=.env run ./index.ts",
+    "verify": "bun run ./verify.ts",
+    "build": "bun build --target bun ./index.ts --outfile bundle.mjs && vite build --config web/vite.config.ts",
+    "lint": "prettier -w .",
+    "test:vfs": "bun run vfs/http-vfs.test.ts",
+    "dev": "concurrently -n vite,vue-tsc,sqlite-serve \"vite --config web/vite.config.ts --port 8009\" \"vue-tsc --noEmit -p web/tsconfig.json --watch\" \"bun run ./vfs/range-server.ts coa.sqlite 8901\"",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/inducksql pnpm -F '~ci' prod:build-docker -f apps/inducksql/Dockerfile && REPO_NAME=ghcr.io/bperel/inducksql-exporter pnpm -F '~ci' prod:build-docker -f apps/inducksql/Dockerfile-exporter",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/inducksql/docker-compose.yml:@apps/inducksql/docker-compose.yml apps/inducksql/Caddyfile:@apps/inducksql/Caddyfile",
+    "prod:deploy": "DIR=apps/inducksql SERVICES='inducksql' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:docker-compose-run": "DIR=apps/inducksql SERVICE=inducksql-exporter pnpm -F '~ci' prod:docker-compose-run"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "mariadb": "^3.5.3",
+    "vue": "^3.5.41"
+  },
+  "devDependencies": {
+    "@types/bun": "~1.3.14",
+    "@types/node": "^26.2.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "concurrently": "^9.2.1",
+    "vite": "^8.2.2",
+    "vue-tsc": "^3.3.11"
+  }
+}
