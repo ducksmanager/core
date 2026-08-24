@@ -35,7 +35,7 @@ pnpm -F '~inducksql' dev       # viewer on :8009, serving coa.sqlite on :8901
 | `date`, `datetime`, `timestamp`, `time` | `TEXT`, ISO-8601                                              |
 | single-column integer primary key       | `INTEGER PRIMARY KEY` (rowid alias)                           |
 | text / composite primary key            | `PRIMARY KEY (...) WITHOUT ROWID` (except FTS5 source tables) |
-| `FULLTEXT` index                        | FTS5 table `<table>_fts`                                      |
+| `FULLTEXT` index(es)                    | one FTS5 table `<table>_fts` over the union of their columns  |
 | `VECTOR` index                          | dropped                                                       |
 | views                                   | not exported — only `BASE TABLE`s are read                    |
 | row counts                              | recorded into `inducksql_stats`                               |
@@ -58,9 +58,12 @@ all behave differently outside FTS5. Use `COLLATE NOCASE` for ASCII case-insensi
 normalised shadow column for accent-insensitive equality.
 
 **Full-text search.** FTS5 with `unicode61 remove_diacritics 2` restores accent-insensitivity —
-`noel` matches `Noël`. Ranking is BM25, so result order differs. `bm25()` only works where the
-FTS table is queried directly; joining through it raises `unable to use function bm25 in the
-requested context`, so wrap the match:
+`noel` matches `Noël`. Ranking is BM25, so result order differs. Note that `MATCH` is the only
+thing an FTS5 table answers: `=` and `LIKE` on an indexed column still scan, exactly as they did
+against a MariaDB FULLTEXT index. Restrict to one column with `col : "phrase"`.
+
+`bm25()` only works where the FTS table is queried directly; joining through it raises
+`unable to use function bm25 in the requested context`, so wrap the match:
 
 ```sql
 WITH m AS MATERIALIZED (

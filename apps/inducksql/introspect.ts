@@ -22,6 +22,8 @@ export type Table = {
   columns: Column[];
   primaryKey: string[];
   indexes: Index[];
+  /** Union of every FULLTEXT index's columns, rebuilt as one FTS5 table per source table. */
+  fulltextColumns: string[];
 };
 
 export const introspect = async (
@@ -96,6 +98,7 @@ export const introspect = async (
     }
 
     const indexes: Index[] = [];
+    const fulltextColumns: string[] = [];
     let primaryKey: string[] = [];
     for (const [indexName, rows] of byIndex) {
       const columnNames = rows.map(({ COLUMN_NAME }) => COLUMN_NAME);
@@ -108,9 +111,14 @@ export const introspect = async (
           unique: Number(rows[0].NON_UNIQUE) === 0,
           type: rows[0].INDEX_TYPE,
         });
+        if (rows[0].INDEX_TYPE === "FULLTEXT") {
+          for (const column of columnNames) {
+            if (!fulltextColumns.includes(column)) fulltextColumns.push(column);
+          }
+        }
       }
     }
 
-    return { name, columns, primaryKey, indexes };
+    return { name, columns, primaryKey, indexes, fulltextColumns };
   });
 };

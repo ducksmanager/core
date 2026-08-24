@@ -124,7 +124,7 @@ self.onmessage = async (event: MessageEvent<Request>) => {
         const objects = db()
           .selectObjects(
             // FTS5 tables and their shadow tables are found from the virtual tables rather than by
-            // name, so the filter holds whatever ftsIndexes is set to.
+            // name, so the filter holds however many the source schema has.
             `WITH fts AS (SELECT name FROM sqlite_master WHERE sql LIKE '%USING fts5%')
              SELECT m.type, m.name, m.tbl_name AS tableName, m.sql, s.row_count AS rowCount
              FROM sqlite_master m
