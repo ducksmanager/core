@@ -9,7 +9,7 @@ import type {
   TransferStats,
 } from "./protocol";
 
-const url = import.meta.env.VITE_DB_URL ?? "http://localhost:8901/coa.sqlite";
+const url = import.meta.env.VITE_DB_URL ?? "/coa.sqlite";
 
 const worker = new Worker(new URL("./db.worker.ts", import.meta.url), {
   type: "module",

@@ -197,6 +197,34 @@ Serving the artifact from another origin needs CORS: `Range` is not a safelisted
 browser preflights and the server must allow `Range` and expose `Content-Range`.
 `vfs/range-server.ts` does both.
 
+### Deployment
+
+Deployed on push to `master` by the repo's `deploy` workflow, which runs `build`,
+`prod:build-docker`, `prod:transfer-files-post` and `prod:deploy` across changed packages. Two
+images are built: `inducksql` (nginx serving the built viewer) and `inducksql-exporter` (the
+export script).
+
+`Caddyfile` puts both behind `inducksql.ducksmanager.net`: `/coa.sqlite` is served straight off
+disk from `/server-data/inducksql`, and everything else proxies to the viewer. Caddy's
+`file_server` honours Range requests, so nothing extra is needed to serve the artifact — and
+because it is the same origin as the app, CORS is not involved at all. Vite proxies the same path
+to `range-server.ts` in development, so both environments look alike.
+
+Refreshing the artifact is a separate batch step, not part of a deploy:
+
+```bash
+pnpm -F '~inducksql' prod:docker-compose-run
+```
+
+That runs the exporter against the `db` container and writes into `/data/inducksql`, which is the
+directory Caddy serves. `export.bash` builds to a temporary name and renames, so a half-built
+file is never served.
+
+One caveat: because the artifact keeps a stable name, a client that is mid-session when a rebuild
+lands can mix pages from the old and new files, which SQLite will read as corruption. Rebuilds
+are infrequent and the window is small, but the robust fix is a content-versioned filename the
+viewer discovers rather than hard-codes.
+
 ### Verification
 
 `verify.ts` compares the artifact against the live schema and exits non-zero on any mismatch:

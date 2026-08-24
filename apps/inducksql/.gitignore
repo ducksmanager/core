@@ -3,4 +3,4 @@
 *.sqlite.gz
 *.sqlite.zst
 bundle.mjs
-web/dist/
+dist/

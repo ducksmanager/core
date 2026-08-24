@@ -6,11 +6,14 @@
   "scripts": {
     "export": "bun --env-file=.env run ./index.ts",
     "verify": "bun run ./verify.ts",
-    "build": "bun build --target bun index.ts --outfile bundle.mjs",
+    "build": "bun build --target bun index.ts --outfile bundle.mjs && vite build --config web/vite.config.ts",
     "lint": "prettier -w .",
     "test:vfs": "bun run vfs/http-vfs.test.ts",
     "dev": "concurrently -n vite,vue-tsc,sqlite-serve \"vite --config web/vite.config.ts --port 8009\" \"vue-tsc --noEmit -p web/tsconfig.json --watch\" \"bun run ./vfs/range-server.ts coa.sqlite 8901\"",
-    "build:web": "vite build --config web/vite.config.ts"
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/inducksql pnpm -F '~ci' prod:build-docker -f apps/inducksql/Dockerfile && REPO_NAME=ghcr.io/bperel/inducksql-exporter pnpm -F '~ci' prod:build-docker -f apps/inducksql/Dockerfile-exporter",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/inducksql/docker-compose.yml:@apps/inducksql/docker-compose.yml apps/inducksql/Caddyfile:@apps/inducksql/Caddyfile",
+    "prod:deploy": "DIR=apps/inducksql SERVICES='inducksql' pnpm -F '~ci' prod:docker-compose-up",
+    "prod:docker-compose-run": "DIR=apps/inducksql SERVICE=inducksql-exporter pnpm -F '~ci' prod:docker-compose-run"
   },
   "dependencies": {
     "dotenv": "^17.4.2",

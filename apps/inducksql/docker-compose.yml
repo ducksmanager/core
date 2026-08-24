@@ -1,0 +1,33 @@
+services:
+  inducksql:
+    container_name: inducksql
+    image: ghcr.io/bperel/inducksql
+    restart: always
+    networks:
+      public-network:
+        aliases:
+          - inducksql
+
+  # Not a long-running service: invoked with `docker compose run` to rebuild the artifact.
+  # It needs the coa schema, so it joins the database network rather than the public one.
+  inducksql-exporter:
+    init: true
+    image: ghcr.io/bperel/inducksql-exporter
+    env_file:
+      - ../../packages/api/.env
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: coa
+      ARTIFACT_PATH: /artifact/coa.sqlite
+    volumes:
+      # The same directory Caddy serves /coa.sqlite from, via its /server-data mount.
+      - /data/inducksql:/artifact
+    networks:
+      - dm-db-network
+
+networks:
+  public-network:
+    external: true
+  dm-db-network:
+    external: true

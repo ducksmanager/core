@@ -1,0 +1,12 @@
+inducksql.ducksmanager.net {
+	# The artifact is served straight off disk: Caddy's file_server honours Range requests,
+	# which is the whole basis of the VFS. Same origin as the app, so no CORS is involved.
+	handle /coa.sqlite {
+		root * /server-data/inducksql
+		file_server
+	}
+
+	handle {
+		reverse_proxy inducksql
+	}
+}
