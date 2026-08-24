@@ -5,6 +5,11 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      force_all:
+        description: "Build and deploy every package, ignoring change detection"
+        type: boolean
+        default: false
   push:
     branches:
       - "master"
@@ -43,7 +48,6 @@ jobs:
         uses: nrwl/nx-set-shas@v5
         with:
           main-branch-name: master
-        #   fallback-sha: "ffffff"
 
       - run: |
           echo "HEAD: ${{ env.NX_HEAD }}"
@@ -64,38 +68,74 @@ jobs:
         with:
           bun-version: 1.3.x
 
-      - name: Check apps changed since the last successful commit
+      - name: Compute affected packages
         run: |
-          if [ "${{ env.NX_BASE }}" == "ffffff" ]; then
-            lastSuccessfulCommit=${{ env.NX_HEAD }}
-          else
-            lastSuccessfulCommit=${{ env.NX_BASE }}
-          fi
+          lastSuccessfulCommit=${{ env.NX_BASE }}
           echo "lastSuccessfulCommit=$lastSuccessfulCommit" >> "$GITHUB_ENV"
-          echo "Changed apps:"
-          pnpm -r -F "...[$lastSuccessfulCommit]" ls --depth -1
+
+          pnpm i -g "turbo@$(node -p "require('./package.json').devDependencies.turbo")"
+
+          allPackages=$(turbo ls --output=json)
+
+          # Files outside every workspace package are invisible to turbo's change
+          # detection, so treat them as affecting everything.
+          packageRegex="^($(echo "$allPackages" | jq -r '.packages.items[].path' | paste -sd'|' -))/"
+          if changedFiles=$(git diff --name-only "$lastSuccessfulCommit" "${{ env.NX_HEAD }}"); then
+            rootChanges=$(echo "$changedFiles" \
+              | grep -vE "$packageRegex" \
+              | grep -vE '^(\.github|\.husky|\.vscode|\.claude)/|^(README\.md|LICENSE|keybindings\.json)$' || true)
+          else
+            echo "Could not diff $lastSuccessfulCommit against ${{ env.NX_HEAD }}."
+            rootChanges="(diff unavailable)"
+          fi
+
+          if [ "${{ inputs.force_all }}" == "true" ]; then
+            echo "force_all requested, selecting every package:"
+            packages=$(echo "$allPackages" | jq -r '.packages.items[].name')
+          elif [ -n "$rootChanges" ]; then
+            echo "Root-level changes affect every package:"
+            echo "$rootChanges" | sed 's/^/  /'
+            packages=$(echo "$allPackages" | jq -r '.packages.items[].name')
+          else
+            echo "Packages affected since $lastSuccessfulCommit:"
+            packages=$(turbo ls -F "...[$lastSuccessfulCommit]" --output=json | jq -r '.packages.items[].name')
+          fi
+          packages=$(echo "$packages" | grep -vE '^(~ci|~duckguessr-api|~monitoring-grafana)$' || true)
+          echo "${packages:-(none)}"
+
+          if [ -z "$packages" ]; then
+            echo "has_affected=false" >> "$GITHUB_ENV"
+          else
+            echo "has_affected=true" >> "$GITHUB_ENV"
+            echo "TURBO_FILTERS=$(echo "$packages" | sed 's/^/-F /' | tr '\n' ' ')" >> "$GITHUB_ENV"
+          fi
 
       - name: Install dependencies
+        if: env.has_affected == 'true'
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
         run: |
           pnpm -r i --config.platform=linux --config.architecture=x64
 
       - name: Retrieve pre-build files
+        if: env.has_affected == 'true'
         run: |
-          pnpm i -g turbo
           ./node_modules/.bin/turbo prod:transfer-files-pre
 
       - uses: docker/setup-buildx-action@v4
+        if: env.has_affected == 'true'
 
       - name: Build apps
+        if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' -F '!~monitoring-grafana' build prod:build-docker
+          ./node_modules/.bin/turbo $TURBO_FILTERS build prod:build-docker
 
       - name: Send post-build files
+        if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' -F '!~monitoring-grafana' prod:transfer-files-post
+          ./node_modules/.bin/turbo $TURBO_FILTERS prod:transfer-files-post
 
       - name: Deploy
+        if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo --concurrency=1 -F "...[$lastSuccessfulCommit]" -F '!~ci' -F '!~duckguessr-api' -F '!~monitoring-grafana' prod:deploy
+          ./node_modules/.bin/turbo --concurrency=1 $TURBO_FILTERS prod:deploy
