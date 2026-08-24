@@ -28,7 +28,7 @@
     "@vueuse/core": "^14.4.0",
     "axios-cache-interceptor": "^1.12.3",
     "bootstrap": "^5.3.8",
-    "bootstrap-vue-next": "^0.42.0",
+    "bootstrap-vue-next": "^1.0.1",
     "chart.js": "^4.5.1",
     "dayjs": "^1.11.23",
     "js-cookie": "^3.0.8",

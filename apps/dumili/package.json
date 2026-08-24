@@ -40,7 +40,7 @@
     "@vueuse/integrations": "^14.4.0",
     "axios-cache-interceptor": "^1.12.3",
     "bootstrap": "^5.3.8",
-    "bootstrap-vue-next": "^0.45.10",
+    "bootstrap-vue-next": "^1.0.1",
     "js-cookie": "^3.0.8",
     "pinia": "^4.0.3",
     "socket-call-client": "^0.7.7",

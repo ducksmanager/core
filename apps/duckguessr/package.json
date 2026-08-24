@@ -22,7 +22,7 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/duckguessr/docker-compose.yml:@apps/duckguessr/docker-compose.yml apps/duckguessr/Caddyfile:@apps/duckguessr/Caddyfile"
   },
   "dependencies": {
-    "@bootstrap-vue-next/nuxt": "^0.42.0",
+    "@bootstrap-vue-next/nuxt": "^1.0.0",
     "@nuxtjs/i18n": "^10.6.0",
     "@nuxtjs/storybook": "^9.0.1",
     "@pinia/nuxt": "^1.0.2",
@@ -33,7 +33,7 @@
     "@vueuse/nuxt": "^14.4.0",
     "axios-cache-interceptor": "^1.12.3",
     "bootstrap": "^5.3.8",
-    "bootstrap-vue-next": "^0.42.0",
+    "bootstrap-vue-next": "^1.0.1",
     "js-cookie": "^3.0.8",
     "nuxt": "^4.5.2",
     "nuxt-typed-router": "4.0.9",

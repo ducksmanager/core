@@ -32,7 +32,7 @@
     "axios": "^1.19.0",
     "axios-cache-interceptor": "^1.12.3",
     "bootstrap": "^5.3.8",
-    "bootstrap-vue-next": "^0.42.0",
+    "bootstrap-vue-next": "^1.0.1",
     "cropperjs": "^1.6.2",
     "interactjs": "^1.10.28",
     "js-cookie": "^3.0.8",
