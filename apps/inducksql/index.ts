@@ -9,7 +9,7 @@ import { parseArgs } from "util";
 import { createPool } from "mariadb";
 import { existsSync, rmSync, statSync } from "fs";
 
-import { ftsIndexes } from "./config";
+import { ftsIndexes, statsTable } from "./config";
 import { introspect } from "./introspect";
 import {
   createFtsIndex,
@@ -94,6 +94,7 @@ try {
 
   const dataStart = Date.now();
   let totalRows = 0;
+  const rowCounts = new Map<string, number>();
   for (const table of tables) {
     const start = Date.now();
     const columns = table.columns.map(({ name }) => name);
@@ -125,6 +126,7 @@ try {
       rows += batch.length;
     }
 
+    rowCounts.set(table.name, rows);
     totalRows += rows;
     if (rows > 50_000) {
       console.log(
@@ -156,6 +158,18 @@ try {
       );
     }
   }
+
+  sqlite.run(
+    `CREATE TABLE ${quote(statsTable)} (` +
+      "table_name TEXT PRIMARY KEY, row_count INTEGER NOT NULL) WITHOUT ROWID",
+  );
+  const insertCount = sqlite.prepare(
+    `INSERT INTO ${quote(statsTable)} VALUES (?, ?)`,
+  );
+  sqlite.transaction(() => {
+    for (const [name, count] of rowCounts) insertCount.run(name, count);
+  })();
+  console.log(`${statsTable}: ${rowCounts.size} row counts recorded`);
 
   sqlite.run("PRAGMA optimize");
   const vacuumStart = Date.now();

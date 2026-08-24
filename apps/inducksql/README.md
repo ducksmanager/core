@@ -54,10 +54,20 @@ artifact, cut whole tables with `--only` rather than dropping indexes.
 | `FULLTEXT` index                        | FTS5 table, see below                                            |
 | `VECTOR` index                          | dropped                                                          |
 | views                                   | **not exported** — only `BASE TABLE`s are read                   |
+| row counts                              | recorded into `inducksql_stats` (see below)                      |
 
 Views are excluded by construction. The ones in `coa` (`v_pool`, `v_sv`,
 `inducks_issuequotation`) use `regexp` and `CAST(... AS UNSIGNED)` and would need rewriting to
 run under SQLite; if the consumer needs them, define them client-side.
+
+### Row counts
+
+`COUNT(*)` scans a table — over a range-request VFS that means pulling it across the network — so
+the exporter records each table's count into an `inducksql_stats(table_name, row_count)` table as
+it loads. Reading every count costs about as much as reading the schema.
+
+`verify.ts` re-derives the counts and fails on any drift, since a stale figure here would be
+invisible in the viewer. The viewer hides `inducksql_stats` from its own listing.
 
 ### Behaviour that differs from MariaDB
 
@@ -159,6 +169,8 @@ rewrites the header to force WAL off.
 
 `web/` is a small Vue 3 + Vite frontend for inspecting the artifact through the range-request
 VFS — a fixed database, not a file picker.
+
+The sidebar lists tables and views with their row counts, read from `inducksql_stats`.
 
 ```bash
 pnpm -F '~inducksql' dev:db    # serve coa.sqlite with Range support on :8901

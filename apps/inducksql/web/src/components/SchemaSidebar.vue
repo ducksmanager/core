@@ -13,19 +13,24 @@ const emit = defineEmits<{ select: [table: string] }>();
 const filter = ref("");
 
 const tables = computed(() => {
-  const names = objects
-    .filter((object) => object.type === "table" || object.type === "view")
-    .map((object) => object.name);
+  const listed = objects.filter(
+    (object) => object.type === "table" || object.type === "view",
+  );
   const needle = filter.value.trim().toLowerCase();
   return (
-    needle ? names.filter((name) => name.toLowerCase().includes(needle)) : names
-  ).sort();
+    needle
+      ? listed.filter((object) => object.name.toLowerCase().includes(needle))
+      : listed
+  ).toSorted((a, b) => a.name.localeCompare(b.name));
 });
 
-const indexCount = (table: string) =>
-  objects.filter(
-    (object) => object.type === "index" && object.tableName === table,
-  ).length;
+// Counts come from the export, not COUNT(*): see config.ts. A badge has no room for seven
+// digits, so it is abbreviated and the exact figure goes in the tooltip.
+const compact = new Intl.NumberFormat(undefined, {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+const exact = new Intl.NumberFormat();
 </script>
 
 <template>
@@ -39,18 +44,18 @@ const indexCount = (table: string) =>
       tables
     </p>
     <ul>
-      <li v-for="table in tables" :key="table">
+      <li v-for="table in tables" :key="table.name">
         <button
-          :class="{ active: table === selected }"
-          @click="emit('select', table)"
+          :class="{ active: table.name === selected }"
+          @click="emit('select', table.name)"
         >
-          <span class="name">{{ table }}</span>
+          <span class="name">{{ table.name }}</span>
           <span
-            v-if="indexCount(table)"
+            v-if="table.rowCount !== null"
             class="badge"
-            :title="`${indexCount(table)} indexes`"
+            :title="`${exact.format(table.rowCount)} rows`"
           >
-            {{ indexCount(table) }}
+            {{ compact.format(table.rowCount) }}
           </span>
         </button>
       </li>

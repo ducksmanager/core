@@ -1,3 +1,9 @@
+/**
+ * Row counts are recorded at build time under this name. COUNT(*) over a range-request VFS
+ * scans the table and drags it across the network, so the viewer reads counts from here.
+ */
+export const statsTable = "inducksql_stats";
+
 /** Tables never worth shipping: the vector index needs sqlite-vec, the rest is build residue. */
 export const excludedTables = ["inducks_entryurl_vector", "_prisma_migrations"];
 export const excludedTablePrefixes = ["temp_files_to_process_"];

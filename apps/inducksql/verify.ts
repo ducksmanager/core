@@ -4,6 +4,7 @@ import { Database } from "bun:sqlite";
 import { parseArgs } from "util";
 import { createPool } from "mariadb";
 
+import { statsTable } from "./config";
 import { introspect } from "./introspect";
 import { quote } from "./sqlite-schema";
 
@@ -147,6 +148,32 @@ try {
     if (!ok) failures++;
     console.log(
       `${table}.${column}: nulls ${row.nulls}/${other.nulls}, empties ${row.empties}/${other.empties} ${ok ? "OK" : "MISMATCH"}`,
+    );
+  }
+
+  // The recorded row counts are what the viewer displays instead of running COUNT(*), so a
+  // drift between them and the data would be invisible in the UI.
+  const recorded = new Map(
+    sqlite
+      .query<{ table_name: string; row_count: number }, []>(
+        `SELECT table_name, row_count FROM ${quote(statsTable)}`,
+      )
+      .all()
+      .map((row) => [row.table_name, Number(row.row_count)] as const),
+  );
+  const wrongCounts = tables.filter(({ name }) => {
+    const actual = sqlite
+      .query<{ n: number }, []>(`SELECT COUNT(*) AS n FROM ${quote(name)}`)
+      .get()!.n;
+    return recorded.get(name) !== Number(actual);
+  });
+  console.log(
+    `${statsTable}: ${tables.length - wrongCounts.length}/${tables.length} recorded counts match`,
+  );
+  if (wrongCounts.length) {
+    failures++;
+    console.error(
+      `  MISMATCH: ${wrongCounts.map(({ name }) => name).join(", ")}`,
     );
   }
 

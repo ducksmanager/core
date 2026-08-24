@@ -11,6 +11,7 @@ import sqlite3InitModule, {
   type SqlValue,
 } from "@sqlite.org/sqlite-wasm";
 
+import { statsTable } from "../../config";
 import { createXhrSource, installHttpVfs } from "../../vfs/http-vfs";
 import {
   schemaObjectTypes,
@@ -44,6 +45,9 @@ const asNullableText = (value: SqlValue): string | null =>
 
 const asNumber = (value: SqlValue): number =>
   typeof value === "number" ? value : Number(asText(value));
+
+const asNullableNumber = (value: SqlValue): number | null =>
+  value === null ? null : asNumber(value);
 
 const asSchemaObjectType = (value: SqlValue): SchemaObjectType =>
   schemaObjectTypes.find((candidate) => candidate === value) ?? "table";
@@ -127,14 +131,18 @@ self.onmessage = async (event: MessageEvent<Request>) => {
       case "schema": {
         const objects = db()
           .selectObjects(
-            `SELECT type, name, tbl_name AS tableName, sql FROM sqlite_master
-             WHERE name NOT LIKE 'sqlite_%' ORDER BY tbl_name, type DESC, name`,
+            `SELECT m.type, m.name, m.tbl_name AS tableName, m.sql, s.row_count AS rowCount
+             FROM sqlite_master m
+             LEFT JOIN ${statsTable} s ON s.table_name = m.name
+             WHERE m.name NOT LIKE 'sqlite_%' AND m.name <> '${statsTable}'
+             ORDER BY m.tbl_name, m.type DESC, m.name`,
           )
           .map((row): SchemaObject => ({
             type: asSchemaObjectType(row.type),
             name: asText(row.name),
             tableName: asText(row.tableName),
             sql: asNullableText(row.sql),
+            rowCount: asNullableNumber(row.rowCount),
           }));
         post({ id: request.id, ok: true, kind: "schema", objects });
         break;

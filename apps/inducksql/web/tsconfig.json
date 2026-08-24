@@ -15,6 +15,7 @@
     "src/**/*.ts",
     "src/**/*.vue",
     "vite.config.ts",
-    "../vfs/http-vfs.ts"
+    "../vfs/http-vfs.ts",
+    "../config.ts"
   ]
 }

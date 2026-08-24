@@ -25,6 +25,8 @@ export type SchemaObject = {
   name: string;
   tableName: string;
   sql: string | null;
+  /** Recorded at export time; null for objects with no recorded count, such as indexes. */
+  rowCount: number | null;
 };
 
 export type ColumnInfo = {
