@@ -58,7 +58,7 @@ const send = (request: PendingRequest) =>
   new Promise<Response>((resolve, reject) => {
     const id = nextId++;
     pending.set(id, { resolve, reject });
-    worker.postMessage({ ...request, id } as Request);
+    worker.postMessage({ ...request, id });
   });
 
 export const connect = async () => {

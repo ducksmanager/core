@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import type { QueryResult } from "../protocol";
+import type { QueryResult, SqlValue } from "../protocol";
 
 const { result } = defineProps<{ result: QueryResult }>();
 
-const render = (value: unknown) => {
+const render = (value: SqlValue) => {
   if (value === null) return "NULL";
   if (value === "") return "''";
+  // BLOBs have no useful text form, so show their size instead of "[object Uint8Array]".
+  if (value instanceof Uint8Array || value instanceof Int8Array) {
+    return `<${value.byteLength} bytes>`;
+  }
+  if (value instanceof ArrayBuffer) return `<${value.byteLength} bytes>`;
   return String(value);
 };
 </script>

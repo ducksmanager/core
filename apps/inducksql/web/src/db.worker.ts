@@ -5,23 +5,48 @@
  * synchronous XMLHttpRequest, which is only permitted off the main thread.
  */
 
-import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
+import sqlite3InitModule, {
+  type BindingSpec,
+  type Database,
+  type SqlValue,
+} from "@sqlite.org/sqlite-wasm";
 
 import { createXhrSource, installHttpVfs } from "../../vfs/http-vfs";
-import type {
-  ColumnInfo,
-  QueryResult,
-  Request,
-  Response,
-  SchemaObject,
-  TransferStats,
+import {
+  schemaObjectTypes,
+  type ColumnInfo,
+  type QueryResult,
+  type Request,
+  type Response,
+  type SchemaObject,
+  type SchemaObjectType,
+  type TransferStats,
 } from "./protocol";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let db: any = null;
+let connection: Database | null = null;
 let stats: TransferStats | null = null;
 
+/** Narrows the nullable module state once, so nothing downstream needs an assertion. */
+const db = (): Database => {
+  if (!connection) throw new Error("The database is not open yet");
+  return connection;
+};
+
 const post = (message: Response) => self.postMessage(message);
+
+// SQLite is dynamically typed: a column holds whatever storage class was written to it,
+// regardless of declared affinity. These coerce a cell instead of asserting its type.
+const asText = (value: SqlValue): string =>
+  typeof value === "string" ? value : value === null ? "" : String(value);
+
+const asNullableText = (value: SqlValue): string | null =>
+  value === null ? null : asText(value);
+
+const asNumber = (value: SqlValue): number =>
+  typeof value === "number" ? value : Number(asText(value));
+
+const asSchemaObjectType = (value: SqlValue): SchemaObjectType =>
+  schemaObjectTypes.find((candidate) => candidate === value) ?? "table";
 
 const snapshot = (): TransferStats =>
   stats
@@ -42,31 +67,33 @@ const open = async (url: string) => {
   ({ stats } = installHttpVfs(sqlite3, {
     resolve: (path) => (path.endsWith(filename) ? source : null),
   }));
-  db = new sqlite3.oo1.DB({ filename, flags: "r", vfs: "http" });
+  connection = new sqlite3.oo1.DB({ filename, flags: "r", vfs: "http" });
   return {
     sizeBytes: source.size,
-    pageSize: Number(db.selectValue("PRAGMA page_size")),
+    pageSize: asNumber(db().selectValue("PRAGMA page_size") ?? 0),
   };
 };
 
-const rows = (sql: string, bind?: unknown[]) => {
-  const out: unknown[][] = [];
-  let columns: string[] = [];
-  db.exec({
-    sql,
-    bind,
+/** exec() fills the array passed as `columnNames`, which is how the header row is recovered. */
+const select = (sql: string, bind?: BindingSpec) => {
+  const columns: string[] = [];
+  const rows = db().exec(sql, {
     rowMode: "array",
-    columnNames: (columns = []),
-    callback: (row: unknown[]) => void out.push(row),
+    returnValue: "resultRows",
+    columnNames: columns,
+    bind,
   });
-  return { columns, rows: out };
+  return { columns, rows };
 };
 
 const runQuery = (sql: string, limit?: number): QueryResult => {
   // The plan is read first so the UI can warn before a SCAN pulls a whole table over the wire.
   let plan: string[] = [];
   try {
-    plan = rows(`EXPLAIN QUERY PLAN ${sql}`).rows.map((row) => String(row[3]));
+    // Reading `detail` by name beats indexing into EXPLAIN's positional columns.
+    plan = db()
+      .selectObjects(`EXPLAIN QUERY PLAN ${sql}`)
+      .map((row) => asText(row.detail));
   } catch {
     plan = [];
   }
@@ -77,7 +104,7 @@ const runQuery = (sql: string, limit?: number): QueryResult => {
     limit && !/\blimit\b/i.test(sql)
       ? `SELECT * FROM (${sql.replace(/;\s*$/, "")}) LIMIT ${limit}`
       : sql;
-  const result = rows(wrapped);
+  const result = select(wrapped);
   const elapsedMs = performance.now() - started;
 
   return {
@@ -98,28 +125,32 @@ self.onmessage = async (event: MessageEvent<Request>) => {
         break;
       }
       case "schema": {
-        const objects = rows(
-          `SELECT type, name, tbl_name, sql FROM sqlite_master
-           WHERE name NOT LIKE 'sqlite_%' ORDER BY tbl_name, type DESC, name`,
-        ).rows.map((row): SchemaObject => ({
-          type: row[0] as SchemaObject["type"],
-          name: row[1] as string,
-          tableName: row[2] as string,
-          sql: row[3] as string | null,
-        }));
+        const objects = db()
+          .selectObjects(
+            `SELECT type, name, tbl_name AS tableName, sql FROM sqlite_master
+             WHERE name NOT LIKE 'sqlite_%' ORDER BY tbl_name, type DESC, name`,
+          )
+          .map((row): SchemaObject => ({
+            type: asSchemaObjectType(row.type),
+            name: asText(row.name),
+            tableName: asText(row.tableName),
+            sql: asNullableText(row.sql),
+          }));
         post({ id: request.id, ok: true, kind: "schema", objects });
         break;
       }
       case "columns": {
-        const columns = rows(
-          `SELECT name, type, "notnull", pk FROM pragma_table_info(?)`,
-          [request.table],
-        ).rows.map((row): ColumnInfo => ({
-          name: row[0] as string,
-          type: row[1] as string,
-          notnull: Number(row[2]),
-          pk: Number(row[3]),
-        }));
+        const columns = db()
+          .selectObjects(
+            `SELECT name, type, "notnull", pk FROM pragma_table_info(?)`,
+            [request.table],
+          )
+          .map((row): ColumnInfo => ({
+            name: asText(row.name),
+            type: asText(row.type),
+            notnull: asNumber(row.notnull),
+            pk: asNumber(row.pk),
+          }));
         post({ id: request.id, ok: true, kind: "columns", columns });
         break;
       }
