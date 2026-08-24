@@ -58,7 +58,7 @@ try {
   }
 
   // Value-level check on the widest text table, where escaping bugs would surface.
-  // inducks_entry has no primary key (128 entrycodes are duplicated), so rows are aligned by
+  // inducks_entry has no primary key and some entrycodes are duplicated, so rows are aligned by
   // ordering both sides bytewise: MariaDB's default utf8mb3_unicode_ci ordering is
   // accent-insensitive and would interleave rows differently from SQLite's BINARY default.
   const limit = parseInt(options.sample);

@@ -30,9 +30,9 @@ export type HttpVfsOptions = {
   name?: string;
   /**
    * Bytes per fetch. Bigger blocks help less than you would expect: b-tree descent issues
-   * *dependent* reads, which read-ahead cannot predict. Measured over five representative
-   * queries on the full artifact, 8 KB -> 128 KB cut requests by only 39% (120 -> 73) while
-   * fetching 9.6x more data (0.9 MB -> 9.0 MB). 16 KB is the compromise.
+   * *dependent* reads, which read-ahead cannot predict, so raising this cuts the request count
+   * only slightly while multiplying the bytes transferred. http-vfs.test.ts reports both, if
+   * you want to re-tune it.
    */
   blockSize?: number;
   /** Cache ceiling in blocks. blockSize * maxBlocks is the peak memory held. */

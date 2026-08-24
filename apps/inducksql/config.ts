@@ -18,8 +18,9 @@ export const ftsIndexes: Record<string, string[]> = {
 
 /**
  * MariaDB index names in the INDUCKS schema are positional (`fk0`, `pk0`, ...). They are all
- * kept by default: dropping the `fk*` ones saves ~510 MB but turns the join paths they serve
- * into full table scans (storycode -> publications measured at 0.01 ms -> 3689 ms).
+ * kept by default: the `fk*` ones account for a large part of the artifact's size, but dropping
+ * them turns the join paths they serve into full table scans, which over a range-request VFS
+ * means pulling whole tables across the network.
  */
 export const skipIndexPattern: RegExp | null = null;
 
