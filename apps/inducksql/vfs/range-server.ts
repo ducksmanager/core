@@ -19,7 +19,16 @@ const server = Bun.serve({
     const headers = {
       "Accept-Ranges": "bytes",
       "Cache-Control": "public, max-age=31536000, immutable",
+      // Range is not a CORS-safelisted header, so a cross-origin read preflights and needs
+      // both the allow-list and Content-Range exposed back to the client.
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Range",
+      "Access-Control-Expose-Headers":
+        "Content-Range, Content-Length, Accept-Ranges",
     };
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers });
+    }
     if (request.method === "HEAD") {
       return new Response(null, {
         headers: { ...headers, "Content-Length": String(size) },

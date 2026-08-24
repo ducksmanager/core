@@ -8,17 +8,25 @@
     "verify": "bun run ./verify.ts",
     "build": "bun build --target bun index.ts --outfile bundle.mjs",
     "lint": "prettier -w .",
-    "test:vfs": "bun run vfs/http-vfs.test.ts"
+    "test:vfs": "bun run vfs/http-vfs.test.ts",
+    "dev": "concurrently -n vite,vue-tsc \"vite --config web/vite.config.ts --port 8009\" \"vue-tsc --noEmit -p web/tsconfig.json --watch\"",
+    "dev:db": "bun run vfs/range-server.ts coa.sqlite 8901",
+    "build:web": "vite build --config web/vite.config.ts"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
-    "mariadb": "^3.5.3"
+    "mariadb": "^3.5.3",
+    "vue": "^3.5.41"
   },
   "devDependencies": {
     "@types/bun": "~1.3.14",
     "@types/node": "^26.2.0",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
-    "@sqlite.org/sqlite-wasm": "3.53.0-build1"
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "concurrently": "^9.2.1",
+    "vite": "^8.2.2",
+    "vue-tsc": "^3.3.11"
   }
 }

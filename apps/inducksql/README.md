@@ -188,6 +188,31 @@ Pruning does not rescue the download. A 15-table browse/search core is still 842
 160 MB zstd, because `inducks_entry` (2.0M rows) and `inducks_storyjob` (2.1M rows) are
 irreducible; adding `inducks_entryurl` takes it to 1316 MB / 208 MB.
 
+### Viewer
+
+`web/` is a small Vue 3 + Vite frontend for inspecting the artifact through the range-request
+VFS — a fixed database, not a file picker.
+
+```bash
+pnpm -F '~inducksql' dev:db    # serve coa.sqlite with Range support on :8901
+pnpm -F '~inducksql' dev       # vite on :8009 + vue-tsc --watch
+```
+
+Point it elsewhere with `VITE_DB_URL`. It has a table/view sidebar with schema and DDL, a SQL
+editor (⌘/Ctrl+Enter), and a results grid.
+
+Two things it does deliberately, both because of how the VFS reads:
+
+- **No row counts, no `OFFSET`.** `COUNT(*)` and deep pagination scan the table, which on a
+  range-request VFS means pulling it across the network. Table browsing is a bare `LIMIT 100`.
+- **It surfaces cost.** Every query reports elapsed time, range requests and KB fetched, with a
+  running total in the header, and `EXPLAIN QUERY PLAN` runs first so a `SCAN` is flagged before
+  it downloads a whole table.
+
+Serving the artifact from another origin needs CORS: `Range` is not a safelisted header, so the
+browser preflights and the server must allow `Range` and expose `Content-Range`.
+`vfs/range-server.ts` does both.
+
 ### Verification
 
 `verify.ts` compares the artifact against the live schema and exits non-zero on any mismatch:
