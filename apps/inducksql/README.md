@@ -201,8 +201,9 @@ browser preflights and the server must allow `Range` and expose `Content-Range`.
 
 Deployed on push to `master` by the repo's `deploy` workflow, which runs `build`,
 `prod:build-docker`, `prod:transfer-files-post` and `prod:deploy` across changed packages. Two
-images are built: `inducksql` (nginx serving the built viewer) and `inducksql-exporter` (the
-export script).
+images are built: `inducksql` (stock nginx serving the built viewer) and `inducksql-exporter`
+(the export script). The image exists because it is how built assets reach the server —
+`prod:transfer-files-*` moves individual config files, not directories of hashed bundles.
 
 `Caddyfile` puts both behind `inducksql.ducksmanager.net`: `/coa.sqlite` is served straight off
 disk from `/server-data/inducksql`, and everything else proxies to the viewer. Caddy's

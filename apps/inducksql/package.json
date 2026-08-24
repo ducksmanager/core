@@ -6,7 +6,7 @@
   "scripts": {
     "export": "bun --env-file=.env run ./index.ts",
     "verify": "bun run ./verify.ts",
-    "build": "bun build --target bun index.ts --outfile bundle.mjs && vite build --config web/vite.config.ts",
+    "build": "bun build --target bun ./index.ts --outfile bundle.mjs && vite build --config web/vite.config.ts",
     "lint": "prettier -w .",
     "test:vfs": "bun run vfs/http-vfs.test.ts",
     "dev": "concurrently -n vite,vue-tsc,sqlite-serve \"vite --config web/vite.config.ts --port 8009\" \"vue-tsc --noEmit -p web/tsconfig.json --watch\" \"bun run ./vfs/range-server.ts coa.sqlite 8901\"",
