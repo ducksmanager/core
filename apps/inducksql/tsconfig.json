@@ -8,5 +8,5 @@
     "noEmit": true,
     "types": ["bun", "node"]
   },
-  "include": ["*.ts"]
+  "include": ["*.ts", "vfs/**/*.ts"]
 }

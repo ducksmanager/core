@@ -97,18 +97,56 @@ The pinned build (3.53.0) has `ENABLE_FTS5`, `ENABLE_RTREE`, `ENABLE_DBSTAT_VTAB
 `MAX_DEFAULT_PAGE_SIZE=8192` — so FTS5 with the tokenizer above works, and the artifact's page
 size matches the build's default.
 
-The VFSes it ships are `memdb`, `kvvfs`, `opfs` and `opfs-sahpool`. **There is no HTTP
-range-request VFS**, so the file cannot be queried in place on the server — it has to be
-present locally before the first query. That makes size the binding constraint:
+`vfs/http-vfs.ts` is a read-only VFS that reads the artifact over HTTP **range requests**, so the
+full 1784 MB file is queryable without downloading it. The bundled VFSes (`memdb`, `kvvfs`,
+`opfs`, `opfs-sahpool`) all need the database present locally first; this one does not.
 
-- **`memdb` / `deserialize`** holds the whole database in wasm memory. 1784 MB is not viable in
-  wasm32; this path needs an artifact trimmed with `--only` (target well under ~500 MB).
-- **`opfs-sahpool`** is the option that scales. Fetch and decompress once into OPFS, then queries
-  read only the pages they touch — every b-tree in the artifact is depth 4, so a point lookup is
-  ~4 index + ~4 table pages ≈ 64 KB regardless of file size. Prefer it over `opfs`: it does not
-  need `SharedArrayBuffer`, so no COOP/COEP headers. Request persistent storage
-  (`navigator.storage.persist()`) before writing 1.8 GB, and expect the first-load download to be
-  304 MB (`zstd`) or 466 MB (`gzip`).
+Measured against the real artifact over real HTTP (`pnpm -F '~inducksql' test:vfs`), five
+representative queries returned byte-identical results to a local read while fetching **0.095% of
+the file**:
+
+| query                              | range requests | fetched |
+| ---------------------------------- | -------------- | ------- |
+| open + `COUNT(*)` on a small table | 9              | 144 KB  |
+| issue → its entries                | 6              | 96 KB   |
+| story → all publications           | 10             | 160 KB  |
+| entryurl by entrycode              | 6              | 96 KB   |
+| FTS5 search                        | 77             | 1232 KB |
+
+Repeating a query costs **0 requests**, and index pages are reused across different queries, so a
+session gets cheaper as it goes.
+
+Usage — this must run in a Worker, because synchronous XHR is not permitted on the main thread:
+
+```ts
+import sqlite3InitModule from "@sqlite.org/sqlite-wasm";
+import { installHttpVfs, createXhrSource } from "./http-vfs";
+
+const sqlite3 = await sqlite3InitModule();
+const source = createXhrSource("/coa.sqlite");
+installHttpVfs(sqlite3, {
+  resolve: (path) => (path.endsWith("coa.sqlite") ? source : null),
+});
+const db = new sqlite3.oo1.DB({
+  filename: "coa.sqlite",
+  flags: "r",
+  vfs: "http",
+});
+```
+
+`blockSize` defaults to 16 KB. Raising it helps less than it looks: b-tree descent issues
+_dependent_ reads that read-ahead cannot predict, so 8 KB → 128 KB cut requests by only 39%
+while fetching 9.6x more data. Prefer HTTP/2 keep-alive over bigger blocks for latency.
+
+Serving requirements:
+
+- The host must honour `Range` and return `206`. `vfs/range-server.ts` is a minimal reference
+  implementation, and Caddy's `file_server` does this by default.
+- The artifact **cannot** carry a whole-file `Content-Encoding` — ranges and compression do not
+  compose. Serve it raw; you only transfer ~0.1% of it.
+- Keep `--journal-mode=delete` (the default). WAL cannot be opened read-only.
+- Serve with a long-lived immutable `Cache-Control` and a versioned URL, so the browser keeps
+  fetched ranges across sessions.
 
 Vite needs the wasm asset left alone and the package excluded from dep optimization:
 
@@ -116,14 +154,13 @@ Vite needs the wasm asset left alone and the package excluded from dep optimizat
 // vite.config.ts
 export default defineConfig({
   optimizeDeps: { exclude: ["@sqlite.org/sqlite-wasm"] },
-  // Only needed for the `opfs` VFS; `opfs-sahpool` works without these.
-  // server: { headers: { "Cross-Origin-Opener-Policy": "same-origin",
-  //                      "Cross-Origin-Embedder-Policy": "require-corp" } },
 });
 ```
 
-Open the database read-only once it is in OPFS, and make sure your host serves the artifact with
-`Content-Encoding` set so it is not decompressed twice.
+No COOP/COEP headers are required: the VFS uses synchronous XHR rather than
+`SharedArrayBuffer`/`Atomics.wait`. If you would rather hold the database locally, `opfs-sahpool`
+still works — fetch and decompress the artifact into OPFS once (304 MB zstd / 466 MB gzip),
+noting that its importer rewrites the header to force WAL off.
 
 ### Serving: static file vs Turso
 
