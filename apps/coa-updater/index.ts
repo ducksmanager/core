@@ -92,8 +92,7 @@ try {
     // Prefix fulltext indexes with table name
     .replace(
       /(ALTER TABLE )(([^ ]+)_temp)( ADD FULLTEXT)(\([^()]+\));/gs,
-      "$1$2$4 fulltext_$3 $5;",
-    ) + "ALTER TABLE inducks_story_temp ADD FULLTEXT(storycode);";
+      "$1$2$4 fulltext_$3 $5;");
 
   console.log("Renaming foreign keys...");
   for (let fkIndex = 0; fkIndex <= 5; fkIndex++) {
@@ -140,9 +139,11 @@ set sql_log_bin=0;
 ${cleanSql}
 ALTER TABLE inducks_entryurl ADD id INT AUTO_INCREMENT NOT NULL, ADD PRIMARY KEY (id);
 
+ALTER TABLE inducks_story ADD FULLTEXT(storycode);
+ALTER TABLE inducks_story ADD FULLTEXT(title);
+
 # Add full text index on entry titles
 ALTER TABLE inducks_entry ADD FULLTEXT INDEX entryTitleFullText(title);
-
 
 ALTER TABLE inducks_entry
   ADD COLUMN is_cover tinyint(1) default null null;
