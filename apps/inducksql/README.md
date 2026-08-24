@@ -20,14 +20,15 @@ Required environment variables (see `.env`):
 
 Options:
 
-| flag            | default      | purpose                                                        |
-| --------------- | ------------ | -------------------------------------------------------------- |
-| `--out`         | `coa.sqlite` | output path                                                    |
-| `--page-size`   | `8192`       | SQLite page size                                               |
-| `--only`        | _(all)_      | comma-separated table allowlist, to produce a smaller artifact |
-| `--no-indexes`  | off          | data only (halves the file, see below)                         |
-| `--no-fts`      | off          | skip the FTS5 tables                                           |
-| `--enum-checks` | off          | emit `CHECK (col IN (...))` for the 55 enum columns            |
+| flag             | default      | purpose                                                        |
+| ---------------- | ------------ | -------------------------------------------------------------- |
+| `--out`          | `coa.sqlite` | output path                                                    |
+| `--page-size`    | `8192`       | SQLite page size                                               |
+| `--only`         | _(all)_      | comma-separated table allowlist, to produce a smaller artifact |
+| `--no-indexes`   | off          | data only (halves the file, see below)                         |
+| `--no-fts`       | off          | skip the FTS5 tables                                           |
+| `--journal-mode` | `delete`     | set to `wal` only for `turso db upload` (see Serving)          |
+| `--enum-checks`  | off          | emit `CHECK (col IN (...))` for the 55 enum columns            |
 
 ### Current output
 
@@ -123,6 +124,32 @@ export default defineConfig({
 
 Open the database read-only once it is in OPFS, and make sure your host serves the artifact with
 `Content-Encoding` set so it is not decompressed twice.
+
+### Serving: static file vs Turso
+
+These are two different architectures, not two hosts for the same thing, and they need
+differently-built artifacts.
+
+**Static file + OPFS** (what the section above describes) keeps `@sqlite.org/sqlite-wasm`.
+Queries run locally at 0.01–0.5 ms and work offline, at the cost of a one-time
+160–304 MB download. Requires `--journal-mode=delete` (the default): a WAL-mode file
+**cannot be opened read-only at all** — SQLite needs to create the `-shm` sidecar and fails with
+`SQLITE_CANTOPEN`.
+
+**Turso / a libSQL server** replaces sqlite-wasm with `@libsql/client` and queries over HTTP.
+No download, but every query is a network round trip, and it needs `--journal-mode=wal` —
+`turso db upload` rejects anything else with `Protocol error: upload works only for DBs with
+journal_mode=WAL`. Two things to weigh:
+
+- Turso bills **row reads**, so a query plan that degrades into a scan costs money rather than
+  just latency: one full scan of `inducks_entry` is ~2M row reads, and the free tier is 500M/month.
+  This is the other reason the `fk*` indexes have to stay.
+- 1.78 GB fits the free tier's 5 GB storage, and no per-database cap is published — but confirm
+  against current limits before committing.
+
+Pruning does not rescue the download. A 15-table browse/search core is still 842 MB raw /
+160 MB zstd, because `inducks_entry` (2.0M rows) and `inducks_storyjob` (2.1M rows) are
+irreducible; adding `inducks_entryurl` takes it to 1316 MB / 208 MB.
 
 ### Verification
 

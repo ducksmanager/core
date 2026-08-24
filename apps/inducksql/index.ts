@@ -26,6 +26,9 @@ const { values: options } = parseArgs({
     "no-indexes": { type: "boolean", default: false },
     "no-fts": { type: "boolean", default: false },
     only: { type: "string" },
+    // `turso db upload` rejects anything that is not WAL; sqlite-wasm's OPFS importer rewrites
+    // the header to force WAL off. Pass --journal-mode=wal for Turso, leave it for the browser.
+    "journal-mode": { type: "string", default: "delete" },
   },
 });
 
@@ -159,13 +162,34 @@ try {
   sqlite.run("VACUUM");
   console.log(`vacuum: ${since(vacuumStart)}`);
 
+  // Set last: VACUUM and the bulk load both run fastest without a journal, and the mode the
+  // artifact ships with only matters to whatever consumes it.
+  const journalMode = options["journal-mode"];
+  const applied = sqlite
+    .query<{ journal_mode: string }, []>(`PRAGMA journal_mode = ${journalMode}`)
+    .get()!.journal_mode;
+  if (applied.toLowerCase() !== journalMode.toLowerCase()) {
+    throw new Error(
+      `journal_mode ${journalMode} was not applied (got ${applied})`,
+    );
+  }
+  console.log(`journal_mode: ${applied}`);
+
   const { integrity_check } = sqlite
     .query<{ integrity_check: string }, []>("PRAGMA integrity_check")
     .get()!;
   if (integrity_check !== "ok") {
     throw new Error(`integrity_check failed: ${integrity_check}`);
   }
+  // WAL mode leaves -wal/-shm sidecars behind. Fold them into the main file so the artifact
+  // stays a single uploadable file.
+  if (applied.toLowerCase() === "wal") {
+    sqlite.run("PRAGMA wal_checkpoint(TRUNCATE)");
+  }
   sqlite.close();
+  for (const suffix of ["-wal", "-shm"]) {
+    if (existsSync(options.out + suffix)) rmSync(options.out + suffix);
+  }
 
   console.log(
     `\n=> ${options.out}  ${mb(options.out)} MB  (${tables.length} tables, integrity ok)`,
