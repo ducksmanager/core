@@ -1,4 +1,4 @@
-import { ftsIndexes, skipIndexPattern, typeMap } from "./config";
+import { ftsIndexes, typeMap } from "./config";
 import type { Table } from "./introspect";
 
 export const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
@@ -65,10 +65,9 @@ export const createTable = (table: Table, enumChecks: boolean) => {
 
 export const createIndexes = (table: Table) =>
   table.indexes
-    .filter(({ name, columns, type }) => {
+    .filter(({ columns, type }) => {
       if (type === "FULLTEXT" || type === "VECTOR") return false;
-      if (columns.join(" ") === table.primaryKey.join(" ")) return false;
-      return !skipIndexPattern?.test(name);
+      return columns.join(" ") !== table.primaryKey.join(" ");
     })
     .map(
       ({ name, columns, unique }) =>

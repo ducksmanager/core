@@ -17,12 +17,6 @@ export const ftsIndexes: Record<string, string[]> = {
   inducks_story: ["storycode"],
 };
 
-/**
- * The `fk*` indexes are most of the artifact's size, but dropping them turns the joins they
- * serve into full table scans, which over a range-request VFS means fetching whole tables.
- */
-export const skipIndexPattern: RegExp | null = null;
-
 export const typeMap: Record<string, "TEXT" | "INTEGER" | "REAL"> = {
   varchar: "TEXT",
   char: "TEXT",
