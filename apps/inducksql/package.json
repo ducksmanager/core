@@ -1,0 +1,22 @@
+{
+  "name": "~inducksql",
+  "description": "Exports the coa schema to a read-only SQLite file for @sqlite.org/sqlite-wasm",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "export": "bun --env-file=.env run ./index.ts",
+    "verify": "bun run ./verify.ts",
+    "build": "bun build --target bun index.ts --outfile bundle.mjs",
+    "lint": "prettier -w ."
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "mariadb": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/bun": "~1.3.14",
+    "@types/node": "^26.2.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3"
+  }
+}
