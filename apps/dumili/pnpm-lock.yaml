@@ -57,8 +57,8 @@ importers:
         specifier: ^5.3.8
         version: 5.3.8(@popperjs/core@2.11.8)
       bootstrap-vue-next:
-        specifier: ^0.45.10
-        version: 0.45.10(@vueuse/core@14.4.0(vue@3.5.41(typescript@6.0.3)))(@vueuse/integrations@14.4.0(axios@1.19.0)(sortablejs@1.15.7)(vue@3.5.41(typescript@6.0.3)))(bootstrap@5.3.8(@popperjs/core@2.11.8))(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(rolldown@1.0.1)(rollup@4.59.1)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.6.1)(sass@1.103.1)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3)))(vue@3.5.41(typescript@6.0.3))
+        specifier: ^1.0.1
+        version: 1.0.1(@vueuse/core@14.4.0(vue@3.5.41(typescript@6.0.3)))(@vueuse/integrations@14.4.0(axios@1.19.0)(sortablejs@1.15.7)(vue@3.5.41(typescript@6.0.3)))(bootstrap@5.3.8(@popperjs/core@2.11.8))(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(rolldown@1.0.1)(rollup@4.59.1)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.6.1)(sass@1.103.1)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3)))(vue@3.5.41(typescript@6.0.3))
       js-cookie:
         specifier: ^3.0.8
         version: 3.0.8
@@ -2541,8 +2541,8 @@ packages:
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
-  bootstrap-vue-next@0.45.10:
-    resolution: {integrity: sha512-9HkNYQ0pS6E48qFsSifR/S04qdTNBy+E5+Qxe+R0ORUAVe3z/R9dhq2fnjGjKV3yOPJzLxC1y/fqvkzVV3dZbQ==}
+  bootstrap-vue-next@1.0.1:
+    resolution: {integrity: sha512-3qIPlwy1T4nWwWTk1a9jHC7k60N94N1ZvF8sLqH6oIGWKsWa5wrDNxUiHRgApoF/aUjhXu3bjZqo/W7Fn0xi4w==}
     peerDependencies:
       '@floating-ui/vue': '*'
       '@internationalized/date': '*'
@@ -7435,7 +7435,7 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  bootstrap-vue-next@0.45.10(@vueuse/core@14.4.0(vue@3.5.41(typescript@6.0.3)))(@vueuse/integrations@14.4.0(axios@1.19.0)(sortablejs@1.15.7)(vue@3.5.41(typescript@6.0.3)))(bootstrap@5.3.8(@popperjs/core@2.11.8))(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(rolldown@1.0.1)(rollup@4.59.1)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.6.1)(sass@1.103.1)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3)))(vue@3.5.41(typescript@6.0.3)):
+  bootstrap-vue-next@1.0.1(@vueuse/core@14.4.0(vue@3.5.41(typescript@6.0.3)))(@vueuse/integrations@14.4.0(axios@1.19.0)(sortablejs@1.15.7)(vue@3.5.41(typescript@6.0.3)))(bootstrap@5.3.8(@popperjs/core@2.11.8))(vue-router@5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(pinia@4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)))(rolldown@1.0.1)(rollup@4.59.1)(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.6.1)(sass@1.103.1)(yaml@2.9.0))(vue@3.5.41(typescript@6.0.3)))(vue@3.5.41(typescript@6.0.3)):
     dependencies:
       '@floating-ui/core': 1.8.0
       bootstrap: 5.3.8(@popperjs/core@2.11.8)

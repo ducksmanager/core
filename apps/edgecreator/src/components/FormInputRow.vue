@@ -63,7 +63,7 @@ const {
   optionName: string;
   range?: number;
   rangeStep?: number;
-  selectOptions?: string[];
+  selectOptions?: PossibleInputValueType[];
   type: "color" | "text" | "range" | "select";
 }>();
 
