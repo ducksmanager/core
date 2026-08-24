@@ -1,4 +1,4 @@
-import { ftsIndexes, typeMap } from "./config";
+import { typeMap } from "./config";
 import type { Table } from "./introspect";
 
 export const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
@@ -10,7 +10,7 @@ const enumValues = (columnType: string) =>
     ?.map((value) => value.slice(1, -1).replaceAll("''", "'")) ?? [];
 
 export const createTable = (table: Table, enumChecks: boolean) => {
-  const { name, columns, primaryKey } = table;
+  const { name, columns, primaryKey, fulltextColumns } = table;
 
   const rowidAlias =
     primaryKey.length === 1 &&
@@ -56,7 +56,7 @@ export const createTable = (table: Table, enumChecks: boolean) => {
 
   // FTS5 external-content tables address rows by rowid, so those keep theirs.
   const withoutRowid =
-    primaryKey.length && !rowidAlias && !(name in ftsIndexes)
+    primaryKey.length && !rowidAlias && !fulltextColumns.length
       ? " WITHOUT ROWID"
       : "";
 

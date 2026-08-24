@@ -168,6 +168,33 @@ try {
     );
   }
 
+  // A FULLTEXT column absent from FTS5 means a query that worked against MariaDB silently
+  // degrades to a scan here.
+  const uncovered: string[] = [];
+  for (const { name, fulltextColumns } of tables) {
+    if (!fulltextColumns.length) continue;
+    const indexed = sqlite
+      .query<{ name: string }, [string]>(
+        "SELECT name FROM pragma_table_info(?)",
+      )
+      .all(`${name}_fts`)
+      .map((row) => row.name);
+    for (const column of fulltextColumns) {
+      if (!indexed.includes(column)) uncovered.push(`${name}.${column}`);
+    }
+  }
+  const fulltextTotal = tables.reduce(
+    (total, { fulltextColumns }) => total + fulltextColumns.length,
+    0,
+  );
+  console.log(
+    `FULLTEXT columns searchable: ${fulltextTotal - uncovered.length}/${fulltextTotal}`,
+  );
+  if (uncovered.length) {
+    failures++;
+    console.error(`  NOT IN FTS5: ${uncovered.join(", ")}`);
+  }
+
   const views = sqlite
     .query<{ n: number }, []>(
       "SELECT COUNT(*) AS n FROM sqlite_master WHERE type = 'view'",

@@ -9,7 +9,7 @@ import { parseArgs } from "util";
 import { createPool } from "mariadb";
 import { existsSync, rmSync, statSync } from "fs";
 
-import { ftsIndexes, statsTable } from "./config";
+import { statsTable } from "./config";
 import { introspect } from "./introspect";
 import {
   createFtsIndex,
@@ -143,13 +143,13 @@ try {
   }
 
   if (!options["no-fts"]) {
-    for (const [table, columns] of Object.entries(ftsIndexes)) {
-      if (!tables.some(({ name }) => name === table)) continue;
+    for (const { name, fulltextColumns } of tables) {
+      if (!fulltextColumns.length) continue;
       const start = Date.now();
-      for (const statement of createFtsIndex(table, columns))
+      for (const statement of createFtsIndex(name, fulltextColumns))
         sqlite.run(statement);
       console.log(
-        `fts5 ${table}(${columns.join(",")}): ${since(start)} (${mb(options.out)} MB)`,
+        `fts5 ${name}(${fulltextColumns.join(",")}): ${since(start)} (${mb(options.out)} MB)`,
       );
     }
   }
