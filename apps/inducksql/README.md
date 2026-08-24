@@ -32,9 +32,11 @@ Options:
 
 ### What is excluded
 
-`inducks_entryurl_vector` is dropped: it needs `sqlite-vec`, which the wasm build does not have.
-So are the `temp_files_to_process_*` build-residue tables and `_prisma_migrations`. Between them
-they account for most of the difference in size against the source schema.
+`inducks_entryurl_vector` is dropped: it needs `sqlite-vec`, which the wasm build does not have,
+and it accounts for most of the difference in size against the source schema. Also excluded are
+the `temp_files_to_process_*` build residue, `_prisma_migrations`, the empty `induckspriv_*`
+staging tables, and `inducks_issuequotation_raw` — so the `inducks_issuequotation` view over it
+would have nothing to read even if views were exported.
 
 A large share of the artifact is indexes, and the bulk of that is the positional `fk*` indexes. They
 look droppable but are not: without them the join paths they serve become full table scans, which

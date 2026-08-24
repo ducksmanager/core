@@ -5,8 +5,12 @@
 export const statsTable = "inducksql_stats";
 
 /** Tables never worth shipping: the vector index needs sqlite-vec, the rest is build residue. */
-export const excludedTables = ["inducks_entryurl_vector", "_prisma_migrations"];
-export const excludedTablePrefixes = ["temp_files_to_process_"];
+export const excludedTables = [
+  "inducks_entryurl_vector",
+  "_prisma_migrations",
+  "inducks_issuequotation_raw",
+];
+export const excludedTablePrefixes = ["temp_files_to_process_", "induckspriv_"];
 
 /**
  * FULLTEXT indexes have no SQLite counterpart, so the ones worth keeping are rebuilt as FTS5.
