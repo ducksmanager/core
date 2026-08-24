@@ -5,7 +5,6 @@ import type { QueryResult } from "../protocol";
 import { runQuery } from "../useDatabase";
 import ResultsGrid from "./ResultsGrid.vue";
 
-/** Name of the query parameter carrying the SQL, so a run can be shared as a link. */
 const sqlParam = "sql";
 
 const shared = new URLSearchParams(window.location.search).get(sqlParam);
@@ -16,7 +15,6 @@ const result = ref<QueryResult | null>(null);
 const error = ref<string | null>(null);
 const running = ref(false);
 
-/** A SCAN pulls the whole table over the wire, so it is worth shouting about. */
 const scans = computed(
   () => result.value?.plan.filter((line) => /^SCAN\b/.test(line.trim())) ?? [],
 );
@@ -26,9 +24,7 @@ const run = async () => {
   running.value = true;
   error.value = null;
 
-  // Reflect the query in the URL so the page can be shared, including when it fails —
-  // a broken query is worth sharing too. replaceState keeps the back button usable
-  // instead of stacking an entry per run.
+  // replaceState, so repeated runs do not stack history entries.
   const url = new URL(window.location.href);
   url.searchParams.set(sqlParam, sql.value);
   window.history.replaceState(null, "", url);
@@ -45,7 +41,6 @@ const run = async () => {
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(0)} KB`;
 
-// The panel only mounts once the database is open, so a shared query can run immediately.
 onMounted(() => {
   if (shared) run();
 });

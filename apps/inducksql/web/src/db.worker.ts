@@ -1,9 +1,6 @@
 /// <reference lib="webworker" />
 
-/**
- * Owns the SQLite instance. This has to be a Worker: the range-request VFS reads through
- * synchronous XMLHttpRequest, which is only permitted off the main thread.
- */
+/** Owns the SQLite instance. Must be a Worker: the VFS reads through synchronous XHR. */
 
 import sqlite3InitModule, {
   type BindingSpec,
@@ -27,7 +24,6 @@ import {
 let connection: Database | null = null;
 let stats: TransferStats | null = null;
 
-/** Narrows the nullable module state once, so nothing downstream needs an assertion. */
 const db = (): Database => {
   if (!connection) throw new Error("The database is not open yet");
   return connection;
@@ -35,8 +31,6 @@ const db = (): Database => {
 
 const post = (message: Response) => self.postMessage(message);
 
-// SQLite is dynamically typed: a column holds whatever storage class was written to it,
-// regardless of declared affinity. These coerce a cell instead of asserting its type.
 const asText = (value: SqlValue): string =>
   typeof value === "string" ? value : value === null ? "" : String(value);
 
@@ -91,10 +85,8 @@ const select = (sql: string, bind?: BindingSpec) => {
 };
 
 const runQuery = (sql: string, limit?: number): QueryResult => {
-  // The plan is read first so the UI can warn before a SCAN pulls a whole table over the wire.
   let plan: string[] = [];
   try {
-    // Reading `detail` by name beats indexing into EXPLAIN's positional columns.
     plan = db()
       .selectObjects(`EXPLAIN QUERY PLAN ${sql}`)
       .map((row) => asText(row.detail));
@@ -131,9 +123,8 @@ self.onmessage = async (event: MessageEvent<Request>) => {
       case "schema": {
         const objects = db()
           .selectObjects(
-            // FTS5 tables and the four shadow tables each one creates are implementation
-            // detail. They are found from the virtual tables themselves rather than by name,
-            // so the filter holds whatever the ftsIndexes config is set to.
+            // FTS5 tables and their shadow tables are found from the virtual tables rather than by
+            // name, so the filter holds whatever ftsIndexes is set to.
             `WITH fts AS (SELECT name FROM sqlite_master WHERE sql LIKE '%USING fts5%')
              SELECT m.type, m.name, m.tbl_name AS tableName, m.sql, s.row_count AS rowCount
              FROM sqlite_master m

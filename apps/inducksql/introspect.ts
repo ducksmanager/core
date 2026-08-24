@@ -24,10 +24,6 @@ export type Table = {
   indexes: Index[];
 };
 
-/**
- * Only BASE TABLEs are read, so the schema's views are excluded by construction. They rely on
- * `regexp` and `CAST(... AS UNSIGNED)` and would need rewriting to run under SQLite anyway.
- */
 export const introspect = async (
   pool: Pool,
   database: string,
@@ -75,7 +71,6 @@ export const introspect = async (
 
   const prefixed = indexRows.filter(({ SUB_PART }) => SUB_PART !== null);
   if (prefixed.length) {
-    // SQLite cannot index a prefix of a column, so this would silently change query plans.
     console.warn(
       `Warning: ignoring ${prefixed.length} prefix index part(s) with no SQLite equivalent`,
     );

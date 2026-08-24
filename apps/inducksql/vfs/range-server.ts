@@ -1,10 +1,6 @@
 #!/usr/bin/env bun
 
-/**
- * Minimal Range-honouring static server, used by http-vfs.test.ts and handy for local
- * development against the artifact. Runs as its own process: the test's transport blocks the
- * event loop synchronously, so a server sharing that loop could never answer it.
- */
+/** Range-honouring static server for the artifact, used by http-vfs.test.ts and `dev:db`. */
 
 const path = process.argv[2];
 const port = Number(process.argv[3] ?? 0);
@@ -19,8 +15,7 @@ const server = Bun.serve({
     const headers = {
       "Accept-Ranges": "bytes",
       "Cache-Control": "public, max-age=31536000, immutable",
-      // Range is not a CORS-safelisted header, so a cross-origin read preflights and needs
-      // both the allow-list and Content-Range exposed back to the client.
+      // Range is not CORS-safelisted, so a cross-origin read preflights.
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "Range",
       "Access-Control-Expose-Headers":

@@ -12,7 +12,6 @@ const enumValues = (columnType: string) =>
 export const createTable = (table: Table, enumChecks: boolean) => {
   const { name, columns, primaryKey } = table;
 
-  // A lone INTEGER primary key becomes a rowid alias, which costs no separate index.
   const rowidAlias =
     primaryKey.length === 1 &&
     typeMap[
@@ -55,8 +54,7 @@ export const createTable = (table: Table, enumChecks: boolean) => {
     }
   }
 
-  // WITHOUT ROWID drops the duplicate b-tree that a TEXT or composite primary key would
-  // otherwise need. FTS5 external-content tables reference a rowid, so those keep theirs.
+  // FTS5 external-content tables address rows by rowid, so those keep theirs.
   const withoutRowid =
     primaryKey.length && !rowidAlias && !(name in ftsIndexes)
       ? " WITHOUT ROWID"
@@ -69,7 +67,6 @@ export const createIndexes = (table: Table) =>
   table.indexes
     .filter(({ name, columns, type }) => {
       if (type === "FULLTEXT" || type === "VECTOR") return false;
-      // A secondary index duplicating the primary key earns nothing.
       if (columns.join(" ") === table.primaryKey.join(" ")) return false;
       return !skipIndexPattern?.test(name);
     })

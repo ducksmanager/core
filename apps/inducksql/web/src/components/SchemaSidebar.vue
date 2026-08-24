@@ -24,8 +24,6 @@ const tables = computed(() => {
   ).toSorted((a, b) => a.name.localeCompare(b.name));
 });
 
-// Counts come from the export, not COUNT(*): see config.ts. A badge has no room for seven
-// digits, so it is abbreviated and the exact figure goes in the tooltip.
 const compact = new Intl.NumberFormat(undefined, {
   notation: "compact",
   maximumFractionDigits: 1,

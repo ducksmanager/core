@@ -26,8 +26,7 @@ const { values: options } = parseArgs({
     "no-indexes": { type: "boolean", default: false },
     "no-fts": { type: "boolean", default: false },
     only: { type: "string" },
-    // Keep the default: a WAL-mode database cannot be opened read-only, and sqlite-wasm's OPFS
-    // importer rewrites the header to force WAL off anyway. Only set wal if a consumer needs it.
+    // A WAL database cannot be opened read-only at all, so `delete` is the shipping default.
     "journal-mode": { type: "string", default: "delete" },
   },
 });
@@ -53,12 +52,10 @@ const pool = createPool({
   password,
   database,
   connectionLimit: 2,
-  // Row values reach SQLite as-is; only DATE/DATETIME needs normalising (see toSqlite).
   bigIntAsNumber: true,
   sessionVariables: { net_read_timeout: 1800, net_write_timeout: 1800 },
 });
 
-/** SQLite has no date or boolean storage class, so dates become sortable ISO-8601 text. */
 const toSqlite = (value: unknown) => {
   if (value instanceof Date)
     return value.toISOString().replace("T", " ").replace("Z", "");
@@ -67,7 +64,7 @@ const toSqlite = (value: unknown) => {
   return value as string | number | null;
 };
 
-// Streaming needs a dedicated connection: queryStream is a Connection-level API.
+// queryStream is a Connection-level API, not a Pool one.
 const streamConnection = await pool.getConnection();
 
 try {
@@ -81,7 +78,6 @@ try {
   }
 
   const sqlite = new Database(options.out, { create: true, strict: false });
-  // Durability is pointless for a build artifact that is regenerated from scratch.
   sqlite.run(`PRAGMA page_size = ${parseInt(options["page-size"])}`);
   sqlite.run("PRAGMA journal_mode = OFF");
   sqlite.run("PRAGMA synchronous = OFF");
@@ -104,7 +100,6 @@ try {
     const select = `SELECT ${columns.map((name) => `\`${name}\``).join(", ")} FROM \`${table.name}\``;
 
     let rows = 0;
-    // Batches keep each transaction bounded while still amortising the write cost.
     let batch: unknown[][] = [];
     const flush = sqlite.transaction((pending: unknown[][]) => {
       for (const row of pending) insert.run(...(row as never[]));
@@ -176,8 +171,6 @@ try {
   sqlite.run("VACUUM");
   console.log(`vacuum: ${since(vacuumStart)}`);
 
-  // Set last: VACUUM and the bulk load both run fastest without a journal, and the mode the
-  // artifact ships with only matters to whatever consumes it.
   const journalMode = options["journal-mode"];
   const applied = sqlite
     .query<{ journal_mode: string }, []>(`PRAGMA journal_mode = ${journalMode}`)
@@ -195,8 +188,7 @@ try {
   if (integrity_check !== "ok") {
     throw new Error(`integrity_check failed: ${integrity_check}`);
   }
-  // WAL mode leaves -wal/-shm sidecars behind. Fold them into the main file so the artifact
-  // stays a single file.
+  // Fold the WAL sidecars back in so the artifact stays a single file.
   if (applied.toLowerCase() === "wal") {
     sqlite.run("PRAGMA wal_checkpoint(TRUNCATE)");
   }

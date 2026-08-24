@@ -1,10 +1,5 @@
-/**
- * Row counts are recorded at build time under this name. COUNT(*) over a range-request VFS
- * scans the table and drags it across the network, so the viewer reads counts from here.
- */
 export const statsTable = "inducksql_stats";
 
-/** Tables never worth shipping: the vector index needs sqlite-vec, the rest is build residue. */
 export const excludedTables = [
   "inducks_entryurl_vector",
   "_prisma_migrations",
@@ -12,11 +7,7 @@ export const excludedTables = [
 ];
 export const excludedTablePrefixes = ["temp_files_to_process_", "induckspriv_"];
 
-/**
- * FULLTEXT indexes have no SQLite counterpart, so the ones worth keeping are rebuilt as FTS5.
- * `remove_diacritics 2` reproduces the accent-insensitivity of the source's utf8mb3_unicode_ci
- * collation, which plain SQLite comparisons do not have.
- */
+/** `remove_diacritics 2` reproduces the source's accent-insensitive collation. */
 export const ftsIndexes: Record<string, string[]> = {
   inducks_entry: ["title"],
   inducks_character: ["charactername"],
@@ -27,10 +18,8 @@ export const ftsIndexes: Record<string, string[]> = {
 };
 
 /**
- * MariaDB index names in the INDUCKS schema are positional (`fk0`, `pk0`, ...). They are all
- * kept by default: the `fk*` ones account for a large part of the artifact's size, but dropping
- * them turns the join paths they serve into full table scans, which over a range-request VFS
- * means pulling whole tables across the network.
+ * The `fk*` indexes are most of the artifact's size, but dropping them turns the joins they
+ * serve into full table scans, which over a range-request VFS means fetching whole tables.
  */
 export const skipIndexPattern: RegExp | null = null;
 
@@ -50,7 +39,6 @@ export const typeMap: Record<string, "TEXT" | "INTEGER" | "REAL"> = {
   float: "REAL",
   double: "REAL",
   decimal: "REAL",
-  // Dates become ISO-8601 text: lexically sortable and accepted by SQLite's date functions.
   date: "TEXT",
   datetime: "TEXT",
   timestamp: "TEXT",

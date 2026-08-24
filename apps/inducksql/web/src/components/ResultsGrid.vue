@@ -6,7 +6,6 @@ const { result } = defineProps<{ result: QueryResult }>();
 const render = (value: SqlValue) => {
   if (value === null) return "NULL";
   if (value === "") return "''";
-  // BLOBs have no useful text form, so show their size instead of "[object Uint8Array]".
   if (value instanceof Uint8Array || value instanceof Int8Array) {
     return `<${value.byteLength} bytes>`;
   }
@@ -54,7 +53,6 @@ const render = (value: SqlValue) => {
 .scroll {
   flex: 1;
   min-height: 0;
-  /* Wide result sets scroll inside the grid; the page itself never scrolls sideways. */
   overflow: auto;
 }
 

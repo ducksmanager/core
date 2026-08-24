@@ -1,9 +1,6 @@
 #!/usr/bin/env bun
 
-/**
- * Runs the range-request VFS against a real HTTP server serving the real artifact, and checks
- * both that results match a direct local read and how many bytes each query actually costs.
- */
+/** Checks the VFS against a real HTTP server: results match a local read, and at what cost. */
 
 import { Database } from "bun:sqlite";
 import { statSync } from "fs";
@@ -15,9 +12,9 @@ const file = process.argv[2] ?? "coa.sqlite";
 const blockSize = Number(process.argv[3] ?? 64 * 1024);
 const size = statSync(file).size;
 
-// The server runs in its own process: the transport below blocks this event loop, so a
-// same-process server could never answer it (that deadlock is easy to hit and hard to read).
-// process.execPath, not "bun": a shimmed `bun` on PATH may not resolve inside a spawn.
+// The server needs its own process: the transport below blocks this event loop, so a
+// same-process server could never answer it. process.execPath, because a shimmed `bun`
+// on PATH may not resolve inside a spawn.
 const server = Bun.spawn(
   [process.execPath, `${import.meta.dir}/range-server.ts`, file, "0"],
   { stdout: "pipe", stderr: "inherit" },
@@ -41,10 +38,7 @@ console.log(
   `serving ${file} (${(size / 1024 ** 2).toFixed(0)} MB) at ${url}, blockSize ${blockSize / 1024} KB\n`,
 );
 
-/**
- * Bun stand-in for createXhrSource: same contract and same real HTTP, but synchronous via
- * spawnSync since Bun has no XMLHttpRequest. The browser uses sync XHR instead.
- */
+/** Stands in for createXhrSource: Bun has no XMLHttpRequest, so spawnSync provides the sync. */
 const createSyncHttpSource = (target: string): RangeSource => ({
   size,
   read(offset, length) {

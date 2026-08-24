@@ -21,8 +21,7 @@ const load = async () => {
   error.value = null;
   try {
     columns.value = await columnsOf(table);
-    // Deliberately a bare LIMIT: no COUNT(*) and no OFFSET, both of which would scan the
-    // whole table and drag it across the network a page at a time.
+    // No COUNT(*) and no OFFSET: both scan the table, which here means fetching it over HTTP.
     preview.value = await runQuery(`SELECT * FROM "${table}" LIMIT 100`);
   } catch (caught) {
     error.value = caught instanceof Error ? caught.message : String(caught);

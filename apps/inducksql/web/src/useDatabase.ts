@@ -45,10 +45,7 @@ worker.onmessage = (event: MessageEvent<Response>) => {
   else entry.reject(new Error(message.error));
 };
 
-/**
- * Omit collapses a discriminated union, so it has to be applied through a naked type parameter
- * for the conditional type to distribute over each member.
- */
+/** Omit must go through a naked type parameter to distribute over the union. */
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   ? Omit<T, K>
   : never;

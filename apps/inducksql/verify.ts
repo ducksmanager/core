@@ -41,7 +41,6 @@ let failures = 0;
 try {
   const tables = await introspect(pool, database);
 
-  // Row counts must agree for every exported table.
   const mismatched: string[] = [];
   for (const { name } of tables) {
     const [{ n }] = await pool.query(`SELECT COUNT(*) AS n FROM \`${name}\``);
@@ -58,11 +57,9 @@ try {
     console.error(`  MISMATCH: ${mismatched.join(", ")}`);
   }
 
-  // Value-level check on the widest text table, where escaping bugs would surface.
-  // inducks_entry has no primary key and some entrycodes are duplicated, so rows are aligned by
-  // ordering both sides bytewise: MariaDB's default utf8mb3_unicode_ci ordering is
-  // accent-insensitive and would interleave rows differently from SQLite's BINARY default.
   const limit = parseInt(options.sample);
+  // inducks_entry has no primary key, and MariaDB's accent-insensitive ordering interleaves
+  // rows differently from SQLite's BINARY, so both sides are ordered bytewise to line up.
   const columns = "entrycode, storyversioncode, title";
   type Row = { entrycode: string; storyversioncode: string; title: string };
   const source: Row[] = await pool.query(
@@ -96,12 +93,10 @@ try {
     console.error(`    sqlite: ${JSON.stringify(exported[index])}`);
   }
 
-  // Titles carrying newlines, tabs or quotes are exactly what a naive CSV/TSV export loses.
   const tricky: { entrycode: string; title: string }[] = await pool.query(
     `SELECT entrycode, title FROM inducks_entry
      WHERE title LIKE '%\\n%' OR title LIKE '%\\t%' OR title LIKE '%"%' LIMIT 5000`,
   );
-  // Duplicated entrycodes make a single-row lookup ambiguous, so assert the pair exists.
   const pairExists = sqlite.query<{ n: number }, [string, string]>(
     "SELECT COUNT(*) AS n FROM inducks_entry WHERE entrycode = ? AND title = ?",
   );
@@ -113,7 +108,6 @@ try {
   );
   if (badTricky.length) failures++;
 
-  // Accented titles confirm the charset survived the round trip.
   const accented: { entrycode: string; title: string }[] = await pool.query(
     `SELECT entrycode, title FROM inducks_entry
      WHERE title REGEXP '[éèêëàâäôöûüçñ]' LIMIT 5000`,
@@ -126,7 +120,6 @@ try {
   );
   if (badAccented.length) failures++;
 
-  // NULL and '' mean different things in this schema and must not be conflated.
   for (const [table, column] of [
     ["inducks_entry", "title"],
     ["inducks_storyversion", "storycode"],
@@ -151,8 +144,6 @@ try {
     );
   }
 
-  // The recorded row counts are what the viewer displays instead of running COUNT(*), so a
-  // drift between them and the data would be invisible in the UI.
   const recorded = new Map(
     sqlite
       .query<{ table_name: string; row_count: number }, []>(
@@ -177,7 +168,6 @@ try {
     );
   }
 
-  // Views are intentionally absent from the export.
   const views = sqlite
     .query<{ n: number }, []>(
       "SELECT COUNT(*) AS n FROM sqlite_master WHERE type = 'view'",

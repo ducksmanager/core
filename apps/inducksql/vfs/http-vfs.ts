@@ -1,17 +1,10 @@
 /**
- * A read-only SQLite VFS that reads the database over HTTP range requests, so a browser can
- * query the full multi-gigabyte artifact without downloading it.
+ * Read-only SQLite VFS backed by HTTP range requests.
  *
- * SQLite's xRead is synchronous, so the transport has to be too. The browser implementation
- * (createXhrSource) uses a synchronous XMLHttpRequest, which is permitted in a Worker and — the
- * spec's InvalidAccessError for responseType only fires when the global is a Window — may use
- * `responseType = "arraybuffer"` there. That avoids SharedArrayBuffer, and therefore COOP/COEP.
- *
- * Reads are served from a block cache rather than page-by-page: walking a b-tree issues several
- * dependent reads, so fetching more than a page at a time is what keeps round trips down.
+ * xRead is synchronous, so the transport must be too: createXhrSource uses synchronous XHR,
+ * which is permitted only in a Worker. That avoids SharedArrayBuffer, and so COOP/COEP.
  */
 
-/** A synchronous byte-range source. `read` must return exactly `length` bytes unless at EOF. */
 export type RangeSource = {
   size: number;
   read(offset: number, length: number): Uint8Array;
@@ -25,17 +18,13 @@ export type HttpVfsStats = {
 };
 
 export type HttpVfsOptions = {
-  /** Maps the path given to sqlite3_open_v2 onto a source, or null if there is no such file. */
   resolve: (path: string) => RangeSource | null;
   name?: string;
   /**
-   * Bytes per fetch. Bigger blocks help less than you would expect: b-tree descent issues
-   * *dependent* reads, which read-ahead cannot predict, so raising this cuts the request count
-   * only slightly while multiplying the bytes transferred. http-vfs.test.ts reports both, if
-   * you want to re-tune it.
+   * Bytes per fetch. Raising this helps less than expected: b-tree descent issues *dependent*
+   * reads that read-ahead cannot predict. http-vfs.test.ts reports requests and bytes.
    */
   blockSize?: number;
-  /** Cache ceiling in blocks. blockSize * maxBlocks is the peak memory held. */
   maxBlocks?: number;
 };
 
@@ -68,7 +57,6 @@ export const installHttpVfs = (
   const block = (handle: Handle, index: number) => {
     const cached = handle.blocks.get(index);
     if (cached) {
-      // Re-insert so plain Map insertion order doubles as LRU order.
       handle.blocks.delete(index);
       handle.blocks.set(index, cached);
       stats.blockHits++;
@@ -87,7 +75,6 @@ export const installHttpVfs = (
     return bytes;
   };
 
-  /** Copies [offset, offset+length) into dest, returning how many bytes were available. */
   const readInto = (
     handle: Handle,
     dest: Uint8Array,
@@ -114,7 +101,6 @@ export const installHttpVfs = (
 
   const ioMethods = new capi.sqlite3_io_methods();
   const vfs = new capi.sqlite3_vfs();
-  // Borrow the housekeeping methods; only the I/O path needs to differ.
   const base = new capi.sqlite3_vfs(capi.sqlite3_vfs_find(null));
 
   ioMethods.$iVersion = 1;
@@ -234,11 +220,7 @@ export const installHttpVfs = (
   return { stats };
 };
 
-/**
- * Browser transport. Must be constructed inside a Worker: synchronous XHR is not permitted on
- * the main thread. The URL has to be served by a host that honours Range requests, and cannot
- * carry a whole-file Content-Encoding — ranges and compression do not compose.
- */
+/** Worker only. The URL must honour Range and carry no whole-file Content-Encoding. */
 export const createXhrSource = (url: string): RangeSource => {
   const probe = new XMLHttpRequest();
   probe.open("HEAD", url, false);
