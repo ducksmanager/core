@@ -1,24 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import type { QueryResult } from "../protocol";
 import { runQuery } from "../useDatabase";
 import ResultsGrid from "./ResultsGrid.vue";
 
-const sql = ref(
-  `-- Accent-insensitive full-text search. bm25() only works where the FTS table
--- is queried directly, hence the materialized CTE.
-WITH m AS MATERIALIZED (
-  SELECT rowid AS rid, bm25(inducks_entry_fts) AS bm
-  FROM inducks_entry_fts WHERE inducks_entry_fts MATCH 'noel' LIMIT 200
-)
-SELECT e.entrycode, e.issuecode, e.title, sv.storycode
-FROM m
-JOIN inducks_entry e ON e.rowid = m.rid
-LEFT JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-ORDER BY m.bm
-LIMIT 50;`,
-);
+/** Name of the query parameter carrying the SQL, so a run can be shared as a link. */
+const sqlParam = "sql";
+
+const shared = new URLSearchParams(window.location.search).get(sqlParam);
+const sql = ref(shared ?? "");
 
 const limit = ref(200);
 const result = ref<QueryResult | null>(null);
@@ -31,9 +22,17 @@ const scans = computed(
 );
 
 const run = async () => {
-  if (running.value) return;
+  if (running.value || !sql.value.trim()) return;
   running.value = true;
   error.value = null;
+
+  // Reflect the query in the URL so the page can be shared, including when it fails —
+  // a broken query is worth sharing too. replaceState keeps the back button usable
+  // instead of stacking an entry per run.
+  const url = new URL(window.location.href);
+  url.searchParams.set(sqlParam, sql.value);
+  window.history.replaceState(null, "", url);
+
   try {
     result.value = await runQuery(sql.value, limit.value);
   } catch (caught) {
@@ -46,7 +45,10 @@ const run = async () => {
 
 const kb = (bytes: number) => `${(bytes / 1024).toFixed(0)} KB`;
 
-defineExpose({ setSql: (value: string) => ((sql.value = value), run()) });
+// The panel only mounts once the database is open, so a shared query can run immediately.
+onMounted(() => {
+  if (shared) run();
+});
 </script>
 
 <template>

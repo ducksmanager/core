@@ -131,10 +131,20 @@ self.onmessage = async (event: MessageEvent<Request>) => {
       case "schema": {
         const objects = db()
           .selectObjects(
-            `SELECT m.type, m.name, m.tbl_name AS tableName, m.sql, s.row_count AS rowCount
+            // FTS5 tables and the four shadow tables each one creates are implementation
+            // detail. They are found from the virtual tables themselves rather than by name,
+            // so the filter holds whatever the ftsIndexes config is set to.
+            `WITH fts AS (SELECT name FROM sqlite_master WHERE sql LIKE '%USING fts5%')
+             SELECT m.type, m.name, m.tbl_name AS tableName, m.sql, s.row_count AS rowCount
              FROM sqlite_master m
              LEFT JOIN ${statsTable} s ON s.table_name = m.name
-             WHERE m.name NOT LIKE 'sqlite_%' AND m.name <> '${statsTable}'
+             WHERE m.name NOT LIKE 'sqlite_%'
+               AND m.name <> '${statsTable}'
+               AND NOT EXISTS (
+                 SELECT 1 FROM fts
+                 WHERE m.name = fts.name
+                    OR m.name LIKE fts.name || '\\_%' ESCAPE '\\'
+               )
              ORDER BY m.tbl_name, m.type DESC, m.name`,
           )
           .map((row): SchemaObject => ({

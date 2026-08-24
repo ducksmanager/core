@@ -180,6 +180,11 @@ pnpm -F '~inducksql' dev       # vite on :8009 + vue-tsc --watch
 Point it elsewhere with `VITE_DB_URL`. It has a table/view sidebar with schema and DDL, a SQL
 editor (⌘/Ctrl+Enter), and a results grid.
 
+Running a query writes it to the `sql` query parameter, so a result can be shared as a link; a
+page loaded with that parameter populates the editor and runs it. FTS5 tables, the shadow tables
+each one creates, and `inducksql_stats` are all left out of the listing — they are found from the
+virtual tables rather than matched by name, so the filter holds if `ftsIndexes` changes.
+
 Two things it does deliberately, both because of how the VFS reads:
 
 - **No row counts, no `OFFSET`.** `COUNT(*)` and deep pagination scan the table, which on a
