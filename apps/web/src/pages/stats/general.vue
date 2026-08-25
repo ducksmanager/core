@@ -96,6 +96,7 @@ alias:
             >
               <template #cell(issue)="{ item }">
                 <Issue
+                  v-if="issuecodeDetails[item.issuecode!]"
                   v-bind="{...issuecodeDetails[item.issuecode!], publicationname: publicationNames[issuecodeDetails[item.issuecode!].publicationcode!]!}"
                 />
               </template>
@@ -237,11 +238,15 @@ watch(
   quotedIssues,
   async (newValue) => {
     if (newValue) {
-      fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
+      hasPublicationNames = false;
+      await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
       await fetchPublicationNames(
-        newValue.map(
-          ({ issuecode }) => issuecodeDetails.value[issuecode!].publicationcode,
-        ),
+        newValue
+          .map(
+            ({ issuecode }) =>
+              issuecodeDetails.value[issuecode!]?.publicationcode,
+          )
+          .filter((publicationcode) => !!publicationcode),
       );
       hasPublicationNames = true;
     }

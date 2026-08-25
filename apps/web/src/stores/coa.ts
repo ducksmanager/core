@@ -42,6 +42,13 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
   };
 };
 
+const mergeInto = <T extends Record<string, unknown>>(
+  target: Ref<T>,
+  patch: Partial<T>,
+) => {
+  target.value = { ...toRaw(target.value), ...patch } as T;
+};
+
 export const coa = defineStore("coa", () => {
   const { coa: events } = inject(socketInjectionKey)!;
 
@@ -161,10 +168,7 @@ export const coa = defineStore("coa", () => {
         : events
             .getPublicationListFromCountrycodes([countrycode])
             .then((data) => {
-              addPublicationNames({
-                ...(publicationNames.value || {}),
-                ...data,
-              });
+              addPublicationNames(data);
               publicationNamesFullCountries.value = [
                 ...publicationNamesFullCountries.value,
                 countrycode,
@@ -181,10 +185,7 @@ export const coa = defineStore("coa", () => {
       ];
       return (
         actualNewPersonCodes.length &&
-        setPersonNames({
-          ...(personNames.value || {}),
-          ...(await events.getAuthorList(actualNewPersonCodes)),
-        })
+        setPersonNames(await events.getAuthorList(actualNewPersonCodes))
       );
     },
     fetchIssuecodeDetails = async (
@@ -199,10 +200,10 @@ export const coa = defineStore("coa", () => {
           ),
       );
       if (newIssuecodes.length) {
-        issuecodeDetails.value = {
-          ...toRaw(issuecodeDetails.value),
-          ...(await events.getIssues(newIssuecodes, withFields)),
-        };
+        mergeInto(
+          issuecodeDetails,
+          await events.getIssues(newIssuecodes, withFields),
+        );
       }
     },
     fetchIssuePopularities = async (issuecodes: string[]) => {
@@ -267,12 +268,12 @@ export const coa = defineStore("coa", () => {
       );
 
       if (newPublicationcodes.size) {
-        issuecodesByPublicationcode.value = {
-          ...toRaw(issuecodesByPublicationcode.value),
-          ...(await events.getIssuecodesByPublicationcodes(
+        mergeInto(
+          issuecodesByPublicationcode,
+          await events.getIssuecodesByPublicationcodes(
             Array.from(newPublicationcodes),
-          )),
-        };
+          ),
+        );
       }
     },
     fetchIssuesByPublicationcode = async (publicationcode: string) => {
@@ -286,10 +287,10 @@ export const coa = defineStore("coa", () => {
         (countrycode) => !(countrycode in issueCountsByCountrycode.value),
       );
       if (filteredCountrycodes.length) {
-        issueCountsByCountrycode.value = {
-          ...toRaw(issueCountsByCountrycode.value),
-          ...(await events.getCoaCountByCountrycode(filteredCountrycodes)),
-        };
+        mergeInto(
+          issueCountsByCountrycode,
+          await events.getCoaCountByCountrycode(filteredCountrycodes),
+        );
       }
     },
     fetchIssueCountsByPublicationcode = async (publicationcodes: string[]) => {
@@ -298,15 +299,10 @@ export const coa = defineStore("coa", () => {
           !(publicationcode in issueCountsByPublicationcode.value),
       );
       if (filteredPublicationcodes.length) {
-        issueCountsByPublicationcode.value = {
-          ...toRaw(issueCountsByPublicationcode.value),
-          ...(await events.getCoaCountByPublicationcode(
-            publicationcodes.filter(
-              (publicationcode) =>
-                !(publicationcode in issueCountsByPublicationcode.value),
-            ),
-          )),
-        };
+        mergeInto(
+          issueCountsByPublicationcode,
+          await events.getCoaCountByPublicationcode(filteredPublicationcodes),
+        );
       }
     },
     fetchRecentIssues = () => events.getRecentIssues(),
