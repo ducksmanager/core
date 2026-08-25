@@ -58,6 +58,10 @@ export async function upsertSubscription(
   subscription: EditSubscription,
   userId: number,
 ) {
+  if (!subscription.publicationcode) {
+    return null;
+  }
+
   if (
     id &&
     !(await prismaDm.subscription.count({

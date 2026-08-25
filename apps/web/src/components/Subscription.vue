@@ -56,6 +56,7 @@
         <b-button
           v-if="isEdit"
           size="sm"
+          :disabled="!editSubscription.publicationcode"
           @click="$emit('edit', editSubscription)"
         >
           {{ $t("OK") }}
