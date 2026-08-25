@@ -117,7 +117,11 @@ export const coa = defineStore("coa", () => {
     addIssueQuotations = (
       newIssueQuotations: Record<string, InducksIssueQuotationSimple>,
     ) => {
-      Object.assign(issueQuotations.value, newIssueQuotations);
+      issueQuotations.value = Object.assign(
+        {},
+        toRaw(issueQuotations.value),
+        newIssueQuotations,
+      );
     },
     fetchCountryNames = async (ignoreCache = false) => {
       if (
@@ -195,10 +199,10 @@ export const coa = defineStore("coa", () => {
           ),
       );
       if (newIssuecodes.length) {
-        Object.assign(
-          issuecodeDetails.value,
-          await events.getIssues(newIssuecodes, withFields),
-        );
+        issuecodeDetails.value = {
+          ...toRaw(issuecodeDetails.value),
+          ...(await events.getIssues(newIssuecodes, withFields)),
+        };
       }
     },
     fetchIssuePopularities = async (issuecodes: string[]) => {
@@ -223,8 +227,14 @@ export const coa = defineStore("coa", () => {
       if (newStorycodes.length) {
         const newStoryDetails = await events.getStoryDetails(newStorycodes);
         if (!("error" in newStoryDetails)) {
-          Object.assign(storyDetails.value, newStoryDetails.stories);
-          Object.assign(storyUrls.value, newStoryDetails.storyUrls);
+          storyDetails.value = {
+            ...toRaw(storyDetails.value),
+            ...newStoryDetails.stories,
+          };
+          storyUrls.value = {
+            ...toRaw(storyUrls.value),
+            ...newStoryDetails.storyUrls,
+          };
         }
       }
     },
@@ -239,10 +249,10 @@ export const coa = defineStore("coa", () => {
         const newStoryversionDetails =
           await events.getStoryversionsDetails(newStoryversioncodes);
         if (!("error" in newStoryversionDetails)) {
-          Object.assign(
-            storyversionDetails.value,
-            newStoryversionDetails.storyversions,
-          );
+          storyversionDetails.value = {
+            ...toRaw(storyversionDetails.value),
+            ...newStoryversionDetails.storyversions,
+          };
         }
       }
     },
@@ -257,12 +267,12 @@ export const coa = defineStore("coa", () => {
       );
 
       if (newPublicationcodes.size) {
-        Object.assign(
-          issuecodesByPublicationcode.value,
-          await events.getIssuecodesByPublicationcodes(
+        issuecodesByPublicationcode.value = {
+          ...toRaw(issuecodesByPublicationcode.value),
+          ...(await events.getIssuecodesByPublicationcodes(
             Array.from(newPublicationcodes),
-          ),
-        );
+          )),
+        };
       }
     },
     fetchIssuesByPublicationcode = async (publicationcode: string) => {
@@ -276,10 +286,10 @@ export const coa = defineStore("coa", () => {
         (countrycode) => !(countrycode in issueCountsByCountrycode.value),
       );
       if (filteredCountrycodes.length) {
-        Object.assign(
-          issueCountsByCountrycode.value,
-          await events.getCoaCountByCountrycode(filteredCountrycodes),
-        );
+        issueCountsByCountrycode.value = {
+          ...toRaw(issueCountsByCountrycode.value),
+          ...(await events.getCoaCountByCountrycode(filteredCountrycodes)),
+        };
       }
     },
     fetchIssueCountsByPublicationcode = async (publicationcodes: string[]) => {
@@ -288,15 +298,15 @@ export const coa = defineStore("coa", () => {
           !(publicationcode in issueCountsByPublicationcode.value),
       );
       if (filteredPublicationcodes.length) {
-        Object.assign(
-          issueCountsByPublicationcode.value,
-          await events.getCoaCountByPublicationcode(
+        issueCountsByPublicationcode.value = {
+          ...toRaw(issueCountsByPublicationcode.value),
+          ...(await events.getCoaCountByPublicationcode(
             publicationcodes.filter(
               (publicationcode) =>
                 !(publicationcode in issueCountsByPublicationcode.value),
             ),
-          ),
-        );
+          )),
+        };
       }
     },
     fetchRecentIssues = () => events.getRecentIssues(),
@@ -308,9 +318,10 @@ export const coa = defineStore("coa", () => {
       if (!(issuecode in issueDetails.value)) {
         const newIssueDetails = await events.getIssueDetails(issuecode);
 
-        Object.assign(issueDetails.value, {
+        issueDetails.value = {
+          ...toRaw(issueDetails.value),
           [issuecode]: addPartInfo(newIssueDetails),
-        });
+        };
       }
     };
 

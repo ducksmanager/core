@@ -202,7 +202,6 @@ export const collection = defineStore("collection", () => {
     loadCollection = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        const publicationNames: Record<string, string> = {};
         issues.value = await collectionEvents.getIssues(
           ...cacheControl(ignoreCache),
         );
@@ -227,34 +226,22 @@ export const collection = defineStore("collection", () => {
           collectionPublicationcodes,
         );
         await coa().fetchPublicationNames(collectionPublicationcodes);
-
-        coa().addPublicationNames(publicationNames);
-        Object.assign(
-          coa().issuecodeDetails,
-          issues.value
-            .map(({ issuecode, publicationcode, issuenumber }) => ({
-              issuecode,
-              publicationcode,
-              issuenumber,
-            }))
-            .groupBy("issuecode"),
-        );
       } else {
         issues.value = await collectionEvents.getIssues(
           ...cacheControl(ignoreCache),
         );
       }
 
-      Object.assign(
-        coa().issuecodeDetails,
-        issues.value
+      coa().issuecodeDetails = {
+        ...toRaw(coa().issuecodeDetails),
+        ...issues.value
           .map(({ issuecode, publicationcode, issuenumber }) => ({
             issuecode,
             publicationcode,
             issuenumber,
           }))
           .groupBy("issuecode"),
-      );
+      };
       isLoadingCollection.value = false;
     },
     loadPurchases = async (ignoreCache = false) => {
