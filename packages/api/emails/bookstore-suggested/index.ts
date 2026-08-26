@@ -17,7 +17,7 @@ export default class extends Email {
 
   getTo = () => process.env.SMTP_USERNAME!;
   getToName = () => process.env.SMTP_FRIENDLYNAME!;
-  getFrom = () => process.env.SMTP_USERNAME!;
+  getFrom = () => this.data.user?.email || 'anonymous@ducksmanager.net';
   getFromName = () => this.data.user?.username || "Anonymous";
   getSubject = () => "Bookstore suggestion";
 }
