@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="vw-100 navbar navbar-expand-md navbar-dark flex-row justify-content-between"
+    class="navbar navbar-expand-md navbar-dark flex-row justify-content-between"
   >
     <div class="d-flex w-100 flex-row align-items-center">
       <b-navbar-brand class="d-md-none d-flex position-absolute">
@@ -186,3 +186,15 @@ const logout = () => {
   user.value = null;
 };
 </script>
+
+<style scoped>
+nav {
+  width: 100vw;
+}
+@media (min-width: 767px) {
+  nav {
+    width: auto;
+  }
+}
+</style>
+
