@@ -170,10 +170,7 @@ export const collection = defineStore("collection", () => {
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      const result = await collectionEvents.createPurchase(date, description);
-      if (typeof result === "object" && result?.error) {
-        return { error: result.error };
-      }
+      await collectionEvents.createPurchase(date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
@@ -181,24 +178,25 @@ export const collection = defineStore("collection", () => {
       await loadPurchases(true);
     },
     createLabel = async (description: string) => {
-      const result = await collectionEvents.createLabel(description);
-      if (typeof result === "object" && result?.error) {
-        return { error: result.error };
-      }
+      await collectionEvents.createLabel(description);
       await loadLabels(true);
     },
     deleteLabel = async (description: string) => {
       await collectionEvents.deleteLabel(description);
       await loadLabels(true);
     },
-    loadPreviousVisit = async () => {
-      const result = await collectionEvents.getLastVisit();
-      if (typeof result === "object" && result?.error) {
-        console.error(result.error);
-      } else if (result) {
-        previousVisit.value = new Date(result as string);
-      }
-    },
+    loadPreviousVisit = () =>
+      collectionEvents
+        .getLastVisit()
+        .then((response) => {
+          if (response) {
+            previousVisit.value = new Date(response);
+          }
+        })
+        .catch((e) => {
+          console.error(e.error);
+          return null;
+        }),
     loadCollection = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
@@ -356,14 +354,16 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await authEvents.login({
-        username,
-        password,
-      });
-      if (typeof response !== "string" && "error" in response) {
-        onError(response.error);
-      } else {
-        onSuccess(response);
+      const token = await authEvents
+        .login({
+          username,
+          password,
+        })
+        .catch((e) => {
+          onError(e.error);
+        });
+      if (typeof token === "string") {
+        onSuccess(token);
       }
     },
     loadUser = async (ignoreCache = false) => {
@@ -374,15 +374,13 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingUser.value && (ignoreCache || !user.value)) {
         isLoadingUser.value = true;
         try {
-          const response = await collectionEvents.getUser(
+          user.value = await collectionEvents.getUser(
             ...cacheControl(ignoreCache),
           );
-          if (typeof response === "object" && "error" in response) {
-            socketOptions.session.clearSession();
-            user.value = null;
-          } else {
-            user.value = response;
-          }
+        } catch (e) {
+          console.error(e);
+          socketOptions.session.clearSession();
+          user.value = null;
         } finally {
           isLoadingUser.value = false;
         }

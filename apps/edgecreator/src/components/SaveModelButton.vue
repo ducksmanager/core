@@ -176,7 +176,7 @@ watch(issueIndexToSave, (newValue) => {
       action === "export",
       action === "submit",
     ).then((response) => {
-      const isSuccess = response!.paths.svgPath;
+      const isSuccess = response.paths.svgPath;
       if (isSuccess) {
         progress.value += 100 / issuecodes.value.length;
         issueIndexToSave.value!++;

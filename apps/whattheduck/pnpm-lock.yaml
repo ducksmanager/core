@@ -110,8 +110,8 @@ importers:
         specifier: ^1.103.1
         version: 1.103.1
       socket-call-client:
-        specifier: ^0.7.7
-        version: 0.7.7(axios-cache-interceptor@1.12.3(axios@1.13.4))(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3))
+        specifier: ^0.8.0
+        version: 0.8.0(axios-cache-interceptor@1.12.3(axios@1.13.4))(vue@3.5.41(typescript@6.0.3))
       universal-cookie:
         specifier: ^7.2.2
         version: 7.2.2
@@ -5515,13 +5515,12 @@ packages:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
 
-  socket-call-client@0.7.7:
-    resolution: {integrity: sha512-W8UYCj7QjYKK9u/pKmqA9EcruSdJbc4EPwbCKp7UNTn0Rgf+SGpAf79bPa6secpThENRl3aVWDk2tOO57FcQAg==}
-    engines: {node: '>=22.0.0 <23.0.0'}
+  socket-call-client@0.8.0:
+    resolution: {integrity: sha512-Jjk1KjvofAcDAzlrtu0oIW85u2xadfDeMGEqJQjz+8JA7SsCNKEzh2bw0x4YMLCK+b25nqEeoIcQjGujU77VWA==}
+    engines: {node: '>=22.0.0'}
     peerDependencies:
-      axios-cache-interceptor: ^1.6.2
-      typescript: ^5.3.3
-      vue: ^3.4.15
+      axios-cache-interceptor: ^1.12.0
+      vue: ^3.5.39
     peerDependenciesMeta:
       axios-cache-interceptor:
         optional: true
@@ -6661,7 +6660,7 @@ snapshots:
       '@ionic/utils-subprocess': 2.1.14
       '@ionic/utils-terminal': 2.3.5
       commander: 9.5.0
-      debug: 4.3.4
+      debug: 4.4.3
       env-paths: 2.2.1
       kleur: 4.1.5
       native-run: 2.0.3
@@ -7416,7 +7415,7 @@ snapshots:
 
   '@ionic/utils-array@2.1.6':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -7424,7 +7423,7 @@ snapshots:
   '@ionic/utils-fs@3.1.7':
     dependencies:
       '@types/fs-extra': 8.1.5
-      debug: 4.3.4
+      debug: 4.4.3
       fs-extra: 9.1.0
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -7448,7 +7447,7 @@ snapshots:
     dependencies:
       '@ionic/utils-object': 2.1.6
       '@ionic/utils-terminal': 2.3.4
-      debug: 4.3.4
+      debug: 4.4.3
       signal-exit: 3.0.7
       tree-kill: 1.2.2
       tslib: 2.6.2
@@ -7468,7 +7467,7 @@ snapshots:
 
   '@ionic/utils-stream@3.1.6':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -7488,7 +7487,7 @@ snapshots:
       '@ionic/utils-stream': 3.1.6
       '@ionic/utils-terminal': 2.3.4
       cross-spawn: 7.0.6
-      debug: 4.3.4
+      debug: 4.4.3
       tslib: 2.6.2
     transitivePeerDependencies:
       - supports-color
@@ -7509,7 +7508,7 @@ snapshots:
   '@ionic/utils-terminal@2.3.4':
     dependencies:
       '@types/slice-ansi': 4.0.0
-      debug: 4.3.4
+      debug: 4.4.3
       signal-exit: 3.0.7
       slice-ansi: 4.0.0
       string-width: 4.2.3
@@ -12210,10 +12209,9 @@ snapshots:
 
   smart-buffer@4.2.0: {}
 
-  socket-call-client@0.7.7(axios-cache-interceptor@1.12.3(axios@1.13.4))(typescript@6.0.3)(vue@3.5.41(typescript@6.0.3)):
+  socket-call-client@0.8.0(axios-cache-interceptor@1.12.3(axios@1.13.4))(vue@3.5.41(typescript@6.0.3)):
     dependencies:
       socket.io-client: 4.8.3
-      typescript: 6.0.3
       vue: 3.5.41(typescript@6.0.3)
     optionalDependencies:
       axios-cache-interceptor: 1.12.3(axios@1.13.4)

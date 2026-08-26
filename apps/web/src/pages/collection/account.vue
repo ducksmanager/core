@@ -256,32 +256,32 @@ const emptyCollection = async () => {
   }
 };
 
-const updateAccount = async () => {
-  error = undefined;
-  const response = await collectionEvents.updateUser({
-    ...userForAccountForm.value!,
-    oldPassword,
-    password,
-    password2,
-  });
-  if ("error" in response) {
-    if ("selector" in response) {
-      error = response as ScopedError;
-    } else {
-      console.error(response.error);
-    }
-  } else {
-    hasRequestedPresentationSentenceUpdate =
-      response.hasRequestedPresentationSentenceUpdate;
-    error = null;
+const updateAccount = () =>
+  collectionEvents
+    .updateUser({
+      ...userForAccountForm.value!,
+      oldPassword,
+      password,
+      password2,
+    })
+    .then(async (response) => {
+      hasRequestedPresentationSentenceUpdate =
+        response.hasRequestedPresentationSentenceUpdate;
+      error = null;
 
-    marketplaceContactMethods.value = [
-      hasEmailContactMethod ? "email" : "",
-      hasDiscordContactMethod ? "discordId" : "",
-    ].filter((value) => value);
-    await updateMarketplaceContactMethods();
-  }
-};
+      marketplaceContactMethods.value = [
+        hasEmailContactMethod ? "email" : "",
+        hasDiscordContactMethod ? "discordId" : "",
+      ].filter((value) => value);
+      await updateMarketplaceContactMethods();
+    })
+    .catch((e) => {
+      if ("selector" in e) {
+        error = e;
+      } else {
+        console.error(e.error);
+      }
+    });
 
 const deleteAccount = async () => {
   if (

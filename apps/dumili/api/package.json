@@ -41,7 +41,7 @@
     "node-unrar-js": "^2.0.2",
     "pdfjs-dist": "^6.2.108",
     "sharp": "^0.33.5",
-    "socket-call-client": "^0.7.7",
+    "socket-call-client": "^0.8.0",
     "socket-call-server": "^0.9.0",
     "socket.io": "^4.8.3",
     "unpdf": "^1.8.1",

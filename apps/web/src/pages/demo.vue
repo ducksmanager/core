@@ -26,16 +26,14 @@ watch(
 );
 
 (async () => {
-  const result = await authEvents.loginAsDemo();
-  switch (result.error) {
-    case "No demo user found":
-      console.error(result.error);
-      break;
-    case undefined:
-      Cookies.set("token", result.token, {
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      });
-      await loadUser();
+  const result = await authEvents.loginAsDemo().catch((e) => {
+    console.error(e.error);
+  });
+  if (result) {
+    Cookies.set("token", result.token, {
+      domain: import.meta.env.VITE_COOKIE_DOMAIN,
+    });
+    await loadUser();
   }
 })();
 </script>

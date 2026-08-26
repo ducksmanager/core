@@ -83,32 +83,28 @@ const { t: $t } = useI18n();
 const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const signup = async () => {
-  const response = await authEvents
+  const token = await authEvents
     .signup({
       username,
       password,
       email,
     })
     .catch((e) => {
-      error = e;
+      if ("selector" in e) {
+        error = {
+          selector: e.selector,
+          error: e.error,
+          message: e.message,
+        };
+      } else {
+        console.error(e.error);
+      }
     });
-  if (typeof response === "string") {
-    Cookies.set("token", response, {
+  if (typeof token === "string") {
+    Cookies.set("token", token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
     await loadUser();
-  } else if (response) {
-    if ("selector" in response) {
-      error = {
-        selector: response.selector,
-        error: response.error,
-        message: response.message,
-      };
-    } else {
-      console.error(response.error);
-    }
-  } else {
-    console.error("Unknown error");
   }
 };
 
