@@ -68,11 +68,7 @@ const { t: $t } = useI18n(),
       ),
   ),
   values = $computed(() => {
-    if (!(
-      totalPerPublicationUniqueIssuecodesSorted.value &&
-      coaIssueCountsByPublicationcode.value &&
-      hasCoaData
-    )) {
+    if (!hasCoaData) {
       return null;
     }
     let possessedIssues = totalPerPublicationUniqueIssuecodesSorted.value.map(
@@ -98,9 +94,6 @@ const { t: $t } = useI18n(),
 watch(
   totalPerPublicationUniqueIssuecodesSorted,
   async (newValue) => {
-    if (!newValue?.length) {
-      return;
-    }
     await fetchPublicationNames(
       newValue.map(([publicationcode]) => publicationcode),
     );
@@ -111,18 +104,15 @@ watch(
 
 watch(
   $$(labels),
-  async (newValue) => {
-    if (!newValue) {
-      return;
-    }
-    height = `${100 + 30 * newValue.length}px`;
+  (newValue) => {
+    height = `${String(100 + 30 * newValue.length)}px`;
   },
   { immediate: true },
 );
 
 watch(
   $$(values),
-  async (newValue) => {
+  (newValue) => {
     if (newValue) {
       chartData = {
         datasets: [
@@ -152,7 +142,7 @@ watch(
               stepSize: 1,
               color: "white",
               callback: (value) =>
-                unitTypeCurrent === "percentage" ? `${value}%` : value,
+                unitTypeCurrent === "percentage" ? `${String(value)}%` : value,
             },
           },
           y: {
@@ -183,7 +173,7 @@ watch(
             callbacks: {
               title: ([tooltipItem]) => tooltipItem.label,
               label: (tooltipItem) =>
-                `${tooltipItem.dataset.label}: ${tooltipItem.raw}${
+                `${tooltipItem.dataset.label!}: ${tooltipItem.raw}${
                   unitTypeCurrent === "percentage" ? "%" : ""
                 }`,
             },
@@ -195,7 +185,7 @@ watch(
   { immediate: true },
 );
 
-loadCollection();
+void loadCollection();
 </script>
 
 <style scoped lang="scss">

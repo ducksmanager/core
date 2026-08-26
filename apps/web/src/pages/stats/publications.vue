@@ -24,7 +24,7 @@ const { totalPerPublication, issues } = storeToRefs(collection());
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
-loadCollection();
+void loadCollection();
 const { t: $t } = useI18n();
 
 const smallCountPublications = $computed(() =>

@@ -107,7 +107,7 @@ watch(
   { immediate: true },
 );
 
-loadCollection();
+void loadCollection();
 loadRatings();
 </script>
 

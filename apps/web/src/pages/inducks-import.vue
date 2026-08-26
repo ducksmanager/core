@@ -393,7 +393,7 @@ watch($$(issuesToImport), async (newValue) => {
   hasIssuecodes = true;
 });
 
-loadCollection();
+void loadCollection();
 </script>
 
 <style scoped lang="scss">

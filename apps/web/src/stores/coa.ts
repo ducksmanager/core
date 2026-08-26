@@ -107,9 +107,7 @@ export const coa = defineStore("coa", () => {
       coverUrls.value[issuecode] = url;
     },
     fetchIssueQuotations = async (issuecodes: string[]) => {
-      const existingIssuecodes = new Set(
-        Object.keys(issueQuotations.value || {}),
-      );
+      const existingIssuecodes = new Set(Object.keys(issueQuotations.value));
       const newIssuecodes = issuecodes.filter(
         (issuecode) => !existingIssuecodes.has(issuecode),
       );
@@ -153,14 +151,14 @@ export const coa = defineStore("coa", () => {
           ),
         ),
       ];
-      return (
-        actualNewPublicationCodes.length &&
+
+      if (actualNewPublicationCodes.length) {
         addPublicationNames(
           await events.getPublicationListFromPublicationcodeList(
             actualNewPublicationCodes,
           ),
-        )
-      );
+        );
+      }
     },
     fetchPublicationNamesFromCountry = async (countrycode: string) =>
       publicationNamesFullCountries.value.includes(countrycode)
@@ -183,10 +181,9 @@ export const coa = defineStore("coa", () => {
           ),
         ),
       ];
-      return (
-        actualNewPersonCodes.length &&
-        setPersonNames(await events.getAuthorList(actualNewPersonCodes))
-      );
+      if (actualNewPersonCodes.length) {
+        setPersonNames(await events.getAuthorList(actualNewPersonCodes));
+      }
     },
     fetchIssuecodeDetails = async (
       issuecodes: string[],
@@ -207,9 +204,7 @@ export const coa = defineStore("coa", () => {
       }
     },
     fetchIssuePopularities = async (issuecodes: string[]) => {
-      const existingIssuecodes = new Set(
-        Object.keys(issuePopularities.value || {}),
-      );
+      const existingIssuecodes = new Set(Object.keys(issuePopularities.value));
       const newIssuecodes = issuecodes.filter(
         (issuecode) => !existingIssuecodes.has(issuecode),
       );
@@ -221,7 +216,7 @@ export const coa = defineStore("coa", () => {
       }
     },
     fetchStoryDetails = async (storycodes: string[]) => {
-      const existingStorycodes = new Set(Object.keys(storyDetails.value || {}));
+      const existingStorycodes = new Set(Object.keys(storyDetails.value));
       const newStorycodes = storycodes.filter(
         (storycode) => !existingStorycodes.has(storycode),
       );
@@ -241,7 +236,7 @@ export const coa = defineStore("coa", () => {
     },
     fetchStoryversionDetails = async (storyversioncodes: string[]) => {
       const existingStoryversioncodes = new Set(
-        Object.keys(storyversionDetails.value || {}),
+        Object.keys(storyversionDetails.value),
       );
       const newStoryversioncodes = storyversioncodes.filter(
         (storyversion) => !existingStoryversioncodes.has(storyversion),
@@ -259,7 +254,7 @@ export const coa = defineStore("coa", () => {
     },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
       const existingPublicationcodes = new Set(
-        Object.keys(issuecodesByPublicationcode.value || {}),
+        Object.keys(issuecodesByPublicationcode.value),
       );
       const newPublicationcodes = new Set(
         publicationcodes.filter(

@@ -89,7 +89,7 @@ const { loadCollection, loadPurchases } = collection();
 const { totalPerPublication, issues, purchasesById } =
   storeToRefs(collection());
 
-loadCollection();
+void loadCollection();
 const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
@@ -128,7 +128,7 @@ let hasPublicationNames = $ref(false),
 const publicationCodesWithOther = $computed(
     () =>
       totalPerPublication.value &&
-      Object.entries(totalPerPublication.value || {})
+      Object.entries(totalPerPublication.value)
         .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
         .filter((_entry, idx) => idx < 20)
         .map(([publicationcode]) => publicationcode)

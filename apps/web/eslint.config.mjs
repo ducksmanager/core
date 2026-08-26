@@ -33,7 +33,7 @@ export default [
     compat.extends(
       "plugin:prettier-vue/recommended",
       "prettier",
-      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/strict-type-checked",
     ),
   ),
   {

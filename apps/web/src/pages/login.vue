@@ -66,7 +66,7 @@ const login = async () => {
   await userLogin(
     username,
     password,
-    async (newToken) => {
+    (newToken) => {
       const domain = import.meta.env.VITE_COOKIE_DOMAIN;
       Cookies.set("token", newToken, {
         domain,
@@ -84,7 +84,7 @@ const login = async () => {
 
 watch(
   user,
-  async (newValue) => {
+  (newValue) => {
     if (newValue) {
       if (route.query.redirect) {
         window.location.href = route.query.redirect as string;

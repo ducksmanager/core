@@ -277,7 +277,9 @@ const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
     reader.onerror = reject;
   });
 
@@ -444,7 +446,7 @@ watch(currentBase64, (base64) => {
   }
 });
 
-onMounted(async () => {
+onMounted(() => {
   for (const model of models.value) {
     model.getIndexSize().then((size) => {
       model.indexSize = size;

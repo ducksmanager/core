@@ -118,7 +118,7 @@ export const collection = defineStore("collection", () => {
     ),
     totalPerPublicationUniqueIssuecodes = computed(() =>
       Object.fromEntries(
-        Object.entries(issuecodesPerPublication.value || {}).map(
+        Object.entries(issuecodesPerPublication.value).map(
           ([publicationcode, issuecodes]) => [
             publicationcode,
             new Set(issuecodes).size,
@@ -126,16 +126,14 @@ export const collection = defineStore("collection", () => {
         ),
       ),
     ),
-    totalPerPublicationUniqueIssuecodesSorted = computed(
-      () =>
-        totalPerPublicationUniqueIssuecodes.value &&
-        Object.entries(totalPerPublicationUniqueIssuecodes.value).sort(
-          ([publicationcode1], [publicationcode2]) =>
-            Math.sign(
-              totalPerPublicationUniqueIssuecodes.value[publicationcode2] -
-                totalPerPublicationUniqueIssuecodes.value[publicationcode1],
-            ),
-        ),
+    totalPerPublicationUniqueIssuecodesSorted = computed(() =>
+      Object.entries(totalPerPublicationUniqueIssuecodes.value).sort(
+        ([publicationcode1], [publicationcode2]) =>
+          Math.sign(
+            totalPerPublicationUniqueIssuecodes.value[publicationcode2] -
+              totalPerPublicationUniqueIssuecodes.value[publicationcode1],
+          ),
+      ),
     ),
     userForAccountForm = computed(() => {
       if (!user.value) {
@@ -295,11 +293,12 @@ export const collection = defineStore("collection", () => {
     },
     updateMarketplaceContactMethods = async () =>
       await collectionEvents.getOption("marketplace_contact_methods"),
-    updateWatchedPublicationsWithSales = async () =>
+    updateWatchedPublicationsWithSales = async () => {
       await collectionEvents.setOption(
         "sales_notification_publications",
         watchedPublicationsWithSales.value!,
-      ),
+      );
+    },
     loadSuggestions = async ({
       countryCode,
       sinceLastVisit,

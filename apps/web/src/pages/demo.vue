@@ -17,7 +17,7 @@ const { auth: authEvents } = inject(socketInjectionKey)!;
 
 watch(
   user,
-  async (newValue) => {
+  (newValue) => {
     if (newValue) {
       router.push("/collection");
     }
