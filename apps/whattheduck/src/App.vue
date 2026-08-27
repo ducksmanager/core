@@ -21,6 +21,7 @@ import { buildStorage } from 'socket-call-client';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
+import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
 import { collection } from '~web/src/stores/collection';
 import AppWithPersistedData from './views/AppWithPersistedData.vue';
 
@@ -99,6 +100,8 @@ const assignSocket = () => {
     },
     session,
   });
+
+  getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value);
 };
 
 const updateBundle = async () => {
