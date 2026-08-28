@@ -25,7 +25,7 @@ watch(
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   const result = await authEvents.loginAsDemo().catch((e) => {
     console.error(e.error);
   });

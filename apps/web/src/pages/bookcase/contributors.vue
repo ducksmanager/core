@@ -38,7 +38,7 @@ const { bookcaseContributors, stats, points } = storeToRefs(users());
 
 let loading = $ref(true);
 
-(async () => {
+void (async () => {
   await fetchBookcaseContributors();
   await fetchStats(
     bookcaseContributors

@@ -71,7 +71,7 @@ const labels = $computed(() => {
     .reduce<string[]>((acc, [publicationcode]) => {
       acc.push(
         publicationNames.value[publicationcode] ||
-          `${$t("Autres")} (${smallCountPublications!.length} ${$t(
+          `${$t("Autres")} (${String(smallCountPublications!.length)} ${$t(
             "Publications",
           ).toLowerCase()})`,
       );
@@ -84,14 +84,12 @@ const values = $computed(() =>
     Math.sign(count1 - count2),
   ),
 );
-const colors = $computed(
-  () =>
-    totalPerPublicationGroupSmallCounts &&
-    Object.entries(totalPerPublicationGroupSmallCounts)
-      .sort(sortByCount)
-      .map(([publicationcode]) =>
-        publicationcode === "" ? "#000" : randomColor(),
-      ),
+const colors = $computed(() =>
+  Object.entries(totalPerPublicationGroupSmallCounts)
+    .sort(sortByCount)
+    .map(([publicationcode]) =>
+      publicationcode === "" ? "#000" : randomColor(),
+    ),
 );
 const randomColor = () =>
   `rgb(${[
@@ -130,7 +128,7 @@ watch(
 );
 
 watch(
-  () => labels && values && colors,
+  () => labels && colors,
   (newValue) => {
     if (!newValue) {
       return;
@@ -162,7 +160,7 @@ watch(
               const percentage = total
                 ? parseFloat(((currentValue / total) * 100).toFixed(1))
                 : 0;
-              return `${currentValue} (${percentage}%)`;
+              return `${String(currentValue)} (${String(percentage)}%)`;
             },
 
             title: (tooltipItems) =>

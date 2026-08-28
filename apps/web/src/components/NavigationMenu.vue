@@ -15,23 +15,11 @@
 </template>
 
 <script lang="ts">
-export type NavigationItem = {
-  title: string;
-  icon?: FunctionalComponent<SVGAttributes>;
-} & (
-  | {
-      route: RouteLocationResolved;
-    }
-  | {
-      onClick: () => void;
-    }
-  | object
-);
+
 </script>
 
 <script setup lang="ts">
-import { RouteLocationResolved } from "vue-router";
-import NavigationItem from "./NavigationItem.vue";
+import { NavigationItem } from "./NavigationItem";
 import { FunctionalComponent, SVGAttributes } from "vue";
 
 type Menu = {

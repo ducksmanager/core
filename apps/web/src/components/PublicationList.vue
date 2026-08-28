@@ -74,7 +74,7 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-const { isPublic, filteredList = undefined } = defineProps<{
+const { isPublic, filteredList } = defineProps<{
   isPublic?: boolean;
   filteredList?: string[];
 }>();
@@ -138,11 +138,11 @@ const publicationsPerCountry = $computed(() =>
       ),
 );
 const getSortedPublications = (country: string) =>
-  publicationsPerCountry?.[country]?.sort((a, b) =>
-    (publicationNames.value?.[a] || "").localeCompare(
-      publicationNames.value?.[b] || "",
+  publicationsPerCountry[country].sort((a, b) =>
+    (publicationNames.value[a] || "").localeCompare(
+      publicationNames.value[b] || "",
     ),
-  ) || [];
+  );
 
 watch(
   totalPerPublication,

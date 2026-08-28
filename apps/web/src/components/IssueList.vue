@@ -415,8 +415,7 @@ const emit = defineEmits<{
   (e: "launch-modal", options: LaunchModalOptions): void;
 }>();
 
-let contextMenuComponent:
-  typeof ContextMenuOnSaleByOthers | typeof ContextMenuOwnCollection;
+let contextMenuComponent: Component;
 switch (contextMenuComponentName) {
   case "context-menu-on-sale-by-others":
     contextMenuComponent = ContextMenuOnSaleByOthers;
@@ -728,7 +727,7 @@ const toggleWatched = async (key: string) => {
   }
 };
 
-(async () => {
+void (async () => {
   if (customIssues) {
     purchases.value = [];
     labels.value = [];

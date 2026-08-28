@@ -84,12 +84,12 @@ const login = async () => {
 
 watch(
   user,
-  (newValue) => {
+  async (newValue) => {
     if (newValue) {
       if (route.query.redirect) {
         window.location.href = route.query.redirect as string;
       } else {
-        router.push("/collection");
+        await router.push("/collection");
       }
     }
   },

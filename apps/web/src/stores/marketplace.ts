@@ -47,7 +47,7 @@ export const marketplace = defineStore("marketplace", () => {
     ),
     sellerUserNames = computed(() =>
       sellerUserIds.value
-        ?.reduce<{ value: number; text: string }[]>(
+        .reduce<{ value: number; text: string }[]>(
           (acc, userId) => [
             ...acc,
             { value: userId, text: users().stats[userId]?.username },

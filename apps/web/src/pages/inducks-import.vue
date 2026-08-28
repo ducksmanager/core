@@ -324,7 +324,7 @@ const processRawData = async () => {
   await fetchIssuecodeDetails(issueCodes);
 
   const issues = issueCodes.filter(
-    (issueCode) => issuecodeDetails.value[issueCode],
+    (issueCode) => issueCode in issuecodeDetails,
   );
   if (issues.length) {
     issuesToImport = issues;
@@ -385,7 +385,8 @@ watch($$(issuesToImport), async (newValue) => {
     return;
   }
   const publicationCodes = newValue
-    .map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode)
+    .filter((issueCode) => issueCode in issuecodeDetails.value)
+    .map((issuecode) => issuecodeDetails.value[issuecode].publicationcode)
     .filter((p): p is string => !!p);
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;

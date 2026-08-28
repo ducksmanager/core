@@ -32,8 +32,8 @@
 
 <script setup lang="ts">
 const {
-  initialCountrycode = undefined,
-  initialPublicationcode = undefined,
+  initialCountrycode,
+  initialPublicationcode,
   noButton = false,
 } = defineProps<{
   noButton?: boolean;
@@ -64,7 +64,7 @@ const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.value.includes(currentCountryCode || "")
     ? Object.keys(publicationNames.value)
         .filter((publicationcode) =>
-          new RegExp(`^${currentCountryCode}/`).test(publicationcode),
+          new RegExp(`^${String(currentCountryCode)}/`).test(publicationcode),
         )
         .map((publicationcode) => ({
           text: publicationNames.value[publicationcode],
@@ -84,9 +84,9 @@ watch($$(currentPublicationcode), (newValue) => {
 
 watch(
   $$(currentCountryCode),
-  (newValue, oldValue) => {
+  async (newValue, oldValue) => {
     if (newValue) {
-      fetchPublicationNamesFromCountry(newValue);
+      await fetchPublicationNamesFromCountry(newValue);
       if (oldValue) {
         currentPublicationcode = undefined;
       }
@@ -97,5 +97,5 @@ watch(
   },
 );
 
-fetchCountryNames();
+void fetchCountryNames();
 </script>

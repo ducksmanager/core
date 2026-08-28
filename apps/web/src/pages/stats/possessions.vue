@@ -63,7 +63,7 @@ const { t: $t } = useI18n(),
   labels = $computed(
     () =>
       hasCoaData &&
-      totalPerPublicationUniqueIssuecodesSorted.value?.map(
+      totalPerPublicationUniqueIssuecodesSorted.value.map(
         ([publicationcode]) => publicationNames.value[publicationcode],
       ),
   ),
@@ -173,7 +173,7 @@ watch(
             callbacks: {
               title: ([tooltipItem]) => tooltipItem.label,
               label: (tooltipItem) =>
-                `${tooltipItem.dataset.label!}: ${tooltipItem.raw}${
+                `${tooltipItem.dataset.label!}: ${String(tooltipItem.raw)}${
                   unitTypeCurrent === "percentage" ? "%" : ""
                 }`,
             },

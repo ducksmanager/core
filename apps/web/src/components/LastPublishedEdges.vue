@@ -60,10 +60,10 @@ const publishedEdgesSincePreviousVisit = $computed(
 const hasPublicationNames = $computed(() =>
   publishedEdgesSincePreviousVisit.every(
     ({ issuecode }) =>
-      issuecodeDetails.value[issuecode] &&
+      issuecode in issuecodeDetails.value &&
       publicationNames.value[issuecodeDetails.value[issuecode].publicationcode],
   ),
 );
 
-loadLastPublishedEdgesForCurrentUser();
+void loadLastPublishedEdgesForCurrentUser();
 </script>

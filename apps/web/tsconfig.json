@@ -43,16 +43,17 @@
     }
   },
   "include": [
+    "auto-imports.d.ts",
     "components.d.ts",
     "eslint.config.mjs",
     "histoire.config.ts",
     "histoire.d.ts",
     "index.ts",
+    "shims.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",
-    "auto-imports.d.ts",
+    "src/route-map.d.ts",
     "vite.config.ts",
-    "src/route-map.d.ts"
   ],
   "exclude": [
     "dist",

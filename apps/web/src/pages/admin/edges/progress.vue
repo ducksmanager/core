@@ -204,7 +204,7 @@ const sortedBookcase = computed(() =>
   }, {}),
 );
 
-(async () => {
+void (async () => {
   mostWanted = await edgesEvents.getWantedEdges();
 
   publishedEdges = await edgesEvents.getPublishedEdges();

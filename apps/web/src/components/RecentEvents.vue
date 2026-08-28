@@ -31,7 +31,7 @@ const { issuecodeDetails } = storeToRefs(coa());
 let isLoaded = $ref(false);
 const eventUserIds = $computed(() =>
   events.value
-    ?.reduce<(number | null)[]>(
+    .reduce<(number | null)[]>(
       (acc, event) => [...acc, ...(event.users || [])],
       [],
     )
@@ -90,7 +90,7 @@ const fetchEventsAndAssociatedData = async () => {
   await fetchStats(eventUserIds.filter((userId) => userId !== null));
 };
 
-(async () => {
+void (async () => {
   await fetchEventsAndAssociatedData();
   isLoaded = true;
 })();

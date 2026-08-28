@@ -21,7 +21,7 @@
   </BNavbarNav>
 </template>
 <script setup lang="ts">
-import type { NavigationItem } from "./NavigationMenu.vue";
+import type { NavigationItem } from "./NavigationItem";
 import { createReusableTemplate } from "@vueuse/core";
 
 const { item } = defineProps<{

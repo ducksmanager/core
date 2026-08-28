@@ -173,7 +173,7 @@ watch(
             callbacks: {
               title: ([tooltip]) => tooltip.label,
               label: ({ dataset, raw }) =>
-                `${dataset.label}: ${raw}${unitTypeCurrent === "percentage" ? "%" : ""}`,
+                `${dataset.label!}: ${String(raw)}${unitTypeCurrent === "percentage" ? "%" : ""}`,
             },
           },
         },
@@ -183,7 +183,7 @@ watch(
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   await loadRatings();
   watchedAuthorsStoryCount = await statsEvents.getWatchedAuthorsStats();
 })();

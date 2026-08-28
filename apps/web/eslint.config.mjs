@@ -55,18 +55,10 @@ export default [
     },
 
     rules: {
-      "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "arrow-body-style": ["error", "as-needed"],
-      "vue/multi-word-component-names": "off",
-      "vue/no-dupe-keys": "off",
-      "vue/no-setup-props-reactivity-loss": "off",
-      "vue/no-v-html": "off",
-      "vue/no-v-text-v-html-on-component": "off",
-      "vue/define-emits-declaration": "error",
-      "vue/define-props-declaration": "error",
-      "vue/no-unused-properties": "error",
 
       "vue/component-name-in-template-casing": [
         "error",
@@ -76,6 +68,16 @@ export default [
           ignores: [],
         },
       ],
+
+      "vue/define-emits-declaration": "error",
+      "vue/define-props-declaration": "error",
+      "vue/multi-word-component-names": "off",
+      "vue/no-dupe-keys": "off",
+      "vue/no-setup-props-reactivity-loss": "off",
+      "vue/no-unused-properties": "error",
+      "vue/no-v-html": "off",
+      "vue/no-v-text-v-html-on-component": "off",
+      "vue/require-default-prop": "off"
     },
   },
   {

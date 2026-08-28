@@ -162,7 +162,7 @@ import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 
 import type { BookcaseEdgeWithPopularity } from "../stores/bookcase";
 
-const { username = undefined } = defineProps<{
+const { username } = defineProps<{
   username?: string;
 }>();
 
@@ -210,7 +210,7 @@ const loading = $computed(
   () =>
     !isPrivateBookcase.value &&
     !isUserNotExisting.value &&
-    !(sortedBookcase && bookcaseOptions && edgesUsingSprites),
+    !(sortedBookcase && bookcaseOptions.value && edgesUsingSprites),
 );
 const percentVisible = $computed(() =>
   thisBookcase.value?.length
@@ -222,7 +222,7 @@ const percentVisible = $computed(() =>
 );
 const mostPopularIssuesInCollectionWithoutEdge = $computed(() =>
   [...(popularIssuesInCollectionWithoutEdge.value || [])]
-    ?.sort(
+    .sort(
       ({ popularity: popularity1 }, { popularity: popularity2 }) =>
         (popularity2 || 0) - (popularity1 || 0),
     )
@@ -283,19 +283,17 @@ watch(
       await loadBookcaseOptions();
       await loadBookcaseOrder();
 
-      const usableSpritesBySpriteId = newValue
-        .filter(({ sprites }) => sprites)
-        .reduce<{
-          [spriteId: string]: BookcaseEdgeSprite & { edges: number[] };
-        }>((acc, { edgeId, sprites }) => {
-          sprites.forEach((sprite: BookcaseEdgeSprite) => {
-            const { name: spriteId } = sprite;
-            if (!acc[spriteId]) acc[spriteId] = { edges: [], ...sprite };
+      const usableSpritesBySpriteId = newValue.reduce<{
+        [spriteId: string]: BookcaseEdgeSprite & { edges: number[] };
+      }>((acc, { edgeId, sprites }) => {
+        sprites.forEach((sprite: BookcaseEdgeSprite) => {
+          const { name: spriteId } = sprite;
+          if (!(spriteId in acc)) acc[spriteId] = { edges: [], ...sprite };
 
-            acc[spriteId].edges.push(edgeId);
-          });
-          return acc;
-        }, {});
+          acc[spriteId].edges.push(edgeId);
+        });
+        return acc;
+      }, {});
 
       const usableSprites = Object.values(usableSpritesBySpriteId).map(
         (usableSprite) => ({
@@ -334,7 +332,7 @@ watch(
 );
 
 watch($$(currentEdgeHighlighted), (newValue) => {
-  document.getElementById(`edge-${newValue}`)?.scrollIntoView();
+  document.getElementById(`edge-${String(newValue)}`)?.scrollIntoView();
 });
 
 watch(

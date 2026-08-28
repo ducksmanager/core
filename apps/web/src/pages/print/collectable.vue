@@ -245,7 +245,7 @@ watch(totalPerPublication, (newValue) =>
   fetchPublicationNames(Object.keys(newValue || {})),
 );
 
-(async () => {
+void (async () => {
   await loadCollection();
   await fetchCountryNames();
   await loadPurchases();

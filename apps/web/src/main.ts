@@ -24,9 +24,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-router.beforeResolve((to) => {
+router.beforeResolve(async (to) => {
   if (!to.meta.public && !Cookies.get("token") && to.path !== "/login") {
-    router.push("/login");
+    await router.push("/login");
     return false;
   }
 });

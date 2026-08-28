@@ -254,7 +254,7 @@ watch(
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   await loadCollection();
   await fetchCount();
   const rarityData = await userGlobalStatsEvents.getUsersCollectionRarity();

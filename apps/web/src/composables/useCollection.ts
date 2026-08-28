@@ -17,7 +17,7 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
     if (!issues.value) return issues.value;
 
     const groupedByCountry = issues.value.groupBy(
-      ({ issuecode }) => issuecode?.split("/")[0],
+      ({ issuecode }) => issuecode.split("/")[0],
       "[]",
     );
 
@@ -34,7 +34,7 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
   const getTotalPerPublication = (includeDuplicates = true) =>
     issues.value
       ? Object.fromEntries(
-          Object.entries(issues.value?.groupBy("publicationcode", "[]")).map(
+          Object.entries(issues.value.groupBy("publicationcode", "[]")).map(
             ([publicationcode, issues]) => [
               publicationcode,
               (includeDuplicates
@@ -86,15 +86,13 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
     ),
     totalUniqueIssues = computed(
       () =>
-        (duplicateIssues.value &&
-          (!issues.value?.length
-            ? 0
-            : issues.value?.length -
-              Object.values(duplicateIssues.value).reduce(
-                (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
-                0,
-              ))) ||
-        0,
+        (!issues.value?.length
+          ? 0
+          : issues.value.length -
+            Object.values(duplicateIssues.value).reduce(
+              (acc, duplicatedIssue) => acc + duplicatedIssue.length - 1,
+              0,
+            )) || 0,
     ),
     totalPerCountry = computed(() => getTotalPerCountry()),
     totalPerCountryWithoutDuplicates = computed(() =>
@@ -119,9 +117,7 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
       (QuotedIssue & { estimationAverage: number })[] | null
     >(() => {
       const issueQuotations = coa().issueQuotations;
-      if (issueQuotations === null) {
-        return null;
-      }
+
       const CONDITION_TO_ESTIMATION_PCT = {
         bon: 1,
         moyen: 0.7,
@@ -131,12 +127,12 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
       };
       return (
         issues.value
-          ?.map(({ issuecode, condition }) => ({
+          ?.filter(({ issuecode }) => issuecode in issueQuotations)
+          .map(({ issuecode, condition }) => ({
             issuecode,
             condition,
             estimation: coa().issueQuotations[issuecode],
           }))
-          .filter(({ estimation }) => estimation)
           .map(({ condition, estimation }) => ({
             condition,
             ...estimation,
@@ -152,7 +148,7 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
     quotationSum = computed(() =>
       quotedIssues.value
         ? Math.round(
-            quotedIssues.value?.reduce(
+            quotedIssues.value.reduce(
               (acc, { estimationGivenCondition }) =>
                 acc + estimationGivenCondition,
               0,

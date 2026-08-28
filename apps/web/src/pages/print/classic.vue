@@ -83,7 +83,7 @@ watch(
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   await fetchCountryNames();
   await loadCollection();
 })();

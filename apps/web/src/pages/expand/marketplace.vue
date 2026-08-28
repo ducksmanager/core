@@ -258,7 +258,7 @@ const isRequestBooked = (thisIssueId: number) =>
   issueRequestsAsBuyer.value?.find(({ issueId }) => thisIssueId === issueId)
     ?.isBooked;
 
-(async () => {
+void (async () => {
   await loadIssuesOnSaleByOthers();
   await loadIssueRequestsAsBuyer();
 
