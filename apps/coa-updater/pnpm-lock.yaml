@@ -19,8 +19,8 @@ importers:
         specifier: ~1.3.14
         version: 1.3.14
       '@types/node':
-        specifier: ^26.2.0
-        version: 26.2.0
+        specifier: ^26.4.0
+        version: 26.4.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -33,8 +33,8 @@ packages:
   '@types/geojson@7946.0.16':
     resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
 
-  '@types/node@26.2.0':
-    resolution: {integrity: sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg==}
+  '@types/node@26.4.0':
+    resolution: {integrity: sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ==}
 
   bun-types@1.3.14:
     resolution: {integrity: sha512-4N0ig0fEomHt5R0KCFWjovxow98rIoRwKolrYdCcknNwMekCXRnWEUvgu5soYV8QXtVsrUD8B95MBOZGPvr6KQ==}
@@ -77,13 +77,13 @@ snapshots:
 
   '@types/geojson@7946.0.16': {}
 
-  '@types/node@26.2.0':
+  '@types/node@26.4.0':
     dependencies:
       undici-types: 8.3.0
 
   bun-types@1.3.14:
     dependencies:
-      '@types/node': 26.2.0
+      '@types/node': 26.4.0
 
   csv-parse@7.0.2: {}
 
@@ -98,7 +98,7 @@ snapshots:
   mariadb@3.5.3:
     dependencies:
       '@types/geojson': 7946.0.16
-      '@types/node': 26.2.0
+      '@types/node': 26.4.0
       denque: 2.1.0
       iconv-lite: 0.7.3
       lru-cache: 11.5.2
