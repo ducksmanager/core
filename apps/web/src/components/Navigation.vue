@@ -69,7 +69,7 @@ const publicCollectionUsername = $computed(() =>
 );
 
 const collectionMenu = computed(() =>
-  username === undefined
+  !username
     ? undefined
     : ({
         title: $t("Collection"),

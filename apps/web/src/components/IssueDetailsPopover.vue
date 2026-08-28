@@ -68,13 +68,13 @@ watch(
 const cloudinaryBaseUrl =
   "https://res.cloudinary.com/dl7hskxab/image/upload/inducks-covers/";
 
-const loadIssueUrls = () => {
+const loadIssueUrls = async () => {
   isCoverLoading = true;
-  nextTick(async () => {
+  await nextTick(async () => {
     await fetchIssueUrls(issuecode);
     isCoverLoading = false;
 
-    const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
+    const possibleCoverUrl = issueDetails.value[issuecode].entries.find(
       ({ kind }) => kind === "c",
     )?.url;
     fullUrl = possibleCoverUrl

@@ -36,10 +36,9 @@ const { fetchStats } = users();
 
 watch(
   user,
-  (newValue) => {
+  async (newValue) => {
     if (newValue) {
-      loadPreviousVisit();
-      fetchStats([newValue.id]);
+      await Promise.all([loadPreviousVisit(), fetchStats([newValue.id])]);
     }
   },
   { immediate: true },

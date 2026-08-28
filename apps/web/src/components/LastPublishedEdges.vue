@@ -58,7 +58,7 @@ const publishedEdgesSincePreviousVisit = $computed(
     ) || [],
 );
 const hasPublicationNames = $computed(() =>
-  publishedEdgesSincePreviousVisit?.every(
+  publishedEdgesSincePreviousVisit.every(
     ({ issuecode }) =>
       issuecodeDetails.value[issuecode] &&
       publicationNames.value[issuecodeDetails.value[issuecode].publicationcode],

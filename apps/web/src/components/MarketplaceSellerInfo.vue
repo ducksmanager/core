@@ -28,7 +28,7 @@ const { sentRequestIssueIds, issuesOnSaleByOthers, issueRequestsAsBuyer } =
   storeToRefs(marketplace());
 
 const sentRequest = $computed(() =>
-  sentRequestIssueIds.value?.includes(issueOnSale?.id),
+  sentRequestIssueIds.value?.includes(issueOnSale.id),
 );
 
 const issueOnSale = $computed(
@@ -40,7 +40,6 @@ const issueOnSale = $computed(
 
 const isBooked = $computed(
   () =>
-    issueOnSale &&
     issueRequestsAsBuyer.value?.find(
       ({ issueId }) => issueId === issueOnSale.id,
     )?.isBooked,

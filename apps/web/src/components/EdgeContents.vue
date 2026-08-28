@@ -57,8 +57,7 @@ const {
 }>();
 const emit = defineEmits<{
   (e: "loaded", ids: string[]): void;
-  (e: "open-book"): void;
-  (e: "ignore-sprite"): void;
+  (e: "open-book" | "ignore-sprite"): void;
 }>();
 const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
 
@@ -105,16 +104,12 @@ const loadEdgeFromSprite = () => {
     ignoreSprite = true;
     return;
   }
-  const retries = 0;
   const checkWidthInterval = setInterval(() => {
-    if (edge?.clientWidth || 0 > 0) {
+    if (edge?.clientWidth) {
       spriteLoaded = true;
       width = edge!.clientWidth;
       height = edge!.clientHeight;
       emit("loaded", [id]);
-      clearInterval(checkWidthInterval);
-    } else if (retries > 100) {
-      ignoreSprite = true;
       clearInterval(checkWidthInterval);
     }
   }, 5);
@@ -136,7 +131,9 @@ let height = $ref<number>();
 
 watch($$(ignoreSprite), (value) => {
   if (value) {
-    console.error(`Could not load sprite for edge ${issuecode}: ${spritePath}`);
+    console.error(
+      `Could not load sprite for edge ${issuecode}: ${spritePath || "null"}`,
+    );
     emit("ignore-sprite");
   }
 });

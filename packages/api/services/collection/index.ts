@@ -73,7 +73,7 @@ const listenEvents = (services: UserServices) => {
       try {
         user = await getUser(_socket.data.user.id);
       } catch (_e) {
-        return { error: "This user does not exist" };
+        return { error: "This user does not exist" as const };
       }
       if (!user.lastAccess) {
         console.log(

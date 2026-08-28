@@ -61,7 +61,7 @@ const {
   orientation?: "horizontal" | "vertical";
 }>();
 
-defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
+defineEmits<{ (e: "loaded" | "open-book"): void }>();
 
 defineSlots<{
   "edge-prefix"(): never;

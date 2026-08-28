@@ -71,7 +71,7 @@ const hasPublicationNames = $computed(() => Object.keys(publicationNames)),
             ({ purchase: currentPurchase }) =>
               currentPurchase.date === purchase.date,
           );
-          if (purchaseIndex === -1 && purchase.date) {
+          if (purchaseIndex === -1) {
             acc.push({
               purchase: {
                 date: purchase.date,

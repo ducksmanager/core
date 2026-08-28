@@ -13,11 +13,12 @@ const listenEvents = () => ({
       user = await prismaDm.user.findFirstOrThrow({
         where: { username },
       });
-    } catch (_e) {
-      return { error: "User not found" };
+    } catch (e) {
+      console.error(e);
+      return { error: "User not found" as string };
     }
     if (!user.allowSharing) {
-      return { error: "This user does not allow sharing" };
+      return { error: "This user does not allow sharing" as string };
     }
     return {
       issues: await prismaDm.issue.findMany({

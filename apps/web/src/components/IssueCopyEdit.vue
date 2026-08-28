@@ -408,8 +408,7 @@ const collectionForCurrentPublication = $computed(() =>
 
 let isSingleIssueSelected = $computed(
   () =>
-    copyState &&
-    ("copyIndex" in copyState || ("id" in copyState && copyState.id === null)),
+    "copyIndex" in copyState || ("id" in copyState && copyState.id === null),
 );
 
 const conditionStates = $computed(
@@ -475,16 +474,16 @@ const formatDate = (value: string) =>
   /\d{4}-\d{2}-\d{2}/.test(value) ? value : today;
 
 const issueIds = $computed((): (number | null)[] =>
-  issuecodes && collectionForCurrentPublication
+  collectionForCurrentPublication
     ? isSingleIssueSelected
       ? [
           collectionForCurrentPublication
-            ?.filter(({ issuecode }) => issuecode === issuecodes[0])
+            .filter(({ issuecode }) => issuecode === issuecodes[0])
             .find((_, currentCopyIndex) => copyIndex === currentCopyIndex)
             ?.id || null,
         ]
       : collectionForCurrentPublication
-          ?.filter(({ issuecode }) => issuecodes.includes(issuecode))
+          .filter(({ issuecode }) => issuecodes.includes(issuecode))
           .map(({ id }) => id || null)
     : [],
 );

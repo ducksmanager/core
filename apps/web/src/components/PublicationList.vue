@@ -120,7 +120,7 @@ const sortedCountries = $computed(
     Object.keys(totalPerCountry.value).sort(
       (countryCode1, countryCode2) =>
         countryNames.value?.[countryCode1]?.localeCompare(
-          countryNames.value?.[countryCode2],
+          countryNames.value[countryCode2],
         ) || 0,
     ),
 );
@@ -155,7 +155,7 @@ watch(
   { immediate: true },
 );
 
-fetchCountryNames();
+void fetchCountryNames();
 </script>
 
 <style scoped lang="scss">
