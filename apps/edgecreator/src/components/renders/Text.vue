@@ -270,19 +270,21 @@ if (!isForm.value) {
   });
 
   const refreshPreview = async () => {
-    const textData = await textEvents.getText({
-      color: fgColor.value.replace("#", ""),
-      colorBackground: bgColor.value.replace("#", ""),
-      width: Math.round(internalWidth.value * 100) / 100,
-      font: font.value,
-      text: effectiveText.value,
-    });
-    if ("results" in textData) {
+    const textData = await textEvents
+      .getText({
+        color: fgColor.value.replace("#", ""),
+        colorBackground: bgColor.value.replace("#", ""),
+        width: Math.round(internalWidth.value * 100) / 100,
+        font: font.value,
+        text: effectiveText.value,
+      })
+      .catch((e) => {
+        window.alert(e.error);
+      });
+    if (textData) {
       textImage.value = textData.results;
 
       applyTextImageDimensions();
-    } else {
-      window.alert(textData.error);
     }
   };
   const waitUntil = (

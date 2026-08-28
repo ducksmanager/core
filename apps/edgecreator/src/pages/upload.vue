@@ -222,7 +222,7 @@ const uploadAll = async () => {
           issuecode: crop.issuecode!,
         })),
       );
-      const isSuccess = response!.paths.svgPath;
+      const isSuccess = response.paths.svgPath;
       crop.sent = !!isSuccess;
     });
   }

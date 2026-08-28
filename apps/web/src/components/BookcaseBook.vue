@@ -204,6 +204,7 @@ watch(
   pagesWithUrl,
   (newValue) => {
     if (newValue && !newValue.length) {
+      emit("close-book");
       toast.create({
         body: $t(
           "DucksManager n'a pas pu trouver d'informations sur le contenu de ce livre. Essayez-en un autre !",
@@ -211,7 +212,6 @@ watch(
         title: $t("Pas d'informations sur le contenu du livre"),
         variant: "warning",
       });
-      emit("close-book");
     }
   },
   { immediate: true },

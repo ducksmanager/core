@@ -60,8 +60,8 @@ importers:
         specifier: ^0.33.5
         version: 0.33.5
       socket-call-client:
-        specifier: ^0.7.7
-        version: 0.7.7(axios-cache-interceptor@1.12.3(axios@1.19.0))(typescript@6.0.3)(vue@3.5.22(typescript@6.0.3))
+        specifier: ^0.8.0
+        version: 0.8.0(axios-cache-interceptor@1.12.3(axios@1.19.0))(vue@3.5.22(typescript@6.0.3))
       socket-call-server:
         specifier: ^0.9.0
         version: 0.9.0
@@ -1954,13 +1954,12 @@ packages:
   simple-swizzle@0.2.4:
     resolution: {integrity: sha512-nAu1WFPQSMNr2Zn9PGSZK9AGn4t/y97lEm+MXTtUDwfP0ksAIX4nO+6ruD9Jwut4C49SB1Ws+fbXsm/yScWOHw==}
 
-  socket-call-client@0.7.7:
-    resolution: {integrity: sha512-W8UYCj7QjYKK9u/pKmqA9EcruSdJbc4EPwbCKp7UNTn0Rgf+SGpAf79bPa6secpThENRl3aVWDk2tOO57FcQAg==}
-    engines: {node: '>=22.0.0 <23.0.0'}
+  socket-call-client@0.8.0:
+    resolution: {integrity: sha512-Jjk1KjvofAcDAzlrtu0oIW85u2xadfDeMGEqJQjz+8JA7SsCNKEzh2bw0x4YMLCK+b25nqEeoIcQjGujU77VWA==}
+    engines: {node: '>=22.0.0'}
     peerDependencies:
-      axios-cache-interceptor: ^1.6.2
-      typescript: ^5.3.3
-      vue: ^3.4.15
+      axios-cache-interceptor: ^1.12.0
+      vue: ^3.5.39
     peerDependenciesMeta:
       axios-cache-interceptor:
         optional: true
@@ -4032,10 +4031,9 @@ snapshots:
     dependencies:
       is-arrayish: 0.3.4
 
-  socket-call-client@0.7.7(axios-cache-interceptor@1.12.3(axios@1.19.0))(typescript@6.0.3)(vue@3.5.22(typescript@6.0.3)):
+  socket-call-client@0.8.0(axios-cache-interceptor@1.12.3(axios@1.19.0))(vue@3.5.22(typescript@6.0.3)):
     dependencies:
       socket.io-client: 4.8.3
-      typescript: 6.0.3
       vue: 3.5.22(typescript@6.0.3)
     optionalDependencies:
       axios-cache-interceptor: 1.12.3(axios@1.19.0)

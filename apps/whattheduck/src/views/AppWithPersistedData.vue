@@ -12,14 +12,10 @@
   </ion-split-pane>
 </template>
 <script setup lang="ts">
-import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { offlineBannerHeight, socket, isPersistedDataLoaded, token, isOfflineMode } = storeToRefs(app());
-
-getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value!);
 
 const collectionStore = wtdcollection();
 const { fetchCollection } = collectionStore;

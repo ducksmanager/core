@@ -1,4 +1,5 @@
 <template>
+  <BOrchestrator />
   <bare v-if="currentLayout === 'bare'" />
   <default v-else />
 </template>

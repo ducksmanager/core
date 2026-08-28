@@ -213,6 +213,7 @@ const models = ref<
         getIndexSize: () =>
           coverIdEvents
             .getIndexSize()
+            .catch((e) => ({ error: e.error as string }))
             .then((result) =>
               "error" in result ? result : result.numberOfImages,
             ),
@@ -226,9 +227,7 @@ const models = ref<
               pastecIndex,
             );
 
-            return "error" in searchResults
-              ? { error: searchResults.errorDetails || "Error" }
-              : searchResults.covers;
+            return searchResults.covers;
           } catch (error) {
             return typeof error === "object" && "errorDetails" in error!
               ? { error: (error.errorDetails as string) || "Error" }
@@ -248,13 +247,12 @@ const models = ref<
     modelData: "covers",
     getIndexSize: () => storySearchEvents.getIndexSize(true),
     run: async (base64) => {
-      const searchResults = await storySearchEvents.findSimilarImages(
-        base64,
-        true,
-      );
-      if ("error" in searchResults) {
-        return { error: searchResults.error! };
-      } else return searchResults.results;
+      const searchResults = await storySearchEvents
+        .findSimilarImages(base64, true)
+        .catch((e) => ({ error: e.error as string }));
+      return "results" in searchResults
+        ? searchResults.results
+        : { error: searchResults.error };
     },
   },
   {
@@ -263,13 +261,12 @@ const models = ref<
     modelData: "story first pages",
     getIndexSize: () => storySearchEvents.getIndexSize(false),
     run: async (base64) => {
-      const searchResults = await storySearchEvents.findSimilarImages(
-        base64,
-        false,
-      );
-      if ("error" in searchResults) {
-        return { error: searchResults.error! };
-      } else return searchResults.results;
+      const searchResults = await storySearchEvents
+        .findSimilarImages(base64, false)
+        .catch((e) => ({ error: e.error as string }));
+      return "results" in searchResults
+        ? searchResults.results
+        : { error: searchResults.error };
     },
   },
 ]);

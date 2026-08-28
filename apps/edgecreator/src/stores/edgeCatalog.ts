@@ -52,13 +52,14 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         return;
       }
 
-      const models = await browseEvents.listOngoingEdgeModels();
-      if ("error" in models) {
+      const models = await browseEvents.listOngoingEdgeModels().catch((e) => {
         console.error(
           "Error while loading ongoing edges",
-          models.error,
-          models.errorDetails,
+          e.error,
+          e.errorDetails,
         );
+      });
+      if (!models) {
         return;
       }
 
@@ -69,14 +70,16 @@ export const edgeCatalog = defineStore("edgeCatalog", () => {
         return;
       }
 
-      const models =
-        await browseEvents.listPublishedEdgeModels(publicationcode);
-      if ("error" in models) {
-        console.error(
-          "Error while loading ongoing edges",
-          models.error,
-          models.errorDetails,
-        );
+      const models = await browseEvents
+        .listPublishedEdgeModels(publicationcode)
+        .catch((e) => {
+          console.error(
+            "Error while loading published edges",
+            e.error,
+            e.errorDetails,
+          );
+        });
+      if (!models) {
         return;
       }
 

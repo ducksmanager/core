@@ -54,14 +54,16 @@ const changePassword = async () => {
     initError = "Token not found";
     return;
   }
-  const response = await authEvents.changePassword({
-    token: token.value,
-    password,
-    password2,
-  });
-  if ("error" in response) {
-    error = response.error!;
-  } else {
+  const response = await authEvents
+    .changePassword({
+      token: token.value,
+      password,
+      password2,
+    })
+    .catch((e) => {
+      error = e.error;
+    });
+  if (response) {
     Cookies.set("token", response.token, {
       domain: import.meta.env.VITE_COOKIE_DOMAIN,
     });
@@ -76,8 +78,5 @@ const changePassword = async () => {
   }
 };
 
-(async () => {
-  await changePassword();
-  loadUser();
-})();
+loadUser();
 </script>

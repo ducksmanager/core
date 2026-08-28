@@ -130,7 +130,7 @@ export const main = defineStore("main", () => {
           country: country.value!,
           magazine: magazine.value!,
         })
-      ).results!.sort((a, b) => numericSortCollator.compare(a, b));
+      ).results.sort((a, b) => numericSortCollator.compare(a, b));
       if (itemType === "elements") {
         publicationElements.value = items;
       } else {
