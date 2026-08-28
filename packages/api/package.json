@@ -52,13 +52,13 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.2.0",
     "@types/nodemailer": "^8.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
     "concurrently": "^10.0.5",
     "eslint": "^10.9.0",
     "eslint-config-prettier": "^10.1.8",
     "nodemon": "^3.1.14",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.67.0",
+    "typescript-eslint": "^8.68.0",
     "wait-on": "^9.1.0"
   }
 }
