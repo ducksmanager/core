@@ -66,13 +66,13 @@ const login = async () => {
   await userLogin(
     username,
     password,
-    (newToken) => {
+    async (newToken) => {
       const domain = import.meta.env.VITE_COOKIE_DOMAIN;
       Cookies.set("token", newToken, {
         domain,
       });
 
-      loadUser(true);
+      await loadUser(true);
     },
     (e) => {
       error = e;

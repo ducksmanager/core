@@ -41,7 +41,6 @@ const countryCodes = $computed(
 const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
-    countryNames &&
     [...countryCodes].sort((countryCodeA, countryCodeB) =>
       countryNames.value![countryCodeA]?.localeCompare(
         countryNames.value![countryCodeB],
@@ -55,7 +54,7 @@ const publicationCodes = $computed(
 const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
     ?.filter((publicationcode) => publicationcode.split("/")[0] === countrycode)
-    ?.sort((a, b) =>
+    .sort((a, b) =>
       (publicationNames.value[a] || "").localeCompare(
         publicationNames.value[b] || "",
       ),

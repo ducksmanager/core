@@ -115,8 +115,8 @@ const { t: $t } = useI18n(),
         issue.creationDate,
     ),
   changeDimension = (dimension: string, value: number) => {
-    if (dimension === "width") width = `${value}px`;
-    else height = `${value}px`;
+    if (dimension === "width") width = `${String(value)}px`;
+    else height = `${String(value)}px`;
   };
 
 let hasPublicationNames = $ref(false),
@@ -174,7 +174,7 @@ const publicationCodesWithOther = $computed(
           if (!publicationCodesWithOther!.includes(publicationcode)) {
             publicationcode = "Other";
           }
-          if (!acc[publicationcode]) {
+          if (!(publicationcode in acc)) {
             acc[publicationcode] = { ...dateAssoc };
           }
           acc[publicationcode][date]++;
@@ -339,7 +339,7 @@ watch(
   { immediate: true },
 );
 
-loadPurchases();
+void loadPurchases();
 </script>
 
 <style scoped lang="scss">

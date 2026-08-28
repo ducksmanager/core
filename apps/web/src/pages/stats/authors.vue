@@ -106,7 +106,7 @@ const labels = $computed(() =>
 );
 
 const changeWidth = (value: number) => {
-  width = `${value}px`;
+  width = `${String(value)}px`;
 };
 
 watch(

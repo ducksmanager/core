@@ -78,5 +78,5 @@ const changePassword = async () => {
   }
 };
 
-loadUser();
+void loadUser();
 </script>

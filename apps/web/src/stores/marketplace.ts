@@ -80,12 +80,10 @@ export const marketplace = defineStore("marketplace", () => {
     },
     loadContactMethods = async (userId: number) => {
       const result = await collectionEvents.getContactMethods(userId);
-      switch (result.error) {
-        case undefined:
-          contactMethods.value[userId] = result;
-          break;
-        default:
-          console.error(result.error, result.errorDetails);
+      if ("error" in result) {
+        console.error(result.error, result.errorDetails);
+      } else {
+        contactMethods.value[userId] = result;
       }
     },
     loadIssueRequestsAsBuyer = async (ignoreCache = false) => {

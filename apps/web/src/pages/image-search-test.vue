@@ -208,7 +208,7 @@ const models = ref<
     (pastecIndex) =>
       ({
         isSelected: true,
-        model: `Legacy (WTD 2-3) - Pastec server ${pastecIndex}`,
+        model: `Legacy (WTD 2-3) - Pastec server ${String(pastecIndex)}`,
         modelData: "covers",
         getIndexSize: () =>
           coverIdEvents
@@ -219,7 +219,7 @@ const models = ref<
             ),
         run: async (base64: string) => {
           console.log(
-            `Running search from cover with pastec server ${pastecIndex}`,
+            `Running search from cover with pastec server ${String(pastecIndex)}`,
           );
           try {
             const searchResults = await coverIdEvents.searchFromCover(
@@ -287,7 +287,7 @@ const handleFileChange = async (event: Event) => {
   }
 };
 
-const handleExampleClick = (example: Example) => {
+const handleExampleClick = (example: Example) =>
   fetch(example.url)
     .then((response) => response.blob())
     .then(async (blob) => {
@@ -295,7 +295,6 @@ const handleExampleClick = (example: Example) => {
       isCover.value = example.isCover;
       currentBase64.value = await toBase64(file);
     });
-};
 
 const handleStartWebcam = async () => {
   try {
@@ -395,13 +394,13 @@ const streamAndSearch = async () => {
   }
 };
 
-const toggleStreaming = () => {
+const toggleStreaming = async () => {
   if (isStreaming.value) {
     isStreaming.value = false;
   } else {
     isStreaming.value = true;
     allModelsCompleted.value = true; // Reset to allow immediate capture
-    streamAndSearch();
+    await streamAndSearch();
   }
 };
 

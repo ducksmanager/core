@@ -334,7 +334,7 @@ const processRawData = async () => {
 
 const groupByPublicationCode = (issues: string[]) =>
   issues
-    ?.map((issuecode) => ({
+    .map((issuecode) => ({
       issuecode,
       publicationcode: issuecodeDetails.value[issuecode].publicationcode,
     }))
@@ -359,7 +359,7 @@ const importIssues = async () => {
     }
   }
 
-  router.push("/collection/show");
+  await router.push("/collection/show");
 };
 
 watch($$(importDataReady), (newValue) => {

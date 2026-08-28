@@ -128,13 +128,13 @@ const numbersPerRow = 100 / lines;
 
 const { fetchCountryNames, fetchPublicationNames, fetchIssuecodeDetails } =
   coa();
-const { countryNames, publicationNames, issuecodeDetails } = storeToRefs(coa());
+const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
 const { loadCollection, loadPurchases } = collection();
 const { issues, totalPerPublication } = storeToRefs(collection());
 
 const ready = $computed(
-  () => issuesPerCell && countryNames && Object.keys(publicationNames).length,
+  () => issuesPerCell && Object.keys(publicationNames).length,
 );
 const maxLetter = $computed(() =>
   !issuesPerCell
@@ -188,19 +188,19 @@ const addIssueToCell = (
   isDoubleIssueEnd = false,
 ) => {
   let mod, number;
-  if (Number.isNaN(issuenumber)) {
+  if (isNaN(Number(issuenumber))) {
     mod = "non-numeric";
     number = issuenumber;
   } else {
     mod = parseInt(issuenumber) % 100;
     number = (parseInt(issuenumber) - mod) / 100;
   }
-  if (!acc[publicationcode]) {
+  if (!(publicationcode in acc)) {
     acc[publicationcode] = {
       "non-numeric": [],
     };
   }
-  if (!acc[publicationcode][mod]) acc[publicationcode][mod] = [];
+  if (!(mod in acc[publicationcode])) acc[publicationcode][mod] = [];
 
   acc[publicationcode][mod].push(
     [
@@ -241,9 +241,9 @@ watch(issues, async (newCollectionValue) => {
     return acc;
   }, {});
 });
-watch(totalPerPublication, (newValue) => {
-  fetchPublicationNames(Object.keys(newValue || {}));
-});
+watch(totalPerPublication, (newValue) =>
+  fetchPublicationNames(Object.keys(newValue || {})),
+);
 
 (async () => {
   await loadCollection();
