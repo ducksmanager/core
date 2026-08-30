@@ -10,22 +10,17 @@
         {{ $t("(hors-ligne)") }}
       </div>
     </div>
-    <div><SwitchLocale :fixed="false" /></div>
+    <div><SwitchLocale /></div>
   </b-container>
 
   <b-container
     fluid
     class="d-flex flex-column flex-grow-1 overflow-y-auto justify-content-center"
   >
-    <router-view v-if="user" />
-
-    <h4 v-else-if="!isSocketConnected">
-      {{ $t("Dumili n'est pas actif actuellement :-(") }}
-    </h4>
+    <router-view v-if="isSocketConnected" />
 
     <h4 v-else>
-      {{ $t("Vous devez être connecté pour accéder à cette page.") }}
-      <a :href="loginUrl">{{ $t("Connexion") }}</a>
+      {{ $t("Dumili est actuellement hors-ligne :-(") }}
     </h4>
   </b-container>
 </template>
@@ -71,9 +66,7 @@ const dumiliSocket = useDumiliSocket({
   onConnectError,
 });
 
-const isSocketConnected = computed(
-  () => !!dumiliSocket.indexationsSocket.value,
-);
+const isSocketConnected = computed(() => !!dumiliSocket.statusSocket.value);
 
 getCurrentInstance()!.appContext.app.provide(
   dumiliSocketInjectionKey,
@@ -87,10 +80,6 @@ getCurrentInstance()!.appContext.app.provide(
     session,
     onConnectError,
   }),
-);
-
-const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
 );
 
 const { isLoadingUser, user } = storeToRefs(collection());

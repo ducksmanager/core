@@ -45,6 +45,20 @@ export const RequiredAuthMiddleware = (
       next();
     })
     .catch((e) => {
-      next(e);
+      next({ name: "authentication_error", message: e });
+    });
+};
+
+export const OptionalAuthMiddleware = (
+  { _socket }: { _socket: Socket },
+  next: (error?: Error) => void,
+) => {
+  authenticateUser(_socket.handshake.auth.token)
+    .then((user) => {
+      _socket.data.user = user;
+      next();
+    })
+    .catch(() => {
+      next();
     });
 };

@@ -13,11 +13,13 @@ import {
   server as indexation,
 } from "./services/indexation";
 import { server as indexations } from "./services/indexations";
+import { server as indexationCreation } from "./services/indexation-creation";
+import { server as status } from "./services/status";
 
 cloudinary.config(true);
 
 export type SessionDataWithIndexation = {
-  user: SessionUser;
+  user: SessionUser | null;
   indexation: FullIndexation;
 };
 
@@ -32,7 +34,9 @@ const io = new Server(httpServer, {
 });
 
 indexations(io);
+indexationCreation(io);
 indexation(io);
+status(io);
 
 io.engine.on("connection_error", (err) => {
   console.error(

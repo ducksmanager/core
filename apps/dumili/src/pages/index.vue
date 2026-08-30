@@ -1,5 +1,5 @@
 <template>
-  <b-container class="h-100">
+  <b-container v-if="user" class="h-100">
     <h4 class="sticky-top bg-light rounded-bottom text-black">
       {{ $t("Indexations en cours") }}
     </h4>
@@ -48,6 +48,22 @@
     >
     <template v-else>{{ $t("Chargement...") }}</template></b-container
   >
+  <b-container
+    v-else
+    class="h-100 flex-column justify-content-center align-items-center d-flex"
+  >
+    <h4>
+      <p>{{ $t("Vous devez être connecté pour lister vos indexations.") }}</p>
+      <a :href="loginUrl">{{ $t("Connexion") }}</a>
+    </h4>
+    <b-alert model-value class="mt-5 text-sm">
+      {{
+        $t(
+          "Si vous possédez l'URL d'une indexation existante, vous pouvez y accéder directement.",
+        )
+      }}
+    </b-alert>
+  </b-container>
   <b-container fluid class="position-absolute bottom-0 start-0">
     <div class="p-5">
       <b-button @click="modal = !modal">{{
@@ -83,12 +99,15 @@ import type { EventOutput } from "socket-call-client";
 import type { ClientEmitEvents as IndexationsEvents } from "~dumili-services/indexations";
 
 const router = useRouter();
-const { indexationsSocket, getIndexationSocketFromId } = inject(
-  dumiliSocketInjectionKey,
-)!;
+const {
+  indexationCreationSocket,
+  indexationsSocket,
+  getIndexationSocketFromId,
+} = inject(dumiliSocketInjectionKey)!;
 
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
+const { user } = storeToRefs(collection());
 
 const form = ref<HTMLFormElement>();
 const currentIndexations =
@@ -96,11 +115,13 @@ const currentIndexations =
 const modal = ref(false);
 const totalPages = ref(16);
 
-const createIndexation = async () => {
-  const cloudinaryFolderName = new Date().toISOString().replace(/[-:.Z]/g, "");
+const loginUrl = computed(
+  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
+);
 
-  await indexationsSocket.value.create(cloudinaryFolderName, totalPages.value);
-  router.push(`/indexation/${cloudinaryFolderName}`);
+const createIndexation = async () => {
+  const uuid = await indexationCreationSocket.value.create(totalPages.value);
+  router.push(`/indexation/${uuid}`);
 };
 
 const deleteIndexation = async (id: string) => {
