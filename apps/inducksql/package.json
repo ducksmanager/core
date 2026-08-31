@@ -18,16 +18,16 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "mariadb": "^3.5.3",
-    "vue": "^3.5.41"
+    "vue": "^3.5.42"
   },
   "devDependencies": {
+    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
     "@types/bun": "~1.3.14",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.4.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "concurrently": "^9.2.4",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
-    "@sqlite.org/sqlite-wasm": "3.53.0-build1",
-    "@vitejs/plugin-vue": "^6.0.8",
-    "concurrently": "^9.2.1",
     "vite": "^8.2.2",
     "vue-tsc": "^3.3.11"
   }
