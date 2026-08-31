@@ -10,7 +10,7 @@ jobs:
       REMOTE_ROOT: apps/dm
     steps:
       - name: Send notifications
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
