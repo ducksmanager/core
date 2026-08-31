@@ -11,8 +11,6 @@ services:
       MYSQL_COVER_INFO_DATABASE: cover_info
       MYSQL_COA_HOST: db
       MYSQL_COA_DATABASE: coa
-      PASTEC_HOST: pastec
-      PASTEC_PORT: 4212
       PASTEC_CONTAINER_HOME: /pastec/build
     networks:
       - dm-db-network
