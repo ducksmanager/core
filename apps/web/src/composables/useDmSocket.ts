@@ -39,7 +39,7 @@ const defaultExport = (options: {
   };
 }) => {
   const socket = inject("dmSocket") as SocketClient;
-  const { session, cacheStorage, onConnectError, onConnected } = options;
+  const { session, cacheStorage, onConnectError } = options;
   const until4am = () => {
     const now = dayjs();
     let coaCacheExpiration = dayjs();
@@ -57,12 +57,7 @@ const defaultExport = (options: {
   const storySearchSocket = inject("storySearchSocket") as SocketClient;
 
   for (const eachSocket of [socket, storySearchSocket]) {
-    if (eachSocket) {
-      eachSocket.onConnectError = onConnectError;
-      if (onConnected) {
-        eachSocket.onConnected = onConnected;
-      }
-    }
+    eachSocket.onConnectError = onConnectError;
   }
 
   return {
@@ -140,7 +135,7 @@ const defaultExport = (options: {
       },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
-    storySearch: storySearchSocket?.addNamespace<StorySearchEvents>(
+    storySearch: storySearchSocket.addNamespace<StorySearchEvents>(
       namespaces.STORY_SEARCH,
       {},
     ),

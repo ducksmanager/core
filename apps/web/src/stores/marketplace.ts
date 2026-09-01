@@ -21,29 +21,20 @@ export const marketplace = defineStore("marketplace", () => {
     sentRequestIssueIds = computed(() =>
       issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),
     ),
-    sellerUserIds = computed(
-      () =>
-        (issuesOnSaleByOthers.value && [
-          ...new Set(issuesOnSaleByOthers.value.map((issue) => issue.userId)),
-        ]) ||
-        [],
-    ),
-    buyerUserIds = computed(
-      () =>
-        (issueRequestsAsSeller.value && [
-          ...new Set(issueRequestsAsSeller.value.map((issue) => issue.buyerId)),
-        ]) ||
-        [],
-    ),
-    buyerUserNamesById = computed(
-      () =>
-        buyerUserIds.value?.reduce<{ [userId: number]: string }>(
-          (acc, userId) => ({
-            ...acc,
-            [userId]: users().stats[userId]?.username,
-          }),
-          {},
-        ) || null,
+    sellerUserIds = computed(() => [
+      ...new Set(issuesOnSaleByOthers.value?.map((issue) => issue.userId)),
+    ]),
+    buyerUserIds = computed(() => [
+      ...new Set(issueRequestsAsSeller.value?.map((issue) => issue.buyerId)),
+    ]),
+    buyerUserNamesById = computed(() =>
+      buyerUserIds.value.reduce<{ [userId: number]: string }>(
+        (acc, userId) => ({
+          ...acc,
+          [userId]: users().stats[userId]?.username,
+        }),
+        {},
+      ),
     ),
     sellerUserNames = computed(() =>
       sellerUserIds.value
@@ -59,7 +50,7 @@ export const marketplace = defineStore("marketplace", () => {
     requestIssueIdsBySellerId = computed(
       () =>
         issueRequestsAsBuyer.value
-          ?.filter(({ issueId }) => issuesOnSaleById.value[issueId])
+          ?.filter(({ issueId }) => issueId in issuesOnSaleById.value)
           .reduce<{ [userId: number]: number[] }>(
             (acc, { issueId }) => ({
               ...acc,

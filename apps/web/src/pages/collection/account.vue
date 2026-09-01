@@ -252,7 +252,7 @@ const { collection: collectionEvents } = inject(socketInjectionKey)!;
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await collectionEvents.emptyCollection();
-    router.push("/collection/show");
+    await router.push("/collection/show");
   }
 };
 
@@ -292,11 +292,11 @@ const deleteAccount = async () => {
     )
   ) {
     await collectionEvents.deleteUser();
-    router.push("/logout");
+    await router.push("/logout");
   }
 };
 
-loadMarketplaceContactMethods();
+void loadMarketplaceContactMethods();
 
 watch(
   marketplaceContactMethods,

@@ -17,9 +17,9 @@ const { auth: authEvents } = inject(socketInjectionKey)!;
 
 watch(
   user,
-  (newValue) => {
+  async (newValue) => {
     if (newValue) {
-      router.push("/collection");
+      await router.push("/collection");
     }
   },
   { immediate: true },

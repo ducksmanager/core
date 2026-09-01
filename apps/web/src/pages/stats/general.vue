@@ -262,7 +262,7 @@ void (async () => {
     return;
   }
   rarityRank = rarityData.me.rank;
-  userIdAboveMe = rarityData.aboveMe?.userId ?? null;
+  userIdAboveMe = rarityData.aboveMe.userId;
 
   const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
   await fetchIssuecodeDetails([rarestIssuecode]);
@@ -274,7 +274,7 @@ void (async () => {
     publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
     issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
   };
-  if (rarityData.aboveMe?.userId) {
+  if (rarityData.aboveMe.userId) {
     await fetchStats([rarityData.aboveMe.userId]);
   }
 })();

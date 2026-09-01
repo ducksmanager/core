@@ -44,9 +44,9 @@ const {
   issuecode,
   spritePath = null,
   popularity = null,
-  invisible = false,
-  highlighted = false,
-  embedded = false,
+  invisible,
+  highlighted,
+  embedded,
   orientation = "vertical",
 } = defineProps<{
   id: string;
@@ -73,7 +73,10 @@ const CLOUDINARY_ROTATED_URL =
 const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
 const hasValidPublicationcode = $computed(
-  () => issuecode && issuecodeDetails.value[issuecode]?.publicationcode,
+  () =>
+    issuecode &&
+    issuecode in issuecodeDetails.value &&
+    issuecodeDetails.value[issuecode].publicationcode,
 );
 
 let src = $computed(() => {

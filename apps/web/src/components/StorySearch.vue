@@ -202,7 +202,7 @@ const runSearch = async (value: string) => {
         results: (data.results as SimpleStoryWithPartInfo[]).map((story) => ({
           ...story,
           collectionIssues: story.issues
-            .filter(({ issuecode }) => collectionIssuesByIssuecode[issuecode])
+            .filter(({ issuecode }) => issuecode in collectionIssuesByIssuecode)
             .map(({ issuecode }) => collectionIssuesByIssuecode[issuecode]!)
             .flat(),
         })),
@@ -225,7 +225,7 @@ watch($$(search), async (newValue) => {
   }
 });
 
-fetchCountryNames();
+void fetchCountryNames();
 </script>
 
 <style scoped lang="scss">

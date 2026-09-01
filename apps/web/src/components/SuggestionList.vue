@@ -89,9 +89,9 @@ const sortedSuggestions = computed(
 );
 
 const getImportance = (score: number) =>
-  sortedSuggestions.value?.maxScore === score
+  sortedSuggestions.value.maxScore === score
     ? 1
-    : sortedSuggestions.value?.minScore === score
+    : sortedSuggestions.value.minScore === score
       ? 3
       : 2;
 
