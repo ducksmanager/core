@@ -26,7 +26,7 @@ import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 
 import type { SessionDataWithIndexation } from "../../index";
-import { RequiredAuthMiddleware } from "../_auth";
+import { OptionalAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
@@ -304,7 +304,7 @@ const getFullIndexation = (
 ) =>
   prisma.indexation
     .findUnique({
-      where: { id: indexationId, dmUserId: services._socket.data.user.id },
+      where: { id: indexationId },
       include: indexationPayloadInclude,
     })
     .then((indexation) => {
@@ -761,8 +761,10 @@ const uploadPages = async (
       );
     }
 
-    const folder = `dumili/${user.username}/${indexation.id}`;
-    const context = { indexation: indexation.id, user: user.username };
+    const username = user?.username || "anonymous";
+
+    const folder = `dumili/${username}/${indexation.id}`;
+    const context = { indexation: indexation.id, user: username };
 
     if (isDocument) {
       const pagesToPotentiallyOverwrite = indexation.pages.filter(
@@ -901,7 +903,7 @@ export const handleHttpFileUpload = async (
   },
 ) => {
   const indexation = await prisma.indexation.findUnique({
-    where: { id: indexationId, dmUserId: user.id },
+    where: { id: indexationId },
     include: indexationPayloadInclude,
   });
   if (!indexation) return { error: "Indexation not found" };
@@ -1299,25 +1301,22 @@ const listenEvents = (services: IndexationServices) => ({
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
   IndexationServerSentStartEndEvents
->(
-  new RegExp(`^${namespaces.INDEXATION.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`),
-  {
-    listenEvents,
-    middlewares: [
-      RequiredAuthMiddleware,
-      async (services, next) => {
-        const indexationId = services._socket.nsp.name.split("/").pop()!;
-        if (!indexationId) {
-          next(new Error("No indexation ID provided"));
-          return;
-        }
+>(new RegExp(`^${namespaces.INDEXATION.replace("{id}", "[a-f0-9-]{36}")}$`), {
+  listenEvents,
+  middlewares: [
+    OptionalAuthMiddleware,
+    async (services, next) => {
+      const indexationId = services._socket.nsp.name.split("/").pop()!;
+      if (!indexationId) {
+        next(new Error("No indexation ID provided"));
+        return;
+      }
 
-        await refreshIndexation(services, true, indexationId);
-        next();
-      },
-    ],
-  },
-);
+      await refreshIndexation(services, true, indexationId);
+      next();
+    },
+  ],
+});
 
 export type ClientEmitEvents = (typeof client)["emitEvents"];
 export type ClientListenEvents = (typeof client)["listenEventsInterfaces"];

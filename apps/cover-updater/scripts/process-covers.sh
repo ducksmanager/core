@@ -8,6 +8,11 @@ LIMIT=${LIMIT_DEFAULT}
 IMAGES_PER_GROUP=${IMAGES_PER_GROUP_DEFAULT}
 THREADS=${THREADS_DEFAULT}
 
+IFS=',' read -ra PASTEC_HOSTS_AND_PORTS_ARR <<< "$PASTEC_HOSTS_AND_PORTS"
+
+PASTEC_HOST=$(echo ${PASTEC_HOSTS_AND_PORTS_ARR[0]} | cut -d':' -f1)
+PASTEC_PORT=$(echo ${PASTEC_HOSTS_AND_PORTS_ARR[0]} | cut -d':' -f2)
+
 usage() {
     echo "Usage: $0 [--help | [--threads=<Number of threads>]|$THREADS_DEFAULT [--images-per-group=<Number of images processed in a row>]|$IMAGES_PER_GROUP_DEFAULT [--limit=<Number of images to process>]|$LIMIT_DEFAULT"
     exit 1
@@ -97,13 +102,22 @@ processImage() {
         return
     fi
 
-    PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${path} http://${PASTEC_HOST}:${PASTEC_PORT}/index/images/${id})
-    if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
-        log=${log}"[Thread $thread_id] Imported\n"
-        addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
+    local failures=""
+    for host_and_port in "${PASTEC_HOSTS_AND_PORTS_ARR[@]}"; do
+        PASTEC_OUTPUT=$(curl -s -S -X PUT --data-binary @${path} http://${host_and_port}/index/images/${id})
+        if [[ ${PASTEC_OUTPUT} == *"IMAGE_ADDED"* ]]; then
+            log=${log}"[Thread $thread_id] Imported into ${host_and_port}\n"
+        else
+            log=${log}"[Thread $thread_id] Failed to import into ${host_and_port} : $PASTEC_OUTPUT\n"
+            failures="${failures}${host_and_port}: ${PASTEC_OUTPUT} "
+        fi
+    done
+
+    if [ -n "${failures}" ]; then
+        failures=${failures//[\'\/\\&]/}
+        addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} "${failures:0:200}")"
     else
-        log=${log}"[Thread $thread_id] Failed to import : $PASTEC_OUTPUT\n"
-        addQueryToSqlList ${thread_id} "$(getCoverLogInsertErrorQuery ${id} ${PASTEC_OUTPUT})"
+        addQueryToSqlList ${thread_id} "$(getCoverLogInsertSuccessQuery ${id})"
     fi
     echo -e ${log}
 }

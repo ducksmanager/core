@@ -34,7 +34,7 @@
     "Détections AI": "AI-обнаружение",
     "Document (PDF, RAR, CBR, ZIP, CBZ)": "Документ (PDF, RAR, CBR, ZIP, CBZ)",
     "Dumili a trouvé des couvertures existantes ressemblant à la vôtre. Sélectionnez la couverture qui ressemble le plus à la vôtre.": "Dumili нашел существующие обложки, похожие на вашу. Выберите обложку, которая больше всего похожа на вашу.",
-    "Dumili n'est pas actif actuellement :-(": "Dumili сейчас не активен :-(",
+    "Dumili est actuellement hors-ligne :-(": "Dumili сейчас оффлайн :-(",
     "Entrez le numéro": "Введите номер",
     "Envoi d'images de pages": "Отправка изображений страниц",
     "Envoi de {pagesToUpload} page(s)...": "Отправка {pagesToUpload} страницы(ы)...",
@@ -80,6 +80,7 @@
     "Si votre document fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront remplacées.": "Если ваш документ содержит более {maxPages} страниц, страницы, начиная со страницы {firstOutOfRangePageNumber}, будут заменены.",
     "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePageNumber} seront remplacées.": "Если вы отправляете более {maxPages} файлов, страницы, начиная со страницы {firstOutOfRangePageNumber}, будут заменены.",
     "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePageNumber} seront ignorées.": "Если вы отправляете более {maxPages} файлов, страницы, начиная со страницы {firstOutOfRangePageNumber}, будут игнорироваться.",
+    "Si vous possédez l'URL d'une indexation existante, vous pouvez y accéder directement.": "Если у вас есть URL существующей индексации, вы можете получить к ней доступ напрямую.",
     "Suggestions IA": "Предложения ИИ",
     "Terminer": "Завершить",
     "Texte": "Текст",
@@ -93,8 +94,9 @@
     "Veuillez entrer le numéro": "Введите номер",
     "Voir sur Inducks": "Смотреть на Inducks",
     "Voulez-vous vraiment supprimer cette entrée ?": "Вы действительно хотите удалить эту запись?",
-    "Vous devez être connecté pour accéder à cette page.": "Вы должны быть авторизованы, чтобы получить доступ к этой странице.",
+    "Vous devez être connecté pour lister vos indexations.": "Вы должны быть авторизованы, чтобы просматривать свои индексации.",
     "Vous devez indiquer les caractéristiques du numéro\navant de pouvoir modifier certaines de ses méta-données.": "Вы должны указать характеристики номера,\nпрежде чем сможете изменить некоторые из его метаданных.",
     "Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement \"Numéro inconnu\")": "Вы должны указать публикацию и номер, чтобы продолжить (кликните на выпадающем списке, который в настоящее время говорит \"Неизвестный номер\")",
-    "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?": "Вы собираетесь удалить {numberOfPagesToDelete} последних страниц из индексации. Вы уверены?"
+    "Vous êtes sur le point de supprimer les {numberOfPagesToDelete} dernières pages de l'indexation. Êtes-vous sûr(e) ?": "Вы собираетесь удалить {numberOfPagesToDelete} последних страниц из индексации. Вы уверены?",
+    "Vous n'êtes pas connecté sur DucksManager. Placez cette page dans vos favoris de navigateur si vous souhaitez y accéder de nouveau plus tard.": "Вы не вошли в DucksManager. Добавьте эту страницу в закладки браузера, если хотите получить к ней доступ позже."
 }

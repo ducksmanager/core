@@ -2,13 +2,11 @@ import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
-import { COVER } from "~dumili-types/storyKinds";
 import prisma from "~prisma/client";
 import type { Prisma } from "~prisma/client_dumili/client";
 
 import type { SessionData } from "../../index";
 import { RequiredAuthMiddleware } from "../_auth";
-import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
 type IndexationsServices = NamespaceProxyTarget<
@@ -31,36 +29,6 @@ const listenEvents = ({ _socket }: IndexationsServices) => ({
         }
         return user;
       }),
-
-  create: async (id: string, numberOfPages: number) =>
-    prisma.indexation
-      .create({
-        data: {
-          id,
-          dmUserId: _socket.data.user.id,
-          pages: {
-            createMany: {
-              data: Array.from({ length: numberOfPages }).map((_, idx) => ({
-                pageNumber: idx + 1,
-              })),
-            },
-          },
-        },
-      })
-      .then((indexation) => createEntry(indexation.id, 1))
-      .then((entry) =>
-        prisma.entry.update({
-          data: {
-            acceptedStoryKindSuggestionId: entry.storyKindSuggestions.find(
-              (s) => s.storyKindRowsStr.split("/")[0] === COVER,
-            )!.id,
-          },
-          where: {
-            id: entry.id,
-          },
-        }),
-      ),
-
   getIndexations: (): Promise<
     Prisma.indexationGetPayload<{
       include: {
