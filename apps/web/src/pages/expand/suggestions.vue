@@ -108,7 +108,7 @@ watch(
 );
 
 void loadCollection();
-loadRatings();
+void loadRatings();
 </script>
 
 <style scoped lang="scss">

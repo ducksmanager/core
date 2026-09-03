@@ -77,8 +77,8 @@ const login = async () => {
     (e) => {
       error = e;
     },
-  ).catch((e) => {
-    error = e;
+  ).catch((e: unknown) => {
+    error = e as string;
   });
 };
 

@@ -92,7 +92,7 @@ import type { SimpleStory } from "~dm-types/SimpleStory";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const { withTitle = true, isPublic = false } = defineProps<{
+const { withTitle, isPublic } = defineProps<{
   withTitle?: boolean;
   isPublic?: boolean;
 }>();
@@ -203,7 +203,7 @@ const runSearch = async (value: string) => {
           ...story,
           collectionIssues: story.issues
             .filter(({ issuecode }) => issuecode in collectionIssuesByIssuecode)
-            .map(({ issuecode }) => collectionIssuesByIssuecode[issuecode]!)
+            .map(({ issuecode }) => collectionIssuesByIssuecode[issuecode])
             .flat(),
         })),
       };

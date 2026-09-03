@@ -113,10 +113,10 @@ watch(
     await fetchPublicationNames([
       ...new Set(
         Object.keys(sortedSuggestions.value.issues)
+          .filter((issuecode) => issuecode in issuecodeDetails.value)
           .map(
-            (issuecode) => issuecodeDetails.value[issuecode]?.publicationcode,
-          )
-          .filter(Boolean),
+            (issuecode) => issuecodeDetails.value[issuecode].publicationcode,
+          ),
       ),
     ]);
     loading = false;

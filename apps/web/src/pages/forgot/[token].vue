@@ -33,7 +33,10 @@ meta:
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { socketInjectionKey } from "../../composables/useDmSocket";
+import {
+  isEventErrorOf,
+  socketInjectionKey,
+} from "../../composables/useDmSocket";
 
 const { loadUser } = collection();
 const route = useRoute<"/forgot/[token]">();
@@ -60,8 +63,10 @@ const changePassword = async () => {
       password,
       password2,
     })
-    .catch((e) => {
-      error = e.error;
+    .catch((e: unknown) => {
+      error = isEventErrorOf(authEvents.changePassword, e)
+        ? e.error
+        : "Unknown error";
     });
   if (response) {
     Cookies.set("token", response.token, {

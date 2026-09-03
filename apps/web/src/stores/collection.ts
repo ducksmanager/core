@@ -1,5 +1,4 @@
 import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
-import type { ShallowRef } from "vue";
 
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { SubscriptionTransformedStringDates } from "~dm-services/collection/subscriptions";
@@ -20,7 +19,7 @@ import {
 } from "~dm-types/Labels";
 
 import useCollection from "../composables/useCollection";
-import { socketInjectionKey } from "../composables/useDmSocket";
+import { isEventErrorOf, socketInjectionKey } from "../composables/useDmSocket";
 
 export type Filter =
   | typeof ON_SALE_LABEL_DESCRIPTION
@@ -60,9 +59,7 @@ export const collection = defineStore("collection", () => {
   const labelFiltersQueryParams =
     useUrlSearchParams<Record<Filter, "true">>("hash-params");
 
-  const collectionUtils = useCollection(
-      issues as ShallowRef<EventOutput<CollectionServices, "getIssues">>,
-    ),
+  const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = shallowRef<string[]>(),
     purchases = shallowRef<purchase[]>(),
     labels = shallowRef<label[]>(),
@@ -78,7 +75,7 @@ export const collection = defineStore("collection", () => {
                 )?.id,
             )
             .filter((id) => id !== undefined),
-        ) as Set<number>,
+        ),
     ),
     watchedAuthors = shallowRef<authorUser[]>(),
     marketplaceContactMethods = ref<string[]>(),
@@ -141,9 +138,7 @@ export const collection = defineStore("collection", () => {
       }
       return {
         ...user.value,
-        discordId: user.value.discordId
-          ? String(user.value.discordId)
-          : undefined,
+        discordId: user.value.discordId || undefined,
         presentationText: user.value.presentationText || "",
         email: user.value.email,
         marketplaceAcceptsExchanges:
@@ -191,8 +186,10 @@ export const collection = defineStore("collection", () => {
             previousVisit.value = new Date(response);
           }
         })
-        .catch((e) => {
-          console.error(e.error);
+        .catch((e: unknown) => {
+          console.error(
+            isEventErrorOf(collectionEvents.getLastVisit, e) ? e.error : e,
+          );
           return null;
         }),
     loadCollection = async (ignoreCache = false) => {
@@ -350,7 +347,7 @@ export const collection = defineStore("collection", () => {
     login = async (
       username: string,
       password: string,
-      onSuccess: (token: string) => void,
+      onSuccess: (token: string) => void | Promise<void>,
       onError: (e: string) => void,
     ) => {
       const token = await authEvents
@@ -358,11 +355,11 @@ export const collection = defineStore("collection", () => {
           username,
           password,
         })
-        .catch((e) => {
-          onError(e.error);
+        .catch((e: unknown) => {
+          onError(isEventErrorOf(authEvents.login, e) ? e.error : String(e));
         });
       if (typeof token === "string") {
-        onSuccess(token);
+        void onSuccess(token);
       }
     },
     loadUser = async (ignoreCache = false) => {

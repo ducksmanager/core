@@ -9,9 +9,9 @@
     <template v-if="sentRequest">{{ $t("Demande envoyée à") }}</template
     ><template v-else>{{ $t("En vente par") }}</template
     >&nbsp;<UserPopover
-      v-if="points[issueOnSale.userId] && stats[issueOnSale.userId]"
+      v-if="points[issueOnSale.userId] && userStats[issueOnSale.userId]"
       :points="points[issueOnSale.userId]"
-      :stats="stats[issueOnSale.userId]"
+      :stats="userStats[issueOnSale.userId]"
       show-ok-for-exchanges
     />
   </span>
@@ -23,7 +23,7 @@ const { issuecode, copyIndex } = defineProps<{
   copyIndex: number;
 }>();
 
-const { points, stats } = storeToRefs(users());
+const { points, stats: userStats } = storeToRefs(users());
 const { sentRequestIssueIds, issuesOnSaleByOthers, issueRequestsAsBuyer } =
   storeToRefs(marketplace());
 

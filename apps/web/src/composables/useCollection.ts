@@ -25,8 +25,8 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
       Object.entries(groupedByCountry).map(([countrycode, countryIssues]) => [
         countrycode,
         includeDuplicates
-          ? countryIssues!.length
-          : new Set(countryIssues!.map((i) => i.issuecode)).size,
+          ? countryIssues.length
+          : new Set(countryIssues.map((i) => i.issuecode)).size,
       ]),
     );
   };
@@ -103,7 +103,7 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
         issues.value?.reduce(
           (acc, { condition }) => ({
             ...acc,
-            [condition || "indefini"]: (acc[condition || "indefini"] || 0) + 1,
+            [condition]: (acc[condition] || 0) + 1,
           }),
           {} as Record<issue_condition, number>,
         ) || ({} as Record<issue_condition, number>),

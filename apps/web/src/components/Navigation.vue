@@ -65,7 +65,7 @@ const { user } = storeToRefs(collection());
 const username = $computed(() => user.value?.username || null);
 
 const publicCollectionUsername = $computed(() =>
-  "username" in route.params ? (route.params.username as string) : undefined,
+  "username" in route.params ? route.params.username : undefined,
 );
 
 const collectionMenu = computed(() =>

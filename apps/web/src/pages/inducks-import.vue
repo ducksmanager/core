@@ -369,10 +369,10 @@ watch($$(importDataReady), (newValue) => {
     issuesImportable = [];
     for (const issuecode of issuesToImport!) {
       if (!(issuecode in issuecodeDetails.value))
-        issuesNotReferenced!.push(issuecode);
+        issuesNotReferenced.push(issuecode);
       else if (findInCollection(issuecode))
-        issuesAlreadyInCollection!.push(issuecode);
-      else issuesImportable!.push(issuecode);
+        issuesAlreadyInCollection.push(issuecode);
+      else issuesImportable.push(issuecode);
     }
 
     issuesNotReferenced = [...new Set(issuesNotReferenced)];

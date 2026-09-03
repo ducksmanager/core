@@ -242,15 +242,19 @@ const sortedBookcase = $computed(
           bookcaseOrder.value!.indexOf(publicationcode1) -
             bookcaseOrder.value!.indexOf(publicationcode2),
         );
+        const issuecodes1 =
+          publicationcode1 in issuecodesByPublicationcode.value
+            ? issuecodesByPublicationcode.value[publicationcode1]
+            : [];
+        const issuecodes2 =
+          publicationcode2 in issuecodesByPublicationcode.value
+            ? issuecodesByPublicationcode.value[publicationcode2]
+            : [];
         return (
           publicationOrderSign ||
           Math.sign(
-            (issuecodesByPublicationcode.value[publicationcode1]?.indexOf(
-              issuecode1,
-            ) || 0) -
-              (issuecodesByPublicationcode.value[publicationcode2]?.indexOf(
-                issuecode2,
-              ) || 0),
+            (issuecodes1.indexOf(issuecode1) || 0) -
+              (issuecodes2.indexOf(issuecode2) || 0),
           )
         );
       },

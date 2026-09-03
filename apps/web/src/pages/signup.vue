@@ -67,6 +67,7 @@ meta:
 import Cookies from "js-cookie";
 
 import type { ScopedError } from "socket-call-client";
+import { isEventErrorOf } from "~/composables/useDmSocket";
 
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -89,15 +90,15 @@ const signup = async () => {
       password,
       email,
     })
-    .catch((e) => {
-      if ("selector" in e) {
+    .catch((e: unknown) => {
+      if (isEventErrorOf(authEvents.signup, e)) {
         error = {
           selector: e.selector,
           error: e.error,
           message: e.message,
         };
       } else {
-        console.error(e.error);
+        console.error(e);
       }
     });
   if (typeof token === "string") {

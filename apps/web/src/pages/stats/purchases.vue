@@ -111,8 +111,11 @@ const { t: $t } = useI18n(),
     getIssueDate(issue).isValid() ? getIssueDate(issue).format("YYYY-MM") : "?",
   getIssueDate = (issue: Pick<dm_issue, "purchaseId" | "creationDate">) =>
     dayjs(
-      (issue.purchaseId && purchasesById.value![issue.purchaseId]?.date) ||
-        issue.creationDate,
+      issue.purchaseId &&
+        purchasesById.value &&
+        issue.purchaseId in purchasesById.value
+        ? purchasesById.value[issue.purchaseId].date
+        : issue.creationDate,
     ),
   changeDimension = (dimension: string, value: number) => {
     if (dimension === "width") width = `${String(value)}px`;

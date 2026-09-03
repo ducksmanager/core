@@ -114,7 +114,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { socketInjectionKey } from "../composables/useDmSocket";
+import { isEventErrorOf, socketInjectionKey } from "../composables/useDmSocket";
 
 const { coverId: coverIdEvents, storySearch: storySearchEvents } =
   inject(socketInjectionKey)!;
@@ -213,7 +213,11 @@ const models = ref<
         getIndexSize: () =>
           coverIdEvents
             .getIndexSize()
-            .catch((e) => ({ error: e.error as string }))
+            .catch((e: unknown) => ({
+              error: isEventErrorOf(coverIdEvents.getIndexSize, e)
+                ? e.error
+                : "Unknown error",
+            }))
             .then((result) =>
               "error" in result ? result : result.numberOfImages,
             ),
@@ -249,7 +253,11 @@ const models = ref<
     run: async (base64) => {
       const searchResults = await storySearchEvents
         .findSimilarImages(base64, true)
-        .catch((e) => ({ error: e.error as string }));
+        .catch((e: unknown) => ({
+          error: isEventErrorOf(storySearchEvents.findSimilarImages, e)
+            ? e.error
+            : "Unknown error",
+        }));
       return "results" in searchResults
         ? searchResults.results
         : { error: searchResults.error };
@@ -263,7 +271,11 @@ const models = ref<
     run: async (base64) => {
       const searchResults = await storySearchEvents
         .findSimilarImages(base64, false)
-        .catch((e) => ({ error: e.error as string }));
+        .catch((e: unknown) => ({
+          error: isEventErrorOf(storySearchEvents.findSimilarImages, e)
+            ? e.error
+            : "Unknown error",
+        }));
       return "results" in searchResults
         ? searchResults.results
         : { error: searchResults.error };
@@ -418,7 +430,7 @@ watch(currentBase64, (base64) => {
       model.time = undefined;
       // Keep model.results to show previous matches
     }
-    nextTick(async () => {
+    void nextTick(async () => {
       const relevantModels = models.value.filter(
         ({ modelData, isSelected }) =>
           modelData === (isCover.value ? "covers" : "story first pages") &&
@@ -444,7 +456,7 @@ watch(currentBase64, (base64) => {
 
 onMounted(() => {
   for (const model of models.value) {
-    model.getIndexSize().then((size) => {
+    void model.getIndexSize().then((size) => {
       model.indexSize = size;
     });
   }

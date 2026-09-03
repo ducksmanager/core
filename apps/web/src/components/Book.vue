@@ -40,7 +40,7 @@ import { PageFlip } from "page-flip";
 const {
   pages,
   edgeWidth = undefined,
-  coverRatio, 
+  coverRatio,
   coverHeight = undefined,
 } = defineProps<{
   pages: (Page & object)[];

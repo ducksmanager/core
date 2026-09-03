@@ -31,10 +31,7 @@ const { issuecodeDetails } = storeToRefs(coa());
 let isLoaded = $ref(false);
 const eventUserIds = $computed(() =>
   events.value
-    .reduce<(number | null)[]>(
-      (acc, event) => [...acc, ...(event.users || [])],
-      [],
-    )
+    .reduce<(number | null)[]>((acc, event) => [...acc, ...event.users], [])
     .filter((userId) => !!userId),
 );
 const isCollectionUpdateEvent = (

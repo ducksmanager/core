@@ -20,9 +20,9 @@ alias: [/bibliotheque/contributeurs]
       class="contributor"
     >
       <UserPopover
-        v-if="'id' in contributor && stats[contributor.id]"
+        v-if="'id' in contributor && userStats[contributor.id]"
         :id="contributor.id"
-        :stats="stats[contributor.id]"
+        :stats="userStats[contributor.id]"
         :points="points[contributor.id]"
       />
       <div v-else-if="'text' in contributor">
@@ -34,7 +34,7 @@ alias: [/bibliotheque/contributeurs]
 
 <script setup lang="ts">
 const { fetchBookcaseContributors, fetchStats } = users();
-const { bookcaseContributors, stats, points } = storeToRefs(users());
+const { bookcaseContributors, stats: userStats, points } = storeToRefs(users());
 
 let loading = $ref(true);
 

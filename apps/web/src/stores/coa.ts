@@ -46,7 +46,7 @@ const mergeInto = <T extends Record<string, unknown>>(
   target: Ref<T>,
   patch: Partial<T>,
 ) => {
-  target.value = { ...toRaw(target.value), ...patch } as T;
+  target.value = { ...toRaw(target.value), ...patch };
 };
 
 export const coa = defineStore("coa", () => {

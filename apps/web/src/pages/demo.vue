@@ -7,6 +7,7 @@ meta:
 
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { isEventErrorOf } from "~/composables/useDmSocket";
 
 const { loadUser } = collection();
 const { user } = storeToRefs(collection());
@@ -26,8 +27,8 @@ watch(
 );
 
 void (async () => {
-  const result = await authEvents.loginAsDemo().catch((e) => {
-    console.error(e.error);
+  const result = await authEvents.loginAsDemo().catch((e: unknown) => {
+    console.error(isEventErrorOf(authEvents.loginAsDemo, e) ? e.error : e);
   });
   if (result) {
     Cookies.set("token", result.token, {

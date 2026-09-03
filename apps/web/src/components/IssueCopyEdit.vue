@@ -399,9 +399,7 @@ const collectionForCurrentPublication = $computed(() =>
   issues.value?.filter(
     ({ publicationcode: issuePublicationcode }) =>
       issuecodeDetails.value[
-        "issuecode" in copyState
-          ? copyState.issuecode!
-          : copyState.issuecodes[0]
+        "issuecode" in copyState ? copyState.issuecode : copyState.issuecodes[0]
       ].publicationcode === issuePublicationcode,
   ),
 );

@@ -107,8 +107,8 @@ const loadEdgeFromSprite = () => {
   const checkWidthInterval = setInterval(() => {
     if (edge?.clientWidth) {
       spriteLoaded = true;
-      width = edge!.clientWidth;
-      height = edge!.clientHeight;
+      width = edge.clientWidth;
+      height = edge.clientHeight;
       emit("loaded", [id]);
       clearInterval(checkWidthInterval);
     }

@@ -239,12 +239,12 @@ watch(
   async (newValue) => {
     if (newValue) {
       hasPublicationNames = false;
-      await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
+      await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode));
       await fetchPublicationNames(
         newValue
           .map(
             ({ issuecode }) =>
-              issuecodeDetails.value[issuecode!]?.publicationcode,
+              issuecodeDetails.value[issuecode]?.publicationcode,
           )
           .filter((publicationcode) => !!publicationcode),
       );
@@ -267,13 +267,9 @@ void (async () => {
   const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
   await fetchIssuecodeDetails([rarestIssuecode]);
   await fetchPublicationNames([
-    issuecodeDetails.value[rarestIssuecode].publicationcode!,
+    issuecodeDetails.value[rarestIssuecode].publicationcode,
   ]);
-  rarestIssue = {
-    ...issuecodeDetails.value[rarestIssuecode],
-    publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
-    issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
-  };
+  rarestIssue = issuecodeDetails.value[rarestIssuecode];
   if (rarityData.aboveMe.userId) {
     await fetchStats([rarityData.aboveMe.userId]);
   }

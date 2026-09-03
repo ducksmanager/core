@@ -36,7 +36,7 @@ alias: [/agrandir/marketplace]
       :accordion-group-id="`email-for-user-${String(userId)}`"
     >
       <template #header
-        >{{ $t("Demandes à") }} {{ stats[Number(userId)].username }}
+        >{{ $t("Demandes à") }} {{ userStats[Number(userId)].username }}
       </template>
       <template #content>
         <ul>
@@ -127,7 +127,7 @@ alias: [/agrandir/marketplace]
         modalContactId &&
         issuesOnSaleById &&
         contactMethods &&
-        stats?.[modalContactId]
+        userStats?.[modalContactId]
       "
       v-model="showModal"
       no-fade
@@ -144,10 +144,11 @@ alias: [/agrandir/marketplace]
         loadIssueRequestsAsBuyer(true);
       "
       ><template #title
-        >{{ $t("Contacter") }} {{ stats[modalContactId].username }}</template
+        >{{ $t("Contacter") }}
+        {{ userStats[modalContactId].username }}</template
       >
       <header>
-        {{ $t("Pour contacter") }} {{ stats[modalContactId].username }},
+        {{ $t("Pour contacter") }} {{ userStats[modalContactId].username }},
         <template v-if="modalContactMethod === 'email'"
           >{{ $t("envoyez-lui un e-mail à l'adresse") }}
           <a :href="`mailto:${contactMethods[modalContactId].email}`">{{
@@ -169,7 +170,7 @@ alias: [/agrandir/marketplace]
       </header>
       <blockquote class="m-3 p-4 border-1 border-secondary">
         <p>
-          {{ $t("Bonjour") }}&nbsp;{{ stats[modalContactId].username }}
+          {{ $t("Bonjour") }}&nbsp;{{ userStats[modalContactId].username }}
           !
         </p>
         <p>
@@ -192,7 +193,7 @@ alias: [/agrandir/marketplace]
       </blockquote>
 
       <b-alert
-        :model-value="stats[modalContactId].marketplaceAcceptsExchanges"
+        :model-value="userStats[modalContactId].marketplaceAcceptsExchanges"
         variant="warning"
         class="mt-4"
         >{{
@@ -238,7 +239,7 @@ const {
 const { fetchPublicationNames } = coa();
 
 const { fetchStats } = users();
-const { stats } = storeToRefs(users());
+const { stats: userStats } = storeToRefs(users());
 
 let hasPublicationNames = $ref(false);
 let userIdFilter = $ref<number>();
@@ -263,7 +264,7 @@ void (async () => {
   await loadIssueRequestsAsBuyer();
 
   await fetchStats(sellerUserIds.value);
-  await fetchPublicationNames(Object.keys(issuesOnSaleByOthers || {}));
+  await fetchPublicationNames(Object.keys(issuesOnSaleByOthers.value || {}));
   hasPublicationNames = true;
 })();
 </script>

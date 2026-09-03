@@ -88,7 +88,7 @@ let src = $computed(() => {
     : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countrycode}/gen/${magazineCode}.${issuenumber.replaceAll(
         " ",
         "",
-      )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`;
+      )}.png?${creationDate ? String(new Date(creationDate).getTime()) : "default"}`;
 });
 
 let ignoreSprite = $ref(false);

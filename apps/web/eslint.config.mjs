@@ -56,7 +56,6 @@ export default [
 
     rules: {
       "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-unnecessary-type-assertion": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "arrow-body-style": ["error", "as-needed"],
 

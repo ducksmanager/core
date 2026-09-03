@@ -19,7 +19,5 @@ interface ImportMetaEnv {
   readonly VITE_EDGES_ROOT: string;
   readonly VITE_IMAGES_ROOT: string;
   readonly VITE_SENTRY_RELEASE: string;
-  // Not provisioned for this app - see main.ts / stores/images.ts guards.
-  readonly VITE_FLAGS_ROOT: string | undefined;
   readonly VITE_SENTRY_DSN: string | undefined;
 }
