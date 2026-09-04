@@ -38,31 +38,31 @@ const smallCountPublications = $computed(() =>
 );
 const totalPerPublicationGroupSmallCounts: {
   [publicationcode: string]: number;
-} = $computed(
-  () =>
-    (smallCountPublications &&
-      totalPerPublication.value && {
-        ...Object.keys(totalPerPublication.value)
-          .filter(
-            (publicationcode) =>
-              !smallCountPublications.includes(publicationcode),
-          )
-          .reduce<Record<string, number>>((acc, publicationcode) => {
-            acc[publicationcode] = totalPerPublication.value![publicationcode];
-            return acc;
-          }, {}),
-        ...(!smallCountPublications.length
-          ? {}
-          : {
-              [""]: smallCountPublications.reduce(
-                (acc, publicationcode) =>
-                  acc + totalPerPublication.value![publicationcode],
-                0,
-              ),
-            }),
-      }) ||
-    {},
-);
+} = $computed(() => {
+  const totals = totalPerPublication.value;
+  if (!smallCountPublications || !totals) {
+    return {};
+  }
+
+  const grouped = Object.keys(totals)
+    .filter(
+      (publicationcode) => !smallCountPublications.includes(publicationcode),
+    )
+    .reduce<Record<string, number>>((acc, publicationcode) => {
+      acc[publicationcode] = totals[publicationcode];
+      return acc;
+    }, {});
+
+  if (smallCountPublications.length) {
+    grouped[""] = smallCountPublications.reduce(
+      (acc, publicationcode) => acc + totals[publicationcode],
+      0,
+    );
+  }
+
+  return grouped;
+});
+
 const labels = $computed(() => {
   if (!hasPublicationNames) return undefined;
 

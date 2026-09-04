@@ -184,22 +184,25 @@ const sortedBookcase = computed(() =>
   Object.values(showEdgesForPublication).reduce<
     Record<string, BookcaseEdgeWithPopularity[]>
   >((acc, publicationcode) => {
-    acc[publicationcode] =
-      issuecodesByPublicationcode.value[publicationcode]?.map((issuecode) => ({
-        id: 0,
-        edgeId: publishedEdgesByPublicationcode?.[publicationcode]
-          .map(({ issuecode }) => issuecode)
-          .includes(issuecode)
-          ? 1
-          : 0,
-        publicationcode,
-        issuecode,
-        creationDate: new Date(),
-        sprites: [],
-        points: 0,
-        slug: "",
-        timestamp: new Date().getTime(),
-      })) || [];
+    acc[publicationcode] = !(
+      publicationcode in issuecodesByPublicationcode.value
+    )
+      ? []
+      : issuecodesByPublicationcode.value[publicationcode].map((issuecode) => ({
+          id: 0,
+          edgeId: publishedEdgesByPublicationcode?.[publicationcode]
+            .map(({ issuecode }) => issuecode)
+            .includes(issuecode)
+            ? 1
+            : 0,
+          publicationcode,
+          issuecode,
+          creationDate: new Date(),
+          sprites: [],
+          points: 0,
+          slug: "",
+          timestamp: new Date().getTime(),
+        }));
     return acc;
   }, {}),
 );

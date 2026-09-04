@@ -10,39 +10,36 @@ import { EventOutput } from "socket-call-client";
 
 export type ServiceIssues = EventOutput<CollectionServices, "getIssues">;
 
+const countIssuesPerGroup = <K extends string>(
+  groups: Record<K, ServiceIssues>,
+  includeDuplicates = true,
+) =>
+  Object.fromEntries(
+    Object.entries(groups as Record<string, ServiceIssues>).map(
+      ([key, groupIssues]) => [
+        key,
+        includeDuplicates
+          ? groupIssues.length
+          : new Set(groupIssues.map(({ issuecode }) => issuecode)).size,
+      ],
+    ),
+  ) as Record<K, number>;
+
 export default (issues: ShallowRef<ServiceIssues | undefined>) => {
   const total = computed(() => issues.value?.length);
 
-  const getTotalPerCountry = (includeDuplicates = true) => {
-    if (!issues.value) return issues.value;
-
-    const groupedByCountry = issues.value.groupBy(
-      ({ issuecode }) => issuecode.split("/")[0],
-      "[]",
+  const getTotalPerCountry = (includeDuplicates = true) =>
+    issues.value &&
+    countIssuesPerGroup(
+      issues.value.groupBy(({ issuecode }) => issuecode.split("/")[0], "[]"),
+      includeDuplicates,
     );
-
-    return Object.fromEntries(
-      Object.entries(groupedByCountry).map(([countrycode, countryIssues]) => [
-        countrycode,
-        includeDuplicates
-          ? countryIssues.length
-          : new Set(countryIssues.map((i) => i.issuecode)).size,
-      ]),
-    );
-  };
 
   const getTotalPerPublication = (includeDuplicates = true) =>
     issues.value
-      ? Object.fromEntries(
-          Object.entries(issues.value.groupBy("publicationcode", "[]")).map(
-            ([publicationcode, issues]) => [
-              publicationcode,
-              (includeDuplicates
-                ? issues
-                : [...new Set(issues.map(({ issuecode }) => issuecode))]
-              ).length,
-            ],
-          ),
+      ? countIssuesPerGroup(
+          issues.value.groupBy("publicationcode", "[]"),
+          includeDuplicates,
         )
       : null;
 
@@ -98,15 +95,11 @@ export default (issues: ShallowRef<ServiceIssues | undefined>) => {
     totalPerCountryWithoutDuplicates = computed(() =>
       getTotalPerCountry(false),
     ),
-    numberPerCondition = computed(
-      () =>
-        issues.value?.reduce(
-          (acc, { condition }) => ({
-            ...acc,
-            [condition]: (acc[condition] || 0) + 1,
-          }),
-          {} as Record<issue_condition, number>,
-        ) || ({} as Record<issue_condition, number>),
+    numberPerCondition = computed(() =>
+      countIssuesPerGroup(
+        issues.value?.groupBy("condition", "[]") ??
+          ({} as Record<issue_condition, ServiceIssues>),
+      ),
     ),
     findInCollection = (issuecode: string) =>
       issues.value?.find(

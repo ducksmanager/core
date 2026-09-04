@@ -57,6 +57,7 @@ export default [
     rules: {
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-useless-default-assignment": "off",
       "arrow-body-style": ["error", "as-needed"],
 
       "vue/component-name-in-template-casing": [

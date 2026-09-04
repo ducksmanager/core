@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-const { countrycode = null, sinceLastVisit = false } = defineProps<{
+const { countrycode = null, sinceLastVisit } = defineProps<{
   countrycode?: string;
   sinceLastVisit?: boolean;
 }>();

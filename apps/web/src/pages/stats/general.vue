@@ -242,11 +242,11 @@ watch(
       await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode));
       await fetchPublicationNames(
         newValue
+          .filter(({ issuecode }) => issuecode in issuecodeDetails.value)
           .map(
             ({ issuecode }) =>
-              issuecodeDetails.value[issuecode]?.publicationcode,
-          )
-          .filter((publicationcode) => !!publicationcode),
+              issuecodeDetails.value[issuecode].publicationcode,
+          ),
       );
       hasPublicationNames = true;
     }

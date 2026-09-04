@@ -462,7 +462,7 @@ const copiesBySelectedIssuecode = $computed(() =>
     return {
       ...acc,
       [issuecode]: [
-        ...(acc[issuecode] || []),
+        ...(issuecode in acc ? acc[issuecode] : []),
         ...filteredUserCopies.filter(
           ({ id: copyId, issuecode: copyIssuecode }) =>
             issueId !== null
