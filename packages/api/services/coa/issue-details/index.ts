@@ -34,14 +34,18 @@ export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
 
 export default {
   getIssueDetails: async (issuecode: string) => {
-    const entries = await getEntries(issuecode);
+    if (typeof issuecode !== "string" || !issuecode) {
+      return { error: "Invalid issuecode" };
+    }
+    const issue = await prismaCoa.inducks_issue.findFirst({
+      where: { issuecode },
+    });
+    if (!issue) {
+      return { error: "Issue not found" };
+    }
     return {
-      releaseDate: (
-        await prismaCoa.inducks_issue.findFirstOrThrow({
-          where: { issuecode },
-        })
-      ).oldestdate!,
-      entries,
+      releaseDate: issue.oldestdate!,
+      entries: await getEntries(issuecode),
     };
   },
 
