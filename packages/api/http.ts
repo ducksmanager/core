@@ -177,9 +177,9 @@ export default () =>
                       issue,
                       entries,
                     };
-                  } catch (error) {
+                  } catch {
                     res.writeHead(404);
-                    res.end(error);
+                    res.end();
                     return;
                   }
                 } else {
