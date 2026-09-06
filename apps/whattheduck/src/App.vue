@@ -70,6 +70,12 @@ const cacheStorage = buildStorage({
   clear: () => storage.clear(),
 });
 
+// `onConnectError` runs from a socket callback with no component context, where
+// creating the collection store would fail to `inject` its socket. The store only
+// exists once the user is past login, so treat "not created" as "nothing cached".
+const hasCachedCollection = () =>
+  getActivePinia()?.state.value.collection !== undefined && Boolean(collection().issues);
+
 const assignSocket = () => {
   const session = {
     getToken: async () => token.value,
@@ -92,7 +98,7 @@ const assignSocket = () => {
         [/jwt expired/, /invalid signature/].some((regex) => regex.test(e.message))
       ) {
         session.clearSession();
-      } else if (!collection().issues) {
+      } else if (!hasCachedCollection()) {
         isOfflineMode.value = 'offline_no_cache';
       } else {
         isOfflineMode.value = true;
