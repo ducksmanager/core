@@ -1,6 +1,8 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import type { UserServices } from "../../../index";
 import contactMethods from "./contact-methods";
@@ -20,10 +22,9 @@ export default (services: UserServices) => {
       });
     },
 
-    createRequests: async (issueIds: number[]) => {
-      if (issueIds.find((issueId) => isNaN(issueId))) {
-        return { error: `Invalid issue ID list, NaN` };
-      }
+    createRequests: ev(
+      v.pipe(v.array(v.number(`Invalid issue ID list, NaN`)), v.nonEmpty("Invalid issue ID list")),
+    )(async (issueIds) => {
       const issues = await prismaDm.issue.findMany({
         where: {
           id: { in: issueIds },
@@ -57,7 +58,7 @@ export default (services: UserServices) => {
           issueId,
         })),
       });
-    },
+    }),
 
     getRequests: async (as: "buyer" | "seller") => {
       switch (as) {

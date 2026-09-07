@@ -1,9 +1,11 @@
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import prisma from "../prisma/client";
-import { type entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
+import { entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
 
@@ -23,11 +25,11 @@ const listenEvents = () => ({
               group by dataset_id, decision
             `,
 
-  getMaintenanceDataForDataset: async (
-    datasetName: string,
-    decisions: (entryurlDetailsDecision | "null")[],
-    offset: number,
-  ) => {
+  getMaintenanceDataForDataset: ev(
+    v.pipe(v.string()),
+    v.pipe(v.array(v.enum({ ...entryurlDetailsDecision, null: "null" }))),
+    v.pipe(v.number()),
+  )(async (datasetName, decisions, offset) => {
     if (!decisions) {
       throw new Error("No decisions provided");
     }
@@ -60,7 +62,7 @@ const listenEvents = () => ({
         sitecodeUrl: "asc",
       },
     });
-  },
+  }),
   updateMaintenanceData: async (
     data: { sitecodeUrl: string; decision: entryurlDetailsDecision }[],
   ) =>

@@ -1,6 +1,8 @@
 import axios from "axios";
 import https from "https";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
@@ -10,10 +12,10 @@ import namespaces from "../namespaces";
 import { getPastecStatus } from "../status";
 
 const listenEvents = () => ({
-  searchFromCover: async (urlOrBase64: string, pastecIndex = 0) => {
-    if (![0, 1].includes(pastecIndex)) {
-      return { error: "Invalid pastec index" };
-    }
+  searchFromCover: ev(v.pipe(
+    v.string("Invalid URL or base64 string"),
+    v.nonEmpty("Invalid URL or base64 string"),
+  ), v.pipe(v.picklist([0, 1], "Invalid pastec index")))(async (urlOrBase64, pastecIndex) => {
     const hostAndPort = process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
     console.log(`Searching from cover on ${hostAndPort}`);
     const buffer = urlOrBase64.includes(";base64,")
@@ -88,7 +90,7 @@ const listenEvents = () => ({
         ],
       })),
     };
-  },
+  }),
   getIndexSize: async () => getPastecStatus(),
   getCoverUrl: async (coverId: number) =>
     getCoverUrl(coverId).then(

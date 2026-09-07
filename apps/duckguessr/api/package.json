@@ -25,8 +25,9 @@
     "jsonwebtoken": "^9.0.3",
     "prisma": "^7.10.0",
     "sharp": "^0.33.5",
-    "socket-call-server": "^0.9.0",
+    "socket-call-server": "^0.11.0",
     "socket.io": "^4.8.3",
+    "valibot": "^1.4.2",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"

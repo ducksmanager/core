@@ -2,6 +2,8 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import type { Errorable } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -19,7 +21,6 @@ import namespaces from "../namespaces";
 import {
   generateAccessToken,
   getHashedPassword,
-  isValidEmail,
   loginAs,
 } from "./util";
 
@@ -30,35 +31,33 @@ const listenEvents = () => ({
         resolve({ error: err!.message || "" });
       });
     }),
-  requestTokenForForgotPassword: async (email: string) => {
-    if (!isValidEmail(email)) {
-      return { error: "Invalid email" };
-    } else {
-      const user = await prismaClient.user.findFirst({
-        where: { email },
+  requestTokenForForgotPassword: ev(
+    v.pipe(v.string(), v.email("Invalid email")),
+  )(async (email) => {
+    const user = await prismaClient.user.findFirst({
+      where: { email },
+    });
+    if (user) {
+      console.log(
+        `A visitor requested to reset a password for a valid e-mail: ${email}`,
+      );
+      const token = jwt.sign(
+        { exp: Math.floor(Date.now() / 1000) + 60 * 60, data: email },
+        process.env.TOKEN_SECRET!,
+      );
+      await prismaClient.userPasswordToken.create({
+        data: { userId: user.id, token },
       });
-      if (user) {
-        console.log(
-          `A visitor requested to reset a password for a valid e-mail: ${email}`,
-        );
-        const token = jwt.sign(
-          { exp: Math.floor(Date.now() / 1000) + 60 * 60, data: email },
-          process.env.TOKEN_SECRET!,
-        );
-        await prismaClient.userPasswordToken.create({
-          data: { userId: user.id, token },
-        });
 
-        await new resetPassword({ user, token }).send();
-        return { token };
-      } else {
-        console.log(
-          `A visitor requested to reset a password for an invalid e-mail: ${email}`,
-        );
-        return { error: "Invalid email" };
-      }
+      await new resetPassword({ user, token }).send();
+      return { token };
+    } else {
+      console.log(
+        `A visitor requested to reset a password for an invalid e-mail: ${email}`,
+      );
+      return { error: "Invalid email" as const };
     }
-  },
+  }),
 
   changePassword: async ({
     password,

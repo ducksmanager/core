@@ -1,3 +1,5 @@
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 import dayjs from "dayjs";
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -20,13 +22,14 @@ export const checkTodayLimit = (userId: number) =>
     })
     .then((data) => ({
       uploadedFilesToday: data.map(({ fileName }) => fileName),
-    }))
+    }));
 
 export default ({ _socket }: UserServices) => ({
-  sendNewEdgePhotoEmail: async (issuecode: string) => {
-    if (typeof issuecode !== "string" || !issuecode) {
-      return { error: "Invalid issuecode" };
-    }
+  sendNewEdgePhotoEmail: ev(
+    v.config(v.pipe(v.string(), v.nonEmpty()), {
+      message: "Invalid issuecode",
+    }),
+  )(async (issuecode: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: _socket.data.user.id },
     });
@@ -38,7 +41,7 @@ export default ({ _socket }: UserServices) => ({
     await email.send();
 
     return { url: edgeUrl };
-  },
+  }),
   createElementImage: async (hash: string, fileName: string) =>
     prismaEdgeCreator.elementImage
       .create({
