@@ -10,7 +10,8 @@
     "prod-run-ssh-command": "pnpm -F '~ci' prod:setup-ssh && ssh -v -o ServerAliveInterval=60 -o ServerAliveCountMax=5 -o StrictHostKeyChecking=no -i /tmp/id_rsa ${PRODUCTION_SSH_USER}@${PRODUCTION_SSH_HOST} \"$COMMAND\"",
     "prod:docker-compose-command": "COMMAND=\"cd $REMOTE_ROOT/$DIR && timeout --kill-after=60s ${REMOTE_PULL_TIMEOUT:-10m} docker compose pull && timeout --kill-after=60s ${REMOTE_TIMEOUT:-60m} docker compose $COMMAND\" pnpm -F '~ci' prod-run-ssh-command",
     "prod:docker-compose-up": "DIR=$DIR COMMAND=\"up -d --force-recreate $SERVICES\" pnpm -F '~ci' prod:docker-compose-command",
-    "prod:docker-compose-run": "DIR=${DIR:-apps/$SERVICE} COMMAND=\"run --rm --no-deps $SERVICE\" pnpm -F '~ci' prod:docker-compose-command",
+    "prod:docker-compose-run-cleanup": "if [ -n \"${SERVICE}\" ]; then COMMAND=\"docker ps -aq --filter name=${SERVICE}-run- | xargs -r docker rm -f\" pnpm -F '~ci' prod-run-ssh-command || true; fi",
+    "prod:docker-compose-run": "pnpm -F '~ci' prod:docker-compose-run-cleanup; DIR=${DIR:-apps/$SERVICE} COMMAND=\"run --rm --no-deps $SERVICE\" pnpm -F '~ci' prod:docker-compose-command; ec=$?; pnpm -F '~ci' prod:docker-compose-run-cleanup; exit $ec",
     "prod:transfer-files": "bun transfer-files.ts"
   },
   "dependencies": {
