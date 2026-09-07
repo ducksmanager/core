@@ -1,1 +1,0 @@
-insert into cover_imports(coverid,imported) values (_COVERID_,'_IMPORT_DATE_');
