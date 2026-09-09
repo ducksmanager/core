@@ -61,7 +61,7 @@ const ddl = () =>
         Showing at most 100 rows. Row counts are omitted on purpose:
         <code>COUNT(*)</code> would fetch the entire table over the network.
       </p>
-      <ResultsGrid v-if="preview" :result="preview" />
+      <results-grid v-if="preview" :result="preview" />
     </template>
 
     <div v-else class="schema">
