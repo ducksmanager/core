@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "dotenv": "^17.4.2",
-    "mariadb": "^3.5.3",
+    "mariadb": "^3.5.4",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "~1.3.14",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.5.1",
     "typescript": "^6.0.3"
   }
 }
