@@ -9,6 +9,7 @@
 !.vscode/launch.json
 *.local
 *.log
+*.tsbuildinfo
 **/.eslintcache
 **/.turbo/
 **/.venv
