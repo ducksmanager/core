@@ -27,7 +27,7 @@ export const liveCoverSearchConfig = {
   },
 };
 
-export type LivePhase = 'idle' | 'scanning' | 'matched' | 'exhausted';
+export type LivePhase = 'idle' | 'scanning' | 'matched' | 'confirming' | 'exhausted';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -72,7 +72,7 @@ export default (searchOneFrame: SearchOneFrame, samplerConfig?: FrameSamplerConf
 
     let previousSearchFoundSomething = false;
 
-    while (isCurrent() && phase.value === 'scanning') {
+    while (isCurrent() && ['scanning', 'confirming'].includes(phase.value)) {
       if (stats.value.searches >= config.session.maxSearches) {
         phase.value = 'exhausted';
         break;
@@ -130,12 +130,16 @@ export default (searchOneFrame: SearchOneFrame, samplerConfig?: FrameSamplerConf
       previousSearchFoundSomething = true;
       const best = outcome.covers[0];
 
-      if (!dismissedIssuecodes.has(best.issuecode) && registerVote(best)) {
-        covers.value = outcome.covers;
-        suggestion.value = best;
-        suggestionFrameSize.value = frame.size;
-        phase.value = 'matched';
-        break;
+      if (!dismissedIssuecodes.has(best.issuecode)) {
+        if (registerVote(best)) {
+          covers.value = outcome.covers;
+          suggestion.value = best;
+          suggestionFrameSize.value = frame.size;
+          phase.value = 'matched';
+          break;
+        } else {
+          phase.value = 'confirming';
+        }
       }
 
       await sleep(Math.max(config.minIntervalMs, stats.value.lastRoundTripMs));

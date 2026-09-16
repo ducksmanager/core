@@ -56,9 +56,12 @@
         >
           <ion-icon :ios="apertureOutline" :md="apertureSharp" />
         </ion-button>
-        <template v-else-if="phase === 'scanning'">
+        <template v-else-if="['scanning', 'confirming'].includes(phase)">
           <ion-spinner name="dots" />
-          <span class="status-label">{{ $t('Recherche de la couverture...') }}</span>
+          <span class="status-label"
+            ><template v-if="phase === 'scanning'">{{ $t('Recherche de la couverture...') }}</template
+            ><template v-else-if="phase === 'confirming'">{{ $t('Confirmation de la couverture...') }}</template></span
+          >
         </template>
       </div>
       <ion-button id="close-button" color="danger" :disabled="isSearching" @click="closeCamera">
