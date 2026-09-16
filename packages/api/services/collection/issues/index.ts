@@ -2,10 +2,9 @@ import { parse } from "csv-parse/sync";
 import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
 
-import type {
-  CollectionUpdateMultipleIssues,
-  CollectionUpdateSingleIssue,
-} from "~dm-types/CollectionUpdate";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -39,14 +38,17 @@ export default ({ _socket }: UserServices) => ({
       .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
         prismaCoa
           .augmentIssueArrayWithInducksData(
-            issues as (T & { issuecode: string })[]
+            issues as (T & { issuecode: string })[],
           )
           .then((data) => data.filter((issue) => "publicationcode" in issue))
-          .then(prismaDm.replaceLabelsWithLabelIds)
+          .then(prismaDm.replaceLabelsWithLabelIds),
       );
   },
 
-  setIssuesAside: async (issueIds: number[], buyerId: number) => {
+  setIssuesAside: ev(
+    v.array(v.number()),
+    v.number(),
+  )(async (issueIds, buyerId) => {
     await prismaDm.requestedIssue.createMany({
       data: issueIds.map((issueId) => ({
         issueId,
@@ -54,8 +56,11 @@ export default ({ _socket }: UserServices) => ({
         isBooked: true,
       })),
     });
-  },
-  transferIssues: async (issueIds: number[], buyerId: number) => {
+  }),
+  transferIssues: ev(
+    v.array(v.number()),
+    v.number(),
+  )(async (issueIds, buyerId) => {
     await prismaDm.issue.updateMany({
       data: {
         userId: buyerId,
@@ -75,14 +80,16 @@ export default ({ _socket }: UserServices) => ({
         buyerId,
       },
     });
-  },
+  }),
 
-  addOrChangeIssues: async ({
-    issuecodes,
-    purchaseId,
-    condition,
-    labelIds,
-  }: CollectionUpdateMultipleIssues) => {
+  addOrChangeIssues: ev(
+    v.object({
+      issuecodes: v.array(v.string()),
+      purchaseId: v.number(),
+      condition: v.union([v.null(), v.enum(issue_condition)]),
+      labelIds: v.array(v.number()),
+    }),
+  )(async ({ issuecodes, purchaseId, condition, labelIds }) => {
     const user = _socket.data.user;
 
     let checkedPurchaseId: number | null = null;
@@ -101,20 +108,30 @@ export default ({ _socket }: UserServices) => ({
       issuecodes,
       condition,
       checkedPurchaseId,
-      labelIds
+      labelIds,
     );
-  },
-  addOrChangeCopies: async ({
-    issuecode,
-    copies,
-  }: CollectionUpdateSingleIssue) => {
+  }),
+
+  addOrChangeCopies: ev(
+    v.object({
+      issuecode: v.string(),
+      copies: v.array(
+        v.object({
+          id: v.number(),
+          condition: v.enum(issue_condition),
+          purchaseId: v.number(),
+          labelIds: v.array(v.number()),
+        }),
+      ),
+    }),
+  )(async ({ issuecode, copies }) => {
     const userId = _socket.data.user.id;
 
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
       copies
         .map(({ purchaseId }) => purchaseId)
-        .filter((purchaseId) => !!purchaseId) as number[],
-      userId
+        .filter((purchaseId) => !!purchaseId),
+      userId,
     );
 
     const output = await addOrChangeCopies(
@@ -123,28 +140,26 @@ export default ({ _socket }: UserServices) => ({
       copies.map(({ id }) => id),
       copies.map(({ condition }) => condition),
       checkedPurchaseIds,
-      copies.map(({ labelIds }) => labelIds)
+      copies.map(({ labelIds }) => labelIds),
     );
 
     return output;
-  },
+  }),
 
-  getCollectionQuotations: (): Promise<
-    Record<string, InducksIssueQuotationSimple>
-  > =>
+  getCollectionQuotations: () =>
     prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
-          select
-            issuecode,
-            round(min(estimationmin))                         AS estimationMin,
-            case max(ifnull(estimationmax, 0))
-                when 0 then null
-                else round(max(ifnull(estimationmax, 0))) end AS estimationMax
-          from dm.numeros
-            inner join coa.inducks_issuequotation using (issuecode)
-          where ID_Utilisateur = ${_socket.data.user.id}
-            and estimationmin is not null
-          group by numeros.ID;
-        `.then(getShownQuotations),
+      select
+        issuecode,
+        round(min(estimationmin))                         AS estimationMin,
+        case max(ifnull(estimationmax, 0))
+            when 0 then null
+            else round(max(ifnull(estimationmax, 0))) end AS estimationMax
+      from dm.numeros
+        inner join coa.inducks_issuequotation using (issuecode)
+      where ID_Utilisateur = ${_socket.data.user.id}
+        and estimationmin is not null
+      group by numeros.ID;
+    `.then(getShownQuotations),
 });
 
 const addOrChangeIssues = async (
@@ -152,8 +167,8 @@ const addOrChangeIssues = async (
   issuecodes: string[],
   condition: issue_condition | undefined,
   purchaseId: number | null | undefined,
-  _labelIds: number[] | undefined
-): Promise<TransactionResults> => {
+  _labelIds: number[] | undefined,
+) => {
   const existingIssues = await prismaDm.issue.findMany({
     where: {
       issuecode: {
@@ -189,7 +204,7 @@ const addOrChangeIssues = async (
       (issuecode) =>
         !existingIssues
           .map(({ issuecode: existingIssuecode }) => existingIssuecode)
-          .includes(issuecode)
+          .includes(issuecode),
     )
     .map((issuecode) =>
       prismaDm.issue.create({
@@ -200,7 +215,7 @@ const addOrChangeIssues = async (
           userId,
           creationDate: new Date(),
         },
-      })
+      }),
     );
   await prismaDm.$transaction(insertOperations);
   // TODO handle labels on multiple issues
@@ -235,20 +250,25 @@ const addOrChangeCopies = async (
   issueIds: (number | null)[],
   conditions: (issue_condition | null)[],
   purchaseIds: (number | null)[],
-  labelIds: (number[] | undefined)[]
+  labelIds: (number[] | undefined)[],
 ): Promise<TransactionResults> => {
-  let operations = [], deleteOperations = [];
+  let operations = [],
+    deleteOperations = [];
   const previousIssueIds = await prismaDm.issue.findMany({
     where: {
       userId,
       issuecode,
     },
   });
-  const deletedIssueIds = previousIssueIds.filter(({ id }) => !issueIds.includes(id));
+  const deletedIssueIds = previousIssueIds.filter(
+    ({ id }) => !issueIds.includes(id),
+  );
   if (deletedIssueIds.length) {
-    deleteOperations = deletedIssueIds.map(({ id }) => prismaDm.issue.delete({
-      where: { id },
-    }));
+    deleteOperations = deletedIssueIds.map(({ id }) =>
+      prismaDm.issue.delete({
+        where: { id },
+      }),
+    );
     await prismaDm.$transaction(deleteOperations);
   }
   if (issueIds.length) {
@@ -300,7 +320,7 @@ const addOrChangeCopies = async (
               labelId,
               issueId,
             })) || [],
-        })
+        }),
       );
     await prismaDm.$transaction(newIssueLabelsOperations);
   }
@@ -312,12 +332,10 @@ const addOrChangeCopies = async (
 
 export const resetDemo = async () => {
   const demo = (await prismaDm.demo.findUnique({ where: { id: 1 } }))!;
-  if (
-    !(
-      getHoursFromDate(demo.lastReset) < getHoursFromDate(new Date()) ||
-      demo.lastReset.getTime() + 3_600_000 < new Date().getTime()
-    )
-  ) {
+  if (!(
+    getHoursFromDate(demo.lastReset) < getHoursFromDate(new Date()) ||
+    demo.lastReset.getTime() + 3_600_000 < new Date().getTime()
+  )) {
     return;
   }
 
@@ -356,7 +374,7 @@ export const resetDemo = async () => {
 
   const csvPurchases = parse<CsvPurchase>(
     readFileSync(`${csvPath}demo_purchases.csv`),
-    { columns: true }
+    { columns: true },
   );
   await prismaDm.purchase.createMany({
     data: csvPurchases.map(({ date, description }) => ({
@@ -377,7 +395,7 @@ export const resetDemo = async () => {
 
 const deleteUserData = async (
   user: user,
-  issuesOnly = false
+  issuesOnly = false,
 ): Promise<void> => {
   await prismaDm.issue.deleteMany({ where: { userId: user.id } });
 

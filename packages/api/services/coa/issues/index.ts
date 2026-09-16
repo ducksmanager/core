@@ -1,17 +1,25 @@
 import type { IssueWithIssuecodeOnly } from "~dm-types/IssueWithIssuecodeOnly";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { ExtraSelectField } from "~prisma-schemas/schemas/coa/extended";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export default {
-  getIssues: (issuecodes: string[], withFields: ExtraSelectField[]) =>
+  getIssues: ev(
+    v.array(v.string()),
+    v.array(v.literal("title", "fullyindexed")),
+  )((issuecodes, withFields) =>
     prismaCoa
       .augmentIssueArrayWithInducksData(
         issuecodes.map((issuecode) => ({ issuecode })),
-        (withFields || []).filter((field) => ["title", "fullyindexed"].includes(field)),
+        (withFields || []).filter((field) =>
+          ["title", "fullyindexed"].includes(field),
+        ),
       )
       .then((data) => data.groupBy("issuecode")),
+  ),
 
-  getCoaCountByPublicationcode: (publicationcodes: string[]) =>
+  getCoaCountByPublicationcode: ev(v.array(v.string()))((publicationcodes) =>
     prismaCoa.inducks_issue
       .groupBy({
         _count: {
@@ -32,8 +40,9 @@ export default {
           ]),
         ),
       ),
+  ),
 
-  getCoaCountByCountrycode: (countrycodes: string[]) =>
+  getCoaCountByCountrycode: ev(v.array(v.string()))((countrycodes) =>
     prismaCoa.inducks_issue
       .groupBy({
         _count: {
@@ -58,27 +67,30 @@ export default {
           {},
         ),
       ),
+  ),
 
-  getIssuecodesByPublicationcodes: async (publicationcodes: string[]) =>
-    prismaCoa.inducks_issue
-      .findMany({
-        select: {
-          publicationcode: true,
-          issuecode: true,
-          issuenumber: true,
-        },
-        where: {
-          publicationcode: {
-            in: publicationcodes.filter((p): p is string => !!p),
+  getIssuecodesByPublicationcodes: ev(v.array(v.string()))(
+    async (publicationcodes) =>
+      prismaCoa.inducks_issue
+        .findMany({
+          select: {
+            publicationcode: true,
+            issuecode: true,
+            issuenumber: true,
           },
-        },
-        orderBy: {
-          issuecode: "asc",
-        },
-      })
-      .then((data) => data.groupBy("publicationcode", "issuecode[]")),
+          where: {
+            publicationcode: {
+              in: publicationcodes.filter((p): p is string => !!p),
+            },
+          },
+          orderBy: {
+            issuecode: "asc",
+          },
+        })
+        .then((data) => data.groupBy("publicationcode", "issuecode[]")),
+  ),
 
-  getIssuesByPublicationcode: async (publicationcode: string) =>
+  getIssuesByPublicationcode: ev(v.string())(async (publicationcode) =>
     prismaCoa.inducks_issue.findMany({
       select: {
         issuecode: true,
@@ -91,9 +103,11 @@ export default {
         issuecode: "asc",
       },
     }),
+  ),
 
-  getIssuesByStorycode: async (storycode: string) =>
-    prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`
+  getIssuesByStorycode: ev(v.string())(
+    async (storycode) =>
+      prismaCoa.$queryRaw<IssueWithIssuecodeOnly[]>`
       SELECT publicationcode, issuenumber, issuecode
       FROM inducks_issue issue
                 INNER JOIN inducks_entry entry using (issuecode)
@@ -101,6 +115,7 @@ export default {
       WHERE sv.storycode = ${storycode}
       GROUP BY publicationcode, issuenumber
       ORDER BY publicationcode`,
+  ),
 
   getRecentIssues: () =>
     prismaCoa.inducks_issue.findMany({

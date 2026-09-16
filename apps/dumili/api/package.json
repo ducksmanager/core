@@ -42,9 +42,10 @@
     "pdfjs-dist": "^6.3.289",
     "sharp": "^0.33.5",
     "socket-call-client": "^0.10.0",
-    "socket-call-server": "^0.11.0",
+    "socket-call-server": "^0.12.0",
     "socket.io": "^4.8.3",
     "unpdf": "^1.8.1",
+    "valibot": "^1.5.0",
     "~api": "workspace:*",
     "~prisma-schemas": "workspace:*"
   },

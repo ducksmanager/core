@@ -28,9 +28,10 @@
     "jsonwebtoken": "^9.0.3",
     "node-base64-image": "^3.0.0",
     "socket-call-client": "^0.10.0",
-    "socket-call-server": "^0.11.0",
+    "socket-call-server": "^0.12.0",
     "socket.io": "^4.8.3",
     "universal-cookie": "^4.0.4",
+    "valibot": "^1.5.0",
     "~api": "workspace:*",
     "~dm-types": "workspace:*",
     "~prisma-schemas": "workspace:*"
@@ -46,6 +47,7 @@
     "concurrently": "^10.0.5",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0"
   }

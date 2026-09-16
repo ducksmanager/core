@@ -42,20 +42,25 @@ export default ({ _socket }: UserServices) => ({
 
     return { url: edgeUrl };
   }),
-  createElementImage: async (hash: string, fileName: string) =>
+  createElementImage: ev(
+    v.string(),
+    v.string(),
+  )(async (hash, fileName) =>
     prismaEdgeCreator.elementImage
       .create({
         select: { id: true },
         data: { hash, fileName },
       })
       .then(({ id }) => ({ photoId: id })),
+  ),
 
   checkTodayLimit: async () => checkTodayLimit(_socket.data.user.id),
 
-  getImageByHash: async (hash: string) =>
+  getImageByHash: ev(v.string())(async (hash) =>
     prismaEdgeCreator.elementImage.findFirst({
       where: {
         hash,
       },
     }),
+  ),
 });

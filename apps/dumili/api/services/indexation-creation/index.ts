@@ -10,13 +10,16 @@ import { OptionalAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 type IndexationCreationServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SessionData>,
   Record<string, never>
 >;
 
 const listenEvents = ({ _socket }: IndexationCreationServices) => ({
-  create: async (numberOfPages: number) =>
+  create: ev(v.number())(async (numberOfPages) =>
     prisma.indexation
       .create({
         data: {
@@ -44,6 +47,7 @@ const listenEvents = ({ _socket }: IndexationCreationServices) => ({
         }),
       )
       .then((entry) => entry.indexationId),
+  ),
 });
 
 const { client, server } = useSocketEvents<

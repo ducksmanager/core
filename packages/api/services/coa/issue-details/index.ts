@@ -56,18 +56,21 @@ export default {
     v.pipe(v.array(v.string()), v.maxLength(10, "Too many requests")),
   )(async (issuecodes) => getIssueCoverDetails(issuecodes)),
 
-  getIssueCoverDetailsByPublicationcode: async (publicationcode: string) => {
-    const issuecodes = (
-      await prismaCoa.inducks_issue.findMany({
-        select: { issuecode: true },
-        where: { publicationcode },
-      })
-    ).map(({ issuecode }) => issuecode);
-    return getIssueCoverDetails(issuecodes);
-  },
+  getIssueCoverDetailsByPublicationcode: ev(v.string())(
+    async (publicationcode) => {
+      const issuecodes = (
+        await prismaCoa.inducks_issue.findMany({
+          select: { issuecode: true },
+          where: { publicationcode },
+        })
+      ).map(({ issuecode }) => issuecode);
+      return getIssueCoverDetails(issuecodes);
+    },
+  ),
 
-  getIssuePopularities: (issuecodes: string[]) =>
+  getIssuePopularities: ev(v.array(v.string()))(async (issuecodes) =>
     getPopularityByIssuecodes(issuecodes),
+  ),
 };
 
 export const getCoverUrls = async (issuecodes: string[]) => {

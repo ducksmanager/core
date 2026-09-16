@@ -8,6 +8,8 @@ import type { SessionUser } from "../types/SessionUser";
 import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
 import { createGameSocket } from "./game";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export type MatchServices = NamespaceProxyTarget<
   Socket<
@@ -20,12 +22,12 @@ export type MatchServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket }: MatchServices) => ({
-  createMatch: async (dataset: string) => {
+  createMatch: ev(v.string())(async (dataset) => {
     console.log(`${_socket.data.user.username} is creating a match`);
     const newGame = (await game.create(dataset))!;
     await createGameSocket(newGame.id);
     return newGame.id;
-  },
+  }),
 });
 
 const { client, server } = useSocketEvents<

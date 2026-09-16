@@ -1,6 +1,7 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
-import type { NewBookstore, NewComment, SimpleBookstore } from "~dm-types/SimpleBookstore";
 import type {
   bookstore,
   bookstoreComment,
@@ -19,7 +20,6 @@ import {
 } from "../auth/util";
 import namespaces from "../namespaces";
 import { isAllowedToCreateBookstoreComment } from "./util";
-
 
 const persistContribution = async (
   user: user,
@@ -51,16 +51,21 @@ const persistContribution = async (
   });
 };
 
-const getBookstores = (onlyActive?: true): Promise<(bookstore & { comments: bookstoreComment[] })[]> =>
+const getBookstores = (
+  onlyActive?: true,
+): Promise<(bookstore & { comments: bookstoreComment[] })[]> =>
   prismaDm.bookstore.findMany({
-    include: onlyActive ? { comments: {
-        where: {
-          isActive: true,
+    include: onlyActive
+      ? {
+          comments: {
+            where: {
+              isActive: true,
+            },
+          },
+        }
+      : {
+          comments: true,
         },
-      }
-    } : {
-      comments: true,
-    },
     where: onlyActive
       ? {
           comments: {
@@ -74,7 +79,7 @@ const getBookstores = (onlyActive?: true): Promise<(bookstore & { comments: book
 
 const adminListenEvents = () => ({
   getBookstores: () => getBookstores(),
-  approveBookstoreComment: async (commentId: number) => {
+  approveBookstoreComment: ev(v.number())(async (commentId) => {
     let bookstoreComment: bookstoreComment;
     try {
       bookstoreComment = await prismaDm.bookstoreComment.findUniqueOrThrow({
@@ -105,7 +110,7 @@ const adminListenEvents = () => ({
       });
       await persistContribution(user, 1, bookstoreComment);
     }
-  },
+  }),
 });
 
 export const { client: adminClient, server: adminServer } = useSocketEvents<
@@ -119,7 +124,7 @@ export const { client: adminClient, server: adminServer } = useSocketEvents<
 const listenEvents = ({ _socket }: UserServices) => ({
   getActiveBookstores: () => getBookstores(true),
 
-  reportBookstoreAsClosed: async (bookstoreId: number) => {
+  reportBookstoreAsClosed: ev(v.number())(async (bookstoreId) => {
     const bookstore = await prismaDm.bookstore.findUniqueOrThrow({
       where: { id: bookstoreId },
     });
@@ -128,12 +133,31 @@ const listenEvents = ({ _socket }: UserServices) => ({
       bookstoreId,
       bookstoreName: bookstore.name,
     }).send();
-  },
+  }),
 
-  createBookstoreComment: async (bookstore: NewBookstore|SimpleBookstore, comment: NewComment) => {
-    if (!bookstore.name || (('id' in bookstore) && !bookstore.id)) {
-      return { error: "No bookstore ID or name was provided" };
-    }
+  createBookstoreComment: ev(
+    v.pipe(
+      v.object({
+        bookstore: v.union([
+          v.object({
+            id: v.number(),
+          }),
+          v.object({
+            name: v.string(),
+            address: v.string(),
+            coordX: v.number(),
+            coordY: v.number(),
+          }),
+        ]),
+        comment: v.object({
+          comment: v.string(),
+          atmosphereRating: v.number(),
+          pricesRating: v.number(),
+          selectionRating: v.number(),
+        }),
+      }),
+    ),
+  )(async ({ bookstore, comment }) => {
     const user = _socket.data.user
       ? await prismaDm.user.findUnique({
           where: {
@@ -143,7 +167,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
       : null;
 
     let dbBookstore: bookstore & { comments: bookstoreComment[] };
-    if ('id' in bookstore) {
+    if ("id" in bookstore) {
       try {
         dbBookstore = await prismaDm.bookstore.findUniqueOrThrow({
           include: {
@@ -190,7 +214,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
     }).send();
 
     return createdComment;
-  },
+  }),
 });
 
 export type AdminClientEvents = (typeof adminClient)["emitEvents"];

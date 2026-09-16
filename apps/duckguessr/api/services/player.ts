@@ -7,6 +7,9 @@ import { type player } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export type ClientListenEvents = {
   logged: (player: player) => void;
   loginFailed: () => void;
@@ -24,15 +27,21 @@ export type PlayerServices = NamespaceProxyTarget<
   Record<string, never>
 >;
 
+const playerValidation = v.object({
+  id: v.number(),
+  username: v.string(),
+  ducksmanagerId: v.nullable(v.number()),
+  avatar: v.string(),
+});
+
 const listenEvents = ({ _socket }: PlayerServices) => ({
-  getPlayer: () => {
-    return Promise.resolve(_socket.data.user);
-  },
+  getPlayer: () => Promise.resolve(_socket.data.user),
 
-  updateUser: async (updatedPlayer: player) =>
+  updateUser: ev(playerValidation)(async (updatedPlayer) =>
     updatePlayer(updatedPlayer.id, updatedPlayer),
+  ),
 
-  getStats: async (gameId?: number) => {
+  getStats: ev(v.optional(v.number()))(async (gameId) => {
     const playerIdsToQuery = [_socket.data.user.id];
     if (gameId) {
       playerIdsToQuery.push(
@@ -46,9 +55,9 @@ const listenEvents = ({ _socket }: PlayerServices) => ({
       );
     }
     return await getPlayerStatistics(playerIdsToQuery);
-  },
+  }),
 
-  getGameStats: async (gameId: number) => {
+  getGameStats: ev(v.number())(async (gameId: number) => {
     const playerIdsToQuery = [_socket.data.user.id];
     if (gameId) {
       playerIdsToQuery.push(
@@ -63,7 +72,7 @@ const listenEvents = ({ _socket }: PlayerServices) => ({
     }
     const stats = await getPlayerStatistics(playerIdsToQuery);
     return { gameId, stats };
-  },
+  }),
 });
 
 const { client, server } = useSocketEvents<

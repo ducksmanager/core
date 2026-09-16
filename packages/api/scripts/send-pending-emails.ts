@@ -57,9 +57,9 @@ for (const contributionType of Object.keys(
         ].totalPoints;
       const pointsEarned = finalPointsCount - initialPointsCount;
 
-      const medalReached = Object.entries(
-        medalLevels[contributionType],
-      ).reduce<number | null>(
+      const medalReached = Object.entries(medalLevels[contributionType]).reduce<
+        number | null
+      >(
         (medalReached, [medal, medalThreshold]) =>
           initialPointsCount < medalThreshold &&
           finalPointsCount >= medalThreshold

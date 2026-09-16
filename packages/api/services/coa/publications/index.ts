@@ -1,28 +1,37 @@
 import type { Prisma as PrismaCoa } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
-export default {
-  getPublicationLanguagecode: (publicationcode: string) =>
-    prismaCoa.inducks_publication.findUnique({
-      where: { publicationcode },
-      select: { languagecode: true },
-    }).then((publication) => publication?.languagecode ?? null),
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
-  getPublicationListFromCountrycodes: (countrycodes: string[]) =>
+export default {
+  getPublicationLanguagecode: ev(v.string())((publicationcode) =>
+    prismaCoa.inducks_publication
+      .findUnique({
+        where: { publicationcode },
+        select: { languagecode: true },
+      })
+      .then((publication) => publication?.languagecode ?? null),
+  ),
+
+  getPublicationListFromCountrycodes: ev(v.array(v.string()))((countrycodes) =>
     getPublicationTitles({
       OR: countrycodes.map((countrycode) => ({
         publicationcode: { startsWith: `${countrycode}/` },
       })),
     }),
+  ),
 
   getFullPublicationList: () => getPublicationTitles(),
 
-  getPublicationListFromPublicationcodeList: (publicationcodes: string[]) =>
-    getPublicationTitles(
-      publicationcodes.length
-        ? { publicationcode: { in: publicationcodes } }
-        : {},
-    ),
+  getPublicationListFromPublicationcodeList: ev(v.array(v.string()))(
+    (publicationcodes) =>
+      getPublicationTitles(
+        publicationcodes.length
+          ? { publicationcode: { in: publicationcodes } }
+          : {},
+      ),
+  ),
 };
 
 export const getPublicationTitles = async (

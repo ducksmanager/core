@@ -1,6 +1,5 @@
 import type { Errorable } from "socket-call-server";
 
-import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
@@ -18,6 +17,9 @@ import {
   PresentationTextValidation,
   validate,
 } from "./util";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export default ({ _socket }: UserServices) => ({
   getUser: async () =>
@@ -42,7 +44,17 @@ export default ({ _socket }: UserServices) => ({
     });
   },
 
-  updateUser: async (input: UserForAccountForm) => {
+  updateUser: ev(
+    v.object({
+      userId: v.number(),
+      discordId: v.string(),
+      email: v.string(),
+      allowSharing: v.boolean(),
+      marketplaceAcceptsExchanges: v.boolean(),
+      presentationText: v.string(),
+      password: v.null(),
+    }),
+  )(async (input) => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
       new DiscordIdValidation(),
@@ -117,5 +129,5 @@ export default ({ _socket }: UserServices) => ({
           }
         });
     });
-  },
+  }),
 });

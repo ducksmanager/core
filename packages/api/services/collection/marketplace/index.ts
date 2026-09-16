@@ -13,17 +13,20 @@ export default (services: UserServices) => {
   return {
     ...contactMethods(services),
 
-    deleteRequests: async (issueId: number) => {
+    deleteRequests: ev(v.number())(async (issueId) => {
       await prismaDm.requestedIssue.deleteMany({
         where: {
           buyerId: _socket.data.user.id,
           issueId,
         },
       });
-    },
+    }),
 
     createRequests: ev(
-      v.pipe(v.array(v.number(`Invalid issue ID list, NaN`)), v.nonEmpty("Invalid issue ID list")),
+      v.pipe(
+        v.array(v.number(`Invalid issue ID list, NaN`)),
+        v.nonEmpty("Invalid issue ID list"),
+      ),
     )(async (issueIds) => {
       const issues = await prismaDm.issue.findMany({
         where: {
@@ -60,31 +63,33 @@ export default (services: UserServices) => {
       });
     }),
 
-    getRequests: async (as: "buyer" | "seller") => {
-      switch (as) {
-        case "seller": {
-          const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
-            { id: number }[]
-          >`
+    getRequests: ev(v.union([v.literal("buyer"), v.literal("seller")]))(
+      async (as) => {
+        switch (as) {
+          case "seller": {
+            const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
+              { id: number }[]
+            >`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
             WHERE issue.ID_Utilisateur = ${_socket.data.user.id}
         `;
-          return await prismaDm.requestedIssue.findMany({
-            where: {
-              id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
-            },
-          });
+            return await prismaDm.requestedIssue.findMany({
+              where: {
+                id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
+              },
+            });
+          }
+          case "buyer":
+            return await prismaDm.requestedIssue.findMany({
+              where: {
+                buyerId: _socket.data.user.id,
+              },
+            });
         }
-        case "buyer":
-          return await prismaDm.requestedIssue.findMany({
-            where: {
-              buyerId: _socket.data.user.id,
-            },
-          });
-      }
-    },
+      },
+    ),
 
     getIssuesForSale: () => getIssuesForSale(_socket.data.user.id),
   };
@@ -120,24 +125,25 @@ export const getIssuesForSale = async (buyerId: number) =>
          WHERE user_collection.issuecode = issue.issuecode
            AND user_collection.ID_Utilisateur = ${buyerId}
         )`
-    .then(
-      (idsForSale) =>
-        prismaDm.issue.findMany({
-          select: {
-            labels: true,
-            userId: true,
-            id: true,
-            issuecode: true,
+    .then((idsForSale) =>
+      prismaDm.issue.findMany({
+        select: {
+          labels: true,
+          userId: true,
+          id: true,
+          issuecode: true,
+        },
+        where: {
+          id: {
+            in: idsForSale.map(({ id }) => id),
           },
-          where: {
-            id: {
-              in: idsForSale.map(({ id }) => id),
-            },
-          },
-        }),
+        },
+      }),
     )
     .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
-      prismaCoa.augmentIssueArrayWithInducksData(
-        issues as (T & { issuecode: string })[],
-      ).then(prismaDm.replaceLabelsWithLabelIds),
+      prismaCoa
+        .augmentIssueArrayWithInducksData(
+          issues as (T & { issuecode: string })[],
+        )
+        .then(prismaDm.replaceLabelsWithLabelIds),
     );

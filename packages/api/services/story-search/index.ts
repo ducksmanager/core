@@ -2,6 +2,8 @@ import * as fs from "fs/promises";
 import { InferenceSession, Tensor } from "onnxruntime-node";
 import sharp from "sharp-0-34";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
@@ -44,46 +46,43 @@ const preprocessImage = async (input: string | Buffer) => {
   } else {
     imageBuffer = input;
   }
-  
+
   if (!imageBuffer || imageBuffer.length === 0) {
     throw new Error("Empty image buffer");
   }
-  
+
   console.log("Image buffer stored");
 
   // Validate and process image with error handling
   // For Sharp 0.34 compatibility, get buffer and metadata separately
   let data: Buffer;
   let info: { width: number; height: number; channels: number };
-  
+
   try {
     // Process image: resize to exact size
     // Using simple resize(width, height) which stretches to exact dimensions
     // This avoids potential issues with options objects in different sharp versions
-    const buffer = await sharp(imageBuffer)
-      .resize(224, 224)
-      .raw()
-      .toBuffer();
-    
+    const buffer = await sharp(imageBuffer).resize(224, 224).raw().toBuffer();
+
     // For raw buffers, calculate dimensions from buffer size
     // Buffer size = width * height * channels
     // We know width=224, height=224, so channels = buffer.length / (224 * 224)
     const expectedSize = 224 * 224;
     const channels = Math.floor(buffer.length / expectedSize);
-    
+
     if (channels < 3 || channels > 4) {
       throw new Error(
-        `Unexpected buffer size: ${buffer.length} bytes. Expected ${expectedSize * 3} (RGB) or ${expectedSize * 4} (RGBA), got ${expectedSize * channels}`
+        `Unexpected buffer size: ${buffer.length} bytes. Expected ${expectedSize * 3} (RGB) or ${expectedSize * 4} (RGBA), got ${expectedSize * channels}`,
       );
     }
-    
+
     // Extract info from calculated values (not metadata, which may return original dimensions)
     info = {
       width: 224,
       height: 224,
       channels: channels,
     };
-    
+
     data = buffer;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -93,14 +92,14 @@ const preprocessImage = async (input: string | Buffer) => {
       { cause: error },
     );
   }
-  
+
   // Validate image dimensions
   if (info.width !== 224 || info.height !== 224) {
     throw new Error(
-      `Invalid image dimensions: expected 224x224, got ${info.width}x${info.height}`
+      `Invalid image dimensions: expected 224x224, got ${info.width}x${info.height}`,
     );
   }
-  
+
   // Handle RGBA (4 channels) by converting to RGB
   let rgbData: Uint8Array;
   if (info.channels === 4) {
@@ -116,13 +115,13 @@ const preprocessImage = async (input: string | Buffer) => {
     rgbData = data;
   } else {
     throw new Error(
-      `Unsupported number of channels: expected 3 or 4, got ${info.channels}`
+      `Unsupported number of channels: expected 3 or 4, got ${info.channels}`,
     );
   }
-  
+
   if (rgbData.length !== 224 * 224 * 3) {
     throw new Error(
-      `Invalid image data length: expected ${224 * 224 * 3}, got ${rgbData.length}`
+      `Invalid image data length: expected ${224 * 224 * 3}, got ${rgbData.length}`,
     );
   }
 
@@ -131,7 +130,7 @@ const preprocessImage = async (input: string | Buffer) => {
   // ImageNet normalization for EfficientNet: normalize to [0,1] then apply mean/std
   const mean = [0.485, 0.456, 0.406];
   const std = [0.229, 0.224, 0.225];
-  
+
   for (let i = 0; i < rgbData.length; i++) {
     const channel = i % 3; // R=0, G=1, B=2
     float32Data[i] = (rgbData[i] / 255 - mean[channel]) / std[channel];
@@ -150,7 +149,7 @@ const preprocessImage = async (input: string | Buffer) => {
   // Validate tensor before returning
   if (transposed.length !== 3 * 224 * 224) {
     throw new Error(
-      `Invalid tensor size: expected ${3 * 224 * 224}, got ${transposed.length}`
+      `Invalid tensor size: expected ${3 * 224 * 224}, got ${transposed.length}`,
     );
   }
 
@@ -159,34 +158,34 @@ const preprocessImage = async (input: string | Buffer) => {
 
 const getEmbedding = async (input: string | Buffer) => {
   const inputTensor = await preprocessImage(input);
-  
+
   // Validate session is available
   const session = await getSession();
   if (!session) {
     throw new Error("ONNX session not initialized");
   }
-  
+
   // Validate tensor
   if (!inputTensor || !inputTensor.data) {
     throw new Error("Invalid input tensor");
   }
-  
+
   try {
     // Run inference with explicit input name matching the model export
     const output = await session.run({ input: inputTensor });
-    
+
     // Validate output
     if (!output || !output.embedding) {
       throw new Error("Model output is missing 'embedding' field");
     }
-    
+
     const embeddingData = output.embedding.data;
     if (!embeddingData || !(embeddingData instanceof Float32Array)) {
       throw new Error(
-        `Invalid embedding data type: expected Float32Array, got ${typeof embeddingData}`
+        `Invalid embedding data type: expected Float32Array, got ${typeof embeddingData}`,
       );
     }
-    
+
     return embeddingData; // normalized embedding
   } catch (error) {
     // Provide more context about the error
@@ -262,10 +261,12 @@ export const findSimilarImages = async (
       LIMIT 5
     `;
     console.log("Query done, results:", results);
-    return { results: results.map(({ sitecode, url, ...rest }) => ({
-      ...rest,
-      fullUrl: getPrefixedEntryurl(url, sitecode)
-    })) } as const;
+    return {
+      results: results.map(({ sitecode, url, ...rest }) => ({
+        ...rest,
+        fullUrl: getPrefixedEntryurl(url, sitecode),
+      })),
+    } as const;
   } catch (error) {
     console.error("Error finding similar images:", error);
     return {
@@ -275,20 +276,22 @@ export const findSimilarImages = async (
 };
 
 const listenEvents = () => ({
-  getIndexSize: async (isCover: boolean) =>
+  getIndexSize: ev(v.boolean())(async (isCover) =>
     prismaCoa.inducks_entryurl_vector.count({
       where: {
         isCover,
       },
     }),
+  ),
 
-  findSimilarImages: async (
-    imageBufferOrBase64: string | Buffer,
-    isCover: boolean,
-  ) =>
+  findSimilarImages: ev(
+    v.union([v.string(), v.instance(Buffer)]),
+    v.boolean(),
+  )(async (imageBufferOrBase64, isCover) =>
     session
       ? findSimilarImages(imageBufferOrBase64, isCover)
-      : ({ error: "Session not initialized" } as const)
+      : ({ error: "Session not initialized" } as const),
+  ),
 });
 
 export const { client, server } = useSocketEvents<

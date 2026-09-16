@@ -63,9 +63,16 @@ const listenEvents = () => ({
       },
     });
   }),
-  updateMaintenanceData: async (
-    data: { sitecodeUrl: string; decision: entryurlDetailsDecision }[],
-  ) =>
+  updateMaintenanceData: ev(
+    v.pipe(
+      v.array(
+        v.object({
+          sitecodeUrl: v.string(),
+          decision: v.enum(entryurlDetailsDecision),
+        }),
+      ),
+    ),
+  )(async (data) =>
     prisma.$transaction(
       data.map(({ sitecodeUrl, decision }) =>
         prisma.entryurlDetails.update({
@@ -79,6 +86,7 @@ const listenEvents = () => ({
         }),
       ),
     ),
+  ),
 });
 
 const { client, server } = useSocketEvents<

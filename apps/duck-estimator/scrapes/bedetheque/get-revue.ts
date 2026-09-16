@@ -29,7 +29,7 @@ export const getRevue = async (
               .body()
               .then((body) => body.toString())
               .catch((e) => {
-            error(`Error while fetching ${url}: ${e}`);
+                error(`Error while fetching ${url}: ${e}`);
                 throw e;
               }),
           ),

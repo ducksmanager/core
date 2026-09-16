@@ -2,14 +2,18 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export const getUserLabel = async (description: string, userId: number) =>
   prismaDm.label.findUnique({
     where: {
       description_userId: {
         description,
-      userId,
-    }
-  }});
+        userId,
+      },
+    },
+  });
 
 export default ({ _socket }: UserServices) => ({
   getLabels: () =>
@@ -20,7 +24,7 @@ export default ({ _socket }: UserServices) => ({
       },
     }),
 
-  createLabel: async (description: string) => {
+  createLabel: ev(v.string())(async (description) => {
     const criteria = {
       userId: _socket.data.user.id,
       description,
@@ -39,9 +43,9 @@ export default ({ _socket }: UserServices) => ({
     await prismaDm.label.create({
       data: criteria,
     });
-  },
+  }),
 
-  deleteLabel: async (labelDescription: string) => {
+  deleteLabel: ev(v.string())(async (labelDescription) => {
     const criteria = {
       userId: _socket.data.user.id,
       description: labelDescription,
@@ -55,5 +59,5 @@ export default ({ _socket }: UserServices) => ({
         description_userId: criteria,
       },
     });
-  },
+  }),
 });

@@ -1,9 +1,14 @@
 import { Prisma } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export default {
-  getCountryList: async (locale: string, countryCodes?: string[]) =>
-    getCountryNames(locale, countryCodes),
+  getCountryList: ev(
+    v.string(),
+    v.optional(v.array(v.string())),
+  )(async (locale, countryCodes) => getCountryNames(locale, countryCodes)),
 };
 
 const getCountryNames = async (

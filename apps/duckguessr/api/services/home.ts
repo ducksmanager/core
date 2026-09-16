@@ -3,6 +3,8 @@ import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
 
 import prisma from "../prisma/client";
 import namespaces from "./namespaces";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export type HomeServices = NamespaceProxyTarget<
   Socket<typeof listenEvents>,
@@ -28,7 +30,7 @@ const convertUrlToBase64 = async (url: string): Promise<string | null> => {
 };
 
 const listenEvents = () => ({
-  getGameRounds: async (gameId: number) => {
+  getGameRounds: ev(v.number())(async (gameId) => {
     const round = await prisma.round.findFirst({
       include: {
         roundScores: true,
@@ -72,7 +74,7 @@ const listenEvents = () => ({
       roundNumber: round.roundNumber,
       base64,
     };
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

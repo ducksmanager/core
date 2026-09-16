@@ -1,6 +1,9 @@
 import type { inducks_issuequotation } from "~prisma-schemas/schemas/coa";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
 
 export const getShownQuotations = <
@@ -34,18 +37,20 @@ export const getQuotationsByIssuecodes = async (issuecodes: string[]) =>
     .then(getShownQuotations);
 
 export default {
-  getQuotationsByIssuecodes: async (issuesByIssuecodes: string[]) => {
-    const codes = issuesByIssuecodes.filter((code) =>
-      ISSUE_CODE_REGEX.test(code),
-    );
-    if (!codes.length) {
-      return Promise.resolve({ error: "Bad request" });
-    } else if (codes.length > 4) {
-      return Promise.resolve({ error: "Too many requests" });
-    } else {
-      return {
-        quotations: await getQuotationsByIssuecodes(codes),
-      };
-    }
-  },
+  getQuotationsByIssuecodes: ev(v.array(v.string()))(
+    async (issuesByIssuecodes) => {
+      const codes = issuesByIssuecodes.filter((code) =>
+        ISSUE_CODE_REGEX.test(code),
+      );
+      if (!codes.length) {
+        return Promise.resolve({ error: "Bad request" });
+      } else if (codes.length > 4) {
+        return Promise.resolve({ error: "Too many requests" });
+      } else {
+        return {
+          quotations: await getQuotationsByIssuecodes(codes),
+        };
+      }
+    },
+  ),
 };

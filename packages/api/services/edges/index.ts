@@ -82,7 +82,8 @@ const listenEvents = () => ({
   )((filters) =>
     getEdges(filters)
       .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
-      .then((edges) => edges.groupBy("issuecode"))),
+      .then((edges) => edges.groupBy("issuecode")),
+  ),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

@@ -3,6 +3,8 @@ import { promisify } from "node:util";
 
 import { v2 as cloudinary } from "cloudinary";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 const execFileAsync = promisify(execFile);
 
@@ -40,9 +42,7 @@ const fetchSessionHash = async (parameters: { font: string }) => {
   if (sessionHashMatch) {
     sessionHashes[parameters.font] = sessionHashMatch[0];
   } else {
-    throw new Error(
-      `No session ID found in URL ${url}, regex: ${regex}`,
-    );
+    throw new Error(`No session ID found in URL ${url}, regex: ${regex}`);
   }
 };
 
@@ -82,78 +82,93 @@ const generateImage = (parameters: {
   });
 
 const listenEvents = () => ({
-  getText: (parameters: {
-    color: string;
-    colorBackground: string;
-    width: number;
-    font: string;
-    text: string;
-  }): Promise<
-    | {
-        error: "Image generation error";
-        errorDetails: string;
-      }
-    | { results: { width: number; height: number; url: string } }
-  > =>
-    new Promise((resolve) => {
-      const { color, colorBackground, width, font, text } = parameters;
-      const context: Record<string, number | string> = {
-        color,
-        colorBackground,
-        width,
-        text,
-      };
-      cloudinary.search
-        .expression(
-          `tags=${font} AND ${Object.keys(context)
-            .reduce<string[]>(
-              (acc, key) => [
-                ...acc,
-                `context.${key}="${String(context[key])}"`,
-              ],
-              [],
-            )
-            .join(" AND ")}`,
-        )
-        .execute()
-        .then(
-          ({
-            resources,
-          }: {
-            resources: {
-              width: number;
-              height: number;
-              secure_url: string;
-            }[];
-          }) => {
-            if (resources.length) {
-              console.log(`Found an existing text`);
-              const { width, height, secure_url: url } = resources[0];
-              resolve({ results: { width, height, url } });
-            } else {
-              console.log(`Found no existing text, generating text image...`);
-              generateImage(parameters)
-                .then(({ width, height, secure_url: url }) => {
-                  console.log(`Text image generated: url=${url}`);
-                  resolve({ results: { width, height, url } });
-                })
-                .catch((response: Error) => {
-                  resolve({
-                    error: "Image generation error",
-                    errorDetails: response.message,
-                  });
-                });
-            }
-          },
-        )
-        .catch((e) => {
-          console.error(e);
-          resolve({
-            error: "Image generation error",
-            errorDetails: e.message,
-          });
-        });
+  getText: ev(
+    v.object({
+      color: v.string(),
+      colorBackground: v.string(),
+      width: v.number(),
+      font: v.string(),
+      text: v.string(),
     }),
+  )(
+    async ({
+      color,
+      colorBackground,
+      width,
+      font,
+      text,
+    }): Promise<
+      | {
+          error: "Image generation error";
+          errorDetails: string;
+        }
+      | { results: { width: number; height: number; url: string } }
+    > =>
+      new Promise((resolve) => {
+        const context: Record<string, number | string> = {
+          color,
+          colorBackground,
+          width,
+          text,
+        };
+        cloudinary.search
+          .expression(
+            `tags=${font} AND ${Object.keys(context)
+              .reduce<string[]>(
+                (acc, key) => [
+                  ...acc,
+                  `context.${key}="${String(context[key])}"`,
+                ],
+                [],
+              )
+              .join(" AND ")}`,
+          )
+          .execute()
+          .then(
+            ({
+              resources,
+            }: {
+              resources: {
+                width: number;
+                height: number;
+                secure_url: string;
+              }[];
+            }) => {
+              if (resources.length) {
+                console.log(`Found an existing text`);
+                const { width, height, secure_url: url } = resources[0];
+                resolve({ results: { width, height, url } });
+              } else {
+                console.log(`Found no existing text, generating text image...`);
+                generateImage({
+                  color,
+                  colorBackground,
+                  width,
+                  font,
+                  text,
+                })
+                  .then(({ width, height, secure_url: url }) => {
+                    console.log(`Text image generated: url=${url}`);
+                    resolve({ results: { width, height, url } });
+                  })
+                  .catch((response: Error) => {
+                    resolve({
+                      error: "Image generation error",
+                      errorDetails: response.message,
+                    });
+                  });
+              }
+            },
+          )
+          .catch((e) => {
+            console.error(e);
+            resolve({
+              error: "Image generation error",
+              errorDetails: e.message,
+            });
+          });
+      }),
+  ),
 });
 
 export const { client, server } = useSocketEvents<

@@ -3,6 +3,9 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { UserServices } from "../../../index";
 import { getUserPurchase } from "../issues/util";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export default ({ _socket }: UserServices) => ({
   getPurchases: () =>
     prismaDm.purchase
@@ -21,7 +24,10 @@ export default ({ _socket }: UserServices) => ({
         })),
       ),
 
-  createPurchase: async (date: string, description: string) => {
+  createPurchase: ev(
+    v.string(),
+    v.string(),
+  )(async (date, description) => {
     const criteria = {
       userId: _socket.data.user.id,
       date: new Date(date),
@@ -30,7 +36,7 @@ export default ({ _socket }: UserServices) => ({
     if (Number.isNaN(criteria.date.getTime())) {
       return { error: `Invalid date: ${date}` } as const;
     }
-  
+
     if (
       (await prismaDm.purchase.count({
         where: criteria,
@@ -42,9 +48,9 @@ export default ({ _socket }: UserServices) => ({
     await prismaDm.purchase.create({
       data: criteria,
     });
-  },
+  }),
 
-  deletePurchase: async (purchaseId: number) => {
+  deletePurchase: ev(v.number())(async (purchaseId) => {
     const criteria = {
       userId: _socket.data.user.id,
       id: purchaseId,
@@ -56,5 +62,5 @@ export default ({ _socket }: UserServices) => ({
     await prismaDm.purchase.deleteMany({
       where: criteria,
     });
-  },
+  }),
 });
