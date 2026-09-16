@@ -126,7 +126,7 @@ export class EmailUpdateValidation extends Validation {
 
 export class EmailValidation extends Validation {
   run = async ({ email }: Pick<user, "email">) => {
-    if (!v.parse(v.pipe(v.string(), v.email()), email)) {
+    if (!v.is(v.pipe(v.string(), v.email()), email)) {
       return {
         message: "Adresse e-mail invalide",
         selector: "#email",

@@ -26,13 +26,13 @@ const listenEvents = () => ({
             `,
 
   getMaintenanceDataForDataset: ev(
-    v.pipe(v.string()),
-    v.pipe(v.array(v.enum({ ...entryurlDetailsDecision, null: "null" }))),
-    v.pipe(v.number()),
+    v.string(),
+    v.pipe(
+      v.array(v.enum({ ...entryurlDetailsDecision, null: "null" })),
+      v.nonEmpty("No decisions provided" as const),
+    ),
+    v.number(),
   )(async (datasetName, decisions, offset) => {
-    if (!decisions) {
-      throw new Error("No decisions provided");
-    }
     const dataset = await prisma.dataset.findUnique({
       where: {
         name: datasetName,

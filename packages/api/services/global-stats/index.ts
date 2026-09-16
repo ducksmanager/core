@@ -122,17 +122,12 @@ const listenEvents = () => ({
       },
     }),
 
-  getUsersPointsAndStats: ev(v.array(v.number()))(async (userIds) =>
-    userIds.length
-      ? {
-          points: await getMedalPoints(userIds),
-          stats: await getUsersQuickStats(userIds),
-        }
-      : {
-          error: "Bad request",
-          errorDetails: "Empty user IDs list",
-        },
-  ),
+  getUsersPointsAndStats: ev(
+    v.pipe(v.array(v.number()), v.nonEmpty("Bad request" as const)),
+  )(async (userIds) => ({
+    points: await getMedalPoints(userIds),
+    stats: await getUsersQuickStats(userIds),
+  })),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

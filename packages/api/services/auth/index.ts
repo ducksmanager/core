@@ -59,13 +59,23 @@ const listenEvents = () => ({
   }),
 
   changePassword: ev(
-    v.object({
-      password: v.string(),
-      password2: v.string(),
-      token: v.string(),
-    }),
+    v.pipe(
+      v.object({
+        password: v.string(),
+        password2: v.string(),
+        token: v.string(),
+      }),
+      v.check(
+        ({ password }) => password.length >= 6,
+        "Your password should be at least 6 characters long" as const,
+      ),
+      v.check(
+        ({ password, password2 }) => password === password2,
+        "The two passwords should be identical" as const,
+      ),
+    ),
   )(
-    async ({ password, password2, token }) =>
+    async ({ password, token }) =>
       new Promise<Errorable<{ token: string }, string>>((resolve) => {
         jwt.verify(
           token,
@@ -73,14 +83,6 @@ const listenEvents = () => ({
           async (err: unknown, data: unknown) => {
             if (err) {
               resolve({ error: "Invalid token" } as const);
-            } else if (password.length < 6) {
-              resolve({
-                error: "Your password should be at least 6 characters long",
-              } as const);
-            } else if (password !== password2) {
-              resolve({
-                error: "The two passwords should be identical",
-              } as const);
             } else {
               const hashedPassword = crypto
                 .createHash("sha1")

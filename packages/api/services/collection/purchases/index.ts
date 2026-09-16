@@ -25,7 +25,13 @@ export default ({ _socket }: UserServices) => ({
       ),
 
   createPurchase: ev(
-    v.string(),
+    v.pipe(
+      v.string(),
+      v.check(
+        (date) => !Number.isNaN(new Date(date).getTime()),
+        "Invalid date" as const,
+      ),
+    ),
     v.string(),
   )(async (date, description) => {
     const criteria = {
@@ -33,9 +39,6 @@ export default ({ _socket }: UserServices) => ({
       date: new Date(date),
       description,
     };
-    if (Number.isNaN(criteria.date.getTime())) {
-      return { error: `Invalid date: ${date}` } as const;
-    }
 
     if (
       (await prismaDm.purchase.count({

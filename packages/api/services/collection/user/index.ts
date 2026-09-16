@@ -45,15 +45,22 @@ export default ({ _socket }: UserServices) => ({
   },
 
   updateUser: ev(
-    v.object({
-      userId: v.number(),
-      discordId: v.string(),
-      email: v.string(),
-      allowSharing: v.boolean(),
-      marketplaceAcceptsExchanges: v.boolean(),
-      presentationText: v.string(),
-      password: v.null(),
-    }),
+    v.pipe(
+      v.object({
+        discordId: v.optional(v.string()),
+        email: v.string(),
+        allowSharing: v.boolean(),
+        marketplaceAcceptsExchanges: v.boolean(),
+        presentationText: v.string(),
+        oldPassword: v.optional(v.string()),
+        password: v.optional(v.string()),
+        password2: v.optional(v.string()),
+      }),
+      v.check(
+        ({ password, password2 }) => password === password2,
+        "The two passwords should be identical" as const,
+      ),
+    ),
   )(async (input) => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
@@ -62,7 +69,6 @@ export default ({ _socket }: UserServices) => ({
       new EmailUpdateValidation(),
       new PresentationTextValidation(),
     ];
-    input.userId = _socket.data.user.id;
     if (input.password) {
       validators = [
         ...validators,
@@ -80,7 +86,11 @@ export default ({ _socket }: UserServices) => ({
       let hasResolved = false;
       prismaDm
         .$transaction(async (transaction) => {
-          const scopedError = await validate(transaction, input, validators);
+          const scopedError = await validate(
+            transaction,
+            { ...input, userId: _socket.data.user.id },
+            validators,
+          );
           if (scopedError) {
             resolve({ error: "Bad request", ...scopedError } as const);
             hasResolved = true;

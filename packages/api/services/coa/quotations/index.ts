@@ -4,7 +4,7 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { ev } from "socket-call-server/valibot";
 import * as v from "valibot";
 
-const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/g;
+const ISSUE_CODE_REGEX = /[a-z]+\/[-A-Z0-9 ]+/;
 
 export const getShownQuotations = <
   Quotation extends Pick<
@@ -37,20 +37,16 @@ export const getQuotationsByIssuecodes = async (issuecodes: string[]) =>
     .then(getShownQuotations);
 
 export default {
-  getQuotationsByIssuecodes: ev(v.array(v.string()))(
-    async (issuesByIssuecodes) => {
-      const codes = issuesByIssuecodes.filter((code) =>
-        ISSUE_CODE_REGEX.test(code),
-      );
-      if (!codes.length) {
-        return Promise.resolve({ error: "Bad request" });
-      } else if (codes.length > 4) {
-        return Promise.resolve({ error: "Too many requests" });
-      } else {
-        return {
-          quotations: await getQuotationsByIssuecodes(codes),
-        };
-      }
-    },
-  ),
+  getQuotationsByIssuecodes: ev(
+    v.pipe(
+      v.array(v.string()),
+      v.transform((issuecodes) =>
+        issuecodes.filter((code) => ISSUE_CODE_REGEX.test(code)),
+      ),
+      v.nonEmpty("Bad request" as const),
+      v.maxLength(4, "Too many requests" as const),
+    ),
+  )(async (codes) => ({
+    quotations: await getQuotationsByIssuecodes(codes),
+  })),
 };
