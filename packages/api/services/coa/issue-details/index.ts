@@ -127,7 +127,10 @@ export const getCoverUrls = async (issuecodes: string[]) => {
       return {
         issuecode,
         title: issue.title!,
-        fullUrl: getPrefixedEntryurl(coverEntryUrl.url!, coverEntryUrl.sitecode!),
+        fullUrl: getPrefixedEntryurl(
+          coverEntryUrl.url!,
+          coverEntryUrl.sitecode!,
+        ),
       };
     });
 };

@@ -20,7 +20,7 @@ export const checkTodayLimit = (userId: number) =>
     })
     .then((data) => ({
       uploadedFilesToday: data.map(({ fileName }) => fileName),
-    }))
+    }));
 
 export default ({ _socket }: UserServices) => ({
   sendNewEdgePhotoEmail: async (issuecode: string) => {

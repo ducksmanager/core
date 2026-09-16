@@ -7,7 +7,9 @@ export default {
     prismaCoa
       .augmentIssueArrayWithInducksData(
         issuecodes.map((issuecode) => ({ issuecode })),
-        (withFields || []).filter((field) => ["title", "fullyindexed"].includes(field)),
+        (withFields || []).filter((field) =>
+          ["title", "fullyindexed"].includes(field),
+        ),
       )
       .then((data) => data.groupBy("issuecode")),
 

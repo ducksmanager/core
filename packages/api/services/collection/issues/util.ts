@@ -25,12 +25,12 @@ export const deleteIssues = async (userId: number, issuecodes: string[]) => {
 
 export const checkPurchaseIdsBelongToUser = async (
   purchaseIds: number[],
-  userId: number
+  userId: number,
 ): Promise<(number | null)[]> => {
   const checkedPromiseIds: (number | null)[] = [];
   for (const purchaseId of purchaseIds) {
     checkedPromiseIds.push(
-      (await getUserPurchase(purchaseId, userId)) ? purchaseId : null
+      (await getUserPurchase(purchaseId, userId)) ? purchaseId : null,
     );
   }
   return checkedPromiseIds;

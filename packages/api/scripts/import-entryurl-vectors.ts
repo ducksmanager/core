@@ -34,10 +34,14 @@ const files = readdirSync(root, {
 const RECALCULATE_ALL = process.env.RECALCULATE_ALL === "true";
 
 if (RECALCULATE_ALL) {
-  console.log("⚠️ RECALCULATE_ALL=true: Will recalculate all vectors (existing vectors will be replaced)");
+  console.log(
+    "⚠️ RECALCULATE_ALL=true: Will recalculate all vectors (existing vectors will be replaced)",
+  );
 } else {
   const existingVectorCount = await prismaCoa.inducks_entryurl_vector.count();
-  console.log(`Found ${existingVectorCount} existing vectors (will skip these)`);
+  console.log(
+    `Found ${existingVectorCount} existing vectors (will skip these)`,
+  );
 }
 
 const filesToProcess: {
@@ -114,12 +118,14 @@ const processFiles = async (tableName: string) => {
     return;
   }
 
-  const filesWithEntriesUrls = new Set(filesWithEntries.map(f => f.url));
-  const allFiles = await prismaCoa.$queryRawUnsafe<{ url: string; relativePath: string }[]>(`
+  const filesWithEntriesUrls = new Set(filesWithEntries.map((f) => f.url));
+  const allFiles = await prismaCoa.$queryRawUnsafe<
+    { url: string; relativePath: string }[]
+  >(`
     SELECT url, relative_path AS relativePath
     FROM ${tableName}
   `);
-  
+
   for (const file of allFiles) {
     if (!filesWithEntriesUrls.has(file.url)) {
       console.log(`Entry not found for ${file.relativePath}`);
@@ -131,9 +137,13 @@ const processFiles = async (tableName: string) => {
   for (let i = 0; i < filesWithEntries.length; i += PROCESS_BATCH_SIZE) {
     const batch = filesWithEntries.slice(i, i + PROCESS_BATCH_SIZE);
     const batchNumber = Math.floor(i / PROCESS_BATCH_SIZE) + 1;
-    const totalBatches = Math.ceil(filesWithEntries.length / PROCESS_BATCH_SIZE);
-    
-    console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`);
+    const totalBatches = Math.ceil(
+      filesWithEntries.length / PROCESS_BATCH_SIZE,
+    );
+
+    console.log(
+      `Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`,
+    );
 
     const vectorPromises = batch.map(async (item) => {
       try {
@@ -151,9 +161,7 @@ const processFiles = async (tableName: string) => {
         const vectorString = formatVectorForDB(vector.vector);
 
         if (!vector.vector || vector.vector.length === 0) {
-          console.error(
-            `Empty vector generated for ${item.relativePath}`,
-          );
+          console.error(`Empty vector generated for ${item.relativePath}`);
           return null;
         }
 
@@ -164,7 +172,8 @@ const processFiles = async (tableName: string) => {
           relativePath: item.relativePath,
         };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         console.error(
           `Error creating image vector for ${item.relativePath}: ${errorMessage}`,
         );
@@ -185,47 +194,58 @@ const processFiles = async (tableName: string) => {
       continue;
     }
 
-    await prismaCoa.$transaction(async (tx) => {
-      const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
+    await prismaCoa
+      .$transaction(async (tx) => {
+        const escapeSqlString = (str: string) =>
+          str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 
-      if (RECALCULATE_ALL) {
-        for (const vector of validVectors) {
-          const entrycodeEscaped = escapeSqlString(vector.entrycode);
-          const vectorStringEscaped = escapeSqlString(vector.vectorString);
-          
-          await tx.$executeRawUnsafe(`
+        if (RECALCULATE_ALL) {
+          for (const vector of validVectors) {
+            const entrycodeEscaped = escapeSqlString(vector.entrycode);
+            const vectorStringEscaped = escapeSqlString(vector.vectorString);
+
+            await tx.$executeRawUnsafe(`
             INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
             VALUES ('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${vector.isCover})
             ON DUPLICATE KEY UPDATE v = VALUES(v), is_cover = VALUES(is_cover)
           `);
-        }
-      } else {
-        for (let j = 0; j < validVectors.length; j += VECTOR_INSERT_BATCH_SIZE) {
-          const vectorBatch = validVectors.slice(j, j + VECTOR_INSERT_BATCH_SIZE);
-          const values = vectorBatch
-            .map(
-              (v) => {
+          }
+        } else {
+          for (
+            let j = 0;
+            j < validVectors.length;
+            j += VECTOR_INSERT_BATCH_SIZE
+          ) {
+            const vectorBatch = validVectors.slice(
+              j,
+              j + VECTOR_INSERT_BATCH_SIZE,
+            );
+            const values = vectorBatch
+              .map((v) => {
                 const entrycodeEscaped = escapeSqlString(v.entrycode);
                 const vectorStringEscaped = escapeSqlString(v.vectorString);
                 return `('${entrycodeEscaped}', VEC_FromText('${vectorStringEscaped}'), ${v.isCover})`;
-              }
-            )
-            .join(", ");
+              })
+              .join(", ");
 
-          await tx.$executeRawUnsafe(`
+            await tx.$executeRawUnsafe(`
             INSERT INTO inducks_entryurl_vector (entrycode, v, is_cover)
             VALUES ${values}
           `);
+          }
         }
-      }
 
-      totalProcessed += validVectors.length;
-      console.log(
-        `Successfully inserted ${validVectors.length} vectors (total: ${totalProcessed})`,
-      );
-    }).catch((error) => {
-      console.error(`Error inserting vectors from batch ${batchNumber}:`, error);
-    });
+        totalProcessed += validVectors.length;
+        console.log(
+          `Successfully inserted ${validVectors.length} vectors (total: ${totalProcessed})`,
+        );
+      })
+      .catch((error) => {
+        console.error(
+          `Error inserting vectors from batch ${batchNumber}:`,
+          error,
+        );
+      });
   }
 };
 
@@ -240,7 +260,8 @@ await prismaCoa.$transaction(
       )
     `);
 
-    const escapeSqlString = (str: string) => str.replace(/\\/g, "\\\\").replace(/'/g, "''");
+    const escapeSqlString = (str: string) =>
+      str.replace(/\\/g, "\\\\").replace(/'/g, "''");
 
     let insertedCount = 0;
 
@@ -266,8 +287,8 @@ await prismaCoa.$transaction(
     console.log(`Inserted ${insertedCount} files into table ${tableName}`);
   },
   {
-    timeout: 30000
-  }
+    timeout: 30000,
+  },
 );
 
 try {

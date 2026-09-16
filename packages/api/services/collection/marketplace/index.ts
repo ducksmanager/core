@@ -119,24 +119,25 @@ export const getIssuesForSale = async (buyerId: number) =>
          WHERE user_collection.issuecode = issue.issuecode
            AND user_collection.ID_Utilisateur = ${buyerId}
         )`
-    .then(
-      (idsForSale) =>
-        prismaDm.issue.findMany({
-          select: {
-            labels: true,
-            userId: true,
-            id: true,
-            issuecode: true,
+    .then((idsForSale) =>
+      prismaDm.issue.findMany({
+        select: {
+          labels: true,
+          userId: true,
+          id: true,
+          issuecode: true,
+        },
+        where: {
+          id: {
+            in: idsForSale.map(({ id }) => id),
           },
-          where: {
-            id: {
-              in: idsForSale.map(({ id }) => id),
-            },
-          },
-        }),
+        },
+      }),
     )
     .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
-      prismaCoa.augmentIssueArrayWithInducksData(
-        issues as (T & { issuecode: string })[],
-      ).then(prismaDm.replaceLabelsWithLabelIds),
+      prismaCoa
+        .augmentIssueArrayWithInducksData(
+          issues as (T & { issuecode: string })[],
+        )
+        .then(prismaDm.replaceLabelsWithLabelIds),
     );

@@ -8,7 +8,7 @@
   "description": "Duckguessr API",
   "main": "index.ts",
   "scripts": {
-    "build": "bun build index.ts --entry-naming index.mjs --target node --sourcemap=linked --outdir dist",
+    "build": "bun build ./index.ts --entry-naming index.mjs --target node --sourcemap=linked --outdir dist",
     "dev:setup": "docker compose -f docker-compose-dev.yml up --force-recreate -d",
     "lint": "eslint .",
     "prisma-pull-generate": "prisma db pull && prisma generate",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.5.1",
+    "@types/node": "^26.6.1",
     "concurrently": "^10.0.5",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",

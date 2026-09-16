@@ -30,14 +30,15 @@ const listenEvents = ({ _socket }: UserServices) => ({
     //     retryAfterMs: rateLimit.retryAfterMs,
     //   } as const;
     // }
-    const hostAndPort = process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
+    const hostAndPort =
+      process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
     console.log(`Searching from cover on ${hostAndPort}`);
     const buffer = urlOrBase64.includes(";base64,")
       ? (
-        await axios.get(urlOrBase64, {
-          responseType: "arraybuffer",
-        })
-      ).data
+          await axios.get(urlOrBase64, {
+            responseType: "arraybuffer",
+          })
+        ).data
       : Buffer.from(urlOrBase64.split(";base64,").pop()!, "base64");
 
     const pastecResponse = await getSimilarImages(buffer, hostAndPort);
@@ -72,7 +73,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
             id: coverIdByIssuecode[issuecode],
             score:
               pastecResponse.scores[
-              pastecResponse.image_ids.indexOf(coverIdByIssuecode[issuecode])
+                pastecResponse.image_ids.indexOf(coverIdByIssuecode[issuecode])
               ],
           })),
         ),
@@ -81,7 +82,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
         covers.sort((cover1, cover2) =>
           Math.sign(
             pastecResponse.image_ids.indexOf(cover1.id) -
-            pastecResponse.image_ids.indexOf(cover2.id),
+              pastecResponse.image_ids.indexOf(cover2.id),
           ),
         ),
       );
@@ -97,11 +98,13 @@ const listenEvents = ({ _socket }: UserServices) => ({
         issuecode,
         fullUrl,
         score,
-        boundingRect: pastecResponse.bounding_rects[
-          pastecResponse.image_ids.indexOf(
-            coversByIssuecode.find((cover) => cover.issuecode === issuecode)!.id,
-          )
-        ],
+        boundingRect:
+          pastecResponse.bounding_rects[
+            pastecResponse.image_ids.indexOf(
+              coversByIssuecode.find((cover) => cover.issuecode === issuecode)!
+                .id,
+            )
+          ],
       })),
     };
   },
@@ -143,15 +146,12 @@ const listenEvents = ({ _socket }: UserServices) => ({
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
   Record<string, never>
->(
-  namespaces.COVER_ID,
-  {
-    listenEvents,
-    middlewares: [
-      // RequiredAuthMiddleware
-    ],
-  },
-);
+>(namespaces.COVER_ID, {
+  listenEvents,
+  middlewares: [
+    // RequiredAuthMiddleware
+  ],
+});
 
 export type ClientEvents = (typeof client)["emitEvents"];
 
@@ -173,27 +173,25 @@ const getCoverUrl = async (coverId: number) =>
     })
     .then(
       (cover) =>
-        `${cover.sitecode}/${cover.sitecode === "webusers" ? "webusers" : ""}${cover.url
+        `${cover.sitecode}/${cover.sitecode === "webusers" ? "webusers" : ""}${
+          cover.url
         }`,
     );
 
-const getSimilarImages = async (
-  cover: Buffer,
-  hostAndPort: string,
-) =>
+const getSimilarImages = async (cover: Buffer, hostAndPort: string) =>
   !process.env.PASTEC_HOSTS_AND_PORTS!.split(",").includes(hostAndPort)
     ? null
     : axios
-      .post<SimilarImagesResult>(
-        `http://${hostAndPort}/index/searcher`,
-        cover,
-        {
-          headers: {
-            "Content-Type": "application/octet-stream",
+        .post<SimilarImagesResult>(
+          `http://${hostAndPort}/index/searcher`,
+          cover,
+          {
+            headers: {
+              "Content-Type": "application/octet-stream",
+            },
           },
-        },
-      )
-      .then(({ data }) => data)
-      .catch((e) => {
-        console.error(e);
-      });
+        )
+        .then(({ data }) => data)
+        .catch((e) => {
+          console.error(e);
+        });

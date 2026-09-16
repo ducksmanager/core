@@ -58,15 +58,11 @@ try {
               issuecode,
             },
           });
-          log(
-            [issuecode, pageUrl, albumNum || "", storedTitle].join(","),
-          );
+          log([issuecode, pageUrl, albumNum || "", storedTitle].join(","));
         }
       } catch (_e) {
         warn(`Issue ${issuecode} not found`);
-        log(
-          ["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","),
-        );
+        log(["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","));
       }
     }
   }

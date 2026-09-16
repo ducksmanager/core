@@ -40,9 +40,7 @@ const fetchSessionHash = async (parameters: { font: string }) => {
   if (sessionHashMatch) {
     sessionHashes[parameters.font] = sessionHashMatch[0];
   } else {
-    throw new Error(
-      `No session ID found in URL ${url}, regex: ${regex}`,
-    );
+    throw new Error(`No session ID found in URL ${url}, regex: ${regex}`);
   }
 };
 
