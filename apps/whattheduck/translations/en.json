@@ -227,5 +227,9 @@
   "numéro": "issue",
   "numéros": "issues",
   "or": "gold",
-  "pays|pays": "country|countries"
+  "pays|pays": "country|countries",
+  "Recherche de la couverture...": "Looking for the cover...",
+  "Recherche du titre...": "Looking up the title...",
+  "Appuyez pour voir le résultat": "Tap to see the result",
+  "Ignorer cette suggestion": "Dismiss this suggestion"
 }

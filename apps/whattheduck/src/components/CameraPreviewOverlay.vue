@@ -24,18 +24,47 @@
       />
     </div>
     <div id="camera-preview" ref="cameraPreview"></div>
+    <div
+      v-if="detectionBox && previewRect"
+      id="detection-layer"
+      aria-hidden="true"
+      :style="{
+        left: `${previewRect.x}px`,
+        top: `${previewRect.y}px`,
+        width: `${previewRect.width}px`,
+        height: `${previewRect.height}px`,
+      }"
+    >
+      <div
+        id="detection-box"
+        :style="{
+          left: `${detectionBox.x - previewRect.x}px`,
+          top: `${detectionBox.y - previewRect.y}px`,
+          width: `${detectionBox.width}px`,
+          height: `${detectionBox.height}px`,
+        }"
+      />
+    </div>
     <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
-      <ion-button ref="takePhotoButton" size="large" :disabled="isSearching" @click="takePhoto()">
-        <ion-icon :ios="apertureOutline" :md="apertureSharp" />
-      </ion-button>
-      <ion-button size="large" color="danger" :disabled="isSearching" @click="closeCamera">
+      <div id="overlay-status">
+        <ion-button
+          v-if="phase === 'exhausted'"
+          ref="takePhotoButton"
+          size="large"
+          :disabled="isSearching"
+          @click="takePhoto()"
+        >
+          <ion-icon :ios="apertureOutline" :md="apertureSharp" />
+        </ion-button>
+        <template v-else-if="phase === 'scanning'">
+          <ion-spinner name="dots" />
+          <span class="status-label">{{ $t('Recherche de la couverture...') }}</span>
+        </template>
+      </div>
+      <ion-button id="close-button" color="danger" :disabled="isSearching" @click="closeCamera">
         <ion-icon :ios="closeOutline" :md="closeSharp" />
       </ion-button>
-      <div
-        id="ratio-buttons"
-        style="display: flex; position: absolute; bottom: 0; right: 0"
-        class="ion-align-items-center"
-      >
+      <div id="ratio-buttons" class="ion-align-items-center">
         <ion-button color="light" fill="clear" @click="currentRatioIndex = 1 - currentRatioIndex"
           ><ion-icon
             v-for="(ratio, index) in RATIOS"
@@ -46,6 +75,12 @@
         ></ion-button>
       </div>
     </ion-row>
+    <CoverSuggestionCard
+      v-if="phase === 'matched' && suggestion"
+      :cover="suggestion"
+      @confirm="confirmSuggestion"
+      @dismiss="dismiss"
+    />
   </div>
 </template>
 
@@ -62,12 +97,19 @@ import {
   tabletPortraitOutline,
 } from 'ionicons/icons';
 import { CameraPreview, CameraPreviewOptions } from '@capgo/camera-preview';
+import { App } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 
 import useCoverSearch from '~/composables/useCoverSearch';
+import useLiveCoverSearch from '~/composables/useLiveCoverSearch';
+import { mapFrameRectToPreview } from '~/composables/useDetectionBox';
 import { app } from '~/stores/app';
 import { IonRow, onIonViewWillLeave } from '@ionic/vue';
 
 type BoundingClientRect = { x: number; y: number; width: number; height: number };
+
+/** 'contain' is the plugin's own default: the stream is fitted into the view and letterboxed. */
+const ASPECT_MODE = 'contain' as const;
 
 const RATIOS = [
   {
@@ -98,23 +140,58 @@ watch(isPortrait, () => {
 const cameraPreview = useTemplateRef<HTMLDivElement>('cameraPreview');
 
 const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
-const { takePhoto, isSearching } = useCoverSearch(useRouter(), coverIdEvents);
+const router = useRouter();
+const { takePhoto, isSearching, searchOneFrame } = useCoverSearch(router, coverIdEvents);
+const { phase, suggestion, suggestionFrameSize, covers, start, stop, dismiss } = useLiveCoverSearch(searchOneFrame);
+
+// Pastec reports where in the uploaded frame the cover was found; place that on the live preview.
+/**
+ * The geometry CameraPreview.start() reports back, which is where the preview actually ended up —
+ * the plugin clamps and letterboxes the rect we ask for, so the requested one cannot place the box.
+ */
+const previewRect = ref<BoundingClientRect>();
+
+const detectionBox = computed(() =>
+  suggestion.value?.boundingRect && suggestionFrameSize.value && previewRect.value
+    ? mapFrameRectToPreview(suggestion.value.boundingRect, suggestionFrameSize.value, previewRect.value, ASPECT_MODE)
+    : undefined,
+);
 const { isCameraPreviewShown } = storeToRefs(app());
 
+const confirmSuggestion = async () => {
+  stop();
+  const searchResults = JSON.stringify(covers.value);
+  if (Capacitor.isNativePlatform()) {
+    await CameraPreview.stop().catch(() => {});
+  }
+  isCameraPreviewShown.value = false;
+  await router.push({ path: '/cover-search-results', query: { searchResults, origin: 'takePhoto' } });
+};
+
 const closeCamera = () => {
+  stop();
   CameraPreview.stop().finally(() => {
     isCameraPreviewShown.value = false;
   });
 };
 
 onIonViewWillLeave(() => {
+  stop();
   isCameraPreviewShown.value = false;
 });
 
 watch(isCameraPreviewShown, () => {
   if (!isCameraPreviewShown.value) {
+    stop();
     CameraPreview.stop();
   }
+});
+
+// Scanning must not survive the app going to the background.
+const pauseListener = App.addListener('pause', stop);
+onUnmounted(() => {
+  stop();
+  pauseListener.then((listener) => listener.remove());
 });
 
 watch([overlayHeight, currentRatioIndex], async () => {
@@ -151,11 +228,17 @@ watch([overlayHeight, currentRatioIndex], async () => {
         position: 'rear',
         force: true,
         toBack: true,
+        // Pinned rather than left to the plugin default, since the detection box maths depends on it.
+        aspectMode: ASPECT_MODE,
         ...boundingClientRect.value,
       } as const;
       try {
-        await CameraPreview.start(cameraPreviewOptions);
+        // The preview is restarted on every resize/rotation, so the loop is rebound to the new session.
+        stop();
+        previewRect.value = await CameraPreview.start(cameraPreviewOptions);
+        start();
       } catch (err) {
+        previewRect.value = undefined;
         console.error('CameraPreview.start failed:', err);
       }
     }
@@ -240,6 +323,10 @@ watch([overlayHeight, currentRatioIndex], async () => {
 #overlay {
   position: absolute;
   background: var(--dm-background-color);
+  /* Three slots so the close button can never land on top of the ratio buttons. */
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
   &.portrait {
     bottom: 1rem;
     height: 4rem;
@@ -247,15 +334,39 @@ watch([overlayHeight, currentRatioIndex], async () => {
   &.landscape {
     right: 1rem;
     width: 4rem;
+    flex-direction: column;
+    padding: 0.5rem 0;
   }
 }
-ion-button {
+
+#overlay-status {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+
+  .status-label {
+    overflow: hidden;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    opacity: 0.8;
+  }
+}
+
+#overlay-status ion-button,
+#close-button {
+  flex: none;
   &::part(native) {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 }
 
 #ratio-buttons {
+  display: flex;
+  flex: none;
+
   ion-button {
     min-height: initial;
     &::part(native) {
@@ -270,5 +381,39 @@ ion-button {
 
 .button-large {
   --min-height: initial;
+}
+
+#detection-layer {
+  position: fixed;
+  z-index: 10000;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#detection-box {
+  position: absolute;
+  border: 3px solid var(--ion-color-success, #2dd36f);
+  border-radius: 6px;
+  box-shadow: 0 0 0 9999px rgb(0 0 0 / 25%);
+  animation: detection-box-in 200ms ease-out;
+}
+
+@keyframes detection-box-in {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+#scanning-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 </style>

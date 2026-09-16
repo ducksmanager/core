@@ -25,11 +25,18 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
 
 const toErrorOutcome = (e: unknown) => {
   if (e && typeof e === 'object' && 'error' in e) {
-    const { error, errorDetails } = e as { error: string; errorDetails?: string };
-    return { status: 'error' as const, error, details: errorDetails };
+    const { error, errorDetails, retryAfterMs } = e as {
+      error: string;
+      errorDetails?: string;
+      retryAfterMs?: number;
+    };
+    return { status: 'error' as const, error, details: errorDetails, retryAfterMs };
   }
   return { status: 'error' as const, error: e instanceof Error ? e.message : 'Error' };
 };
+
+export const normalizeBase64 = (input: string): string =>
+  input.startsWith('data:') ? input : `data:image/jpeg;base64,${input}`;
 
 /** The file picker rejects with "pickFiles canceled." when the user dismisses it, which is not an error. */
 const isPickerCancellation = (e: unknown): boolean =>
@@ -51,9 +58,6 @@ export default (router: Router, coverIdEvents: ReturnType<typeof useDmSocket>['c
 
   const isSearching = ref(false);
   const { t } = useI18n();
-
-  const normalizeBase64 = (input: string): string =>
-    input.startsWith('data:') ? input : `data:image/jpeg;base64,${input}`;
 
   const searchOneFrame = async (dataUrl: string, pastecIndex: number) => {
     try {
