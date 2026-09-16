@@ -37,7 +37,9 @@ import { stores as webStores } from "~web";
 
 const { loadDimensionsFromApi, loadStepsFromApi } = useModelLoad();
 
-const selected = defineModel<string>();
+const selected = defineModel<string>({
+  required: true,
+});
 
 const {
   hasMoreBefore = false,

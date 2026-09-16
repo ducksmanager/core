@@ -36,7 +36,7 @@
     },
     "types": [
       "./.eslint.d.ts"
-    ],
+    ]
   },
   "include": [
     "auto-imports.d.ts",
@@ -51,5 +51,5 @@
     "node_modules",
     "dist",
     ".turbo"
-  ],
+  ]
 }

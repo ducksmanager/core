@@ -10,7 +10,7 @@
     "name": "Bruno Perel"
   },
   "scripts": {
-    "build": "bun build --target node --external electron index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
+    "build": "bun build --target node --external electron ./index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "lint": "eslint --fix .",
     "start": "bun --inspect run --watch ./index.ts",
     "dev": "PWDEBUG=1 bun --inspect run --watch ./index.ts",
@@ -29,13 +29,13 @@
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.6",
+    "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.6.1",
     "@types/yargs": "^17.0.35",
-    "eslint": "^10.9.1",
+    "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.68.0"
+    "typescript-eslint": "^8.70.0"
   }
 }

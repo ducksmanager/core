@@ -9,7 +9,7 @@ import { defineConfig, normalizePath } from 'vite';
 import VitePluginImageTools from 'vite-plugin-image-tools';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-import getViteAliases from '../../vite-aliases';
+import getViteAliases from '../../vite-aliases.ts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -93,7 +93,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: normalizePath(path.resolve(__dirname, '../web/public/images/medals/*.png')),
+          src: normalizePath(path.resolve(import.meta.dirname, '../web/public/images/medals/*.png')),
           dest: 'images/medals',
           // Matched paths are ../web/public/images/medals/<file>.png → destDir becomes
           // images/medals/web/public/images/medals; go up 4 segments to land in images/medals/.
@@ -140,10 +140,10 @@ export default defineConfig({
 
   resolve: {
     dedupe: ['pinia', 'vue', 'vue-i18n', 'vue-router', '@vueuse/core'],
-    alias: getViteAliases(path.resolve(__dirname, '../..'), {
-      '~': path.resolve(__dirname, './src'),
-      '~translations': path.resolve(__dirname, 'translations'),
-      '~web': path.resolve(__dirname, '../web'),
+    alias: getViteAliases(path.resolve(import.meta.dirname, '../..'), {
+      '~': path.resolve(import.meta.dirname, './src'),
+      '~translations': path.resolve(import.meta.dirname, 'translations'),
+      '~web': path.resolve(import.meta.dirname, '../web'),
     }),
   },
 });

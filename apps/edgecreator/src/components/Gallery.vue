@@ -96,7 +96,9 @@ const selected = defineModel<string | undefined>({
   default: undefined,
 });
 
-const items = defineModel<GalleryItem[]>("items");
+const items = defineModel<GalleryItem[]>("items", {
+  default: () => [],
+});
 
 const clickedImage = ref<GalleryItem>();
 const showUploadModal = ref(false);

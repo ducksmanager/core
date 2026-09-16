@@ -111,7 +111,9 @@ const {
 
 const stepNumber = inject<number>("stepNumber");
 
-const inputValue = defineModel<string>();
+const inputValue = defineModel<string | undefined>({
+  default: undefined,
+});
 
 const originalColor = ref<string>();
 

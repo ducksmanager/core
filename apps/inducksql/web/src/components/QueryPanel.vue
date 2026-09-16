@@ -79,7 +79,7 @@ onMounted(() => {
       <span v-for="line in scans" :key="line" class="plan">{{ line }}</span>
     </p>
 
-    <ResultsGrid v-if="result" :result="result" />
+    <results-grid v-if="result" :result="result" />
   </section>
 </template>
 
