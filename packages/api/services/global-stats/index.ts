@@ -106,7 +106,7 @@ const listenEvents = () => ({
           ...user,
           name: "name" in user ? user.name : user.username,
         }))
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.name.localeCompare(b.name)),
     ),
 
   getUserCount: () => prismaDm.user.count(),
@@ -120,13 +120,15 @@ const listenEvents = () => ({
     }),
 
   getUsersPointsAndStats: async (userIds: number[]) =>
-    userIds.length ? {
-      points: await getMedalPoints(userIds),
-      stats: await getUsersQuickStats(userIds),
-    } : {
-      error: "Bad request",
-      errorDetails: "Empty user IDs list",
-    },
+    userIds.length
+      ? {
+          points: await getMedalPoints(userIds),
+          stats: await getUsersQuickStats(userIds),
+        }
+      : {
+          error: "Bad request",
+          errorDetails: "Empty user IDs list",
+        },
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(
@@ -134,7 +136,7 @@ export const { client, server } = useSocketEvents<typeof listenEvents>(
   {
     listenEvents,
     middlewares: [],
-  }
+  },
 );
 
 export type ClientEvents = (typeof client)["emitEvents"];

@@ -14,9 +14,12 @@ import type { ConsoleArgs } from "~/index";
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
 const ROOT_URL = "https://www.bedetheque.com/";
 
-export const error = (...args: ConsoleArgs) => console.error(`[bedetheque]`, ...args);
-export const warn = (...args: ConsoleArgs) => console.warn(`[bedetheque]`, ...args);
-export const log = (...args: ConsoleArgs) => console.log(`[bedetheque]`, ...args);
+export const error = (...args: ConsoleArgs) =>
+  console.error(`[bedetheque]`, ...args);
+export const warn = (...args: ConsoleArgs) =>
+  console.warn(`[bedetheque]`, ...args);
+export const log = (...args: ConsoleArgs) =>
+  console.log(`[bedetheque]`, ...args);
 
 export type CsvIssue = {
   bedetheque_url: string;

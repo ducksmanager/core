@@ -4,13 +4,8 @@ import type { Socket } from "socket.io";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 const listenEvents = () => ({
-  getLegacyDimensions: async (
-    publicationcode: string,
-    issuenumber: string,
-  ) =>
-    prismaEdgeCreator.$queryRaw<
-      { optionName: string; optionValue: string }[]
-    >`
+  getLegacyDimensions: async (publicationcode: string, issuenumber: string) =>
+    prismaEdgeCreator.$queryRaw<{ optionName: string; optionValue: string }[]>`
     with inducks_issues as (select row_number() over () as row_num, issuenumber
         from coa.inducks_issue
         where publicationcode = ${publicationcode} order by issuecode)
