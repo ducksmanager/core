@@ -1,6 +1,5 @@
 import type { Errorable } from "socket-call-server";
 
-import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
@@ -18,6 +17,9 @@ import {
   PresentationTextValidation,
   validate,
 } from "./util";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export default ({ _socket }: UserServices) => ({
   getUser: async () =>
@@ -42,7 +44,24 @@ export default ({ _socket }: UserServices) => ({
     });
   },
 
-  updateUser: async (input: UserForAccountForm) => {
+  updateUser: ev(
+    v.pipe(
+      v.object({
+        discordId: v.optional(v.string()),
+        email: v.string(),
+        allowSharing: v.boolean(),
+        marketplaceAcceptsExchanges: v.boolean(),
+        presentationText: v.string(),
+        oldPassword: v.optional(v.string()),
+        password: v.optional(v.string()),
+        password2: v.optional(v.string()),
+      }),
+      v.check(
+        ({ password, password2 }) => password === password2,
+        "The two passwords should be identical" as const,
+      ),
+    ),
+  )(async (input) => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
       new DiscordIdValidation(),
@@ -50,7 +69,6 @@ export default ({ _socket }: UserServices) => ({
       new EmailUpdateValidation(),
       new PresentationTextValidation(),
     ];
-    input.userId = _socket.data.user.id;
     if (input.password) {
       validators = [
         ...validators,
@@ -68,7 +86,11 @@ export default ({ _socket }: UserServices) => ({
       let hasResolved = false;
       prismaDm
         .$transaction(async (transaction) => {
-          const scopedError = await validate(transaction, input, validators);
+          const scopedError = await validate(
+            transaction,
+            { ...input, userId: _socket.data.user.id },
+            validators,
+          );
           if (scopedError) {
             resolve({ error: "Bad request", ...scopedError } as const);
             hasResolved = true;
@@ -117,5 +139,5 @@ export default ({ _socket }: UserServices) => ({
           }
         });
     });
-  },
+  }),
 });

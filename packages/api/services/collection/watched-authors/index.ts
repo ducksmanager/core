@@ -1,8 +1,10 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { authorUser } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 const maxWatchedAuthors = 5;
 
@@ -27,16 +29,21 @@ export default ({ _socket }: UserServices) => ({
     }));
   },
 
-  addWatchedAuthor: async (personcode: string) => {
+  addWatchedAuthor: ev(v.string())(async (personcode) => {
     try {
       await upsertAuthorUser(personcode, _socket.data.user.id, null);
     } catch (e) {
       console.log(e);
       return { error: "Error", errorDetails: (e as Error).message };
     }
-  },
+  }),
 
-  updateWatchedAuthor: async (data: authorUser) => {
+  updateWatchedAuthor: ev(
+    v.object({
+      personcode: v.string(),
+      notation: v.number(),
+    }),
+  )(async (data) => {
     try {
       const { personcode, notation } = data;
       await upsertAuthorUser(personcode, _socket.data.user.id, notation);
@@ -44,16 +51,16 @@ export default ({ _socket }: UserServices) => ({
       console.error(e);
       return { error: "Error", errorDetails: (e as Error).message };
     }
-  },
+  }),
 
-  deleteWatchedAuthor: async (personcode: string) => {
+  deleteWatchedAuthor: ev(v.string())(async (personcode) => {
     await prismaDm.authorUser.deleteMany({
       where: {
         personcode,
         userId: _socket.data.user.id,
       },
     });
-  },
+  }),
 });
 
 const upsertAuthorUser = async (

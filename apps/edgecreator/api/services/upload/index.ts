@@ -6,6 +6,8 @@ import type { Socket } from "socket.io";
 import { SocketClient } from "socket-call-client";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { RequiredAuthMiddleware } from "~dm-services/auth/util";
 import type { ClientEvents as EdgeCreatorServices } from "~dm-services/edgecreator";
@@ -142,22 +144,22 @@ export type UploadServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket: socket }: UploadServices) => ({
-  uploadFromBase64: async (
-    parameters: {
-      data: string;
-      issuecode: string;
-    } & (
-      | {
-          isEdgePhoto: false;
-          fileName: string;
-        }
-      | {
-          isEdgePhoto: true;
-          fileName?: undefined;
-        }
-    ),
-  ) => {
-    const { issuecode, data, isEdgePhoto, fileName } = parameters;
+  uploadFromBase64: ev(
+    v.union([
+      v.object({
+        data: v.string(),
+        issuecode: v.string(),
+        isEdgePhoto: v.literal(false),
+        fileName: v.string(),
+      }),
+      v.object({
+        data: v.string(),
+        issuecode: v.string(),
+        isEdgePhoto: v.literal(true),
+        fileName: v.undefined(),
+      }),
+    ]),
+  )(async ({ issuecode, data, isEdgePhoto, fileName }) => {
     const cleanData = data.includes(",") ? data.split(",")[1] : data;
     const targetFilePath = await getTargetFilePath(
       isEdgePhoto
@@ -197,7 +199,7 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
     }
 
     return { fileName: targetFileName };
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

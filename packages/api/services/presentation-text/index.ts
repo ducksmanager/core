@@ -1,4 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -10,11 +12,13 @@ import namespaces from "../namespaces";
 export type Decision = "approve" | "refuse";
 
 const listenEvents = () => ({
-  approveOrDenyPresentationText: async (
-    sentence: string,
-    userId: number,
-    decision: Decision,
-  ) => {
+  approveOrDenyPresentationText: ev(
+    v.tuple([
+      v.string(),
+      v.number(),
+      v.union([v.literal("approve"), v.literal("refuse")]),
+    ]),
+  )(async ([sentence, userId, decision]) => {
     switch (decision) {
       case "approve":
         {
@@ -36,7 +40,7 @@ const listenEvents = () => ({
           }),
         }).send();
     }
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

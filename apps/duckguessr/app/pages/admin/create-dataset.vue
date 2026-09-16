@@ -489,6 +489,9 @@ watch(
       .then((result) => {
         datasetPreview.value = result;
       })
+      .catch((error) => {
+        console.error("Error previewing dataset:", error);
+      })
       .finally(() => {
         isCalculatingDatasetPreview.value = false;
       });

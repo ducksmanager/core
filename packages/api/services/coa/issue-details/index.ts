@@ -1,6 +1,8 @@
 import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export const getPrefixedEntryurl = (url: string, sitecode: string) =>
   `${
@@ -33,10 +35,11 @@ export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
     .then((data) => data.groupBy("issuecode"));
 
 export default {
-  getIssueDetails: async (issuecode: string) => {
-    if (typeof issuecode !== "string" || !issuecode) {
-      return { error: "Invalid issuecode" };
-    }
+  getIssueDetails: ev(
+    v.config(v.pipe(v.string(), v.nonEmpty()), {
+      message: "Invalid issuecode",
+    }),
+  )(async (issuecode) => {
     const issue = await prismaCoa.inducks_issue.findFirst({
       where: { issuecode },
     });
@@ -47,25 +50,27 @@ export default {
       releaseDate: issue.oldestdate!,
       entries: await getEntries(issuecode),
     };
-  },
+  }),
 
-  getIssueCoverDetails: async (issuecodes: string[]) =>
-    issuecodes.length > 10
-      ? { error: "Too many requests" }
-      : getIssueCoverDetails(issuecodes),
+  getIssueCoverDetails: ev(
+    v.pipe(v.array(v.string()), v.maxLength(10, "Too many requests")),
+  )(async (issuecodes) => getIssueCoverDetails(issuecodes)),
 
-  getIssueCoverDetailsByPublicationcode: async (publicationcode: string) => {
-    const issuecodes = (
-      await prismaCoa.inducks_issue.findMany({
-        select: { issuecode: true },
-        where: { publicationcode },
-      })
-    ).map(({ issuecode }) => issuecode);
-    return getIssueCoverDetails(issuecodes);
-  },
+  getIssueCoverDetailsByPublicationcode: ev(v.string())(
+    async (publicationcode) => {
+      const issuecodes = (
+        await prismaCoa.inducks_issue.findMany({
+          select: { issuecode: true },
+          where: { publicationcode },
+        })
+      ).map(({ issuecode }) => issuecode);
+      return getIssueCoverDetails(issuecodes);
+    },
+  ),
 
-  getIssuePopularities: (issuecodes: string[]) =>
+  getIssuePopularities: ev(v.array(v.string()))(async (issuecodes) =>
     getPopularityByIssuecodes(issuecodes),
+  ),
 };
 
 export const getCoverUrls = async (issuecodes: string[]) => {

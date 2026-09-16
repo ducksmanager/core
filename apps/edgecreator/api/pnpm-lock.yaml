@@ -48,17 +48,20 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       socket-call-client:
-        specifier: ^0.8.0
-        version: 0.8.0(vue@3.5.22(typescript@6.0.3))
+        specifier: ^0.10.0
+        version: 0.10.0(vue@3.5.22(typescript@6.0.3))
       socket-call-server:
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.12.0
+        version: 0.12.0(valibot@1.5.0(typescript@6.0.3))
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
       universal-cookie:
         specifier: ^4.0.4
         version: 4.0.4
+      valibot:
+        specifier: ^1.5.0
+        version: 1.5.0(typescript@6.0.3)
       ~api:
         specifier: workspace:*
         version: link:../../../packages/api
@@ -1485,8 +1488,8 @@ packages:
     resolution: {integrity: sha512-6x6dK6zJdpTzF4sQeNYxwtvBzf6Eg4GtlesS94HOvTudUeyK2WXAaIfmDgsyslYrRBeFIlsi54AYsFGUuhmvrQ==}
     engines: {node: '>= 0.4'}
 
-  socket-call-client@0.8.0:
-    resolution: {integrity: sha512-Jjk1KjvofAcDAzlrtu0oIW85u2xadfDeMGEqJQjz+8JA7SsCNKEzh2bw0x4YMLCK+b25nqEeoIcQjGujU77VWA==}
+  socket-call-client@0.10.0:
+    resolution: {integrity: sha512-2VdFULMF991RDjVpIRpj78LHrtzH4LzWe5yJyBFbpQ7OB0xarFc1zr81TcMwqc7+fPusLw1npEjYPPiTBG5VGg==}
     engines: {node: '>=22.0.0'}
     peerDependencies:
       axios-cache-interceptor: ^1.12.0
@@ -1495,9 +1498,14 @@ packages:
       axios-cache-interceptor:
         optional: true
 
-  socket-call-server@0.9.0:
-    resolution: {integrity: sha512-yh3KIhXlp0jaE5x/XYs+vG5sZjZbsyzTBL9jyJqa2SXJoVhnqjiqk0l6LVtxagpjeMvhTa/UgQYx1L36TShavg==}
+  socket-call-server@0.12.0:
+    resolution: {integrity: sha512-3gJP+03tspzEfLMak8BRRuVJFuWAKsZHatN74rKDPp4jLNpRim6p8MALx9Qbk3B8n1muXl4tMzYrroHa4of4ig==}
     engines: {node: '>=22.0.0'}
+    peerDependencies:
+      valibot: ^1.0.0
+    peerDependenciesMeta:
+      valibot:
+        optional: true
 
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
@@ -1620,6 +1628,14 @@ packages:
   utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+
+  valibot@1.5.0:
+    resolution: {integrity: sha512-nil6AkP2TChWL43Z5uJ6GTxX01CUA+g8LWUM+N/rB9NBbkUMaUsi9PUNzlUPgoKASgmx9f7eGOYpJ04/fSa6FQ==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
@@ -3174,7 +3190,7 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  socket-call-client@0.8.0(vue@3.5.22(typescript@6.0.3)):
+  socket-call-client@0.10.0(vue@3.5.22(typescript@6.0.3)):
     dependencies:
       socket.io-client: 4.8.3
       vue: 3.5.22(typescript@6.0.3)
@@ -3183,9 +3199,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket-call-server@0.9.0:
+  socket-call-server@0.12.0(valibot@1.5.0(typescript@6.0.3)):
     dependencies:
       socket.io: 4.8.3
+    optionalDependencies:
+      valibot: 1.5.0(typescript@6.0.3)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -3329,6 +3347,10 @@ snapshots:
       requires-port: 1.0.0
 
   utils-merge@1.0.1: {}
+
+  valibot@1.5.0(typescript@6.0.3):
+    optionalDependencies:
+      typescript: 6.0.3
 
   vary@1.1.2: {}
 

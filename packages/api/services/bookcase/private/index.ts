@@ -1,4 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -7,13 +9,15 @@ import { RequiredAuthMiddleware } from "../../auth/util";
 import namespaces from "../../namespaces";
 
 const listenEvents = ({ _socket }: UserServices) => ({
-  setBookcaseOptions: async ({
-    textures,
-    showAllCopies: showDuplicatesInBookcase,
-  }: {
-    textures: { bookcase: string; bookshelf: string };
-    showAllCopies: boolean;
-  }) => {
+  setBookcaseOptions: ev(
+    v.object({
+      textures: v.object({
+        bookcase: v.string(),
+        bookshelf: v.string(),
+      }),
+      showAllCopies: v.boolean(),
+    }),
+  )(async ({ textures, showAllCopies: showDuplicatesInBookcase }) => {
     const [, bookcaseSubTexture1] = textures.bookcase.split("/");
     const [, bookcaseSubTexture2] = textures.bookshelf.split("/");
     const user = await prismaDm.user.findUnique({
@@ -36,8 +40,9 @@ const listenEvents = ({ _socket }: UserServices) => ({
       where: { id: user.id },
     });
     return "OK";
-  },
-  setBookcaseOrder: async (publicationCodes: string[]) => {
+  }),
+
+  setBookcaseOrder: ev(v.array(v.string()))(async (publicationCodes) => {
     const userId = _socket.data.user.id;
     await prismaDm.bookcasePublicationOrder.deleteMany({
       where: { userId },
@@ -49,7 +54,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
         userId,
       })),
     });
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

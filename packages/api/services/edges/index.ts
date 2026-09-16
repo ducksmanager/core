@@ -1,4 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -10,9 +12,6 @@ const getEdges = async (filters: {
   publicationcode?: string;
   issuecodes?: string[];
 }) => {
-  if (!(filters.publicationcode || filters.issuecodes)) {
-    throw new Error("Invalid filter");
-  }
   const issuecode = {
     in:
       filters.issuecodes ||
@@ -72,10 +71,19 @@ const listenEvents = () => ({
       })
       .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues)),
 
-  getEdges: (filters: { publicationcode?: string; issuecodes?: string[] }) =>
+  getEdges: ev(
+    v.config(
+      v.object({
+        publicationcode: v.optional(v.string()),
+        issuecodes: v.optional(v.array(v.string())),
+      }),
+      { message: "Invalid filters" },
+    ),
+  )((filters) =>
     getEdges(filters)
       .then((edges) => prismaCoa.augmentIssueArrayWithInducksData(edges))
       .then((edges) => edges.groupBy("issuecode")),
+  ),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

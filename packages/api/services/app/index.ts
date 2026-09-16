@@ -1,5 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import namespaces from "../namespaces";
 
@@ -31,7 +33,11 @@ export const getUpdateFileUrl = async (appInfos?: AppInfos) => {
 };
 
 const listenEvents = () => ({
-  getBundleUrl: (appInfos: AppInfos) => getUpdateFileUrl(appInfos),
+  getBundleUrl: ev(
+    v.object({
+      version: v.string(),
+    }),
+  )((appInfos) => getUpdateFileUrl(appInfos)),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

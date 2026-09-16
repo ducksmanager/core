@@ -1,6 +1,9 @@
 import PushNotifications from "@pusher/push-notifications-server";
 import { useSocketEvents } from "socket-call-server";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../index";
@@ -52,7 +55,7 @@ const listenEvents = (services: UserServices) => {
         results.groupBy("issuecode", "popularity"),
       ),
 
-    getNotificationToken: async (username: string) => {
+    getNotificationToken: ev(v.string())(async (username: string) => {
       if (username !== _socket.data.user.username) {
         return { error: "Unauthorized" };
       } else {
@@ -66,35 +69,34 @@ const listenEvents = (services: UserServices) => {
           return { error: "Error", errorDetails: (e as Error).message };
         }
       }
-    },
+    }),
 
-    getLastVisit: async () => {
-      let user: Awaited<ReturnType<typeof getUser>>;
-      try {
-        user = await getUser(_socket.data.user.id);
-      } catch (_e) {
-        return { error: "This user does not exist" };
-      }
-      if (!user.lastAccess) {
-        console.log(
-          `Initializing last access for user ${_socket.data.user.id}`,
-        );
-        user.previousAccess = null;
-        user.lastAccess = new Date();
-      } else {
-        console.log(`Updating last access for user ${_socket.data.user.id}`);
-        user.previousAccess = user.lastAccess;
-        user.lastAccess = new Date();
-      }
-      prismaDm.user.update({
-        data: user,
-        where: {
-          id: _socket.data.user.id,
-        },
-      });
+    getLastVisit: async () =>
+      getUser(_socket.data.user.id)
+        .then((user) => {
+          if (!user.lastAccess) {
+            console.log(
+              `Initializing last access for user ${_socket.data.user.id}`,
+            );
+            user.previousAccess = null;
+            user.lastAccess = new Date();
+          } else {
+            console.log(
+              `Updating last access for user ${_socket.data.user.id}`,
+            );
+            user.previousAccess = user.lastAccess;
+            user.lastAccess = new Date();
+          }
+          prismaDm.user.update({
+            data: user,
+            where: {
+              id: _socket.data.user.id,
+            },
+          });
 
-      return user.previousAccess?.toISOString() || null;
-    },
+          return user.previousAccess?.toISOString() || null;
+        })
+        .catch(() => ({ error: "This user does not exist" as const })),
 
     getLastPublishedEdges: async () => {
       const threeMonthsAgo = new Date();
