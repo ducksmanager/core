@@ -48,7 +48,7 @@
     <ion-row id="overlay" ref="overlay" :class="{ portrait: isPortrait, landscape: !isPortrait }">
       <div id="overlay-status">
         <ion-button
-          v-if="phase === 'exhausted'"
+          v-if="!isLiveCoverSearchEnabled || phase === 'exhausted'"
           ref="takePhotoButton"
           size="large"
           :disabled="isSearching"
@@ -159,7 +159,7 @@ const detectionBox = computed(() =>
     ? mapFrameRectToPreview(suggestion.value.boundingRect, suggestionFrameSize.value, previewRect.value, ASPECT_MODE)
     : undefined,
 );
-const { isCameraPreviewShown } = storeToRefs(app());
+const { isCameraPreviewShown, isLiveCoverSearchEnabled } = storeToRefs(app());
 
 const confirmSuggestion = async () => {
   stop();
@@ -239,7 +239,9 @@ watch([overlayHeight, currentRatioIndex], async () => {
         // The preview is restarted on every resize/rotation, so the loop is rebound to the new session.
         stop();
         previewRect.value = await CameraPreview.start(cameraPreviewOptions);
-        start();
+        if (isLiveCoverSearchEnabled.value) {
+          start();
+        }
       } catch (err) {
         previewRect.value = undefined;
         console.error('CameraPreview.start failed:', err);

@@ -44,6 +44,7 @@ export const app = defineStore('app', () => {
   const isCameraPreviewShown = ref(false);
 
   const isFastCoverSearchEnabled = useSessionStorage('isFastCoverSearchEnabled', false);
+  const isLiveCoverSearchEnabled = useSessionStorage('isLiveCoverSearchEnabled', false);
 
   const isCoaView = ref(route.hash.startsWith('#coa-'));
 
@@ -222,6 +223,7 @@ export const app = defineStore('app', () => {
     isCameraPreviewShown,
     isCoaView,
     isFastCoverSearchEnabled,
+    isLiveCoverSearchEnabled,
     isIOS,
     isOffline,
     isOfflineMode,

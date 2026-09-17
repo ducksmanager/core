@@ -32,9 +32,18 @@
           </ion-item-divider>
         </ion-item-group>
         <ion-row>
-          <ion-col size="10" class="ion-padding"> <ion-label>Fast cover search (experimental)</ion-label></ion-col>
+          <ion-col size="10" class="ion-padding">
+            <ion-label>{{ $t('Recherche rapide de couverture (expérimental)') }}</ion-label></ion-col
+          >
           <ion-col size="2" style="display: flex" class="ion-padding ion-justify-content-end"
             ><ion-checkbox v-model="isFastCoverSearchEnabled" /></ion-col
+        ></ion-row>
+        <ion-row>
+          <ion-col size="10" class="ion-padding">
+            <ion-label>{{ $t('Recherche de couverture en direct (expérimental)') }}</ion-label></ion-col
+          >
+          <ion-col size="2" style="display: flex" class="ion-padding ion-justify-content-end"
+            ><ion-checkbox v-model="isLiveCoverSearchEnabled" /></ion-col
         ></ion-row>
         <ion-item-group>
           <ion-item-divider>
@@ -115,7 +124,7 @@ const storeName = ref<'App Store' | 'Play Store'>();
 
 const storeUrl = computed(() => (storeName.value === 'Play Store' ? playStoreUrl : appStoreUrl));
 
-const { socket, token, isOfflineMode, isFastCoverSearchEnabled } = storeToRefs(app());
+const { socket, token, isOfflineMode, isFastCoverSearchEnabled, isLiveCoverSearchEnabled } = storeToRefs(app());
 const router = useRouter();
 
 AppUpdate.getAppUpdateInfo()
