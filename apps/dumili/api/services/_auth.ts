@@ -3,7 +3,9 @@ import type { Socket } from "socket.io";
 
 import type { SessionUser } from "~dm-types/SessionUser";
 
-const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
+export const authenticateUser = async (
+  token?: string | null,
+): Promise<SessionUser> =>
   new Promise((resolve, reject) => {
     if (!token) {
       reject("No token provided");
@@ -19,8 +21,7 @@ const authenticateUser = async (token?: string | null): Promise<SessionUser> =>
           reject(`Invalid token: ${err}`);
         } else {
           const user = payload as
-            | Omit<SessionUser, "token">
-            | { data?: Omit<SessionUser, "token"> };
+            Omit<SessionUser, "token"> | { data?: Omit<SessionUser, "token"> };
           if ("data" in user) {
             resolve(user.data as SessionUser);
           } else if ("id" in user) {
@@ -44,6 +45,20 @@ export const RequiredAuthMiddleware = (
       next();
     })
     .catch((e) => {
-      next(e);
+      next({ name: "authentication_error", message: e });
+    });
+};
+
+export const OptionalAuthMiddleware = (
+  { _socket }: { _socket: Socket },
+  next: (error?: Error) => void,
+) => {
+  authenticateUser(_socket.handshake.auth.token)
+    .then((user) => {
+      _socket.data.user = user;
+      next();
+    })
+    .catch(() => {
+      next();
     });
 };

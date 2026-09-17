@@ -24,7 +24,18 @@
           { threshold: 1 },
         ]"
         class="position-relative d-flex justify-content-center align-items-center p-3 pb-5 border"
-        :class="{ selectable, selected: selectedId === id, ...(currentEntryPageNumbers?.includes(pageNumber) ? {overlay: true, striped: true, [`kind-${currentEntry!.acceptedStoryKind?.storyKindRows.kind}`]: true} : {}) }"
+        :class="{
+          selectable,
+          selected: selectedId === id,
+          ...(currentEntryPageNumbers?.includes(pageNumber)
+            ? {
+                overlay: true,
+                striped: true,
+                'bg-transparent': true,
+                [`kind-${currentEntry!.acceptedStoryKind?.storyKindRows.kind}`]: true,
+              }
+            : {}),
+        }"
         cols="12"
         md="4"
         @click="selectedId = id"
@@ -32,7 +43,7 @@
         <b-button
           v-if="image"
           variant="danger"
-          class="position-absolute top-0 mt-2 text-center opacity-50 opacity-100-hover"
+          class="position-absolute top-0 mt-2 text-center"
           @click="disconnectPageUrl(id)"
         >
           {{ $t("Désassocier l'image") }}

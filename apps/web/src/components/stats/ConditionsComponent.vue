@@ -24,10 +24,12 @@ const {
   conditions,
   numberPerCondition,
   style = undefined,
+  legendColor = "white",
 } = defineProps<{
   conditions: Condition<boolean>[];
   numberPerCondition: Record<issue_condition, number>;
   style?: Record<string, string>;
+  legendColor?: string;
 }>();
 
 Chart.register(Legend, PieController, Tooltip, Title, ArcElement);
@@ -44,35 +46,33 @@ const chartData = computed(() => ({
     },
   ],
 }));
-const options = computed(
-  (): ChartOptions<"pie"> => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        labels: {
-          color: "white",
-        },
+const options = computed((): ChartOptions<"pie"> => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: legendColor,
       },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem: TooltipItem<"pie">) => {
-            const { dataset, parsed: currentValue } = tooltipItem;
-            const total = dataset.data.reduce(
-              (acc, value) => acc + value || 0,
-              0,
-            );
-            const percentage = parseFloat(
-              ((currentValue / total) * 100).toFixed(1),
-            );
-            return `${currentValue} (${percentage}%)`;
-          },
+    },
+    tooltip: {
+      callbacks: {
+        label: (tooltipItem: TooltipItem<"pie">) => {
+          const { dataset, parsed: currentValue } = tooltipItem;
+          const total = dataset.data.reduce(
+            (acc, value) => acc + value || 0,
+            0,
+          );
+          const percentage = parseFloat(
+            ((currentValue / total) * 100).toFixed(1),
+          );
+          return `${currentValue} (${percentage}%)`;
         },
       },
     },
-  }),
-);
+  },
+}));
 </script>
 
 <style scoped lang="scss">

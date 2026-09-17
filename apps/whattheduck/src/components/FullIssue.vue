@@ -33,16 +33,16 @@ const {
   partInfo?: EntryPartInfo;
 }>();
 
-const coaStore = coa();
+const { issuecodeDetails, publicationNames } = storeToRefs(coa());
 
 const { getCollectionIssues } = wtdcollection();
 
 const collectionIssues = computed(() => getCollectionIssues(issuecode));
-const issue = computed(() => coaStore.issuecodeDetails[issuecode]);
+const issue = computed(() => issuecodeDetails.value[issuecode]);
 
 const countrycode = computed(() => issue.value?.publicationcode.split('/')[0]);
 
-const publicationName = computed(() => issue.value && coaStore.publicationNames[issue.value.publicationcode]);
+const publicationName = computed(() => issue.value && publicationNames.value[issue.value.publicationcode]);
 </script>
 
 <style scoped lang="scss">

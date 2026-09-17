@@ -27,6 +27,10 @@ textarea::placeholder {
   max-width: calc(100% - 40px);
 }
 
+.pb-10 {
+  padding-bottom: 6rem !important;
+}
+
 .z-4 {
   z-index: 4 !important;
 }
@@ -170,17 +174,16 @@ button:hover {
 
 @mixin storyKindBackground($bg) {
   background-color: $bg !important;
-  color: color.invert($bg);
+  color: black;
 
   &.striped {
-    background-color: transparent !important;
     background: repeating-linear-gradient(
       -45deg,
       rgba($bg, 0.8),
       rgba($bg, 0.8) 1px,
-      transparent 1px,
-      transparent 10px
-    );
+      white 1px,
+      white 10px
+    ) !important;
   }
   &.btn:hover {
     background-color: color.adjust($bg, $lightness: 5%) !important;

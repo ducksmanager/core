@@ -41,6 +41,6 @@
     "eslint.config.mjs",
     "nuxt.config.ts",
     "sentry.client.config.ts",
-    "env.d.ts",
+    "env.d.ts"
   ]
 }

@@ -11,7 +11,8 @@ model entry {
   id                            Int                   @id @default(autoincrement())
   acceptedStorySuggestionId     Int?                  @map("accepted_story_suggested_id")
   acceptedStoryKindSuggestionId Int?                  @map("accepted_story_kind_suggested_id")
-  indexationId                  String                @map("indexation_id") @db.VarChar(20)
+  includedInEntryId             Int?                  @map("included_in_entry_id")
+  indexationId                  String                @map("indexation_id") @db.VarChar(36)
   position                      Int
   entrycomment                  String?               @db.VarChar(2009)
   part                          String?               @db.VarChar(5)
@@ -19,6 +20,8 @@ model entry {
   entirepages                   Int
   brokenpagenumerator           Int                   @default(0)
   brokenpagedenominator         Int                   @default(1)
+  includedInEntry               entry?                @relation("entry_included_in_entry", fields: [includedInEntryId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_included_in_entry_id_fk")
+  includedEntries               entry[]               @relation("entry_included_in_entry")
   indexation                    indexation            @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "entry_indexation_id_fk")
   acceptedStoryKind             storyKindSuggestion?  @relation("entry_accepted_story_kind_suggested_idTostory_kind_suggestion", fields: [acceptedStoryKindSuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_kind_suggestion_id_fk")
   acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
@@ -28,6 +31,7 @@ model entry {
   @@index([acceptedStoryKindSuggestionId], map: "entry_story_kind_suggestion_id_fk")
   @@index([acceptedStorySuggestionId], map: "entry_story_suggestion_id_fk")
   @@index([indexationId], map: "entry_indexation_id_fk")
+  @@index([includedInEntryId], map: "entry_included_in_entry_id_fk")
 }
 
 model image {
@@ -50,7 +54,7 @@ model image {
 model page {
   id           Int        @id @default(autoincrement())
   pageNumber   Int        @map("page_number") @db.SmallInt
-  indexationId String     @map("indexation_id") @db.VarChar(20)
+  indexationId String     @map("indexation_id") @db.VarChar(36)
   imageId      Int?       @map("image_id")
   image        image?     @relation(fields: [imageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "page_image_id_fk")
   indexation   indexation @relation(fields: [indexationId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "page_indexation_id_fk")
@@ -60,15 +64,15 @@ model page {
 }
 
 model indexation {
-  id                        String            @id @db.VarChar(20)
+  id                        String            @id @db.VarChar(36) @default(uuid())
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
-  dmUserId                  Int               @map("dm_user_id")
+  dmUserId                  Int?               @map("dm_user_id")
   title                     String?           @db.VarChar(158)
   price                     String?           @db.VarChar(150)
   releaseDate               String?           @map("release_date") @db.VarChar(10)
   entries                   entry[]
   acceptedIssueSuggestion   issueSuggestion?  @relation("indexation_accepted_issue_suggestion_idToissue_suggestion", fields: [acceptedIssueSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "indexation_issue_suggestion_id_fk")
-  user                      user              @relation(fields: [dmUserId], references: [dmId], onUpdate: Restrict, map: "indexation_user_dm_id_fk")
+  user                      user?              @relation(fields: [dmUserId], references: [dmId], onUpdate: Restrict, map: "indexation_user_dm_id_fk")
   issueSuggestions          issueSuggestion[]
   pages                     page[]
 
@@ -109,7 +113,7 @@ model storySuggestion {
 
 model issueSuggestion {
   id                           Int                  @id @default(autoincrement())
-  indexationId                 String               @map("indexation_id") @db.VarChar(20)
+  indexationId                 String               @map("indexation_id") @db.VarChar(36)
   publicationcode              String               @db.VarChar(12)
   issuenumber                  String               @db.VarChar(13)
   aiStorySearchPossibleStoryId Int?                 @map("story_search_possible_story_id")
@@ -215,7 +219,6 @@ model aiStorySuggestion {
 
 model user {
   dmId            Int          @id @map("dm_id")
-  inducksUsername String?      @map("inducks_username") @db.VarChar(64)
   indexation      indexation[]
 }
 

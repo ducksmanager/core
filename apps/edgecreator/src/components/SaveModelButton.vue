@@ -55,7 +55,9 @@
           }}
         </b-alert>
         <div
-          v-for="contributionType of Object.keys(userContributionEnL10n) as contribution[]"
+          v-for="contributionType of Object.keys(
+            userContributionEnL10n,
+          ) as contribution[]"
           :key="contributionType"
         >
           <h2>{{ $t(ucFirst(userContributionEnL10n[contributionType])) }}</h2>
@@ -73,22 +75,26 @@
             :min-input-length="0"
             @select-item="
               (user: SimpleUser) => {
-                contributorsByContributionType[contributionType as contribution].add(user);
+                contributorsByContributionType[
+                  contributionType as contribution
+                ].add(user);
               }
             "
           />
           <ul>
             <li
-              v-for="contributor in contributorsByContributionType[contributionType as contribution]"
+              v-for="contributor in contributorsByContributionType[
+                contributionType as contribution
+              ]"
               :key="contributor.username"
             >
               {{ contributor.username }}
               <i-bi-x-square-fill
                 class="clickable"
                 @click="
-                  contributorsByContributionType[contributionType as contribution].delete(
-                    contributor,
-                  );
+                  contributorsByContributionType[
+                    contributionType as contribution
+                  ].delete(contributor)
                 "
               />
             </li>
@@ -170,7 +176,7 @@ watch(issueIndexToSave, (newValue) => {
       action === "export",
       action === "submit",
     ).then((response) => {
-      const isSuccess = response!.paths.svgPath;
+      const isSuccess = response.paths.svgPath;
       if (isSuccess) {
         progress.value += 100 / issuecodes.value.length;
         issueIndexToSave.value!++;
@@ -185,9 +191,7 @@ watch(issueIndexToSave, (newValue) => {
 
 const onOK = () => {
   if (action) {
-    for (const contributionType of Object.keys(
-      contributors.value,
-    ) as contribution[]) {
+    for (const contributionType of ["photographe", "createur"] as const) {
       for (const contributor of contributorsByContributionType.value[
         contributionType
       ]) {

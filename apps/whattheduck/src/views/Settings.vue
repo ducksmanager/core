@@ -9,34 +9,49 @@
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <ion-list>
+      <ion-list class="ion-no-padding">
+        <ion-item-group>
+          <ion-item-divider>
+            <ion-label>{{ $t('Apparence') }}</ion-label>
+          </ion-item-divider>
+        </ion-item-group>
+        <ion-segment :value="themePreference" @ion-change="onThemeChange">
+          <ion-segment-button value="system">
+            <ion-label>{{ $t('Système') }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="light">
+            <ion-label>{{ $t('Clair') }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="dark">
+            <ion-label>{{ $t('Sombre') }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-item-group>
+          <ion-item-divider>
+            <ion-label>{{ $t('Fonctionnalités') }}</ion-label>
+          </ion-item-divider>
+        </ion-item-group>
+        <ion-row>
+          <ion-col size="10" class="ion-padding"> <ion-label>Fast cover search (experimental)</ion-label></ion-col>
+          <ion-col size="2" style="display: flex" class="ion-padding ion-justify-content-end"
+            ><ion-checkbox v-model="isFastCoverSearchEnabled" /></ion-col
+        ></ion-row>
         <ion-item-group>
           <ion-item-divider>
             <ion-label>{{ $t('Version') }}</ion-label>
           </ion-item-divider>
         </ion-item-group>
         <ion-item>
-          <ion-text v-if="currentAppVersion">
+          <ion-label v-if="currentAppVersion">
             {{
               $t('What The Duck version {version} bundle {bundle}', {
                 version: currentAppVersion,
                 bundle: currentBundleVersion,
               })
-            }}</ion-text
+            }}</ion-label
           ></ion-item
         >
-        <ion-row>
-          <ion-col size="10" class="ion-padding"> <ion-label>Fast cover search (experimental)</ion-label></ion-col>
-          <ion-col size="2" style="display: flex" class="ion-padding ion-justify-content-end"
-            ><ion-checkbox v-model="isFastCoverSearchEnabled" /></ion-col
-        ></ion-row>
-        <a id="link-to-dm" target="_blank" :href="storeUrl" class="ion-padding">
-          <template v-if="storeName === 'Play Store'">{{
-            $t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
-          }}</template>
-          <template v-else>{{ $t("Notez What The Duck sur l'App Store si vous l'appréciez :-)") }}</template>
-        </a>
-        <ion-item-group style="padding-top: 1rem">
+        <ion-item-group>
           <ion-item-divider>
             <ion-label>{{ $t('Réseaux sociaux') }}</ion-label>
           </ion-item-divider>
@@ -64,6 +79,12 @@
           {{ $t('Supprimer mon compte') }}
         </ion-button>
       </template>
+      <a id="link-to-dm" target="_blank" :href="storeUrl" class="ion-padding">
+        <template v-if="storeName === 'Play Store'">{{
+          $t("Notez What The Duck sur le Play Store si vous l'appréciez :-)")
+        }}</template>
+        <template v-else>{{ $t("Notez What The Duck sur l'App Store si vous l'appréciez :-)") }}</template>
+      </a>
     </ion-content>
   </ion-page>
 </template>
@@ -75,8 +96,12 @@ import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
 
 import { app } from '~/stores/app';
+import { useTheme, type ThemePreference } from '~/composables/useTheme';
 
 const { t } = useI18n();
+
+const { preference: themePreference, setThemePreference } = useTheme();
+const onThemeChange = (event: CustomEvent) => setThemePreference(event.detail.value as ThemePreference);
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=net.ducksmanager.whattheduck';
 const appStoreUrl = 'https://www.apple.com/app-store/';
 const discordUrl = import.meta.env.VITE_DISCORD_URL;

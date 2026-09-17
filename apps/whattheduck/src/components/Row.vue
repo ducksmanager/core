@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import { ClassValue } from 'vue';
 import { app } from '~/stores/app';
 
 const {
@@ -26,15 +27,15 @@ const {
 } = defineProps<{
   id: string;
   type: 'countrycode' | 'publicationcode' | 'issuecode';
-  class: Record<string, boolean> | '';
+  class: ClassValue;
 }>();
 
 defineSlots<{
   'fill-bar'(): unknown;
-  'checkbox'(): unknown;
-  'prefix'(): unknown;
-  'label'(): unknown;
-  'suffix'(): unknown;
+  checkbox(): unknown;
+  prefix(): unknown;
+  label(): unknown;
+  suffix(): unknown;
 }>();
 
 const { isOfflineMode, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());

@@ -1,0 +1,58 @@
+# PaddleOCR on Linux arm64 — LOCAL DEV ONLY (prod x86 uses ./Dockerfile).
+# Paddle's prebuilt arm64 wheels SIGSEGV, so we build ultra-infer with the ONNX
+# Runtime backend and route inference through PaddleX HPI. See PR #17824.
+
+ARG PYTHON_VERSION=3.12
+
+# ── Stage 1: build the ultra-infer wheel for arm64 (ORT backend only) ──
+FROM python:${PYTHON_VERSION}-slim-bookworm AS ultra-infer-builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential cmake git patchelf wget \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir wheel numpy setuptools
+
+RUN git clone --depth 1 https://github.com/PaddlePaddle/PaddleX.git /build/PaddleX
+WORKDIR /build/PaddleX/deploy/ultra-infer/python
+
+ENV WITH_GPU=OFF \
+    ENABLE_ORT_BACKEND=ON \
+    ENABLE_OPENVINO_BACKEND=OFF \
+    ENABLE_TRT_BACKEND=OFF \
+    ENABLE_PADDLE_BACKEND=OFF \
+    ENABLE_VISION=OFF \
+    ENABLE_TEXT=OFF \
+    ENABLE_BENCHMARK=OFF \
+    CC=gcc \
+    CXX=g++
+
+RUN python setup.py build && python setup.py bdist_wheel
+
+# ── Stage 2: runtime image ──
+ARG PYTHON_VERSION=3.12
+FROM python:${PYTHON_VERSION}-slim-bookworm
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgl1 libglib2.0-0 libgomp1 libsm6 libxext6 libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV FLAGS_enable_pir_in_executor=0 \
+    FLAGS_enable_pir_api=0 \
+    FLAGS_use_mkldnn=0 \
+    OMP_NUM_THREADS=4 \
+    OPENBLAS_NUM_THREADS=4
+
+COPY apps/dumili/api/paddleocr/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY --from=ultra-infer-builder /build/PaddleX/deploy/ultra-infer/python/dist/*.whl /tmp/
+RUN pip install --no-cache-dir /tmp/ultra_infer*.whl onnxruntime paddle2onnx \
+    && rm -f /tmp/*.whl
+
+COPY apps/dumili/api/paddleocr/patch_paddlex_hpi.py /tmp/patch_paddlex_hpi.py
+RUN python /tmp/patch_paddlex_hpi.py && rm /tmp/patch_paddlex_hpi.py
+
+COPY apps/dumili/api/paddleocr/recognition_model_rules.json ./
+
+ENTRYPOINT ["python3", "-u", "./server.py"]

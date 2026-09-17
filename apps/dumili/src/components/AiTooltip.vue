@@ -1,7 +1,6 @@
 <template>
   <div
-    class="position-absolute z-1"
-    :class="`${topCenter ? 'top-0 mt-1' : 'end-0 me-1'}`"
+    class="position-absolute d-flex align-items-center r-0 top-0 end-0 me-2 h-100"
   >
     <Teleport to="body">
       <b-popover
@@ -21,14 +20,17 @@
     />
   </div>
 </template>
-<script setup lang="ts" generic="LoadingEventStart extends keyof IndexationServerSentStartEvents">
+<script
+  setup
+  lang="ts"
+  generic="LoadingEventStart extends keyof IndexationServerSentStartEvents"
+>
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
 import type { IndexationServerSentStartEvents } from "~dumili-services/indexation";
 
 const { status, loadingEvents = [] } = defineProps<{
   id: string;
   status: "success" | "failure" | "idle";
-  topCenter?: boolean;
   loadingEvents?: {
     eventName: LoadingEventStart;
     checkMatch: (id: number) => boolean;

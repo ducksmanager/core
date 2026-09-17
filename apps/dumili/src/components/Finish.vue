@@ -3,28 +3,8 @@
     fluid
     class="d-flex flex-grow-1 h-100 flex-column align-items-center justify-content-center overflow-y-auto"
   >
-    <b-alert v-if="!issue" variant="warning" :model-value="true">
-      {{
-        $t(
-          'Vous devez spécifier une publication et un numéro pour continuer (cliquez sur la liste déroulante qui indique actuellement "Numéro inconnu")',
-        )
-      }}</b-alert
-    >
-    <b-alert
-      v-if="!indexation!.releaseDate"
-      variant="warning"
-      :model-value="true"
-    >
-      {{
-        $t(
-          'Vous devez spécifier la date de sortie du numéro dans "Méta-données" pour continuer',
-        )
-      }}</b-alert
-    >
-    <b-alert v-else-if="!csv" variant="warning" :model-value="true">
-      {{
-        $t("Vous devez identifier au moins une histoire pour continuer")
-      }}</b-alert
+    <b-alert v-if="csvError" variant="warning" :model-value="true">
+      {{ csvError }}</b-alert
     >
     <template v-else>
       <b-alert variant="info" :model-value="true">
@@ -65,7 +45,7 @@
           name="issue_comment"
           class="d-none"
         />
-        <b-form-textarea v-model="csv" name="csv" class="d-none" />
+        <b-form-textarea v-model="csvEntries" name="csv" class="d-none" />
         <b-button type="submit" variant="primary">{{
           $t("Prévisualiser l'indexation sur Inducks")
         }}</b-button>
@@ -74,27 +54,32 @@
   </b-container>
 </template>
 <script setup lang="ts">
-const { t: $t } = useI18n();
-
-import { getCsvEntries, getCsvMetadata } from "~/composables/useCsvExport";
+import useCsvExport, {
+  buildStoriesWithDetails,
+} from "~/composables/useCsvExport";
 import { suggestions } from "~/stores/suggestions";
-import type { FullEntry } from "~dumili-services/indexation";
+import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
 import { type storySuggestion } from "~prisma/client_dumili/client";
 import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
 
-const { indexation } = storeToRefs(suggestions());
-const { acceptedIssue: issue } = storeToRefs(suggestions());
+const { t: $t } = useI18n();
+
+const { indexation } = storeToRefs(suggestions()) as {
+  indexation: Ref<FullIndexation>;
+};
 
 const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 
+const { t } = useI18n();
+
 const acceptedStories = computed(() =>
-  indexation.value?.entries
+  indexation.value.entries
     .map((entry) => entry.acceptedStory)
     .filter((story): story is FullEntry["acceptedStory"] => story !== null),
 );
 
 const storycodes = computed(() =>
-  Object.values(acceptedStories.value || {})
+  acceptedStories.value
     .filter(
       (story): story is storySuggestion & { storycode: string } =>
         story?.storycode !== null,
@@ -102,29 +87,22 @@ const storycodes = computed(() =>
     .map((story) => story.storycode),
 );
 
-const storiesWithDetails = computedAsync(() =>
-  Promise.all([
-    coaEvents.getStoriesStoryjobs(storycodes.value),
-    coaEvents.getStoriesHeroCharacter(storycodes.value),
-  ]).then(([storyjobs, heroCharacter]) => {
-    const storiesStoryjobs = "error" in storyjobs ? {} : storyjobs.data;
-    const heroCharacters = "error" in heroCharacter ? {} : heroCharacter.data;
-    return storycodes.value
-      .map((storycode) => ({
-        storycode,
-        heroCharacter:
-          storycode in heroCharacters ? heroCharacters[storycode] : null,
-        storyjobs:
-          storycode in storiesStoryjobs ? storiesStoryjobs[storycode] : [],
-      }))
-      .groupBy("storycode");
-  }),
+const storiesWithDetails = computedAsync(
+  () =>
+    Promise.all([
+      coaEvents.getStoriesStoryjobs(storycodes.value),
+      coaEvents.getStoriesHeroCharacter(storycodes.value),
+    ]).then(([storyjobs, heroCharacter]) =>
+      buildStoriesWithDetails(storycodes.value, storyjobs, heroCharacter),
+    ),
+  {},
 );
 
-const csv = computed(() =>
-  getCsvEntries(indexation.value!, storiesWithDetails.value),
+const { csvEntries, csvError, csvMetadata } = useCsvExport(
+  toReactive(indexation),
+  toReactive(storiesWithDetails),
+  t,
 );
-const csvMetadata = computed(() => getCsvMetadata(indexation.value!));
 </script>
 <style scoped lang="scss">
 @use "sass:list";

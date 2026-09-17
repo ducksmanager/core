@@ -63,7 +63,7 @@ alias: [/collection/abonnements]
       class="mt-3 align-items-center"
     >
       <b-col>
-        <b-button class="mt-4" @click="currentSubscription = newSubscription">
+        <b-button class="mt-4" @click="currentSubscription = newSubscription()">
           {{ $t("Ajouter un abonnement") }}
         </b-button>
       </b-col>
@@ -72,7 +72,7 @@ alias: [/collection/abonnements]
       v-if="currentSubscription && !currentSubscription.id"
       :subscription="currentSubscription"
       is-edit
-      @start-edit="currentSubscription = newSubscription"
+      @start-edit="currentSubscription = newSubscription()"
       @cancel-edit="currentSubscription = undefined"
       @edit="createSubscription"
     />
@@ -100,11 +100,12 @@ const { subscriptions } = storeToRefs(collection());
 
 const { collection: collectionEvents } = inject(socketInjectionKey)!;
 
-const newSubscription = $ref({
-  publicationcode: "fr/SPG",
-  startDate: new Date(),
-  endDate: dayjs(new Date()).add(1, "year").toDate(),
-} as subscription);
+const newSubscription = () =>
+  ({
+    publicationcode: "fr/SPG",
+    startDate: new Date(),
+    endDate: dayjs(new Date()).add(1, "year").toDate(),
+  }) as subscription;
 
 let currentSubscription = $ref<subscription>();
 

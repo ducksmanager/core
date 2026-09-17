@@ -1,4 +1,8 @@
 {
+  "Apparence": "Utseende",
+  "Clair": "Ljust",
+  "Sombre": "Mörkt",
+  "Système": "System",
   "%d nouvelle histoire": "%d ny berättelse",
   "%d numéro à lire": "%d utgåva för att läsa",
   "{numberOfUsers} utilisateurs possèdent ce numéro": "{numberOfUsers} användare äger denna utgåva",
@@ -59,6 +63,7 @@
   "Ex. {index}": "Kopia {index}",
   "Faites un appui long sur le dernier numéro consécutif à sélectionner": "Tryck länge på den sista utgåvan",
   "Filtrer": "Filter",
+  "Fonctionnalités": "Funktioner",
   "Hauteur :": "Längd:",
   "Il n'est pas possible de modifier à la fois des numéros dont vous possédez plusieurs examplaires et des numéros avec un seul exemplaire": "Du kan inte ändra utgåvor som du äger flera kopior av samtidigt som utgåvor som du bara äger en kopia av",
   "Impossible de créer un fichier pour la caméra Android": "Det gick inte att skapa en tom fil för kameran",

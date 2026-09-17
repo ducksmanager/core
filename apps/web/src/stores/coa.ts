@@ -41,6 +41,13 @@ const addPartInfo = (issueDetails: InducksIssueDetails) => {
   };
 };
 
+const mergeInto = <T extends Record<string, unknown>>(
+  target: Ref<T>,
+  patch: Partial<T>,
+) => {
+  target.value = { ...toRaw(target.value), ...patch } as T;
+};
+
 export const coa = defineStore("coa", () => {
   const { coa: events } = inject(socketInjectionKey)!;
   const locale = useI18n().locale;
@@ -90,7 +97,7 @@ export const coa = defineStore("coa", () => {
     publicationNamesFullCountries = shallowRef<string[]>([]),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
-    issuecodeDetails = shallowRef<Record<string, IssuecodeDetail>>({}),
+    issuecodeDetails = ref<Record<string, IssuecodeDetail>>({}),
     issuesByPublicationcode = ref<
       Record<string, EventOutput<CoaClientEvents, "getIssuesByPublicationcode">>
     >({}),
@@ -140,8 +147,8 @@ export const coa = defineStore("coa", () => {
           ),
       );
       if (newIssuecodes.length) {
-        Object.assign(
-          issuecodeDetails.value,
+        mergeInto(
+          issuecodeDetails,
           await events.getIssues(newIssuecodes, withFields),
         );
       }
@@ -158,14 +165,9 @@ export const coa = defineStore("coa", () => {
           !(publicationcode in issueCountsByPublicationcode.value),
       );
       if (filteredPublicationcodes.length) {
-        Object.assign(
-          issueCountsByPublicationcode.value,
-          await events.getCoaCountByPublicationcode(
-            publicationcodes.filter(
-              (publicationcode) =>
-                !(publicationcode in issueCountsByPublicationcode.value),
-            ),
-          ),
+        mergeInto(
+          issueCountsByPublicationcode,
+          await events.getCoaCountByPublicationcode(filteredPublicationcodes),
         );
       }
     },
@@ -177,10 +179,13 @@ export const coa = defineStore("coa", () => {
     fetchIssueUrls = async (issuecode: string) => {
       if (!(issuecode in issueDetails.value)) {
         const newIssueDetails = await events.getIssueDetails(issuecode);
-
-        Object.assign(issueDetails.value, {
+        if ("error" in newIssueDetails) {
+          return;
+        }
+        issueDetails.value = {
+          ...toRaw(issueDetails.value),
           [issuecode]: addPartInfo(newIssueDetails),
-        });
+        };
       }
     };
 

@@ -1,11 +1,13 @@
-FROM debian:buster
-LABEL maintainer="Bruno Perel"
+FROM oven/bun:1.3
+LABEL org.opencontainers.image.authors="Bruno Perel"
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget curl mariadb-client ca-certificates jq && \
-    rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 
-COPY apps/cover-updater/scripts /home/scripts
-RUN chmod -R +x /home/scripts
+RUN apt-get update -y && apt-get install -y openssl
 
-CMD bash -c /home/scripts/import-covers.sh && bash -c /home/scripts/process-covers.sh
+COPY apps/cover-updater/bundle.mjs /app/
+
+COPY packages/prisma-schemas/client_coa/ /client_coa
+COPY packages/prisma-schemas/client_cover_info/ /client_cover_info
+
+ENTRYPOINT ["bun", "bundle.mjs"]

@@ -8,7 +8,6 @@
           ? 'success'
           : 'idle'
     "
-    top-center
     :loading-events="[
       {
         eventName: 'reportSetKumikoInferredPageStoryKinds',

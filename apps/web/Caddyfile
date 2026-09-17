@@ -2,6 +2,10 @@ ducksmanager.net {
     reverse_proxy web-websocket
 }
 
+www.ducksmanager.net {
+    redir https://ducksmanager.net{uri} permanent
+}
+
 sentry.ducksmanager.net {
     reverse_proxy web-sentry:80
 }

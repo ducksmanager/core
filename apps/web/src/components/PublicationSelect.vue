@@ -11,7 +11,6 @@
       name="publicationcode"
       required
       :options="publicationNamesForCurrentCountry"
-      @input="$emit('input', currentPublicationcode!)"
     />
     <router-link
       v-if="!noButton"
@@ -41,7 +40,7 @@ const {
   initialCountrycode?: string;
   initialPublicationcode?: string;
 }>();
-defineEmits<{ (e: "input", publicationcode: string): void }>();
+const emit = defineEmits<{ (e: "input", publicationcode: string): void }>();
 
 const currentCountryCode = $ref(initialCountrycode);
 let currentPublicationcode = $ref(initialPublicationcode);
@@ -76,6 +75,12 @@ const publicationNamesForCurrentCountry = $computed(() =>
         )
     : [],
 );
+
+// b-form-select updates its model on `change`, which fires after the native
+// `input` event, so emitting from a DOM listener would send a stale value.
+watch($$(currentPublicationcode), (newValue) => {
+  emit("input", newValue ?? "");
+});
 
 watch(
   $$(currentCountryCode),

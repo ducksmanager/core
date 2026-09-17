@@ -57,12 +57,7 @@ class MockSocketNamespace {
   async getUser() {
     return {
       id: 1,
-      inducksUsername: "storybook-user",
     };
-  }
-
-  async updateUser() {
-    return { success: true };
   }
 
   async getIndexation() {

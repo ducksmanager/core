@@ -1,0 +1,11 @@
+inducksql.ducksmanager.net {
+	# file_server honours Range, which is what the VFS runs on.
+	handle /coa.sqlite {
+		root * /server-data/inducksql
+		file_server
+	}
+
+	handle {
+		reverse_proxy inducksql
+	}
+}

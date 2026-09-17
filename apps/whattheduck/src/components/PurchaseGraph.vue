@@ -20,6 +20,7 @@ import { Bar } from 'vue-chartjs';
 import type { issue as dm_issue } from '~prisma-schemas/schemas/dm';
 import { coa as webCoa } from '~web/src/stores/coa';
 
+import { useTheme } from '~/composables/useTheme';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { since } = defineProps<{
@@ -28,6 +29,9 @@ const { since } = defineProps<{
 }>();
 
 Chart.register(Legend, CategoryScale, BarElement, LinearScale, BarController, Tooltip, Title);
+
+const { isDark } = useTheme();
+const textColor = computed(() => (isDark.value ? '#ffffff' : '#000000'));
 
 const options = ref();
 
@@ -148,8 +152,8 @@ const compareDates = (a: string, b: string) =>
   );
 
 watch(
-  () => datasets.value && labels.value,
-  (newValue) => {
+  [() => datasets.value && labels.value, textColor],
+  ([newValue, color]) => {
     if (newValue) {
       options.value = {
         animation: {
@@ -161,13 +165,13 @@ watch(
           x: {
             stacked: true,
             ticks: {
-              color: 'white',
+              color,
             },
           },
           y: {
             stacked: true,
             ticks: {
-              color: 'white',
+              color,
             },
           },
         },
@@ -175,7 +179,7 @@ watch(
           legend: {
             display: true,
             labels: {
-              color: 'white',
+              color,
             },
           },
           tooltip: {

@@ -1,10 +1,11 @@
 <template>
   <div :class="classes">
     <b-dropdown
-      class="position-relative z-1"
-      style="width: calc(100% - 40px)"
+      class="position-relative w-100"
+      :style="
+        showTooltips ? { width: 'calc(100% - 4rem) !important' } : undefined
+      "
       :menu-class="['border-white', 'min-w-100', ...extraMenuClass]"
-      :contenteditable="textEditable || null"
       :toggle-class="[
         'text-wrap',
         'w-100',
@@ -25,6 +26,8 @@
         <b-dropdown-item
           v-for="(suggestion, idx) of groupSuggestions"
           :key="`suggestion-${idx}`"
+          :disabled="'isDisabled' in suggestion && suggestion.isDisabled"
+          :contenteditable="textEditable || null"
           :link-class="[
             'd-flex',
             'justify-content-between',
@@ -39,6 +42,7 @@
             current = suggestion;
             showCustomizeForm = false;
           "
+          @input.stop.prevent
         >
           <slot v-bind="{ suggestion, location: 'dropdown' }" />
           <AiSuggestionIcon
@@ -63,6 +67,7 @@
         <div
           v-else
           class="d-flex w-100 justify-content-between align-items-center"
+          :class="extraButtonClass"
         >
           <slot
             v-if="current"
@@ -78,7 +83,8 @@
     <slot v-if="showCustomizeForm" name="customize-form" />
   </div>
 </template>
-<script setup lang="ts" generic="S extends {id: number|string}">
+<script setup lang="ts" generic="S extends { id: number | string; isDisabled?: boolean;  }">
+import type { ClassValue } from "vue";
 const $slots = useSlots();
 
 defineSlots<{
@@ -101,16 +107,20 @@ const {
   itemClass = () => [],
   selectedItemClass = () => ["selected"],
   extraMenuClass = [],
+  extraButtonClass = [],
   textEditable = false,
+  showTooltips = true,
 } = defineProps<{
-  class?: string;
+  class?: ClassValue;
   itemLinkClasses?: string[];
   suggestions: S[];
   category?: (suggestion: S) => "ai" | "user" | "previous";
   itemClass?: (suggestion: S) => string[];
   selectedItemClass?: (suggestion: S) => string[];
   extraMenuClass?: string[];
+  extraButtonClass?: string[];
   textEditable?: boolean;
+  showTooltips?: boolean;
 }>();
 
 const { t: $t } = useI18n();

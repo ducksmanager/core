@@ -1,9 +1,11 @@
 import "~group-by";
 
-import type { Socket } from "socket.io";
+import { v2 as cloudinary } from "cloudinary";
+import type { Server } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import {
   type ServerSentStartEndEvents,
+  getServerSentEvents,
   useSocketEvents,
 } from "socket-call-server";
 
@@ -15,6 +17,7 @@ import type {
   entry,
   indexation,
   issueSuggestion,
+  page,
   Prisma,
   storyKindSuggestion,
   storySuggestion,
@@ -23,16 +26,149 @@ import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
 
 import type { SessionDataWithIndexation } from "../../index";
-import { RequiredAuthMiddleware } from "../_auth";
+import { OptionalAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
-import { getStoriesFromImage, getFullStoriesFromKeywords } from "./story-search";
+import {
+  getStoriesFromImage,
+  getFullStoriesFromKeywords,
+} from "./story-search";
 import { SocketClient } from "socket-call-client";
 
+import { readFileSync, existsSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
+import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from "unpdf";
+
+import { createExtractorFromData } from "node-unrar-js";
+import { unzipSync } from "fflate";
+
+await definePDFJSModule(() => import("pdfjs-dist"));
+
+// In the production bundle, bun bakes in the CI build path for unrar.wasm.
+// We override it by loading the file explicitly when it's present next to the bundle.
+// In local dev (unbundled), node-unrar-js resolves the path itself so we leave it undefined.
+const bundleSideWasm = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "unrar.wasm",
+);
+const unrarWasmBinary = existsSync(bundleSideWasm)
+  ? (() => {
+      const buf = readFileSync(bundleSideWasm);
+      return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+    })()
+  : undefined;
+
+const canvasImport = () => import("@napi-rs/canvas");
+
+const createCoaEvents = () =>
+  new SocketClient(process.env.DM_SOCKET_URL!).addNamespace<CoaEvents>(
+    dmNamespaces.COA,
+  );
+let coaEventsInstance: ReturnType<typeof createCoaEvents> | undefined;
+const coaEvents = () => (coaEventsInstance ??= createCoaEvents());
+
+const MAX_DOCUMENT_FILE_SIZE = 50 * 1024 * 1024;
+const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_DOCUMENT_MIME_TYPES = new Set<string>([
+  "application/pdf",
+  "application/x-rar",
+  "application/octet-stream",
+  "application/zip",
+]);
+const ALLOWED_IMAGE_MIME_TYPES = new Set<string>([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+]);
+const ALLOWED_MIME_TYPES = new Set<string>([
+  ...ALLOWED_DOCUMENT_MIME_TYPES,
+  ...ALLOWED_IMAGE_MIME_TYPES,
+]);
+
+const inferMimeType = (value?: string) => {
+  const extension = value?.toLowerCase()?.split(".")?.pop();
+  if (!extension) {
+    return undefined;
+  }
+
+  switch (extension) {
+    case "pdf":
+      return "application/pdf";
+    case "rar":
+    case "cbr":
+      return "application/x-rar";
+    case "zip":
+    case "cbz":
+      return "application/zip";
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+  }
+  return undefined;
+};
+
+const uploadToCloudinary = async ({
+  services,
+  folder,
+  context,
+  page,
+  ...params
+}: {
+  services: IndexationServices;
+  folder: string;
+  context: Record<string, string>;
+  page: page;
+  buffer: Buffer;
+}) =>
+  new Promise<void>((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        context,
+        overwrite: false,
+        folder,
+        resource_type: "image",
+        upload_preset: "dumili_signed",
+      },
+      async (error, result) => {
+        if (error || !result) {
+          reject(
+            error ??
+              new Error("Cloudinary upload failed: " + JSON.stringify(result)),
+          );
+        } else {
+          console.log(
+            `Uploaded page ${page.pageNumber} to Cloudinary:`,
+            result.secure_url,
+          );
+
+          await setPageUrl(services, page.id, result.secure_url);
+          resolve();
+        }
+      },
+    );
+    stream.end(params.buffer);
+  });
+
+const entryStoryInclude = {
+  acceptedStory: true,
+  acceptedStoryKind: { include: { storyKindRows: true } },
+  storyKindSuggestions: { include: { storyKindRows: true } },
+  storySuggestions: {
+    include: {
+      aiStorySuggestion: {
+        include: {
+          aiStorySearchPossibleStory: true,
+        },
+      },
+    },
+  },
+  includedInEntry: true,
+} as const;
 
 const indexationPayloadInclude = {
   user: true,
@@ -54,7 +190,11 @@ const indexationPayloadInclude = {
               matches: true,
               stories: {
                 include: {
-                  aiStorySuggestion: true,
+                  aiStorySuggestion: {
+                    include: {
+                      aiOcrPossibleStory: true,
+                    },
+                  },
                 },
               },
             },
@@ -76,22 +216,70 @@ const indexationPayloadInclude = {
   issueSuggestions: true,
   entries: {
     include: {
-      acceptedStory: true,
-      acceptedStoryKind: { include: { storyKindRows: true } },
-      storyKindSuggestions: { include: { storyKindRows: true } },
-      storySuggestions: { include: { aiStorySuggestion: {
-        include: {
-          aiStorySearchPossibleStory: true
-      } }}},
+      ...entryStoryInclude,
+      includedEntries: {
+        include: entryStoryInclude,
+      },
     },
   },
 } as const;
 
-export type FullIndexation = Prisma.indexationGetPayload<{
-  include: typeof indexationPayloadInclude;
+const setPageUrl = async (
+  services: IndexationServices,
+  id: number,
+  url: string | null,
+) => {
+  if (
+    !services._socket.data.indexation.pages.some(
+      ({ id: pageId }) => pageId === id,
+    )
+  ) {
+    return {
+      error: "This indexation does not have any page with this ID",
+    };
+  }
+  return prisma.page
+    .update({
+      data: {
+        image: url
+          ? {
+              connectOrCreate: {
+                create: {
+                  url,
+                },
+                where: {
+                  url,
+                },
+              },
+            }
+          : { disconnect: true },
+      },
+      where: {
+        id,
+      },
+    })
+    .then(async () => {
+      await refreshIndexation(services);
+      return "OK" as const;
+    });
+};
+
+type EntryWithoutIncludedEntries = Prisma.entryGetPayload<{
+  include: typeof entryStoryInclude;
 }>;
 
-export type FullEntry = FullIndexation["entries"][number];
+export type FullEntry = EntryWithoutIncludedEntries & {
+  includedEntries?: EntryWithoutIncludedEntries[];
+};
+
+export type FullIndexation = Omit<
+  Prisma.indexationGetPayload<{
+    include: typeof indexationPayloadInclude;
+  }>,
+  "entries"
+> & {
+  entries: FullEntry[];
+};
 
 export type IndexationServerSentStartEvents = {
   reportSetKumikoInferredPageStoryKinds: (pageId: number) => void;
@@ -99,6 +287,8 @@ export type IndexationServerSentStartEvents = {
   reportCreateAiStorySuggestions: (entryId: number) => void;
   reportRunOcrOnImage: (imageId: number) => void;
   reportRunStorySearchOnImage: (imageId: number) => void;
+  reportDocumentAnalyzed: (pageNumbers: number[]) => void;
+  reportDocumentPageUploaded: (pageNumber: number) => void;
 };
 
 export type IndexationServerSentStartEndEvents =
@@ -106,22 +296,15 @@ export type IndexationServerSentStartEndEvents =
     indexationUpdated: (indexation: FullIndexation) => void;
   };
 
-export type IndexationSocket = Socket<
-  object,
-  IndexationServerSentStartEndEvents,
-  object,
-  SessionDataWithIndexation
->;
-
 const isAiRunning: Record<string, boolean> = {};
-export const getFullIndexation = (
+const getFullIndexation = (
   services: IndexationServices,
   indexationId: string,
   runAi = true,
 ) =>
   prisma.indexation
     .findUnique({
-      where: { id: indexationId, dmUserId: services._socket.data.user.id },
+      where: { id: indexationId },
       include: indexationPayloadInclude,
     })
     .then((indexation) => {
@@ -162,9 +345,15 @@ const createAiStorySuggestions = async (
   services: IndexationServices,
   indexation: FullIndexation,
 ) => {
-  const languagecode = indexation.acceptedIssueSuggestion?.publicationcode ? (await coaEvents.getPublicationLanguagecode(indexation.acceptedIssueSuggestion.publicationcode)) || 'en' : 'en';
-  
-  for (const entry of indexation.entries) {
+  const languagecode = indexation.acceptedIssueSuggestion?.publicationcode
+    ? (await coaEvents().getPublicationLanguagecode(
+        indexation.acceptedIssueSuggestion.publicationcode,
+      )) || "en"
+    : "en";
+
+  for (const entry of indexation.entries.filter(
+    ({ includedInEntryId }) => !includedInEntryId,
+  )) {
     if (
       [STORY, COVER].includes(
         entry.acceptedStoryKind?.storyKindRows?.kind ?? "",
@@ -180,238 +369,221 @@ const createAiStorySuggestions = async (
 
       services.reportCreateAiStorySuggestions(entry.id);
 
-      for (const { name, field, storyField, _storySuggestionRelationship } of [
+      const sourceDefinitions = [
         {
           name: "image-based story search",
           field: "aiStorySearchResult",
           storyField: "aiStorySearchPossibleStory",
-          _storySuggestionRelationship: "storySearchDetails",
+          fk: "storySearchPossibleStoryId",
+          otherFk: "ocrPossibleStoryId",
         },
         {
           name: "OCR-based story search",
           field: "aiOcrResult",
           storyField: "aiOcrPossibleStory",
-          _storySuggestionRelationship: "ocrDetails",
+          fk: "ocrPossibleStoryId",
+          otherFk: "storySearchPossibleStoryId",
         },
-      ] as const) {
-        const cachedResults:
-          | {
-              type: typeof _storySuggestionRelationship;
-              storycode: string;
-            }[]
-          | undefined = undefined; /*firstPageOfEntry.image[field]?.stories
-          .filter(
-            (
-              story
-            ): story is typeof story & {
-              aiStorySuggestion: { storycode: string };
-            } => !!story.aiStorySuggestion
-          )
-          .map(
-            ({
-              aiStorySuggestion: {
-                storySuggestion: { storycode },
-              },
-            }) => ({
-              type: storySuggestionRelationship,
-              storycode,
-            })
-          );*/
+      ] as const;
 
-        if (cachedResults) {
-          // if (cachedResults.length) {
-          //   console.log(
-          //     `Entry starting at page ${entry.position}: ${cachedResults.length} ${name} matches found (cached)`,
-          //   );
-          //   break;
-          // } else {
-          //   console.log(
-          //     `Entry starting at page ${entry.position}: No ${name} matches found (cached)`,
-          //   );
-          //   continue;
-          // }
-        } else {
-          const results =
-            field === "aiStorySearchResult"
-              ? await getStoriesFromImage(
-                  firstPageOfEntry.image,
-                  entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
-                )
-              : await getFullStoriesFromKeywords(
-                  (
-                    await runOcrOnImage(
-                      services,
-                      entry.position,
-                      firstPageOfEntry.image,
-                      languagecode
-                    )
-                  ).map(({ text }) => text),
-                );
-          if ("error" in results) {
-            console.error(results.error);
-          } else {
-            let aiResultId = (
-              await prisma.image.findUnique({
-                where: {
-                  id: firstPageOfEntry.image.id,
-                },
-              })
-            )?.[`${field}Id`];
+      const computedSources: {
+        field: (typeof sourceDefinitions)[number]["field"];
+        storyField: (typeof sourceDefinitions)[number]["storyField"];
+        fk: (typeof sourceDefinitions)[number]["fk"];
+        otherFk: (typeof sourceDefinitions)[number]["otherFk"];
+        scoreByStorycode: Record<string, number>;
+      }[] = [];
+      for (const {
+        name,
+        field,
+        storyField,
+        fk,
+        otherFk,
+      } of sourceDefinitions) {
+        const results =
+          field === "aiStorySearchResult"
+            ? await getStoriesFromImage(
+                firstPageOfEntry.image,
+                entry.acceptedStoryKind?.storyKindRows?.kind === COVER,
+              )
+            : await getFullStoriesFromKeywords(
+                (
+                  await runOcrOnImage(
+                    services,
+                    entry.position,
+                    firstPageOfEntry.image,
+                    languagecode,
+                  )
+                ).map(({ text }) => text),
+              );
+        if ("error" in results) {
+          console.error(results.error);
+          continue;
+        }
+        if (!results.stories.length) {
+          console.info(
+            `Entry starting at page ${entry.position}: No ${name} results found`,
+          );
+          continue;
+        }
+        console.log(
+          `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`,
+        );
+        const storiesWithScores = results.stories.groupBy(
+          "storycode",
+          "score[]",
+        );
+        const scoreByStorycode = Object.fromEntries(
+          Object.keys(storiesWithScores).map((storycode) => [
+            storycode,
+            storiesWithScores[storycode].sort((a, b) => b - a)[0],
+          ]),
+        );
+        computedSources.push({
+          field,
+          storyField,
+          fk,
+          otherFk,
+          scoreByStorycode,
+        });
+      }
 
-            if (aiResultId) {
-              if (field === "aiOcrResult") {
-                await prisma.storySuggestion.deleteMany({
-                  where: {
-                    aiStorySuggestion: {
-                      aiOcrPossibleStory: {
-                        resultId: aiResultId,
-                      },
-                    },
-                  },
-                });
-                await prisma.aiOcrPossibleStory.deleteMany({
-                  where: {
-                    resultId: aiResultId,
-                  },
-                });
-              } else {
-                await prisma.storySuggestion.deleteMany({
-                  where: {
-                    aiStorySuggestion: {
-                      aiStorySearchPossibleStory: {
-                        resultId: aiResultId,
-                      },
-                    },
-                  },
-                });
-                await prisma.aiStorySearchPossibleStory.deleteMany({
-                  where: {
-                    resultId: aiResultId,
-                  },
+      if (computedSources.length) {
+        const firstPageImageId = firstPageOfEntry.image.id;
+        await prisma.$transaction(
+          async (tx) => {
+            for (const {
+              field,
+              storyField,
+              fk,
+              otherFk,
+              scoreByStorycode,
+            } of computedSources) {
+              let aiResultId = (
+                await tx.image.findUnique({
+                  where: { id: firstPageImageId },
+                })
+              )?.[`${field}Id`];
+              if (!aiResultId) {
+                aiResultId =
+                  field === "aiOcrResult"
+                    ? (await tx.aiOcrResult.create({ data: {} })).id
+                    : (await tx.aiStorySearchResult.create({ data: {} })).id;
+                await tx.image.update({
+                  where: { id: firstPageImageId },
+                  data: { [`${field}Id`]: aiResultId },
                 });
               }
-            } else {
-              if (field === "aiOcrResult") {
-                aiResultId = (
-                  await prisma.aiOcrResult.create({
-                    data: {},
-                  })
-                ).id;
-              } else {
-                aiResultId = (
-                  await prisma.aiStorySearchResult.create({
-                    data: {},
-                  })
-                ).id;
-              }
-            }
 
-            await prisma.image.update({
-              where: {
-                id: firstPageOfEntry.image.id,
-              },
-              data: {
-                [`${field}Id`]: aiResultId,
-              },
-            });
-            if (!results.stories.length) {
-              console.info(
-                `Entry starting at page ${entry.position}: No ${name} results found`,
-              );
-            } else {
-              console.log(
-                `Entry starting at page ${entry.position}: ${results.stories.length} ${name} matches found`,
-              );
-              await prisma.storySuggestion.deleteMany({
+              const existing = await tx.storySuggestion.findMany({
                 where: {
-                  aiStorySuggestion: {
-                    [storyField]: {
-                      // aiOcrPossibleStory or aiStorySearchPossibleStory
-                      isNot: null,
-                    },
-                  },
                   entryId: entry.id,
+                  aiStorySuggestion: { [storyField]: { isNot: null } },
+                },
+                select: {
+                  id: true,
+                  aiStorySuggestion: {
+                    select: {
+                      id: true,
+                      ocrPossibleStoryId: true,
+                      storySearchPossibleStoryId: true,
+                    },
+                  },
                 },
               });
+              const possibleStoryIdsToDelete: number[] = [];
+              const aiStorySuggestionIdsToDetach: number[] = [];
+              const storySuggestionIdsToDelete: number[] = [];
+              const aiStorySuggestionIdsToDelete: number[] = [];
+              for (const { id, aiStorySuggestion } of existing) {
+                if (!aiStorySuggestion) continue;
+                const possibleStoryId = aiStorySuggestion?.[fk];
+                if (possibleStoryId == null) continue;
+                possibleStoryIdsToDelete.push(possibleStoryId);
+                if (aiStorySuggestion[otherFk] != null) {
+                  aiStorySuggestionIdsToDetach.push(aiStorySuggestion.id);
+                } else {
+                  storySuggestionIdsToDelete.push(id);
+                  aiStorySuggestionIdsToDelete.push(aiStorySuggestion.id);
+                }
+              }
 
-              const storiesWithScores = results.stories.groupBy("storycode", "score[]");
+              if (aiStorySuggestionIdsToDetach.length) {
+                await tx.aiStorySuggestion.updateMany({
+                  where: { id: { in: aiStorySuggestionIdsToDetach } },
+                  data: { [fk]: null },
+                });
+              }
+              if (storySuggestionIdsToDelete.length) {
+                await tx.storySuggestion.deleteMany({
+                  where: { id: { in: storySuggestionIdsToDelete } },
+                });
+              }
+              if (aiStorySuggestionIdsToDelete.length) {
+                await tx.aiStorySuggestion.deleteMany({
+                  where: { id: { in: aiStorySuggestionIdsToDelete } },
+                });
+              }
+              if (possibleStoryIdsToDelete.length) {
+                if (field === "aiOcrResult") {
+                  await tx.aiOcrPossibleStory.deleteMany({
+                    where: { id: { in: possibleStoryIdsToDelete } },
+                  });
+                } else {
+                  await tx.aiStorySearchPossibleStory.deleteMany({
+                    where: { id: { in: possibleStoryIdsToDelete } },
+                  });
+                }
+              }
 
-              for (const storycode of Object.keys(storiesWithScores)) {
-                console.log("Creating story suggestion for storycode", storycode);
-                const data = {
-                  aiStorySuggestion: {
+              for (const storycode of Object.keys(scoreByStorycode)) {
+                const possibleStory = {
+                  [storyField]: {
                     create: {
-                      [storyField]: {
-                        // aiOcrPossibleStory or aiStorySearchPossibleStory
-                        create: {
-                          [field]: {
-                            // aiOcrResult or aiStorySearchResult
-                            connect: {
-                              id: aiResultId,
-                            },
-                          },
-                          score: storiesWithScores[storycode].sort((a, b) => b - a)[0],
-                        },
-                      },
-                    },
-                  },
-                  storycode,
-                  entry: {
-                    connect: {
-                      id: entry.id,
+                      [field]: { connect: { id: aiResultId } },
+                      score: scoreByStorycode[storycode],
                     },
                   },
                 };
-                await prisma.storySuggestion.upsert({
+                await tx.storySuggestion.upsert({
                   where: {
-                    entryId_storycode: {
-                      entryId: entry.id,
-                      storycode,
-                    },
+                    entryId_storycode: { entryId: entry.id, storycode },
                   },
-                  create: data,
-                  update: data,
-                });
-              }
-
-              const newEntry = (await prisma.entry.findUnique({
-                include: {
-                  storySuggestions: {
-                    include: {
-                      aiStorySuggestion: {
-                        include: {
-                          [storyField]: true, // ocrDetails or storySearchDetails
-                        },
-                      },
-                    },
+                  create: {
+                    storycode,
+                    entry: { connect: { id: entry.id } },
+                    aiStorySuggestion: { create: possibleStory },
                   },
-                },
-                where: {
-                  id: entry.id,
-                },
-              }))!;
-              const acceptedStorySuggestionId = newEntry.storySuggestions.find(
-                ({ storycode }) => storycode === currentlyAcceptedStorycode,
-              )?.id;
-              // If no story is currently accepted, we accept the first story suggestion
-              if (acceptedStorySuggestionId) {
-                await prisma.entry.update({
-                  where: {
-                    id: entry.id,
-                  },
-                  data: {
-                    acceptedStory: {
-                      connect: {
-                        id: acceptedStorySuggestionId,
-                      },
+                  update: {
+                    aiStorySuggestion: {
+                      upsert: { create: possibleStory, update: possibleStory },
                     },
                   },
                 });
               }
-              break;
             }
-          }
-        }
+
+            // Keep the currently accepted story accepted if it still exists.
+            if (currentlyAcceptedStorycode) {
+              const acceptedStory = await tx.storySuggestion.findFirst({
+                where: {
+                  entryId: entry.id,
+                  storycode: currentlyAcceptedStorycode,
+                },
+                select: { id: true },
+              });
+              if (acceptedStory) {
+                await tx.entry.update({
+                  where: { id: entry.id },
+                  data: {
+                    acceptedStory: { connect: { id: acceptedStory.id } },
+                  },
+                });
+              }
+            }
+          },
+          { maxWait: 10_000, timeout: 30_000 },
+        );
       }
 
       services.reportCreateAiStorySuggestionsEnd(entry.id);
@@ -428,7 +600,9 @@ const setInferredEntriesStoryKinds = async (
   entries: FullIndexation["entries"],
   force?: boolean,
 ) => {
-  for (const entry of entries) {
+  for (const entry of entries.filter(
+    ({ includedInEntryId }) => !includedInEntryId,
+  )) {
     if (
       entry.storyKindSuggestions.some(
         ({ aiKumikoResultId }) => aiKumikoResultId,
@@ -532,51 +706,223 @@ const setInferredEntriesStoryKinds = async (
 };
 
 export type IndexationServices = NamespaceProxyTarget<
-  Socket<
-    typeof listenEvents,
-    IndexationServerSentStartEndEvents,
-    object,
-    SessionDataWithIndexation
-  >,
+  {
+    data: SessionDataWithIndexation;
+    nsp: { name: string };
+  },
   IndexationServerSentStartEndEvents
 >;
 
-const listenEvents = (services: IndexationServices) => ({
-  setPageUrl: async (id: number, url: string | null) => {
-    if (
-      !services._socket.data.indexation.pages.some(
-        ({ id: pageId }) => pageId === id,
-      )
-    ) {
-      return {
-        error: "This indexation does not have any page with this ID",
-      };
-    }
-    return prisma.page
-      .update({
-        data: {
-          image: url
-            ? {
-                connectOrCreate: {
-                  create: {
-                    url,
-                  },
-                  where: {
-                    url,
-                  },
-                },
-              }
-            : { disconnect: true },
-        },
-        where: {
-          id,
-        },
-      })
-      .then(async () => {
-        await refreshIndexation(services);
-        return "OK" as const;
-      });
+const makeServicesProxy = (
+  io: Server,
+  indexationId: string,
+  user: SessionDataWithIndexation["user"],
+  initialIndexation: FullIndexation,
+): IndexationServices =>
+  getServerSentEvents<
+    IndexationServerSentStartEndEvents,
+    IndexationServices["_socket"]
+  >(io.of(`/indexation/${indexationId}`), {
+    data: { user, indexation: initialIndexation },
+    nsp: { name: `/indexation/${indexationId}` },
+  });
+
+const uploadPages = async (
+  services: IndexationServices,
+  {
+    buffer,
+    fileName,
+    mimeType,
+    firstPageNumber,
+    firstOutOfRangePageNumber,
+  }: {
+    buffer: Buffer;
+    fileName: string;
+    mimeType: string;
+    firstPageNumber: number;
+    firstOutOfRangePageNumber: number;
   },
+) => {
+  try {
+    const { indexation, user } = services._socket.data;
+    const effectiveMimeType = mimeType || inferMimeType(fileName);
+    if (!effectiveMimeType || !ALLOWED_MIME_TYPES.has(effectiveMimeType)) {
+      return { error: "Unsupported file type" };
+    }
+
+    const isDocument = ALLOWED_DOCUMENT_MIME_TYPES.has(effectiveMimeType);
+    const maxSize = isDocument ? MAX_DOCUMENT_FILE_SIZE : MAX_IMAGE_FILE_SIZE;
+
+    if (buffer.byteLength > maxSize) {
+      throw new Error(
+        isDocument
+          ? "Document file too large (max 50 MB)"
+          : "Image file too large (max 5 MB)",
+      );
+    }
+
+    const username = user?.username || "anonymous";
+
+    const folder = `dumili/${username}/${indexation.id}`;
+    const context = { indexation: indexation.id, user: username };
+
+    if (isDocument) {
+      const pagesToPotentiallyOverwrite = indexation.pages.filter(
+        ({ pageNumber }) =>
+          pageNumber >= firstPageNumber &&
+          pageNumber < firstOutOfRangePageNumber,
+      );
+
+      const uploadDocumentPages = async (
+        items: { name: string; getData: () => Promise<Buffer> }[],
+      ) => {
+        if (!items.length) {
+          throw new Error("No valid pages found in the document");
+        }
+        const pagesToOverwrite = pagesToPotentiallyOverwrite.slice(
+          0,
+          items.length,
+        );
+        services.reportDocumentAnalyzed(
+          pagesToOverwrite.map(({ pageNumber }) => pageNumber),
+        );
+        for (const [idx, page] of pagesToOverwrite.entries()) {
+          const { name, getData } = items[idx];
+          console.info(
+            `Uploading page ${page.pageNumber} from file ${name}...`,
+          );
+          await uploadToCloudinary({
+            services,
+            buffer: await getData(),
+            page,
+            folder,
+            context,
+          });
+          services.reportDocumentPageUploaded(page.pageNumber);
+        }
+      };
+
+      switch (effectiveMimeType) {
+        case "application/x-rar":
+        case "application/octet-stream": {
+          const extractor = await createExtractorFromData({
+            data: new Uint8Array(buffer).buffer,
+            ...(unrarWasmBinary && { wasmBinary: unrarWasmBinary }),
+          });
+          const extracted = extractor.extract();
+          const files = [...extracted.files]
+            .filter(
+              (f) =>
+                f.extraction?.length &&
+                f.fileHeader.name.split("/").length === 1 &&
+                inferMimeType(f.fileHeader.name) &&
+                ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(f.fileHeader.name)!),
+            )
+            .sort((a, b) => a.fileHeader.name.localeCompare(b.fileHeader.name));
+          await uploadDocumentPages(
+            files.map((f) => ({
+              name: f.fileHeader.name,
+              getData: async () => Buffer.from(f.extraction!),
+            })),
+          );
+          break;
+        }
+
+        case "application/zip": {
+          const files = Object.entries(unzipSync(new Uint8Array(buffer)))
+            .filter(
+              ([name]) =>
+                name.split("/").length === 1 &&
+                inferMimeType(name) &&
+                ALLOWED_IMAGE_MIME_TYPES.has(inferMimeType(name)!),
+            )
+            .sort(([a], [b]) => a.localeCompare(b));
+          await uploadDocumentPages(
+            files.map(([name, data]) => ({
+              name,
+              getData: async () => Buffer.from(data),
+            })),
+          );
+          break;
+        }
+
+        case "application/pdf": {
+          const pdf = await getDocumentProxy(new Uint8Array(buffer));
+          await uploadDocumentPages(
+            Array.from({ length: pdf.numPages }, (_, i) => ({
+              name: `page ${i + 1}`,
+              getData: async () => {
+                const dataUrl = await renderPageAsImage(pdf, i + 1, {
+                  toDataURL: true,
+                  canvasImport,
+                });
+                return Buffer.from(dataUrl.split(",")[1], "base64");
+              },
+            })),
+          );
+          break;
+        }
+      }
+    } else {
+      const page = indexation.pages.find(
+        ({ pageNumber }) => pageNumber === firstPageNumber,
+      )!;
+      await uploadToCloudinary({ services, buffer, page, folder, context });
+      services.reportDocumentPageUploaded(page.pageNumber);
+    }
+
+    return { status: "OK" };
+  } catch (error) {
+    const returnedError =
+      error instanceof Error
+        ? error.message
+        : "Cloudinary upload failed: " + JSON.stringify(error);
+    console.error(returnedError);
+    return { error: returnedError };
+  }
+};
+
+export const handleHttpFileUpload = async (
+  io: Server,
+  {
+    indexationId,
+    user,
+    buffer,
+    fileName,
+    mimeType,
+    firstPageNumber,
+    firstOutOfRangePageNumber,
+  }: {
+    indexationId: string;
+    user: SessionDataWithIndexation["user"];
+    buffer: Buffer;
+    fileName: string;
+    mimeType: string;
+    firstPageNumber: number;
+    firstOutOfRangePageNumber: number;
+  },
+) => {
+  const indexation = await prisma.indexation.findUnique({
+    where: { id: indexationId },
+    include: indexationPayloadInclude,
+  });
+  if (!indexation) return { error: "Indexation not found" };
+  indexation.entries = indexation.entries.sort(
+    (a, b) => a.position - b.position,
+  );
+  const services = makeServicesProxy(io, indexationId, user, indexation);
+  return uploadPages(services, {
+    buffer,
+    fileName,
+    mimeType,
+    firstPageNumber,
+    firstOutOfRangePageNumber,
+  });
+};
+
+const listenEvents = (services: IndexationServices) => ({
+  setPageUrl: async (id: number, url: string | null) =>
+    setPageUrl(services, id, url),
 
   deleteIndexation: async () => {
     const { id: indexationId } = services._socket.data.indexation;
@@ -873,19 +1219,21 @@ const listenEvents = (services: IndexationServices) => ({
     storyKindSuggestionId: storyKindSuggestion["id"] | null,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
-      ({ storyKindSuggestions }) =>
-        storyKindSuggestions.some(({ id }) => id === storyKindSuggestionId),
+      ({ id }) => id === entryId,
     );
     if (!entry) {
       return {
-        error: `This indexation does not have any entry with this story kind suggestion`,
-        errorDetails: JSON.stringify({ storyKindSuggestionId }),
-      };
-    }
-    if (entry.id !== entryId) {
-      return {
         error: `This indexation does not have any entry with this ID`,
         errorDetails: JSON.stringify({ entryId }),
+      };
+    }
+    const suggestion = entry.storyKindSuggestions.find(
+      ({ id }) => id === storyKindSuggestionId,
+    );
+    if (storyKindSuggestionId && !suggestion) {
+      return {
+        error: `This indexation does not have any entry with this story kind suggestion`,
+        errorDetails: JSON.stringify({ storyKindSuggestionId }),
       };
     }
 
@@ -905,14 +1253,7 @@ const listenEvents = (services: IndexationServices) => ({
 
   updateEntry: async (
     entryId: entry["id"],
-    data: Pick<
-      entry,
-      | "entirepages"
-      | "brokenpagenumerator"
-      | "brokenpagedenominator"
-      | "title"
-      | "position"
-    >,
+    data: Partial<Pick<entry, "entirepages" | "title" | "position">>,
   ) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id }) => id === entryId,
@@ -936,39 +1277,55 @@ const listenEvents = (services: IndexationServices) => ({
     return { status: "OK" };
   },
 
-  createEntry: async (position: number) =>
-    createEntry(services._socket.data.indexation.id, position)
-      .then(() => refreshIndexation(services))
-      .then(() => ({ status: "OK" })),
+  createEntry: (
+    position: number,
+    includedInEntryId: number | undefined = undefined,
+  ) =>
+    createEntry(
+      services._socket.data.indexation.id,
+      position,
+      includedInEntryId,
+    ).then(async ({ id, includedInEntryId }) => {
+      if (!includedInEntryId) {
+        await refreshIndexation(services);
+      }
+      return {
+        entry: services._socket.data.indexation.entries.find(
+          ({ id: entryId }) => entryId === id,
+        )!,
+        status: "OK",
+      };
+    }),
 });
 
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
   IndexationServerSentStartEndEvents
->(
-  new RegExp(`^${namespaces.INDEXATION.replace("{id}", "[0-9]{8}T[0-9]{9}")}$`),
-  {
-    listenEvents,
-    middlewares: [
-      RequiredAuthMiddleware,
-      async (services, next) => {
-        const indexationId = services._socket.nsp.name.split("/").pop()!;
-        if (!indexationId) {
-          next(new Error("No indexation ID provided"));
-          return;
-        }
+>(new RegExp(`^${namespaces.INDEXATION.replace("{id}", "[a-f0-9-]{36}")}$`), {
+  listenEvents,
+  middlewares: [
+    OptionalAuthMiddleware,
+    async (services, next) => {
+      const indexationId = services._socket.nsp.name.split("/").pop()!;
+      if (!indexationId) {
+        next(new Error("No indexation ID provided"));
+        return;
+      }
 
-        await refreshIndexation(services, true, indexationId);
-        next();
-      },
-    ],
-  },
-);
+      await refreshIndexation(services, true, indexationId);
+      next();
+    },
+  ],
+});
 
 export type ClientEmitEvents = (typeof client)["emitEvents"];
 export type ClientListenEvents = (typeof client)["listenEventsInterfaces"];
 
-export const createEntry = async (indexationId: string, position: number) =>
+export const createEntry = async (
+  indexationId: string,
+  position: number,
+  includedInEntryId: number | undefined = undefined,
+) =>
   prisma.entry.create({
     include: {
       storyKindSuggestions: true,
@@ -976,6 +1333,13 @@ export const createEntry = async (indexationId: string, position: number) =>
     data: {
       position,
       entirepages: 1,
+      includedInEntry: includedInEntryId
+        ? {
+            connect: {
+              id: includedInEntryId,
+            },
+          }
+        : undefined,
       indexation: {
         connect: {
           id: indexationId,

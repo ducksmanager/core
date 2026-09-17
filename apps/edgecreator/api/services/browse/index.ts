@@ -24,25 +24,28 @@ const parser = new XMLParser({
 
 const getSvgMetadata = (
   metadataNodes: { "#text": string; type?: string }[],
-  metadataType: string
+  metadataType: string,
 ) =>
   metadataNodes
     .filter(
       ({ type, "#text": text }) =>
-        type === metadataType && typeof text === "string"
+        type === metadataType && typeof text === "string",
     )
     .map(({ "#text": text }) => text.trim());
 
 const findPublishedEdges = async (publicationcode: string) => {
   const [countrycode, magazinecode] = publicationcode.split("/");
-  const coaIssues = await prismaCoa.inducks_issue.findMany({
-    select: {
-      issuecode: true,
-    },
-    where: {
-      publicationcode,
-    },
-  });
+  const coaIssues = (
+    await prismaCoa.inducks_issue.findMany({
+      select: {
+        issuecode: true,
+        issuenumber: true,
+      },
+      where: {
+        publicationcode,
+      },
+    })
+  ).groupBy("issuecode", "issuenumber");
   const existingEdges = (
     await prismaDm.edge.findMany({
       select: {
@@ -51,27 +54,16 @@ const findPublishedEdges = async (publicationcode: string) => {
       },
       where: {
         issuecode: {
-          in: coaIssues.map((issue) => issue.issuecode),
+          in: Object.keys(coaIssues),
         },
-      },
-    })
-  ).groupBy("issuecode");
-
-  const coaIssuecodesByShortIssuecode = (
-    await prismaCoa.inducks_issue.findMany({
-      select: {
-        issuecode: true,
-      },
-      where: {
-        publicationcode,
       },
     })
   )
     .map((issue) => ({
       ...issue,
-      shortIssuecode: issue.issuecode.replace(/[ ]+/, " "),
+      fileName: `${publicationcode.split("/")[1]}.${coaIssues[issue.issuecode].replace(/[ ]+/, "")}.png`,
     }))
-    .groupBy("shortIssuecode", "issuecode");
+    .groupBy("fileName");
 
   const genDir = `${getEdgesPath()}/${countrycode}/gen`;
   if (!existsSync(genDir)) {
@@ -85,17 +77,14 @@ const findPublishedEdges = async (publicationcode: string) => {
     .filter((file) => new RegExp(`^${magazinecode}..+.png$`).test(file.name))
     .flatMap((file) => {
       const filePath = path.join(file.parentPath, file.name);
-      const [magazinecode, issuenumberShort] = file.name.split(".");
-      const publicationcode = `${countrycode}/${magazinecode}`;
-      const shortIssuecode = `${publicationcode} ${issuenumberShort}`;
 
-      let svgUrl: string | undefined;
-      const edge = existingEdges[`${publicationcode} ${issuenumberShort}`];
+      const edge = existingEdges[file.name];
       if (!edge) {
         // Auto-generated edge image
         return [];
       }
 
+      let svgUrl: string | undefined;
       const potentialSvgPath = filePath.replace(".png", ".svg");
       if (existsSync(potentialSvgPath)) {
         svgUrl = potentialSvgPath.replace(/^.+\/edges\//, "");
@@ -103,7 +92,7 @@ const findPublishedEdges = async (publicationcode: string) => {
 
       return {
         id: edge.id,
-        issuecode: coaIssuecodesByShortIssuecode[shortIssuecode],
+        issuecode: edge.issuecode,
         publicationcode,
         url: filePath.replace(/^.+\/edges\//, ""),
         svgUrl,
@@ -118,7 +107,7 @@ const findOngoingEdges = async (currentUsername?: string) => {
   })
     .filter(
       (file) =>
-        file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`)
+        file.isDirectory() && existsSync(`${getEdgesPath()}/${file.name}/gen`),
     )
     .flatMap((countryDir) => {
       const genDir = `${getEdgesPath()}/${countryDir.name}/gen`;
@@ -145,11 +134,11 @@ const findOngoingEdges = async (currentUsername?: string) => {
 
           const designers = getSvgMetadata(
             metadataNodes,
-            "contributor-designer"
+            "contributor-designer",
           );
           const photographers = getSvgMetadata(
             metadataNodes,
-            "contributor-photographer"
+            "contributor-photographer",
           );
 
           return {
@@ -204,7 +193,7 @@ const findOngoingEdges = async (currentUsername?: string) => {
 
 const listenEvents = (services: BrowseServices) => ({
   listPublishedEdgeModels: async (
-    publicationcode: string
+    publicationcode: string,
   ): Promise<
     | {
         error: "Generic error";
@@ -262,9 +251,9 @@ const listenEvents = (services: BrowseServices) => ({
     try {
       return {
         results: readdirSync(
-          `${getEdgesPath()}/${country}/${imageType}`
+          `${getEdgesPath()}/${country}/${imageType}`,
         ).filter((item) =>
-          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item)
+          new RegExp(`(?:^|[. ])${magazine}(?:[. ]|$)`).test(item),
         ),
       };
     } catch (_e) {

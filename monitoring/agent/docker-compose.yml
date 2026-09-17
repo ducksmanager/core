@@ -1,0 +1,42 @@
+services:
+  alloy:
+    container_name: monitoring-alloy
+    image: grafana/alloy:latest
+    restart: always
+    cgroup: host
+    command:
+      - run
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    env_file:
+      - .env
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /data/metrics:/textfile:ro
+      - alloy_data:/var/lib/alloy/data
+    networks:
+      - public-network
+      - dm-api-network
+
+  disk-metrics:
+    container_name: monitoring-disk-metrics
+    image: busybox:latest
+    restart: always
+    command: ["sh", "/disk-metrics.sh"]
+    volumes:
+      - ./disk-metrics.sh:/disk-metrics.sh:ro
+      - /data/metrics:/out
+
+volumes:
+  alloy_data:
+
+networks:
+  public-network:
+    external: true
+  dm-api-network:
+    external: true

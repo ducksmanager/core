@@ -1,5 +1,17 @@
 <template>
   <b-row v-if="hasData" class="d-flex h-100">
+    <b-alert
+      v-if="!indexation.dmUserId"
+      variant="info"
+      model-value
+      :cols="12"
+      class="d-flex align-items-center justify-content-center"
+      >{{
+        $t(
+          "Vous n'êtes pas connecté sur DucksManager. Placez cette page dans vos favoris de navigateur si vous souhaitez y accéder de nouveau plus tard.",
+        )
+      }}</b-alert
+    >
     <b-col :cols="6" class="d-flex flex-column h-100">
       <Gallery v-if="activeTabIndex === 0" :pages="indexation.pages" />
       <b-col v-else-if="activeTabIndex === 1" class="d-flex flex-column h-100">

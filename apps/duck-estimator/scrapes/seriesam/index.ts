@@ -9,10 +9,13 @@ import {
 import { readCsvMapping } from "~/csv";
 import type { ConsoleArgs } from "~/index";
 
-export const error = (...args: ConsoleArgs) => console.error(`[seriesam]`, ...args);
-export const warn = (...args: ConsoleArgs) => console.warn(`[seriesam]`, ...args);
+export const error = (...args: ConsoleArgs) =>
+  console.error(`[seriesam]`, ...args);
+export const warn = (...args: ConsoleArgs) =>
+  console.warn(`[seriesam]`, ...args);
 export const log = (...args: ConsoleArgs) => console.log(`[seriesam]`, ...args);
-export const info = (...args: ConsoleArgs) => console.log(`[seriesam]`, ...args);
+export const info = (...args: ConsoleArgs) =>
+  console.log(`[seriesam]`, ...args);
 
 const MAPPING_FILE = "scrapes/seriesam/coa-mapping.csv";
 const ROOT_URL = "https://www.seriesam.com/cgi-bin/guide?s=";
@@ -112,9 +115,7 @@ export async function scrape() {
           while (true) {
             column = await row.$(`td:nth-child(${cellNumber})`);
             if (column === null) {
-              warn(
-                ` Inducks issue ${issuecodeInRange}: No quotation found`,
-              );
+              warn(` Inducks issue ${issuecodeInRange}: No quotation found`);
               break;
             } else {
               const estimation = parseInt(await column.innerText());

@@ -1,4 +1,20 @@
 <template>
+  <DefineCreateEntryButton v-slot="{ sourceEntryIdx, createAfter }">
+    <div
+      class="position-absolute w-100 d-flex align-items-center justify-content-center"
+      :style="{
+        height: `${pageHeight}px`,
+        top: `${pageHeight * (createAfter ? indexation.entries[sourceEntryIdx].position + indexation.entries[sourceEntryIdx].entirepages - 1 : indexation.entries[sourceEntryIdx].position - 2)}px`,
+      }"
+    >
+      <b-button
+        class="fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
+        variant="success"
+        @click="createEntry(sourceEntryIdx, createAfter)"
+        >{{ $t("Ajouter une entrée") }}</b-button
+      >
+    </div>
+  </DefineCreateEntryButton>
   <b-card
     no-body
     class="table-of-contents d-flex w-100 h-100 m-0 p-0"
@@ -16,7 +32,7 @@
         style="z-index: 1030"
       >
         <template #button-content>{{ $t("Méta-données") }}</template>
-        <b-form @submit.prevent="updateIndexation">
+        <b-form class="text-black" @submit.prevent="updateIndexation">
           <b-alert
             v-if="indexation.acceptedIssueSuggestion === null"
             variant="warning"
@@ -53,12 +69,16 @@
           >
             <b-form-input
               id="release-date"
-              :value="(indexationEdit.releaseDate as unknown as string)?.split('T')[0]"
+              :value="
+                (indexationEdit.releaseDate as unknown as string)?.split('T')[0]
+              "
               type="date"
               v-bind="getInputProps()"
               @input="
                 if ($event.target) {
-                  indexationEdit.releaseDate = (($event.target as HTMLInputElement).value);
+                  indexationEdit.releaseDate = (
+                    $event.target as HTMLInputElement
+                  ).value;
                 }
               "
               @click.stop="() => {}"
@@ -116,29 +136,25 @@
       </b-col>
       <b-col :cols="11" class="position-relative p-0">
         <template
-          v-for="(entry, idx) in indexation.entries"
-          :key="indexation.entries[idx].id"
+          v-for="(entry, idx) in nonIncludedEntries"
+          :key="nonIncludedEntries[idx].id"
         >
-          <div
-            class="position-absolute w-100 d-flex align-items-center justify-content-center"
-            :style="{
-              borderTop: '1px solid black',
-              height: `${pageHeight}px`,
-              top: `${pageHeight * (entry.position + entry.entirepages - 1)}px`,
-            }"
-          >
-            <b-button
-              v-if="showCreateEntryAfter(idx)"
-              class="create-entry fw-bold position-absolute mx-md-n5 d-flex justify-content-center align-items-center"
-              variant="success"
-              @click="createEntry(entry.position + entry.entirepages)"
-              >{{ $t("Ajouter une entrée") }}</b-button
-            >
-          </div>
+          <CreateEntryButton
+            v-if="showCreateEntry(idx, false)"
+            :source-entry-idx="idx"
+            :create-after="false"
+          />
+
           <TableOfContentsEntry
-            v-model="indexation.entries[idx]"
-            @on-entry-resize-stop="($event) => onEntryResizeStop(idx, $event)"
-            @on-entry-drag-stop="($event) => onEntryDragStop(idx, $event)"
+            v-model="nonIncludedEntries[idx]"
+            @on-entry-resize-stop="($event) => onEntryResizeStop(entry, $event)"
+            @on-entry-drag-stop="($event) => onEntryDragStop(entry, $event)"
+          />
+
+          <CreateEntryButton
+            v-if="showCreateEntry(idx, true)"
+            :source-entry-idx="idx"
+            :create-after="true"
           />
         </template>
       </b-col>
@@ -164,6 +180,12 @@ const indexationEdit = ref() as Ref<
   }
 >;
 
+const { define: DefineCreateEntryButton, reuse: CreateEntryButton } =
+  createReusableTemplate<{
+    sourceEntryIdx: number;
+    createAfter: boolean;
+  }>();
+
 watch(
   indexation,
   () => {
@@ -185,6 +207,12 @@ const hasAcceptedIssueSuggestion = computed(
   () => indexation.value.acceptedIssueSuggestion !== null,
 );
 
+const nonIncludedEntries = computed(() =>
+  indexation.value.entries.filter(
+    ({ includedInEntryId }) => !includedInEntryId,
+  ),
+);
+
 const getInputProps = () => ({
   disabled: !hasAcceptedIssueSuggestion.value,
   style: hasAcceptedIssueSuggestion.value
@@ -192,30 +220,47 @@ const getInputProps = () => ({
     : { cursor: "not-allowed" },
 });
 
-const showCreateEntryAfter = (entryIdx: number) => {
+const showCreateEntry = (entryIdx: number, createAfter: boolean) => {
   const entry = indexation.value.entries[entryIdx];
-  const nextEntry = indexation.value.entries[entryIdx + 1];
-  return (
-    (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
-    (!nextEntry &&
-      entry.position + entry.entirepages - 1 <
-        indexationEdit.value.numberOfPages)
+  if (createAfter) {
+    const nextEntry = indexation.value.entries.find(
+      (thisEntry, idx) => idx > entryIdx && !thisEntry.includedInEntryId,
+    );
+    return (
+      (nextEntry && entry.position + entry.entirepages < nextEntry.position) ||
+      (!nextEntry &&
+        entry.position + entry.entirepages - 1 <
+          indexationEdit.value.numberOfPages)
+    );
+  }
+  const previousEntry = indexation.value.entries.findLast(
+    (thisEntry, idx) => idx < entryIdx && !thisEntry.includedInEntryId,
   );
+  return previousEntry
+    ? entry.position > previousEntry.position + previousEntry.entirepages
+    : entry.position > 1;
 };
 
-const onEntryResizeStop = (entryIdx: number, height: number) => {
-  indexation.value!.entries[entryIdx].entirepages = Math.max(
-    0,
-    Math.round(height / pageHeight.value),
-  );
+const onEntryResizeStop = (entry: { id: number }, height: number) => {
+  indexationSocket.value!.updateEntry(entry.id, {
+    entirepages: Math.max(0, Math.round(height / pageHeight.value)),
+  });
 };
 
-const onEntryDragStop = (entryIdx: number, y: number) => {
-  indexation.value!.entries[entryIdx].position = 1 + y / pageHeight.value;
+const onEntryDragStop = (entry: { id: number }, y: number) => {
+  indexationSocket.value!.updateEntry(entry.id, {
+    position: 1 + Math.round(y / pageHeight.value),
+  });
 };
 
-const createEntry = (position: number) =>
-  indexationSocket.value!.createEntry(position);
+const createEntry = (entryIdx: number, createAfter: boolean) => {
+  const entry = indexation.value.entries[entryIdx];
+  const position = createAfter
+    ? entry.position + entry.entirepages
+    : entry.position - 1;
+
+  return indexationSocket.value!.createEntry(position);
+};
 
 const updateIndexation = () => {
   if (indexationEdit.value.numberOfPages < indexation.value.pages.length) {
@@ -258,7 +303,6 @@ watch(
 .table-of-contents {
   background-color: #eee;
   color: black;
-  white-space: nowrap;
   user-select: none;
 
   :deep(.card-header) {

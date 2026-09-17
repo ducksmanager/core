@@ -14,7 +14,7 @@
         button
         class="ion-align-items-center ion-text-nowrap"
         @click="
-          (fab?.$el as HTMLIonFabElement).close();
+          (fab?.$el as HTMLIonFabElement | undefined)?.close();
           emit('show-camera-preview');
         "
       >
@@ -33,7 +33,7 @@
         button
         class="ion-align-items-center ion-text-nowrap"
         @click="
-          (fab?.$el as HTMLIonFabElement).close();
+          (fab?.$el as HTMLIonFabElement | undefined)?.close();
           isCoaView = true;
           selectedIssuecodes = undefined;
         "
@@ -74,11 +74,11 @@ import useCoverSearch from '../composables/useCoverSearch';
 
 import { app } from '~/stores/app';
 
-const { coverId: coverIdEvents, storySearch: storySearchEvents } = inject(dmSocketInjectionKey)!;
+const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 
 const emit = defineEmits<(e: 'show-camera-preview') => void>();
 
-const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents, storySearchEvents);
+const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents);
 const { isCoaView, isOfflineMode, selectedIssuecodes } = storeToRefs(app());
 
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();

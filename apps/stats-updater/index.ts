@@ -6,15 +6,8 @@ import type { PoolConnection } from "mariadb";
 import { createPool } from "mariadb";
 import * as process from "process";
 
-import {
-  type inducks_issue,
-  type inducks_storyjob,
-  Prisma,
-} from "~prisma-schemas/schemas/coa";
-import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
-import type { authorUser, issue as dmIssue } from "~prisma-schemas/schemas/dm";
+import type { issue as dmIssue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
 dotenv.config();
@@ -46,11 +39,7 @@ const {
   DM_STATS_DDL_PATH: string;
 };
 
-// These are required for the respective Prisma clients to work
-process.env.DATABASE_URL_COA = DATABASE_URL_DM_STATS.replace(
-  /\/[^/]+$/,
-  `/${DATABASE_NAME_COA}`,
-);
+// Required for the DM Prisma client to work
 process.env.DATABASE_URL_DM = DATABASE_URL_DM_STATS.replace(
   /\/[^/]+$/,
   `/${DATABASE_NAME_DM}`,
@@ -110,14 +99,18 @@ const runQueryFile = async (dbName: string, sqlFile: string) =>
   runQuery(`USE ${dbName};` + readFileSync(sqlFile).toString());
 
 // Direct connection for heavy SQL (avoids Prisma adapter issues). Use ANALYZE after bulk insert — OPTIMIZE rebuilds can run long and close the socket.
-const runQueryOnDirectConnection = async (sql: string, dbName?: string) => {
+const runQueryOnDirectConnection = async (
+  sql: string,
+  dbName?: string,
+  params?: unknown[],
+) => {
   if (dbName) {
     await connection.query(`USE ${dbName}`);
   }
   await connection.query(
     "SET SESSION net_read_timeout = 28800, net_write_timeout = 28800",
   );
-  await connection.query(sql);
+  await connection.query(sql, params);
 };
 
 connect().then(async () => {
@@ -134,6 +127,7 @@ connect().then(async () => {
     },
   });
   const personcodes = Object.keys(authorUsers.groupBy("personcode"));
+  const personcodePlaceholders = personcodes.map(() => "?").join(",");
   const userIdsWithPersoncodes = Object.keys(authorUsers.groupBy("userId")).map(
     (userId) => parseInt(userId),
   );
@@ -162,63 +156,80 @@ connect().then(async () => {
     ).map((issue) => issue as dmIssue & { issuecode: string }),
   });
 
-  console.log("Creating storyIssue entries");
-  await prismaDmStats.storyIssue.createMany({
-    data: await prismaCoa.$queryRaw<
-      ({ storycode: string } & Pick<inducks_issue, "issuecode">)[]
-    >`
-      select distinct sv.storycode, i.issuecode
-      from inducks_storyjob sj
-        inner join inducks_storyversion sv using (storyversioncode)
-        inner join inducks_entry e using (storyversioncode)
-        inner join inducks_issue i using (issuecode)
-      where sj.personcode in (${Prisma.join(personcodes)})
-        and sv.storycode != ''`,
-  });
+  console.log("ANALYZING TABLES auteurs_pseudos, numeros_simple");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE auteurs_pseudos, numeros_simple",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
-  await prismaDmStats.$executeRaw`OPTIMIZE TABLE histoires_publications`;
+  console.log("Creating storyIssue entries");
+  await runQueryOnDirectConnection(
+    `insert into histoires_publications(storycode, issuecode)
+    select distinct sv.storycode, i.issuecode
+    from ${DATABASE_NAME_COA}.inducks_storyjob sj
+      inner join ${DATABASE_NAME_COA}.inducks_storyversion sv using (storyversioncode)
+      inner join ${DATABASE_NAME_COA}.inducks_entry e using (storyversioncode)
+      inner join ${DATABASE_NAME_COA}.inducks_issue i using (issuecode)
+    where sj.personcode in (${personcodePlaceholders})
+      and sv.storycode != ''`,
+    DATABASE_NAME_DM_STATS_NEW,
+    personcodes,
+  );
+
+  console.log("ANALYZING TABLE histoires_publications");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE histoires_publications",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
   console.log("Creating authorStory entries");
-  await prismaDmStats.authorStory.createMany({
-    data: await prismaCoa.$queryRaw<
-      (Pick<inducks_storyjob, "personcode"> & { storycode: string })[]
-    >`
-      select distinct sj.personcode, sv.storycode
-      from inducks_storyjob sj
-            inner join inducks_storyversion sv using (storyversioncode)
-      where sv.storycode != ''
-            and sv.what = 's'
-            and sv.kind = 'n'
-            and sj.personcode in (${Prisma.join(personcodes)})`,
-  });
+  await runQueryOnDirectConnection(
+    `insert into auteurs_histoires(personcode, storycode)
+    select distinct sj.personcode, sv.storycode
+    from ${DATABASE_NAME_COA}.inducks_storyjob sj
+      inner join ${DATABASE_NAME_COA}.inducks_storyversion sv using (storyversioncode)
+    where sv.storycode != ''
+      and sv.what = 's'
+      and sv.kind = 'n'
+      and sj.personcode in (${personcodePlaceholders})`,
+    DATABASE_NAME_DM_STATS_NEW,
+    personcodes,
+  );
 
-  await prismaDmStats.$executeRaw`OPTIMIZE TABLE auteurs_histoires`;
+  console.log("ANALYZING TABLE auteurs_histoires");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE auteurs_histoires",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
   console.log("Creating missingStoryForUser entries");
-  await prismaDmStats.missingStoryForUser.createMany({
-    data: await prismaDmStats.$queryRaw<
-      (Pick<authorUser, "userId"> &
-        Pick<authorStory, "personcode" | "storycode">)[]
-    >`
-      select a_p.ID_User AS userId,
-        a_h.personcode,
-        a_h.storycode
-      from auteurs_pseudos a_p
-            inner join auteurs_histoires a_h on a_p.NomAuteurAbrege = a_h.personcode
-            inner join histoires_publications h_pub using (storycode)
-      where not exists(
-                    select 1
-                    from histoires_publications h_pub
-                          inner join numeros_simple n using (issuecode)
-                    where a_h.storycode = h_pub.storycode
-                          and a_p.ID_User = n.ID_Utilisateur
-            )
-      group by a_p.ID_User,
-            a_h.personcode,
-            a_h.storycode`,
-  });
+  await runQueryOnDirectConnection(
+    `insert into utilisateurs_histoires_manquantes(ID_User, personcode, storycode)
+    select distinct a_p.ID_User,
+      a_h.personcode,
+      a_h.storycode
+    from auteurs_pseudos a_p
+      inner join auteurs_histoires a_h on a_p.NomAuteurAbrege = a_h.personcode
+    where exists(
+            select 1
+            from histoires_publications h_pub
+            where h_pub.storycode = a_h.storycode
+          )
+      and not exists(
+            select 1
+            from histoires_publications h_pub
+              inner join numeros_simple n using (issuecode)
+            where h_pub.storycode = a_h.storycode
+              and n.ID_Utilisateur = a_p.ID_User
+          )`,
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
-  await prismaDmStats.$executeRaw`OPTIMIZE TABLE utilisateurs_histoires_manquantes`;
+  console.log("ANALYZING TABLE utilisateurs_histoires_manquantes");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE utilisateurs_histoires_manquantes",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
   console.log("Creating missingIssueForUser entries");
   await runQueryOnDirectConnection(

@@ -72,14 +72,11 @@
           <Issue
             :issuecode="edgeEvent.issuecodes[0]"
             hide-condition
-            :flex="false"
-          />&nbsp;<OtherIssues
+            :flex="false" />&nbsp;<OtherIssues
             :number="edgeEvent.issuecodes.length"
             :text-single="$t('autre tranche')"
-            :text-multiple="$t('autres tranches')"
-          />
-        </span>
-      </BookcasePopover>
+            :text-multiple="$t('autres tranches')" /></span
+      ></BookcasePopover>
       {{ $t("pour la bibliothèque DucksManager") }}
     </template>
     <template v-else-if="collectionSubscriptionAdditionEvent">

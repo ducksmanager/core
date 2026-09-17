@@ -68,7 +68,9 @@
     "dev:android": {
       "persistent": true
     },
-    "dev:setup": {},
+    "dev:setup": {
+      "cache": false
+    },
     "dev:blocking": {
       "dependsOn": [
         "dev:setup"
@@ -80,12 +82,14 @@
       ]
     },
     "dev": {
+      "cache": false,
       "persistent": true,
       "dependsOn": [
         "^dev:blocking-up"
       ]
     },
     "dev:bun": {
+      "cache": false,
       "persistent": true,
       "dependsOn": [
         "^dev:blocking-up"

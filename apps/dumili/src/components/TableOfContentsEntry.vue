@@ -1,10 +1,8 @@
 <template>
   <vue-draggable-resizable
-    :active="isCurrentEntry"
     :parent="true"
-    prevent-deactivation
     :resizable="showVerticalResizeHandle"
-    :draggable="true"
+    draggable
     :handles="['bm']"
     :grid="[1000, pageHeight]"
     :h="height"
@@ -13,7 +11,24 @@
     :on-resize="onResize"
     :on-drag="onDrag"
     role="button"
-    :class-name="`position-absolute d-flex align-items-center justify-content-center cursor-pointer col w-100 kind-${entry.acceptedStoryKind?.storyKindRows.kind} ${(overlay?.type === 'story kind' && overlay.entryId === entry.id && 'striped') || ''} ${(isCurrentEntry && 'active') || ''} ${(showVerticalResizeHandle && 'up-and-down') || ''}`"
+    :class-name="
+      [
+        'entry',
+        'position-absolute',
+        'd-flex',
+        'align-items-center',
+        'justify-content-center',
+        'cursor-pointer',
+        'col',
+        'w-100',
+        `kind-${entry.acceptedStoryKind?.storyKindRows.kind}`,
+        (overlay?.type === 'story kind' &&
+          overlay.entryId === entry.id &&
+          'striped') ||
+          '',
+        (showVerticalResizeHandle && 'up-and-down') || '',
+      ].join(' ')
+    "
     @resize-stop="
       (_left: number, _top: number, _width: number, height: number) => {
         emit('onEntryResizeStop', height);
@@ -29,7 +44,7 @@
     <template #bm>
       <i-bi-arrows-expand v-if="showVerticalResizeHandle" />
     </template>
-    <Entry v-model="entry" :editable="currentEntry?.id === entry.id" />
+    <Entry v-model="entry" />
   </vue-draggable-resizable>
 </template>
 
@@ -78,11 +93,7 @@ const maxLastPageNumber = computed(() =>
     : indexation.value!.pages.length,
 );
 
-const { currentEntry, overlay, pageHeight, currentPage } = storeToRefs(ui());
-
-const isCurrentEntry = computed(
-  () => currentEntry.value?.id === entry.value.id,
-);
+const { overlay, pageHeight, currentPage } = storeToRefs(ui());
 
 const shouldAcceptChange = (y: number, height: number) =>
   1 + Math.round(y / pageHeight.value) >= minPosition.value &&
@@ -103,9 +114,8 @@ const onDrag = (_x: number, y: number) =>
 .striped {
   opacity: 1;
 }
-.draggable {
+.entry {
   border-top: 1px solid black !important;
-  z-index: 2 !important;
 
   &:last-child::after {
     content: "";
@@ -114,13 +124,6 @@ const onDrag = (_x: number, y: number) =>
     left: 0;
     right: 0;
     border-bottom: 1px solid black !important;
-  }
-
-  &.active {
-    z-index: 3 !important;
-    box-shadow:
-      inset 0 5px 5px -5px black,
-      inset 0 -5px 5px -5px black;
   }
 }
 

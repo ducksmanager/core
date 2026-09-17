@@ -5,7 +5,6 @@ import "~group-by";
 import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import { createBootstrap } from "bootstrap-vue-next";
-import Cookies from "js-cookie";
 import { SocketClient } from "socket-call-client";
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
@@ -21,11 +20,6 @@ const routes = setupLayouts(generatedRoutes);
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-});
-router.beforeResolve(async (to) => {
-  if (!to.meta.public && !Cookies.get("token") && to.name !== "login") {
-    return { name: "login" };
-  }
 });
 
 const store = createPinia();

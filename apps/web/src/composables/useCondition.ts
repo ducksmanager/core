@@ -7,8 +7,7 @@ const issue_condition = {
 
 export type Condition<WithMissing extends boolean = true> = {
   dbValue:
-    | keyof typeof issue_condition
-    | (WithMissing extends true ? null : never);
+    keyof typeof issue_condition | (WithMissing extends true ? null : never);
   dbEnValue: "none" | "bad" | "notsogood" | "good" | null;
   color: string;
   getText: () => string;

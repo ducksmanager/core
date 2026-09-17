@@ -1,5 +1,8 @@
 <template>
-  <div :class="{ readonly }" @mouseout="currentRating = rating">
+  <div
+    :class="{ readonly, 'text-nowrap': true }"
+    @mouseout="currentRating = rating"
+  >
     <span
       v-for="index in maxRating"
       :key="index"

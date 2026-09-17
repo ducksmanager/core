@@ -1,6 +1,6 @@
 <template>
   <ion-content class="no-padding">
-    <ion-row v-if="!isOfflineMode && !isIOS">
+    <ion-row v-if="!isOfflineMode">
       <ion-col size="12" style="height: 100%"
         ><img v-if="fullUrl" :src="coverUrl" /><ion-text v-else>{{ $t('pas de couverture') }}</ion-text>
         <ion-chip v-if="issuecodes.length > 1">+&nbsp;{{ issuecodes.length - 1 }}</ion-chip></ion-col
@@ -75,7 +75,7 @@ const { updateCollectionSingleIssue, updateCollectionMultipleIssues } = wtdcolle
 const { issuesByIssuecode } = storeToRefs(wtdcollection());
 const { fetchCoverUrlsByIssuecodes, fetchIssuecodeDetails } = coa();
 const { issuecodeDetails } = storeToRefs(coa());
-const { isOfflineMode, isCoaView, currentNavigationItem, isIOS } = storeToRefs(app());
+const { isOfflineMode, isCoaView, currentNavigationItem } = storeToRefs(app());
 
 const fullUrl = ref<string | null>();
 

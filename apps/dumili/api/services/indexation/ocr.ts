@@ -1,7 +1,6 @@
 import axios from "axios";
 
 import prisma from "~prisma/client";
-import type { aiKumikoResultPanel } from "~prisma/client_dumili/client";
 
 import { type FullIndexation, type IndexationServices } from ".";
 
@@ -24,7 +23,7 @@ export const runOcrOnImage = async (
   }
   if (image.aiOcrResult) {
     console.log(`Page ${pageNumber}: This page already has OCR results`);
-    return image.aiOcrResult.matches;
+    // return image.aiOcrResult.matches;
   }
   services.reportRunOcrOnImage(image.id);
   const firstPanelUrl = image.url.replace(
@@ -35,16 +34,16 @@ export const runOcrOnImage = async (
   console.log(`Page ${pageNumber}: Running OCR on ${firstPanelUrl}`);
 
   const ocrResults = await runOcr(firstPanelUrl, languagecode);
-  const matches = ocrResults.map(
-    ({ confidence, text, box: [x1, y1, x2, y2] }) => ({
+  const matches = ocrResults
+    .map(({ confidence, text, box: [x1, y1, x2, y2] }) => ({
       confidence,
       text,
       x1,
       y1,
       x2,
       y2,
-    }),
-  );
+    }))
+    .filter(({ confidence }) => confidence > 0.75);
 
   await prisma.image.update({
     where: {
@@ -73,17 +72,20 @@ export const runOcrOnImage = async (
   return matches;
 };
 /* Adding a bit of extra in case the storycode is just outside the panel */
-export const extendBoundaries = (
-  { x, y, width, height }: aiKumikoResultPanel,
-  extendBy: number,
-) => ({
-  left: x,
-  top: y,
-  width: width + extendBy,
-  height: height + extendBy,
-});
+// export const extendBoundaries = (
+//   { x, y, width, height }: aiKumikoResultPanel,
+//   extendBy: number,
+// ) => ({
+//   left: x,
+//   top: y,
+//   width: width + extendBy,
+//   height: height + extendBy,
+// });
 
-export const runOcr = async (url: string, languagecode: string): Promise<OcrResult[]> =>
+const runOcr = async (
+  url: string,
+  languagecode: string,
+): Promise<OcrResult[]> =>
   axios
     .post(process.env.OCR_HOST!, { url, language: languagecode })
     .then(({ data }) => data);

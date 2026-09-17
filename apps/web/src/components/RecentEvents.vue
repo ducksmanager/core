@@ -31,9 +31,10 @@ const { issuecodeDetails } = storeToRefs(coa());
 let isLoaded = $ref(false);
 const eventUserIds = $computed(() =>
   events.value
-    ?.reduce<
-      (number | null)[]
-    >((acc, event) => [...acc, ...(event.users || [])], [])
+    ?.reduce<(number | null)[]>(
+      (acc, event) => [...acc, ...(event.users || [])],
+      [],
+    )
     .filter((userId) => !!userId),
 );
 const isCollectionUpdateEvent = (
@@ -75,9 +76,15 @@ const fetchEventsAndAssociatedData = async () => {
       ),
     ...events.value
       .filter((event) => isEdgeCreationEvent(event))
-      .reduce<
-        string[]
-      >((acc, { issuecodes }) => [...acc, ...issuecodes.map((issuecode) => issuecodeDetails.value[issuecode].publicationcode)], []),
+      .reduce<string[]>(
+        (acc, { issuecodes }) => [
+          ...acc,
+          ...issuecodes.map(
+            (issuecode) => issuecodeDetails.value[issuecode].publicationcode,
+          ),
+        ],
+        [],
+      ),
   ]);
 
   await fetchStats(eventUserIds.filter((userId) => userId !== null));
@@ -92,7 +99,7 @@ const fetchEventsAndAssociatedData = async () => {
 <style scoped lang="scss">
 #recently {
   position: absolute;
-  top: 550px;
+  top: 680px;
   padding: 5px 5px 20px 5px;
   border-top: 1px solid #23282e;
 

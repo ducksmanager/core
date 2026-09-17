@@ -76,12 +76,11 @@ for (const subscription of ongoingSubscriptions) {
       await prismaDm.subscriptionRelease.create({
         data: {
           issuecode: release.issuecode,
-          releaseDate: new Date(release.filledoldestdate), 
+          releaseDate: new Date(release.filledoldestdate),
           publicationcode: release.publicationcode,
         },
       });
-    }
-    else {
+    } else {
       console.log(
         "Issue %s already exists for user %s",
         release.issuecode,

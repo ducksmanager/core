@@ -32,6 +32,8 @@ import type { FullIndexation } from "~dumili-services/indexation";
 
 const { t: $t } = useI18n();
 
+const { publicationNames } = storeToRefs(coa());
+
 const showIssueSelect = ref(false);
 const suggestionsStore = suggestions();
 const { createIssueSuggestion } = suggestionsStore;
@@ -61,6 +63,7 @@ const createAndAcceptIssueSuggestion = async (data: {
           publicationcode === data.publicationcode &&
           issuenumber === data.issuenumber,
       )!;
+
     showIssueSelect.value = false;
   });
 };
@@ -69,6 +72,20 @@ watch(
   () => indexation.value?.acceptedIssueSuggestion?.id,
   (suggestionId) => {
     indexationSocket.value?.acceptIssueSuggestion(suggestionId || null);
+  },
+);
+
+watch(
+  () => indexation.value?.acceptedIssueSuggestion,
+  (suggestion) => {
+    if (suggestion) {
+      useTitle().value = `DuMILi: ${publicationNames.value[suggestion.publicationcode]} #${suggestion.issuenumber}`;
+    } else {
+      useTitle().value = `DuMILi`;
+    }
+  },
+  {
+    immediate: true,
   },
 );
 </script>

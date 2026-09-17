@@ -184,7 +184,7 @@ const listenEvents = () => ({
       where: { username: "demo" },
     });
     if (!demoUser) {
-      return { error: "No demo user found" };
+      return { error: "No demo user found" as const };
     } else {
       const token = await loginAs(
         demoUser,

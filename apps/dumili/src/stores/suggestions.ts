@@ -39,9 +39,12 @@ export const suggestions = defineStore("suggestions", () => {
     };
   };
 
-  const createIssueSuggestion = async (
+  const createIssueSuggestion = (
     suggestion: Pick<issueSuggestion, "publicationcode" | "issuenumber">,
   ) => indexationSocket.value!.createIssueSuggestion(suggestion);
+
+  const deleteEntry = (entryId: number) =>
+    indexationSocket.value!.deleteEntry(entryId);
 
   const acceptedIssue = computed({
     get: () => indexation.value?.acceptedIssueSuggestion,
@@ -53,6 +56,7 @@ export const suggestions = defineStore("suggestions", () => {
     languagecode,
     loadIndexation,
     createIssueSuggestion,
+    deleteEntry,
     hasPendingIssueSuggestions: computed(
       () => false, //pendingIssueSuggestions.value.length
     ),

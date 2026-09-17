@@ -37,6 +37,7 @@
             :style="{ width: '100%', height: '80%' }"
             :conditions="conditionsWithoutMissing"
             :number-per-condition="numberPerCondition"
+            :legend-color="chartLegendColor"
         /></ion-col>
       </ion-row>
       <ion-row style="height: 25vh">
@@ -78,10 +79,14 @@
 <script setup lang="ts">
 import ConditionsComponent from '~web/src/components/stats/ConditionsComponent.vue';
 import { coa as webCoa } from '~web/src/stores/coa';
+import { useTheme } from '~/composables/useTheme';
 import { wtdcollection } from '~/stores/wtdcollection';
 
 const { t } = useI18n();
 const { conditionsWithoutMissing } = useCondition();
+
+const { isDark } = useTheme();
+const chartLegendColor = computed(() => (isDark.value ? '#ffffff' : '#000000'));
 
 type GraphType = 'pastYear' | 'allTime';
 const currentCollectionProgressionGraphType = ref<GraphType>('pastYear');

@@ -1,6 +1,10 @@
 import { useSocketEvents } from "socket-call-server";
 
-import type { NewBookstore, NewComment, SimpleBookstore } from "~dm-types/SimpleBookstore";
+import type {
+  NewBookstore,
+  NewComment,
+  SimpleBookstore,
+} from "~dm-types/SimpleBookstore";
 import type {
   bookstore,
   bookstoreComment,
@@ -19,7 +23,6 @@ import {
 } from "../auth/util";
 import namespaces from "../namespaces";
 import { isAllowedToCreateBookstoreComment } from "./util";
-
 
 const persistContribution = async (
   user: user,
@@ -51,16 +54,21 @@ const persistContribution = async (
   });
 };
 
-const getBookstores = (onlyActive?: true): Promise<(bookstore & { comments: bookstoreComment[] })[]> =>
+const getBookstores = (
+  onlyActive?: true,
+): Promise<(bookstore & { comments: bookstoreComment[] })[]> =>
   prismaDm.bookstore.findMany({
-    include: onlyActive ? { comments: {
-        where: {
-          isActive: true,
+    include: onlyActive
+      ? {
+          comments: {
+            where: {
+              isActive: true,
+            },
+          },
+        }
+      : {
+          comments: true,
         },
-      }
-    } : {
-      comments: true,
-    },
     where: onlyActive
       ? {
           comments: {
@@ -130,8 +138,11 @@ const listenEvents = ({ _socket }: UserServices) => ({
     }).send();
   },
 
-  createBookstoreComment: async (bookstore: NewBookstore|SimpleBookstore, comment: NewComment) => {
-    if (!bookstore.name || (('id' in bookstore) && !bookstore.id)) {
+  createBookstoreComment: async (
+    bookstore: NewBookstore | SimpleBookstore,
+    comment: NewComment,
+  ) => {
+    if (!bookstore.name || ("id" in bookstore && !bookstore.id)) {
       return { error: "No bookstore ID or name was provided" };
     }
     const user = _socket.data.user
@@ -143,7 +154,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
       : null;
 
     let dbBookstore: bookstore & { comments: bookstoreComment[] };
-    if ('id' in bookstore) {
+    if ("id" in bookstore) {
       try {
         dbBookstore = await prismaDm.bookstore.findUniqueOrThrow({
           include: {

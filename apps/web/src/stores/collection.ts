@@ -38,7 +38,16 @@ export type purchaseWithStringDate = Omit<purchase, "date"> & {
   date: string;
 };
 
+// The cache key of a socket call includes its arguments, so passing
+// `{ disableCache: false }` would store the response under a different key than
+// the one a cache-enabled call reads from.
+const cacheControl = (ignoreCache: boolean) =>
+  (ignoreCache ? [{ disableCache: true }] : []) as [{ disableCache: boolean }];
+
 export const collection = defineStore("collection", () => {
+  const route = useRoute<
+    "/collection/user/[username]/[[...all]]" | "/bookcase/show/[username]"
+  >();
   const {
     collection: collectionEvents,
     stats: statsEvents,
@@ -92,6 +101,7 @@ export const collection = defineStore("collection", () => {
     user = shallowRef<
       SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
     >(),
+    isPublicCollection = computed(() => route.params.username !== undefined),
     userPermissions =
       shallowRef<EventOutput<CollectionServices, "getUserPermissions">>(),
     previousVisit = ref<Date>(),
@@ -160,10 +170,7 @@ export const collection = defineStore("collection", () => {
       await loadCollection(true);
     },
     createPurchase = async (date: string, description: string) => {
-      const result = await collectionEvents.createPurchase(date, description);
-      if (typeof result === "object" && result?.error) {
-        return { error: result.error };
-      }
+      await collectionEvents.createPurchase(date, description);
       await loadPurchases(true);
     },
     deletePurchase = async (id: number) => {
@@ -171,31 +178,31 @@ export const collection = defineStore("collection", () => {
       await loadPurchases(true);
     },
     createLabel = async (description: string) => {
-      const result = await collectionEvents.createLabel(description);
-      if (typeof result === "object" && result?.error) {
-        return { error: result.error };
-      }
+      await collectionEvents.createLabel(description);
       await loadLabels(true);
     },
     deleteLabel = async (description: string) => {
       await collectionEvents.deleteLabel(description);
       await loadLabels(true);
     },
-    loadPreviousVisit = async () => {
-      const result = await collectionEvents.getLastVisit();
-      if (typeof result === "object" && result?.error) {
-        console.error(result.error);
-      } else if (result) {
-        previousVisit.value = new Date(result as string);
-      }
-    },
+    loadPreviousVisit = () =>
+      collectionEvents
+        .getLastVisit()
+        .then((response) => {
+          if (response) {
+            previousVisit.value = new Date(response);
+          }
+        })
+        .catch((e) => {
+          console.error(e.error);
+          return null;
+        }),
     loadCollection = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingCollection.value && !issues.value)) {
         isLoadingCollection.value = true;
-        const publicationNames: Record<string, string> = {};
-        issues.value = await collectionEvents.getIssues({
-          disableCache: ignoreCache,
-        });
+        issues.value = await collectionEvents.getIssues(
+          ...cacheControl(ignoreCache),
+        );
 
         const collectionPublicationcodes = [
           ...new Set(
@@ -217,41 +224,29 @@ export const collection = defineStore("collection", () => {
           collectionPublicationcodes,
         );
         await coa().fetchPublicationNames(collectionPublicationcodes);
-
-        coa().addPublicationNames(publicationNames);
-        Object.assign(
-          coa().issuecodeDetails,
-          issues.value
-            .map(({ issuecode, publicationcode, issuenumber }) => ({
-              issuecode,
-              publicationcode,
-              issuenumber,
-            }))
-            .groupBy("issuecode"),
-        );
       } else {
-        issues.value = await collectionEvents.getIssues({
-          disableCache: ignoreCache,
-        });
+        issues.value = await collectionEvents.getIssues(
+          ...cacheControl(ignoreCache),
+        );
       }
 
-      Object.assign(
-        coa().issuecodeDetails,
-        issues.value
+      coa().issuecodeDetails = {
+        ...toRaw(coa().issuecodeDetails),
+        ...issues.value
           .map(({ issuecode, publicationcode, issuenumber }) => ({
             issuecode,
             publicationcode,
             issuenumber,
           }))
           .groupBy("issuecode"),
-      );
+      };
       isLoadingCollection.value = false;
     },
     loadPurchases = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingPurchases.value && !purchases.value)) {
         isLoadingPurchases.value = true;
         purchases.value = (
-          await collectionEvents.getPurchases({ disableCache: ignoreCache })
+          await collectionEvents.getPurchases(...cacheControl(ignoreCache))
         ).map((purchase) => ({
           ...purchase,
           date: new Date(purchase.date),
@@ -262,9 +257,9 @@ export const collection = defineStore("collection", () => {
     loadLabels = async (ignoreCache = false) => {
       if (ignoreCache || (!isLoadingLabels.value && !labels.value)) {
         isLoadingLabels.value = true;
-        labels.value = await collectionEvents.getLabels({
-          disableCache: ignoreCache,
-        });
+        labels.value = await collectionEvents.getLabels(
+          ...cacheControl(ignoreCache),
+        );
         isLoadingLabels.value = false;
       }
     },
@@ -277,7 +272,7 @@ export const collection = defineStore("collection", () => {
         isLoadingWatchedPublicationsWithSales.value = true;
         watchedPublicationsWithSales.value = await collectionEvents.getOption(
           "sales_notification_publications",
-          { disableCache: ignoreCache },
+          ...cacheControl(ignoreCache),
         );
         isLoadingWatchedPublicationsWithSales.value = false;
       }
@@ -291,7 +286,7 @@ export const collection = defineStore("collection", () => {
         isLoadingMarketplaceContactMethods.value = true;
         marketplaceContactMethods.value = await collectionEvents.getOption(
           "marketplace_contact_methods",
-          { disableCache: ignoreCache },
+          ...cacheControl(ignoreCache),
         );
         isLoadingMarketplaceContactMethods.value = false;
       }
@@ -327,7 +322,7 @@ export const collection = defineStore("collection", () => {
       ) {
         isLoadingSubscriptions.value = true;
         subscriptions.value = (
-          await collectionEvents.getSubscriptions({ disableCache: ignoreCache })
+          await collectionEvents.getSubscriptions(...cacheControl(ignoreCache))
         ).map((subscription: SubscriptionTransformedStringDates) => ({
           ...subscription,
           startDate: new Date(Date.parse(subscription.startDate)),
@@ -359,14 +354,16 @@ export const collection = defineStore("collection", () => {
       onSuccess: (token: string) => void,
       onError: (e: string) => void,
     ) => {
-      const response = await authEvents.login({
-        username,
-        password,
-      });
-      if (typeof response !== "string" && "error" in response) {
-        onError(response.error);
-      } else {
-        onSuccess(response);
+      const token = await authEvents
+        .login({
+          username,
+          password,
+        })
+        .catch((e) => {
+          onError(e.error);
+        });
+      if (typeof token === "string") {
+        onSuccess(token);
       }
     },
     loadUser = async (ignoreCache = false) => {
@@ -377,15 +374,13 @@ export const collection = defineStore("collection", () => {
       if (!isLoadingUser.value && (ignoreCache || !user.value)) {
         isLoadingUser.value = true;
         try {
-          const response = await collectionEvents.getUser({
-            disableCache: ignoreCache,
-          });
-          if (typeof response === "object" && "error" in response) {
-            socketOptions.session.clearSession();
-            user.value = null;
-          } else {
-            user.value = response;
-          }
+          user.value = await collectionEvents.getUser(
+            ...cacheControl(ignoreCache),
+          );
+        } catch (e) {
+          console.error(e);
+          socketOptions.session.clearSession();
+          user.value = null;
         } finally {
           isLoadingUser.value = false;
         }
@@ -413,6 +408,7 @@ export const collection = defineStore("collection", () => {
     isLoadingUser,
     copiesPerIssuecode,
     isLoadingSuggestions,
+    isPublicCollection,
     issuecodesPerPublication,
     labelIdFilters,
     labelFiltersQueryParams,

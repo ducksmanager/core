@@ -2,9 +2,20 @@
   "name": "~cover-updater",
   "version": "1.0.0",
   "description": "Adding Inducks covers to the DucksManager cover index",
+  "main": "index.ts",
   "scripts": {
+    "build": "bun build --target bun ./index.ts --outfile bundle.mjs",
     "prod:docker-compose-run": "SERVICE=cover-updater pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-cover-id-updater pnpm -F '~ci' prod:build-docker -f apps/cover-updater/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/cover-updater/docker-compose.yml:@apps/cover-updater/docker-compose.yml"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "~prisma-schemas": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "~1.3.14",
+    "@types/node": "^26.6.1",
+    "typescript": "^6.0.3"
   }
 }

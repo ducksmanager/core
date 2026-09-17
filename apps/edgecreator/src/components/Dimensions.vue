@@ -38,7 +38,7 @@ const values = defineModel<{
   width: number;
   height: number;
 }>({
-  default: { width: 15, height: 200 },
+  required: true,
 });
 
 const ucFirst = (text: string) =>

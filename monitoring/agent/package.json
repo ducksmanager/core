@@ -1,0 +1,10 @@
+{
+  "name": "~monitoring-agent",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files monitoring/agent/docker-compose.yml:@monitoring/agent/docker-compose.yml monitoring/agent/config.alloy:@monitoring/agent/config.alloy monitoring/agent/disk-metrics.sh:@monitoring/agent/disk-metrics.sh",
+    "prod:deploy": "DIR=monitoring/agent pnpm -F '~ci' prod:docker-compose-up"
+  }
+}

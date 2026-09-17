@@ -6,18 +6,24 @@ import dmNamespaces from "~dm-services/namespaces";
 import type { ClientEvents as StorySearchEvents } from "~dm-services/story-search";
 import type { image } from "~prisma/client_dumili/client";
 
-const socket = new SocketClient(process.env.DM_SOCKET_URL!);
-const coaEvents = socket.addNamespace<CoaEvents>(dmNamespaces.COA);
+const createCoaEvents = () =>
+  new SocketClient(process.env.DM_SOCKET_URL!).addNamespace<CoaEvents>(
+    dmNamespaces.COA,
+  );
+let coaEventsInstance: ReturnType<typeof createCoaEvents> | undefined;
+const coaEvents = () => (coaEventsInstance ??= createCoaEvents());
 
-const storySearchSocket = new SocketClient(
-  process.env.DM_STORY_SEARCH_SOCKET_URL!,
-);
-const storySearchEvents = storySearchSocket.addNamespace<StorySearchEvents>(
-  dmNamespaces.STORY_SEARCH,
-);
+const createStorySearchEvents = () =>
+  new SocketClient(
+    process.env.DM_STORY_SEARCH_SOCKET_URL!,
+  ).addNamespace<StorySearchEvents>(dmNamespaces.STORY_SEARCH);
+let storySearchEventsInstance:
+  ReturnType<typeof createStorySearchEvents> | undefined;
+const storySearchEvents = () =>
+  (storySearchEventsInstance ??= createStorySearchEvents());
 
 export const getFullStoriesFromKeywords = async (keywords: string[]) => {
-  const response = await coaEvents.getFullStoriesFromKeywords(keywords);
+  const response = await coaEvents().getFullStoriesFromKeywords(keywords);
   if ("error" in response) {
     return {
       error: `Error running story search: ${response.error}`,
@@ -33,7 +39,7 @@ export const getStoriesFromImage = async (image: image, isCover: boolean) => {
       responseType: "arraybuffer",
     })
   ).data;
-  const response = await storySearchEvents.findSimilarImages(
+  const response = await storySearchEvents().findSimilarImages(
     imageBuffer,
     isCover,
   );

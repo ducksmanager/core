@@ -96,7 +96,7 @@ export const getInducksIssuecodesBetween = async (
 };
 
 export const getAll = () =>
-   prismaCoa.inducks_issuequotation_raw.findMany({
+  prismaCoa.inducks_issuequotation_raw.findMany({
     orderBy: [
       {
         issuecode: "asc",

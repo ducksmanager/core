@@ -2,6 +2,15 @@ import type { SimpleEntry } from "~dm-types/SimpleEntry";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
+export const getPrefixedEntryurl = (url: string, sitecode: string) =>
+  `${
+    /^\d/.test(url)
+      ? "webusers/webusers"
+      : url.startsWith("webusers")
+        ? "webusers"
+        : sitecode?.replace(/thumbnails2?/, "")
+  }/${url}`;
+
 export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
   prismaDm.issue
     .groupBy({
@@ -25,14 +34,18 @@ export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
 
 export default {
   getIssueDetails: async (issuecode: string) => {
-    const entries = await getEntries(issuecode);
+    if (typeof issuecode !== "string" || !issuecode) {
+      return { error: "Invalid issuecode" };
+    }
+    const issue = await prismaCoa.inducks_issue.findFirst({
+      where: { issuecode },
+    });
+    if (!issue) {
+      return { error: "Issue not found" };
+    }
     return {
-      releaseDate: (
-        await prismaCoa.inducks_issue.findFirstOrThrow({
-          where: { issuecode },
-        })
-      ).oldestdate!,
-      entries,
+      releaseDate: issue.oldestdate!,
+      entries: await getEntries(issuecode),
     };
   },
 
@@ -111,15 +124,13 @@ export const getCoverUrls = async (issuecodes: string[]) => {
     .filter(([issuecode]) => !!entryurls[entrycodeByIssuecode[issuecode]]?.url)
     .map(([issuecode, issue]) => {
       const coverEntryUrl = entryurls[entrycodeByIssuecode[issuecode]];
-      const urlPrefix = /^\d/.test(coverEntryUrl.url!)
-        ? "webusers/webusers"
-        : coverEntryUrl.url!.startsWith("webusers")
-          ? "webusers"
-          : coverEntryUrl.sitecode?.replace(/thumbnails2?/, "");
       return {
         issuecode,
         title: issue.title!,
-        fullUrl: `${urlPrefix}/${coverEntryUrl.url}`,
+        fullUrl: getPrefixedEntryurl(
+          coverEntryUrl.url!,
+          coverEntryUrl.sitecode!,
+        ),
       };
     });
 };

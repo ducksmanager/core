@@ -6,8 +6,8 @@
       'fw-bold': visiblePages?.has(page.id),
     }"
     @click="currentPage = page.pageNumber - 1"
-    ><div>{{ $t("Page") }} {{ page.pageNumber }}</div>
-    <PageStoryKindTooltip :page="page" />
+    ><b-col cols="8">{{ page.pageNumber }}</b-col>
+    <b-col cols="4"> <PageStoryKindTooltip :page="page" /></b-col>
   </b-col>
 </template>
 <script setup lang="ts">

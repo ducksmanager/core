@@ -23,7 +23,7 @@
       "~group-by": [
         "../../util/group-by"
       ]
-    },
+    }
   },
   "exclude": [
     "node_modules",

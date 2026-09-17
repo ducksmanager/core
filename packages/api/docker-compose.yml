@@ -3,6 +3,9 @@ services:
     container_name: ducksmanager-api
     image: ghcr.io/bperel/ducksmanager-api
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=ducksmanager-api
     networks:
       - public-network
       - dm-api-network
@@ -12,6 +15,9 @@ services:
     container_name: ducksmanager-api-websocket
     image: ghcr.io/bperel/ducksmanager-api:websocket
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=ducksmanager-api-websocket
     volumes:
       - ./latest-whattheduck-bundle.txt:/app/latest-whattheduck-bundle.txt
       - /data/covers:${ENTRYURLS_DIR}
@@ -25,6 +31,9 @@ services:
     container_name: ducksmanager-api-story-search
     image: ghcr.io/bperel/ducksmanager-api:story-search
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://monitoring-alloy:4318
+      - OTEL_SERVICE_NAME=ducksmanager-api-story-search
     volumes:
       - /data/covers:${ENTRYURLS_DIR}
       - /data/covers-by-storycode:${ENTRYURLS_DIR}-by-storycode
@@ -33,19 +42,26 @@ services:
       - dm-api-network
       - dm-db-network
 
-  pastec:
-    container_name: pastec
-    image: "bperel/pastec-ubuntu-1704-timestamps"
+  pastec-improved:
+    container_name: pastec-improved
+    image: "bperel/pastec:improved"
     restart: always
-    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
+    command:
+      [
+        "-p",
+        "4212",
+        "-i",
+        "/pastec-index-last.dat",
+        "/pastec/visualWordsORB.dat",
+      ]
     volumes:
       - ./pastec-index-last.dat:/pastec-index-last.dat:ro
     networks:
       - dm-api-network
 
-  pastec-improved:
-    container_name: pastec-improved
-    image: "bperel/pastec:improved"
+  pastec-kp1000-flann200:
+    container_name: pastec-kp1000-flann200
+    image: "bperel/pastec:kp1000-flann200"
     restart: always
     command:
       [

@@ -3,17 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": ">=24.0.0 <25.0.0"
+    "node": ">=26.0.0 <27.0.0"
   },
   "author": {
     "email": "brunoperel@gmail.com",
     "name": "Bruno Perel"
   },
   "scripts": {
-    "build": "bun build --target node index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
+    "build": "bun build --target node --external electron ./index.ts --outdir dist && mv dist/index.js bundle.mjs && rm -rf dist",
     "lint": "eslint --fix .",
-    "start": "bun --inspect run --watch index.ts",
-    "dev": "PWDEBUG=1 bun --inspect run --watch index.ts",
+    "start": "bun --inspect run --watch ./index.ts",
+    "dev": "PWDEBUG=1 bun --inspect run --watch ./index.ts",
     "prod:docker-compose-run": "SERVICE=duck-estimator pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/duck-estimator pnpm -F '~ci' prod:build-docker -f apps/duck-estimator/Dockerfile",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/duck-estimator/.env:apps/duck-estimator/.env",
@@ -21,22 +21,22 @@
   },
   "dependencies": {
     "bedetheque-scraper": "^3.2.0",
-    "csv-parse": "^6.2.1",
+    "csv-parse": "^7.0.2",
     "csv-writer": "^1.6.0",
-    "dotenv": "^16.6.1",
-    "electron": "^32.3.3",
+    "dotenv": "^17.4.2",
     "playwright-firefox": "~1.47.2",
-    "yargs": "^17.7.2",
+    "yargs": "^17.7.3",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^24.12.3",
+    "@types/node": "^26.6.1",
     "@types/yargs": "^17.0.35",
-    "eslint": "^10.3.0",
+    "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.2"
+    "typescript-eslint": "^8.70.0"
   }
 }

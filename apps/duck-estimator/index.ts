@@ -11,7 +11,7 @@ import { scrape as comicsmania } from "./scrapes/comicsmania";
 import { scrape as gocollect } from "./scrapes/gocollect";
 import { scrape as seriesam } from "./scrapes/seriesam";
 
-export type ConsoleArgs = Parameters<typeof console.error>
+export type ConsoleArgs = Parameters<typeof console.error>;
 
 const scrapes = [
   { name: "bdm", scrape: bdm },
@@ -30,17 +30,38 @@ dotenv.config({
 
 mkdirSync(getCacheDir(), { recursive: true });
 
-const results = await Promise.allSettled(
-  scrapes.map(async ({ name, scrape }) => {
+const CONCURRENT_SCRAPES = 2;
+
+const results: PromiseSettledResult<void>[] = new Array(scrapes.length);
+let nextScrapeIndex = 0;
+
+const runScrapes = async () => {
+  while (nextScrapeIndex < scrapes.length) {
+    const index = nextScrapeIndex++;
+    const { name, scrape } = scrapes[index];
     console.log(`Scraping ${name}, start date: ${new Date().toISOString()}`);
-    await scrape();
-    console.log(`Scrape done, end date: ${new Date().toISOString()}`);
-  })
+    try {
+      await scrape();
+      results[index] = { status: "fulfilled", value: undefined };
+      console.log(
+        `Scrape done for ${name}, end date: ${new Date().toISOString()}`,
+      );
+    } catch (reason) {
+      results[index] = { status: "rejected", reason };
+      console.error(
+        `Scrape failed for ${name}, end date: ${new Date().toISOString()}`,
+      );
+    }
+  }
+};
+
+await Promise.all(
+  Array.from({ length: Math.min(CONCURRENT_SCRAPES, scrapes.length) }, () =>
+    runScrapes(),
+  ),
 );
 
-const hasFailed = results.some(
-  (result) => result.status === "rejected"
-);
+const hasFailed = results.some((result) => result.status === "rejected");
 
 await writeCsvMapping(await getAll());
 exec("sh bump-dump.sh", (error, stdout, stderr) => {
@@ -58,7 +79,7 @@ exec("sh bump-dump.sh", (error, stdout, stderr) => {
     results.forEach((result, index) => {
       if (result.status === "rejected") {
         console.error(
-          `Scrape failed for ${scrapes[index].name}: ${result.reason}`
+          `Scrape failed for ${scrapes[index].name}: ${result.reason}`,
         );
       }
     });

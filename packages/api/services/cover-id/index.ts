@@ -14,7 +14,8 @@ const listenEvents = () => ({
     if (![0, 1].includes(pastecIndex)) {
       return { error: "Invalid pastec index" };
     }
-    const hostAndPort = process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
+    const hostAndPort =
+      process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
     console.log(`Searching from cover on ${hostAndPort}`);
     const buffer = urlOrBase64.includes(";base64,")
       ? (
@@ -81,6 +82,13 @@ const listenEvents = () => ({
         issuecode,
         fullUrl,
         score,
+        boundingRect:
+          pastecResponse.bounding_rects[
+            pastecResponse.image_ids.indexOf(
+              coversByIssuecode.find((cover) => cover.issuecode === issuecode)!
+                .id,
+            )
+          ],
       })),
     };
   },
@@ -152,10 +160,7 @@ const getCoverUrl = async (coverId: number) =>
         }`,
     );
 
-const getSimilarImages = async (
-  cover: Buffer,
-  hostAndPort: string,
-) =>
+const getSimilarImages = async (cover: Buffer, hostAndPort: string) =>
   !process.env.PASTEC_HOSTS_AND_PORTS!.split(",").includes(hostAndPort)
     ? null
     : axios

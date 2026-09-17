@@ -9,10 +9,9 @@ import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import eslintPlugin from "vite-plugin-eslint";
-import mkcert from "vite-plugin-mkcert";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
-import getViteAliases from "../../vite-aliases";
+import getViteAliases from "../../vite-aliases.ts";
 
 export default defineConfig({
   build: {
@@ -21,7 +20,6 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    mkcert(),
     Icons({
       autoInstall: true,
       customCollections: {
@@ -35,7 +33,10 @@ export default defineConfig({
     {
       // default settings on build (i.e. fail on error)
       ...eslintPlugin({
-        overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
+        overrideConfigFile: path.resolve(
+          import.meta.dirname,
+          "eslint.config.mjs",
+        ),
       }),
       apply: "build",
     },
@@ -44,13 +45,16 @@ export default defineConfig({
       ...eslintPlugin({
         failOnWarning: false,
         failOnError: false,
-        overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
+        overrideConfigFile: path.resolve(
+          import.meta.dirname,
+          "eslint.config.mjs",
+        ),
       }),
       apply: "serve",
       enforce: "post",
     },
     AutoImport({
-      dts: true,
+      dts: "src/auto-imports.d.ts",
       imports: ["vue", "vue-router", "vue-i18n", "pinia", "@vueuse/core"],
       vueTemplate: true,
       eslintrc: {
@@ -73,7 +77,7 @@ export default defineConfig({
     VueI18n({
       runtimeOnly: false,
       compositionOnly: true,
-      include: [path.resolve(__dirname, "..", "translations/**")],
+      include: [path.resolve(import.meta.dirname, "..", "translations/**")],
     }),
   ],
   resolve: {
@@ -85,14 +89,14 @@ export default defineConfig({
       "@vueuse/core",
       "bootstrap-vue-next",
     ],
-    alias: getViteAliases(path.resolve(__dirname, "../.."), {
-      "~": path.resolve(__dirname, "src"),
-      "~dumili-services": path.resolve(__dirname, "api/services"),
-      "~dumili-types": path.resolve(__dirname, "types"),
-      "~dumili-utils": path.resolve(__dirname, "utils"),
-      "~prisma": path.resolve(__dirname, "api/prisma"),
-      "~translations": path.resolve(__dirname, "translations"),
-      "~web": path.resolve(__dirname, "../web"),
+    alias: getViteAliases(path.resolve(import.meta.dirname, "../.."), {
+      "~": path.resolve(import.meta.dirname, "src"),
+      "~dumili-services": path.resolve(import.meta.dirname, "api/services"),
+      "~dumili-types": path.resolve(import.meta.dirname, "types"),
+      "~dumili-utils": path.resolve(import.meta.dirname, "utils"),
+      "~prisma": path.resolve(import.meta.dirname, "api/prisma"),
+      "~translations": path.resolve(import.meta.dirname, "translations"),
+      "~web": path.resolve(import.meta.dirname, "../web"),
     }),
   },
   server: {

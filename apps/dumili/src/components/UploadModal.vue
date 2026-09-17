@@ -6,14 +6,14 @@
     align="center"
     no-footer
     centered
-    :class="{ 'pe-none': isUploading || processLog }"
+    :class="{ 'pe-none': isUploading }"
     content-class="h-100 "
     dialog-class="h-100"
     body-class="d-flex flex-column align-items-start overflow-auto"
   >
     <label>{{ $t("Type de fichier") }}</label>
-    <b-form-radio v-model="uploadFileType" name="file-type" value="PDF"
-      >{{ $t("PDF") }}
+    <b-form-radio v-model="uploadFileType" name="file-type" value="Document"
+      >{{ $t("Document (PDF, RAR, CBR, ZIP, CBZ)") }}
     </b-form-radio>
     <b-form-radio v-model="uploadFileType" name="file-type" value="Images"
       >{{ $t("Images") }}
@@ -22,7 +22,7 @@
     <template
       v-if="
         pagesWithoutOverwrite.length !== pages.length &&
-        firstOutOfRangePage <=
+        firstOutOfRangePageNumber <=
           pagesWithoutOverwrite[0].pageNumber + pagesWithoutOverwrite.length
       "
     >
@@ -54,15 +54,15 @@
         )
       }}
       <template v-if="pagesWithoutOverwrite.length === pages.length" />
-      <template v-else-if="uploadFileType === 'PDF'"
+      <template v-else-if="uploadFileType === 'Document'"
         >{{
           $t(
             uploadExistingFileAction === "ignore"
-              ? "Si votre PDF fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePage} seront ignorées."
-              : "Si votre PDF fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePage} seront remplacées.",
+              ? "Si votre document fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront ignorées."
+              : "Si votre document fait plus de {maxPages} page(s), les pages à partir de la page {firstOutOfRangePageNumber} seront remplacées.",
             {
               maxPages: pagesWithoutOverwrite.length,
-              firstOutOfRangePage,
+              firstOutOfRangePageNumber,
             },
           )
         }}
@@ -71,91 +71,98 @@
         >{{
           $t(
             uploadExistingFileAction === "ignore"
-              ? "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePage} seront ignorées."
-              : "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePage} seront remplacées.",
+              ? "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePageNumber} seront ignorées."
+              : "Si vous envoyez plus de {maxPages} fichier(s), les pages à partir de la page {firstOutOfRangePageNumber} seront remplacées.",
             {
               maxPages: pagesWithoutOverwrite.length,
-              firstOutOfRangePage,
+              firstOutOfRangePageNumber,
             },
           )
         }}
       </template>
     </b-alert>
-    <div class="d-flex flex-column align-items-center">
-      <div class="status">{{ processLog }}</div>
-      <b-alert
-        variant="info"
-        :model-value="uploadFileType === 'PDF'"
-        :dismissible="false"
-        class="w-100"
-        ><i18n-t
-          keypath="Assurez-vous que le fichier PDF ait une taille de fichier de 10 MB au maximum. Si ce n'est pas le cas, vous pouvez utiliser un outil tel que {link} pour compresser votre fichier de telle sorte qu'il fasse moins de 10 MB."
+    <b-alert
+      variant="info"
+      :model-value="uploadFileType === 'Document'"
+      :dismissible="false"
+      class="w-100"
+      >{{
+        $t(
+          "Assurez-vous que le document ait une taille de fichier de 50 MB au maximum.",
+        )
+      }}</b-alert
+    >
+    <b-alert
+      variant="info"
+      :model-value="uploadFileType === 'Images'"
+      :dismissible="false"
+      class="w-100"
+      >{{
+        $t(
+          "Vous aurez la possibilité de rogner les images avant de les envoyer.",
+        )
+      }}
+    </b-alert>
+
+    <b-progress
+      v-if="isUploading || errorMessage"
+      :max="100"
+      class="w-100 text-white"
+      style="min-height: 2rem"
+      :class="{ 'bg-danger': errorMessage }"
+    >
+      <b-progress-bar :value="overallProgress">
+        <div
+          class="position-absolute d-flex w-100 align-items-center justify-content-center"
         >
-          <template #link
-            ><a
-              href="https://bigpdf.11zon.com/en/compress-pdf/compress-pdf-to-10mb"
-              >11zon.com</a
-            ></template
-          >
-        </i18n-t></b-alert
-      >
-      <b-alert
-        variant="info"
-        :model-value="uploadFileType === 'Images'"
-        :dismissible="false"
-        class="w-100"
-        >{{
-          $t(
-            "Vous aurez la possibilité de rogner les images avant de les envoyer.",
-          )
-        }}
-      </b-alert>
-      <b-alert
-        variant="warning"
-        :model-value="uploadFileType === 'Images'"
-        :dismissible="false"
-        class="w-100"
-        >{{
-          $t(
-            "Lors de l'envoi de vos images, il est possible qu'un message avec le texte 'There are running uploads. Click OK to abort.' apparaisse. Si cela se produit, cliquez sur le bouton 'Cancel'.",
-          )
-        }}
-      </b-alert>
-    </div>
-    <div v-show="showWidget" id="widget-container" class="w-100"></div>
+          {{ progressLabel }}
+        </div>
+      </b-progress-bar>
+    </b-progress>
+    <div id="uppy-container" class="w-100"></div>
   </b-modal>
 </template>
 
 <script setup lang="ts">
-import type {
-  CloudinaryCreateUploadWidget,
-  CloudinaryUploadWidget,
-  CloudinaryUploadWidgetInfo,
-} from "../../cloudinary-widget";
+import Uppy from "@uppy/core";
+import Dashboard from "@uppy/dashboard";
+import ImageEditor from "@uppy/image-editor";
+import Webcam from "@uppy/webcam";
+import XHRUpload from "@uppy/xhr-upload";
+import "@uppy/core/css/style.min.css";
+import "@uppy/dashboard/css/style.min.css";
+import "@uppy/image-editor/css/style.min.css";
+import "@uppy/webcam/css/style.min.css";
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { suggestions } from "~/stores/suggestions";
 
-import { stores as webStores } from "~web";
-
-const { indexationSocket } = inject(dumiliSocketInjectionKey)!;
+const { indexationSocket, options } = inject(dumiliSocketInjectionKey)!;
 
 const {
   pagesWithoutOverwrite: pagesWithoutOverwriteInitial,
   pagesAllowOverwrite: pagesAllowOverwriteInitial,
-  uploadPageNumber = undefined,
+  uploadPageNumber,
 } = defineProps<{
-  uploadPageNumber?: number;
+  uploadPageNumber: number;
   pagesWithoutOverwrite: { id: number; pageNumber: number }[];
   pagesAllowOverwrite: { id: number; pageNumber: number }[];
 }>();
 
+const emit = defineEmits<{
+  (e: "upload-done"): void;
+  (e: "done"): void;
+}>();
+
+const route = useRoute();
+
 const modal = ref(false);
+const authToken = ref<string | null>(null);
 
 const pagesWithoutOverwrite = ref(pagesWithoutOverwriteInitial);
 const pagesAllowOverwrite = ref(pagesAllowOverwriteInitial);
 
-watch(modal, (value) => {
+watch(modal, async (value) => {
   if (value) {
+    authToken.value = (await options.session.getToken()) ?? null;
     pagesWithoutOverwrite.value = pagesWithoutOverwriteInitial;
     pagesAllowOverwrite.value = pagesAllowOverwriteInitial;
   } else {
@@ -165,36 +172,52 @@ watch(modal, (value) => {
 
 const { t: $t } = useI18n();
 
-const { indexation } = storeToRefs(suggestions());
-
-const { user } = storeToRefs(webStores.collection());
-
-const showWidget = ref(true);
-
-const uploadFileType = ref<"Images" | "PDF">("PDF");
+const uploadFileType = ref<"Images" | "Document">("Document");
 
 const uploadExistingFileAction = ref<"ignore" | "replace">("ignore");
 
 const isUploading = ref(false);
-const processLog = ref("");
+const errorMessage = ref("");
 
-const emit = defineEmits<{
-  (e: "upload-done"): void;
-  (e: "done"): void;
-}>();
+const pagesToUpload = ref<number[]>();
+const pagesUploaded = ref<number[]>([]);
+const httpUploadProgress = ref(0);
 
-declare var cloudinary: {
-  openUploadWidget: CloudinaryCreateUploadWidget;
+const overallProgress = computed(() => {
+  const httpPart = httpUploadProgress.value / 2;
+  const cloudinaryPart = pagesToUpload.value?.length
+    ? (pagesUploaded.value.length / pagesToUpload.value.length) * 50
+    : 0;
+  return httpPart + cloudinaryPart;
+});
+
+const progressLabel = computed(() => {
+  if (errorMessage.value) return errorMessage.value;
+  if (httpUploadProgress.value < 100) return $t("Envoi du fichier...");
+  if (!pagesToUpload.value?.length) return "";
+  return $t("Page {pagesUploaded}/{totalPages} envoyée", {
+    pagesUploaded: pagesUploaded.value.length,
+    totalPages: pagesToUpload.value.length,
+  });
+});
+
+indexationSocket.value!.reportDocumentAnalyzed = (
+  reportedPagesToUpload: number[],
+) => {
+  pagesToUpload.value = reportedPagesToUpload;
 };
 
-const uploadWidget = ref<CloudinaryUploadWidget>();
+indexationSocket.value!.reportDocumentPageUploaded = (pageNumber: number) => {
+  pagesUploaded.value = [...pagesUploaded.value, pageNumber];
+};
+
+const uppy = shallowRef<Uppy>();
 
 watch(
   () => uploadPageNumber,
   (value) => {
     if (value !== undefined) {
       modal.value = true;
-      showWidget.value = true;
     }
   },
   { immediate: true },
@@ -206,115 +229,140 @@ const pages = computed(() =>
     : pagesAllowOverwrite.value,
 );
 
-const firstOutOfRangePage = computed(
+const firstOutOfRangePageNumber = computed(
   () =>
     pagesWithoutOverwrite.value[pagesWithoutOverwrite.value.length - 1]
       .pageNumber + 1,
 );
 
-const processPage = async (pageIndex: number, url: string) => {
-  const page = pages.value[pageIndex];
-  console.log(`Processing page ${page.pageNumber}...`);
-  processLog.value = `Processing page ${page.pageNumber}...`;
-  await indexationSocket.value!.setPageUrl(page.id, url);
+const getFileTypes = () =>
+  uploadFileType.value === "Document"
+    ? [
+        ".pdf",
+        ".rar",
+        ".cbr",
+        ".zip",
+        ".cbz",
+        "application/x-rar",
+        "application/pdf",
+        "application/octet-stream",
+        "application/zip",
+      ]
+    : [".png", ".jpeg", ".jpg", "image/png", "image/jpeg"];
+
+const initUppy = () => {
+  if (uppy.value) {
+    uppy.value.destroy();
+    uppy.value = undefined;
+  }
+
+  const maxFileSize =
+    uploadFileType.value === "Document" ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+
+  const instance = new Uppy({
+    restrictions: {
+      allowedFileTypes: getFileTypes(),
+      maxFileSize,
+      maxNumberOfFiles: uploadFileType.value === "Document" ? 1 : 50,
+    },
+  });
+
+  instance.use(Dashboard, {
+    hideProgressDetails: false,
+    autoOpen: "imageEditor",
+    inline: true,
+    proudlyDisplayPoweredByUppy: false,
+    target: "#uppy-container",
+  });
+
+  if (uploadFileType.value === "Images") {
+    instance.use(Webcam, {
+      modes: ["picture"],
+      mirror: false,
+    });
+    instance.use(ImageEditor);
+  }
+
+  let fileAddCount = 0;
+  instance.on("file-added", (file) => {
+    const idx = fileAddCount++;
+    instance.setFileMeta(file.id, {
+      firstPageNumber: uploadPageNumber + idx,
+    });
+  });
+
+  const indexationId = route.params.id as string;
+
+  instance.use(XHRUpload, {
+    endpoint: `${import.meta.env.VITE_DUMILI_SOCKET_URL}/upload/indexation/${indexationId}`,
+    formData: false,
+    method: "POST",
+    limit: 1,
+    headers: (file) => ({
+      Authorization: `Bearer ${authToken.value ?? ""}`,
+      "X-File-Name": encodeURIComponent(file.name ?? ""),
+      "X-First-Page-Number": String(
+        (file.meta.firstPageNumber as number | undefined) ?? uploadPageNumber,
+      ),
+      "X-First-Out-Of-Range-Page-Number": String(
+        firstOutOfRangePageNumber.value,
+      ),
+    }),
+  });
+
+  instance.on("upload", () => {
+    isUploading.value = true;
+    httpUploadProgress.value = 0;
+    pagesUploaded.value = [];
+    pagesToUpload.value = undefined;
+    errorMessage.value = "";
+    if (uploadFileType.value === "Images") {
+      const files = instance.getFiles();
+      pagesToUpload.value = files.map((_, i) => uploadPageNumber + i);
+    }
+  });
+
+  instance.on("progress", (percent) => {
+    httpUploadProgress.value = percent;
+  });
+
+  instance.on("upload-error", (_file, _error, response) => {
+    try {
+      const responseObject = JSON.parse(
+        (response as { response?: string })?.response || "{}",
+      );
+      errorMessage.value = responseObject?.error || _error.message || "";
+    } catch {}
+    instance.cancelAll();
+    isUploading.value = false;
+  });
+
+  instance.on("complete", (result) => {
+    if (result.failed?.length === 0 && !errorMessage.value) {
+      modal.value = false;
+      emit("upload-done");
+    }
+    isUploading.value = false;
+  });
+
+  uppy.value = instance;
 };
 
 onMounted(() => {
-  watch(
-    uploadFileType,
-    (value) => {
-      const fileIds: string[] = [];
-      const folderName = indexation.value!.id;
-      if (uploadWidget.value) {
-        uploadWidget.value.close();
-        document.getElementById("widget-container")!.innerHTML = "";
-      }
-      uploadWidget.value = cloudinary.openUploadWidget(
-        {
-          cloudName: import.meta.env.VITE_CLOUDINARY_CLOUDNAME,
-          uploadPreset: "dumili",
-          folder: `dumili/${user.value!.username}/${folderName}`,
-          showPoweredBy: false,
-          sources:
-            value === "PDF" ? ["local", "url"] : ["local", "url", "camera"],
-          maxFileSize: 10 * 1024 * 1024,
-          maxImageFileSize: 5 * 1024 * 1024,
-          inlineContainer: "#widget-container",
-          cropping: value === "Images",
-          context: {
-            indexation: folderName,
-            user: user.value!.username,
-          },
-        },
-        async (error, result) => {
-          if (error) {
-            console.error(error);
-          } else {
-            console.log("Event: ", result.event);
-            switch (result?.event) {
-              case "upload-added":
-                fileIds.push((result.info as CloudinaryUploadWidgetInfo).id);
-                break;
-              case "queues-start":
-                isUploading.value = true;
-                break;
-              case "success":
-                showWidget.value = false;
-                const info = result.info as CloudinaryUploadWidgetInfo;
-                console.log("Done! Here is the image info: ", info);
+  watch(uploadFileType, initUppy, { immediate: true });
+});
 
-                const firstUploadPageIndex = pages.value.findIndex(
-                  (page) => page.pageNumber === uploadPageNumber,
-                );
-                if (info.pages) {
-                  for (
-                    let page = 1;
-                    page <= Math.min(info.pages, pages.value.length);
-                    page++
-                  ) {
-                    await processPage(
-                      firstUploadPageIndex + page - 1,
-                      info.secure_url
-                        .replace("/upload/", `/upload/pg_${page}/`)
-                        .replace(/.pdf$/g, ".png"),
-                    );
-                  }
-                } else {
-                  await processPage(
-                    firstUploadPageIndex + fileIds.indexOf(info.id),
-                    info.secure_url,
-                  );
-                }
-                modal.value = false;
-                emit("upload-done");
-                break;
-              case "abort":
-                modal.value = false;
-                break;
-            }
-          }
-        },
-      );
-
-      watch(showWidget, (value) => {
-        if (!value) {
-          uploadWidget.value?.close();
-        }
-      });
-    },
-    { immediate: true },
-  );
+onBeforeUnmount(() => {
+  uppy.value?.destroy();
 });
 </script>
 
 <style lang="scss">
-iframe {
-  visibility: visible !important;
-  max-width: initial !important;
-  max-height: initial !important;
-}
-
 .modal-dialog {
   height: calc(100% - 5rem) !important;
+}
+
+.uppy-Dashboard-inner {
+  width: 100% !important;
 }
 </style>

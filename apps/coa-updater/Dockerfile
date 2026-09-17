@@ -1,4 +1,4 @@
-FROM oven/bun
+FROM oven/bun:1.3
 LABEL org.opencontainers.image.authors="Bruno Perel"
 
 WORKDIR /app

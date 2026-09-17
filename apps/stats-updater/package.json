@@ -4,19 +4,19 @@
   "description": "Daily stats calculation for DucksManager",
   "main": "index.ts",
   "scripts": {
-    "build": "bun build --target bun index.ts --outfile bundle.mjs",
+    "build": "bun build --target bun ./index.ts --outfile bundle.mjs",
     "prod:docker-compose-run": "SERVICE=stats-updater pnpm -F '~ci' prod:docker-compose-run",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/stats-updater pnpm -F '~ci' prod:build-docker -f apps/stats-updater/Dockerfile",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/stats-updater/docker-compose.yml:@apps/stats-updater/docker-compose.yml"
   },
   "dependencies": {
-    "dotenv": "^16.6.1",
-    "mariadb": "^3.5.2",
+    "dotenv": "^17.4.2",
+    "mariadb": "^3.5.4",
     "~prisma-schemas": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "@types/node": "^24.12.3",
+    "@types/bun": "~1.3.14",
+    "@types/node": "^26.6.1",
     "typescript": "^6.0.3"
   }
 }

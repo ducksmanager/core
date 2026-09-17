@@ -20,7 +20,7 @@ const { copyListModes } = app();
 const fab = shallowRef<ComponentPublicInstance<HTMLIonFabElement>>();
 
 const copyToClipboard = async (event?: (typeof copyListModes)[number]) => {
-  (fab.value?.$el as HTMLIonFabElement).close();
+  (fab.value?.$el as HTMLIonFabElement | undefined)?.close();
   if (!event) {
     return;
   }

@@ -63,7 +63,8 @@ type MissingPublications = {
 };
 
 interface Suggestion
-  extends PrismaDmStats.missingIssueForUserGetPayload<MissingPublications>,
+  extends
+    PrismaDmStats.missingIssueForUserGetPayload<MissingPublications>,
     PrismaDmStats.suggestedIssueForUserGetPayload<SuggestedPublications> {}
 
 const getStoryDetails = async (

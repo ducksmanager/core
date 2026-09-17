@@ -24,20 +24,15 @@
             :key="currentBookstore.id"
             :lng-lat="[currentBookstore.coordY, currentBookstore.coordX]"
             anchor="bottom"
-            :color="
-              currentBookstore.reportedAsClosed
-                ? 'grey'
-                : openedPopupId === currentBookstore.id
-                  ? 'red'
-                  : 'blue'
-            "
+            :color="currentBookstore.reportedAsClosed ? 'grey' : 'blue'"
             :offset="[0, 6]"
             popup-anchor="top"
-            @popup-open="openedPopupId = currentBookstore.id"
-            @popup-close="
-              openedPopupId = undefined;
-              existingBookstore = undefined;
-            "
+            :open="openedPopupId === currentBookstore.id"
+            @update:open="(val: boolean) => {
+              openedPopupId = val ? currentBookstore.id : undefined;
+              if (!val) existingBookstore = undefined;
+              params.id = val ? String(currentBookstore.id) : undefined;
+            }"
           >
             <template #popup>
               <div :class="{ 'striped-bg': currentBookstore.reportedAsClosed }">
@@ -293,10 +288,10 @@ let newBookstoreSent = $ref(false);
 let existingBookstoreSent = $ref(false);
 let closedBookstoreReportedSent = $ref(false);
 
-const route = useRoute();
-const openedPopupId = $ref<number | undefined>(
-  route.query.id ? parseInt(route.query.id as string) : undefined,
-);
+let mapCenter = $ref([1.73584, 46.754917]);
+
+const params = useUrlSearchParams<{ id?: string }>("history");
+let openedPopupId = $ref<number>();
 
 const { t: $t } = useI18n();
 let loaded = $ref(false);
@@ -320,7 +315,6 @@ const newComment = $ref<NewComment>(newCommentDefaults);
 
 const accessToken =
   "pk.eyJ1IjoiYnBlcmVsIiwiYSI6ImNqbmhubHVrdDBlZ20zcG8zYnQydmZwMnkifQ.suaRi8ln1w_DDDlTlQH0vQ";
-const mapCenter = [1.73584, 46.754917];
 
 const bookstoreCommentsUserIds = $computed(
   () =>
@@ -430,6 +424,20 @@ onMounted(async () => {
     [newBookstore.coordY, newBookstore.coordX] = center;
   });
 });
+
+watch(
+  () => [params.id, bookstores] as const,
+  ([id]) => {
+    openedPopupId = id ? parseInt(id) : undefined;
+    if (openedPopupId && bookstores) {
+      const bookstore = bookstores.find((b) => b.id === openedPopupId);
+      if (bookstore) {
+        mapCenter = [bookstore.coordY, bookstore.coordX];
+      }
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">

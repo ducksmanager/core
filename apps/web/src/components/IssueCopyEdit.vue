@@ -341,8 +341,7 @@ const emit = defineEmits<{
   (
     e: "update",
     updatedCopy:
-      | IssueWithPublicationcodeOptionalId
-      | CollectionUpdateMultipleIssues,
+      IssueWithPublicationcodeOptionalId | CollectionUpdateMultipleIssues,
   ): void;
 }>();
 

@@ -3,26 +3,6 @@
     fluid
     class="position-relative d-flex flex-row align-items-center justify-content-center p-2"
   >
-    <b-dropdown
-      v-if="dumiliUser"
-      id="user-dropdown"
-      :auto-close="false"
-      variant="light"
-    >
-      <template #button-content><i-bi-person-fill /></template>
-      <b-form @submit.prevent="updateUser">
-        <b-dropdown-item
-          >{{ $t("Nom d'utilisateur Inducks") }}
-          <input
-            v-model="dumiliUser.inducksUsername"
-            type="text"
-            @click.stop="() => {}"
-        /></b-dropdown-item>
-        <b-dropdown-item>
-          <b-button type="submit" variant="primary">{{ $t("OK") }}</b-button>
-        </b-dropdown-item>
-      </b-form>
-    </b-dropdown>
     <div class="flex-grow-1">
       <router-link class="display-6" to="/">DuMILi</router-link>
       <div class="small">DUcksManager Inducks LIttle helper</div>
@@ -30,22 +10,17 @@
         {{ $t("(hors-ligne)") }}
       </div>
     </div>
-    <div><SwitchLocale :fixed="false" /></div>
+    <div><SwitchLocale /></div>
   </b-container>
 
   <b-container
     fluid
     class="d-flex flex-column flex-grow-1 overflow-y-auto justify-content-center"
   >
-    <router-view v-if="user" />
-
-    <h4 v-else-if="!isSocketConnected">
-      {{ $t("Dumili n'est pas actif actuellement :-(") }}
-    </h4>
+    <router-view v-if="isSocketConnected" />
 
     <h4 v-else>
-      {{ $t("Vous devez être connecté pour accéder à cette page.") }}
-      <a :href="loginUrl">{{ $t("Connexion") }}</a>
+      {{ $t("Dumili est actuellement hors-ligne :-(") }}
     </h4>
   </b-container>
 </template>
@@ -63,8 +38,6 @@ import useDumiliSocket, {
 } from "./composables/useDumiliSocket";
 
 import { buildWebStorage } from "socket-call-client";
-import type { user } from "~prisma/client_dumili/client";
-import { suggestions } from "./stores/suggestions";
 
 const { t: $t } = useI18n();
 
@@ -93,9 +66,7 @@ const dumiliSocket = useDumiliSocket({
   onConnectError,
 });
 
-const isSocketConnected = computed(
-  () => !!dumiliSocket.indexationsSocket.value,
-);
+const isSocketConnected = computed(() => !!dumiliSocket.statusSocket.value);
 
 getCurrentInstance()!.appContext.app.provide(
   dumiliSocketInjectionKey,
@@ -111,32 +82,8 @@ getCurrentInstance()!.appContext.app.provide(
   }),
 );
 
-const loginUrl = computed(
-  () => `${import.meta.env.VITE_DM_URL}/login?redirect=${document.URL}`,
-);
-
 const { isLoadingUser, user } = storeToRefs(collection());
 const { loadUser } = collection();
-const dumiliUser = ref<user>();
-
-const updateUser = async () => {
-  const { indexationsSocket } = dumiliSocket;
-  await indexationsSocket.value!.updateUser(dumiliUser.value!);
-  if (dumiliSocket.indexationSocket) {
-    suggestions().loadIndexation();
-  }
-};
-
-watch(
-  user,
-  async (newUser, oldUser) => {
-    if (newUser && !oldUser) {
-      const { indexationsSocket } = dumiliSocket;
-      dumiliUser.value = await indexationsSocket.value!.getUser();
-    }
-  },
-  { immediate: true },
-);
 
 watch(
   isSocketConnected,
@@ -151,10 +98,6 @@ watch(
 <style lang="scss">
 @use "./style.scss";
 @import "vue-draggable-resizable/style.css";
-
-.dropdown {
-  margin-left: calc(var(--bs-gutter-x) * 0.5);
-}
 
 :deep(#flags) {
   right: 0 !important;

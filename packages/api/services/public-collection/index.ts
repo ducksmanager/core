@@ -20,20 +20,26 @@ const listenEvents = () => ({
       return { error: "This user does not allow sharing" };
     }
     return {
-      issues: await prismaDm.issue.findMany({
-        where: {
-          userId: user.id,
-          issuecode: {
-            not: null,
+      issues: await prismaDm.issue
+        .findMany({
+          where: {
+            userId: user.id,
+            issuecode: {
+              not: null,
+            },
           },
-        },
-      }).then((issues) =>
-        prismaCoa.augmentIssueArrayWithInducksData(
-          issues as (issue & { issuecode: string })[],
-        )).then((issues) => issues.map((issue) => ({
-          ...issue,
-          labelIds: [] as number[],
-        })))
+        })
+        .then((issues) =>
+          prismaCoa.augmentIssueArrayWithInducksData(
+            issues as (issue & { issuecode: string })[],
+          ),
+        )
+        .then((issues) =>
+          issues.map((issue) => ({
+            ...issue,
+            labelIds: [] as number[],
+          })),
+        ),
     };
   },
 });

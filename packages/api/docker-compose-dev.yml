@@ -1,18 +1,26 @@
 services:
-  pastec:
-    container_name: pastec
-    image: "bperel/pastec-ubuntu-1704-timestamps"
-    ports:
-      - "4212:4212"
-    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
-    volumes:
-      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
 
   pastec-improved:
     container_name: pastec-improved
     image: "bperel/pastec:improved"
     ports:
       - "4213:4212"
+    command:
+      [
+        "-p",
+        "4212",
+        "-i",
+        "/pastec-index-last.dat",
+        "/pastec/visualWordsORB.dat",
+      ]
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+
+  pastec-kp1000-flann200:
+    container_name: pastec-kp1000-flann200
+    image: "bperel/pastec:kp1000-flann200"
+    ports:
+      - "4214:4212"
     command:
       [
         "-p",

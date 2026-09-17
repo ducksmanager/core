@@ -12,17 +12,22 @@
   </ion-split-pane>
 </template>
 <script setup lang="ts">
-import { socketInjectionKey as dmSocketInjectionKey } from '~web/src/composables/useDmSocket';
-
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
-const { offlineBannerHeight, socket, isPersistedDataLoaded, token } = storeToRefs(app());
-
-getCurrentInstance()!.appContext.app.provide(dmSocketInjectionKey, socket.value!);
+const { offlineBannerHeight, socket, isPersistedDataLoaded, token, isOfflineMode } = storeToRefs(app());
 
 const collectionStore = wtdcollection();
 const { fetchCollection } = collectionStore;
+const { issues } = storeToRefs(collectionStore);
+
+// The connection may fail before the cached collection is read, in which case the
+// app is offline but browsable.
+watch(issues, (loadedIssues) => {
+  if (loadedIssues && isOfflineMode.value === 'offline_no_cache') {
+    isOfflineMode.value = true;
+  }
+});
 
 const isCollectionLoaded = ref(false);
 
@@ -48,8 +53,15 @@ watch(
   [isPersistedDataLoaded, token],
   async ([isLoaded, tokenString]) => {
     if (isLoaded && tokenString) {
-      await fetchCollection(true);
-      isCollectionLoaded.value = true;
+      // Show the cached collection first, then refresh it from the server in the
+      // background, so that a slow or absent connection doesn't block rendering.
+      await dataLoader.value.run(
+        () => fetchCollection(),
+        () => {
+          isCollectionLoaded.value = true;
+          fetchCollection(true);
+        },
+      );
     }
   },
   { immediate: true },

@@ -24,7 +24,7 @@
       ],
       "~prisma-schemas/*": [
         "../../packages/prisma-schemas/*"
-      ],
+      ]
     }
   },
   "include": ["*.ts", "scrapes/**/*.ts"]

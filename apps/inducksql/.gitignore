@@ -1,0 +1,6 @@
+.idea/
+*.sqlite
+*.sqlite.gz
+*.sqlite.zst
+bundle.mjs
+dist/

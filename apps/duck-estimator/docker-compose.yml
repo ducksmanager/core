@@ -7,6 +7,9 @@ services:
       GIT_COMMITTER_NAME: Admin
       GIT_AUTHOR_EMAIL: admin@ducksmanager.net
       GIT_COMMITTER_EMAIL: admin@ducksmanager.net
+    mem_limit: 3g
+    memswap_limit: 3g
+    cpus: 2
     networks:
       - dm-db-network
     volumes:

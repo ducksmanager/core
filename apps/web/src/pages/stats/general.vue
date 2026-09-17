@@ -96,6 +96,7 @@ alias:
             >
               <template #cell(issue)="{ item }">
                 <Issue
+                  v-if="issuecodeDetails[item.issuecode!]"
                   v-bind="{...issuecodeDetails[item.issuecode!], publicationname: publicationNames[issuecodeDetails[item.issuecode!].publicationcode!]!}"
                 />
               </template>
@@ -237,11 +238,15 @@ watch(
   quotedIssues,
   async (newValue) => {
     if (newValue) {
-      fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
+      hasPublicationNames = false;
+      await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
       await fetchPublicationNames(
-        newValue.map(
-          ({ issuecode }) => issuecodeDetails.value[issuecode!].publicationcode,
-        ),
+        newValue
+          .map(
+            ({ issuecode }) =>
+              issuecodeDetails.value[issuecode!]?.publicationcode,
+          )
+          .filter((publicationcode) => !!publicationcode),
       );
       hasPublicationNames = true;
     }
@@ -253,8 +258,11 @@ watch(
   await loadCollection();
   await fetchCount();
   const rarityData = await userGlobalStatsEvents.getUsersCollectionRarity();
+  if (!rarityData.me) {
+    return;
+  }
   rarityRank = rarityData.me.rank;
-  userIdAboveMe = rarityData.aboveMe.userId;
+  userIdAboveMe = rarityData.aboveMe?.userId ?? null;
 
   const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
   await fetchIssuecodeDetails([rarestIssuecode]);
@@ -266,7 +274,7 @@ watch(
     publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
     issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
   };
-  if (rarityData.aboveMe.userId) {
+  if (rarityData.aboveMe?.userId) {
     await fetchStats([rarityData.aboveMe.userId]);
   }
 })();

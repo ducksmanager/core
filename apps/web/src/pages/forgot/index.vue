@@ -56,10 +56,12 @@ const { t: $t } = useI18n();
 const { auth: authEvents } = inject(socketInjectionKey)!;
 
 const sendPasswordToken = async () => {
-  const response = await authEvents.requestTokenForForgotPassword(email);
-  if ("error" in response) {
-    error = response.error!;
-  } else {
+  const response = await authEvents
+    .requestTokenForForgotPassword(email)
+    .catch((e) => {
+      error = e.error;
+    });
+  if (response) {
     token = response.token;
   }
 };
