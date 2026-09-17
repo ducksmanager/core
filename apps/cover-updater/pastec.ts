@@ -2,6 +2,7 @@ import { pastecHosts } from "./env";
 import { errorMessage } from "./util";
 
 const INDEX_FETCH_TIMEOUT = 300_000;
+const INDEX_WRITE_TIMEOUT = 600_000;
 
 export const pastecIndexHost = pastecHosts[0]!;
 
@@ -49,6 +50,25 @@ export const addCoverToIndex = async (
     );
     const body = await response.text();
     return body.includes("IMAGE_ADDED") ? null : body.trim();
+  } catch (error) {
+    return errorMessage(error);
+  }
+};
+
+export const writeIndex = async () => {
+  try {
+    const response = await fetch(`http://${pastecIndexHost}/index/io`, {
+      method: "POST",
+      body: JSON.stringify({ type: "WRITE", index_path: '/pastec-index-last.dat' }),
+      signal: AbortSignal.timeout(INDEX_WRITE_TIMEOUT),
+    });
+    const body = (await response.text()).trim();
+    if (!response.ok) {
+      return `HTTP ${response.status}: ${body}`;
+    }
+    // The body is logged either way: a Pastec that cannot open the file answers
+    // 200 with an error payload rather than a status code.
+    return body.includes("INDEX_WRITTEN") ? null : body;
   } catch (error) {
     return errorMessage(error);
   }

@@ -1,15 +1,12 @@
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
 
-import { maxDeletePercent, pastecHosts } from "./env";
-import {
-  addCoverToIndex,
-  fetchIndexedCoverIds,
-  pastecIndexHost,
-} from "./pastec";
+import { maxDeletePercent, maxProcessMinutes, pastecHosts } from "./env";
+import { addCoverToIndex, pastecIndexHost } from "./pastec";
 import { chunk, mapWithConcurrency } from "./util";
 
 const COVERS_ROOT = "/data/covers";
 const BATCH_SIZE = 100;
+const INSERT_CHUNK_SIZE = 5000;
 const CONCURRENCY = 10;
 const DELETE_CHUNK_SIZE = 1000;
 // cover_imports.import_error is a VARCHAR(200).
@@ -29,16 +26,50 @@ const fetchPendingCovers = (batchSize: number) =>
     WHERE cover_imports.coverid IS NULL
     LIMIT ${batchSize}`;
 
-// The index decides what gets deleted, so an index we failed to read must never
-// pass for an empty one: every failure path skips the cleanup instead. Importing
-// a cover again is harmless, deleting one is not.
-export const deleteNonIndexedCovers = async () => {
-  const indexedCoverIds = await fetchIndexedCoverIds();
-  if (!indexedCoverIds) {
-    console.warn("Skipping cover cleanup");
+const countPendingCovers = () =>
+  prismaCoverInfo.$queryRaw<{ count: bigint }[]>`
+    SELECT COUNT(*) AS count
+    FROM covers
+      LEFT JOIN cover_imports ON cover_imports.coverid = covers.id
+    WHERE cover_imports.coverid IS NULL`.then(([row]) => Number(row!.count));
+
+export const recordAlreadyIndexedCovers = async (indexedCoverIds: number[]) => {
+  const indexed = new Set(indexedCoverIds);
+  const recordedCoverIds = new Set(
+    (await prismaCoverInfo.coverImport.findMany({ select: { id: true } })).map(
+      ({ id }) => id,
+    ),
+  );
+
+  const coverIdsToRecord = (
+    await prismaCoverInfo.cover.findMany({ select: { id: true } })
+  )
+    .map(({ id }) => id)
+    .filter(
+      (coverId) => indexed.has(coverId) && !recordedCoverIds.has(coverId),
+    );
+
+  if (!coverIdsToRecord.length) {
+    console.log("Index backfill: nothing to record");
     return;
   }
 
+  console.log(
+    `Index backfill: recording ${coverIdsToRecord.length} covers that the index already holds`,
+  );
+  const importedAt = new Date();
+  for (const coverIds of chunk(coverIdsToRecord, INSERT_CHUNK_SIZE)) {
+    await prismaCoverInfo.coverImport.createMany({
+      data: coverIds.map((id) => ({ id, importedAt })),
+      skipDuplicates: true,
+    });
+  }
+};
+
+// The index decides what gets deleted, so an index we failed to read must never
+// pass for an empty one: the caller skips the cleanup entirely instead. Importing
+// a cover again is harmless, deleting one is not.
+export const deleteNonIndexedCovers = async (indexedCoverIds: number[]) => {
   const indexed = new Set(indexedCoverIds);
   const importedCoverIds = (
     await prismaCoverInfo.coverImport.findMany({
@@ -118,12 +149,19 @@ const recordResults = (results: CoverImportResult[]) =>
   });
 
 export const processCovers = async () => {
+  const deadline = Date.now() + maxProcessMinutes * 60_000;
   let processedCount = 0;
   let importedCount = 0;
+  let stoppedOnDeadline = false;
 
   // No offset needed: recording a result gives the cover a cover_imports row,
   // which takes it out of the next batch.
   while (true) {
+    if (Date.now() >= deadline) {
+      stoppedOnDeadline = true;
+      break;
+    }
+
     const covers = await fetchPendingCovers(BATCH_SIZE);
     if (!covers.length) {
       break;
@@ -139,4 +177,11 @@ export const processCovers = async () => {
   console.log(
     `Processed ${processedCount} covers, ${importedCount} imported into ${pastecHosts.length} Pastec instance(s)`,
   );
+  if (stoppedOnDeadline) {
+    console.log(
+      `Stopped after ${maxProcessMinutes} minutes, ${await countPendingCovers()} covers still pending`,
+    );
+  }
+
+  return { processedCount, importedCount };
 };

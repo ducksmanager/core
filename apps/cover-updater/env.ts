@@ -46,3 +46,8 @@ export const pastecHosts = PASTEC_HOSTS_AND_PORTS.split(",")
 // Raisable for a single run when the index was legitimately rebuilt and the
 // cleanup would otherwise refuse to catch up. See deleteNonIndexedCovers.
 export const maxDeletePercent = Number(process.env.MAX_DELETE_PERCENT ?? 10);
+
+// The run has to end well before the CI step's own timeout kills it, otherwise
+// the index dump never happens and a whole run's imports are lost on the next
+// Pastec restart. Processing stops at this point and resumes tomorrow.
+export const maxProcessMinutes = Number(process.env.MAX_PROCESS_MINUTES ?? 15);

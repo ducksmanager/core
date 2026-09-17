@@ -57,7 +57,6 @@ jobs:
 
       - name: Run cover-updater
         timeout-minutes: 20
-        continue-on-error: true
         env:
           REMOTE_TIMEOUT: 15m
         run: |
