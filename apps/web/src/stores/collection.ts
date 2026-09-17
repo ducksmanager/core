@@ -338,9 +338,10 @@ export const collection = defineStore("collection", () => {
       }
     },
     loadUserIssueQuotations = async () => {
-      coa().addIssueQuotations(
-        await collectionEvents.getCollectionQuotations(),
-      );
+      // FIXME
+      // coa().addIssueQuotations(
+      //   await collectionEvents.getCollectionQuotations(),
+      // );
     },
     loadLastPublishedEdgesForCurrentUser = async () => {
       if (!lastPublishedEdgesForCurrentUser.value) {

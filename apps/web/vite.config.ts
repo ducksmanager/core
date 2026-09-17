@@ -1,4 +1,6 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
+import { piniaColadaDevframe } from "@pinia/colada-devtools";
+import { viteDevframeHub } from "@devframes/vite/hub";
 import Vue from "@vitejs/plugin-vue";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
@@ -10,6 +12,7 @@ import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
 import Components from "unplugin-vue-components/vite";
+import VueDevTools from "vite-plugin-vue-devtools";
 import VueRouter from "vue-router/vite";
 import { VueRouterAutoImports } from "vue-router/unplugin";
 import { defineConfig } from "vite";
@@ -27,6 +30,18 @@ const gitCommitHash = () => {
 };
 
 const sentryRelease = gitCommitHash();
+
+// `PiniaColadaDevtoolsStandalone()` mounts the same devframe, but gated behind
+// DevFrame's OTP prompt and with its own floating dock. Hosting it directly
+// keeps it ungated on localhost and headless — src/devtools.ts loads the
+// in-page agent and surfaces the frame as a Vue DevTools tab instead.
+const piniaColadaDevtoolsHub = () =>
+  viteDevframeHub({
+    quiet: true,
+    auth: false,
+    ui: false,
+    devframes: [piniaColadaDevframe],
+  });
 
 export default defineConfig({
   clearScreen: false,
@@ -46,6 +61,8 @@ export default defineConfig({
     }),
   },
   plugins: [
+    VueDevTools(),
+    piniaColadaDevtoolsHub(),
     ReactivityTransform(),
     VueRouter({
       dts: "src/route-map.d.ts",
