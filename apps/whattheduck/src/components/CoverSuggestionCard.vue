@@ -17,15 +17,15 @@ import { coa } from '~web/src/stores/coa';
 
 import type { Cover } from '~/composables/useCoverSearch';
 
-const props = defineProps<{ cover: Cover }>();
+const { cover } = defineProps<{ cover: Cover }>();
 const emit = defineEmits<{ confirm: []; dismiss: [] }>();
 
 const { issuecodeDetails, publicationNames } = storeToRefs(coa());
 const { fetchIssuecodeDetails, fetchPublicationNames } = coa();
 
-const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${props.cover.fullUrl}`);
+const coverUrl = computed(() => `${import.meta.env.VITE_CLOUDINARY_BASE_URL}${cover.fullUrl}`);
 
-const details = computed(() => issuecodeDetails.value[props.cover.issuecode]);
+const details = computed(() => issuecodeDetails.value[cover.issuecode]);
 const title = computed(() => {
   const issue = details.value;
   if (!issue) {
@@ -37,7 +37,7 @@ const title = computed(() => {
 
 // The thumbnail renders immediately; the text fills in once COA data arrives.
 watch(
-  () => props.cover.issuecode,
+  () => cover.issuecode,
   async (issuecode) => {
     await fetchIssuecodeDetails([issuecode]);
     const publicationcode = issuecodeDetails.value[issuecode]?.publicationcode;
