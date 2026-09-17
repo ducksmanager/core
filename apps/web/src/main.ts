@@ -84,6 +84,10 @@ const app = createApp(App)
 
 app.mount("#app");
 
+if (import.meta.env.DEV) {
+  import("~/devtools");
+}
+
 if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     integrations: [
