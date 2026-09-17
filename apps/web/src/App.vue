@@ -1,11 +1,9 @@
 <template>
   <LayoutWrapper v-if="isReady" />
-  <PiniaColadaDevtools />
 </template>
 
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import { PiniaColadaDevtools } from "@pinia/colada-devtools";
 
 import { buildWebStorage } from "socket-call-client";
 

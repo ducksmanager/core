@@ -129,9 +129,7 @@ export default ({ _socket }: UserServices) => ({
     return output;
   },
 
-  getCollectionQuotations: (): Promise<
-    Record<string, InducksIssueQuotationSimple>
-  > =>
+  getCollectionQuotations: () =>
     prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
           select
             issuecode,

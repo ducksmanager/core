@@ -1,4 +1,5 @@
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
+import { PiniaColadaDevtoolsStandalone } from "@pinia/colada-devtools/standalone";
 import Vue from "@vitejs/plugin-vue";
 import ReactivityTransform from "@vue-macros/reactivity-transform/vite";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
@@ -46,6 +47,7 @@ export default defineConfig({
     }),
   },
   plugins: [
+    PiniaColadaDevtoolsStandalone(),
     ReactivityTransform(),
     VueRouter({
       dts: "src/route-map.d.ts",
