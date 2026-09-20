@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :key="headerKey" :translucent="true">
+    <ion-header :key="headerKey" :translucent="true" :class="{ 'ion-display-none': ownsCameraPreview }">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button color="primary" />
@@ -9,7 +9,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <camera-preview-overlay v-if="isCameraPreviewShown" />
+      <camera-preview-overlay v-if="ownsCameraPreview" />
       <div v-else-if="!covers.length"></div>
       <template v-else>
         <div>
@@ -105,6 +105,8 @@ const { coverId: coverIdEvents } = inject(dmSocketInjectionKey)!;
 const { pickCoverFile } = useCoverSearch(useRouter(), coverIdEvents);
 
 const route = useRoute();
+
+const ownsCameraPreview = computed(() => isCameraPreviewShown.value && route.path === '/cover-search-results');
 
 const { getCollectionIssues } = wtdcollection();
 

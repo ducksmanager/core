@@ -1,27 +1,30 @@
 <template>
   <div id="camera-preview-container" :class="{ portrait: isPortrait, landscape: !isPortrait }">
-    <div v-if="boundingClientRect" id="camera-bg-overlays" aria-hidden="true">
-      <div class="camera-bg-overlay camera-bg-top" :style="{ height: `${boundingClientRect.y}px` }" />
-      <div
-        class="camera-bg-overlay camera-bg-bottom"
-        :style="{ top: `${boundingClientRect.y + boundingClientRect.height}px` }"
-      />
-      <div
-        class="camera-bg-overlay camera-bg-left"
-        :style="{
-          top: `${boundingClientRect.y}px`,
-          width: `${boundingClientRect.x}px`,
-          height: `${boundingClientRect.height}px`,
-        }"
-      />
-      <div
-        class="camera-bg-overlay camera-bg-right"
-        :style="{
-          top: `${boundingClientRect.y}px`,
-          left: `${boundingClientRect.x + boundingClientRect.width}px`,
-          height: `${boundingClientRect.height}px`,
-        }"
-      />
+    <div id="camera-bg-overlays" aria-hidden="true">
+      <div v-if="!boundingClientRect" class="camera-bg-overlay camera-bg-full" />
+      <template v-else>
+        <div class="camera-bg-overlay camera-bg-top" :style="{ height: `${boundingClientRect.y}px` }" />
+        <div
+          class="camera-bg-overlay camera-bg-bottom"
+          :style="{ top: `${boundingClientRect.y + boundingClientRect.height}px` }"
+        />
+        <div
+          class="camera-bg-overlay camera-bg-left"
+          :style="{
+            top: `${boundingClientRect.y}px`,
+            width: `${boundingClientRect.x}px`,
+            height: `${boundingClientRect.height}px`,
+          }"
+        />
+        <div
+          class="camera-bg-overlay camera-bg-right"
+          :style="{
+            top: `${boundingClientRect.y}px`,
+            left: `${boundingClientRect.x + boundingClientRect.width}px`,
+            height: `${boundingClientRect.height}px`,
+          }"
+        />
+      </template>
     </div>
     <div id="camera-preview" ref="cameraPreview"></div>
     <div
@@ -278,6 +281,10 @@ watch([overlayHeight, currentRatioIndex], async () => {
 .camera-bg-overlay {
   position: absolute;
   background: var(--dm-background-color);
+}
+
+.camera-bg-full {
+  inset: 0;
 }
 
 .camera-bg-top {
