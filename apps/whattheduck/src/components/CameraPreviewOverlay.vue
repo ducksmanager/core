@@ -1,7 +1,7 @@
 <template>
   <div id="camera-preview-container" :class="{ portrait: isPortrait, landscape: !isPortrait }">
     <div id="camera-bg-overlays" aria-hidden="true">
-      <div v-if="!boundingClientRect" class="camera-bg-overlay camera-bg-full" />
+      <div v-if="!hasPreviewStarted || !boundingClientRect" class="camera-bg-overlay camera-bg-full" />
       <template v-else>
         <div class="camera-bg-overlay camera-bg-top" :style="{ height: `${boundingClientRect.y}px` }" />
         <div
@@ -150,12 +150,9 @@ const router = useRouter();
 const { takePhoto, isSearching, searchOneFrame } = useCoverSearch(router, coverIdEvents);
 const { phase, suggestion, suggestionFrameSize, covers, start, stop, dismiss } = useLiveCoverSearch(searchOneFrame);
 
-// Pastec reports where in the uploaded frame the cover was found; place that on the live preview.
-/**
- * The geometry CameraPreview.start() reports back, which is where the preview actually ended up —
- * the plugin clamps and letterboxes the rect we ask for, so the requested one cannot place the box.
- */
 const previewRect = ref<BoundingClientRect>();
+
+const hasPreviewStarted = ref(false);
 
 const detectionBox = computed(() =>
   suggestion.value?.boundingRect && suggestionFrameSize.value && previewRect.value
@@ -242,6 +239,7 @@ watch([overlayHeight, currentRatioIndex], async () => {
         // The preview is restarted on every resize/rotation, so the loop is rebound to the new session.
         stop();
         previewRect.value = await CameraPreview.start(cameraPreviewOptions);
+        hasPreviewStarted.value = true;
         if (isLiveCoverSearchEnabled.value) {
           start();
         }
