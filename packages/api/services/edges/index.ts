@@ -72,12 +72,12 @@ const listenEvents = () => ({
       .then((issues) => prismaCoa.augmentIssueArrayWithInducksData(issues)),
 
   getEdges: ev(
-    v.config(
+    v.pipe(
       v.object({
         publicationcode: v.optional(v.string()),
         issuecodes: v.optional(v.array(v.string())),
       }),
-      { message: "Invalid filters" },
+      v.check(({ publicationcode, issuecodes }) => !!publicationcode || !!issuecodes?.length, "Invalid filters" as const),
     ),
   )((filters) =>
     getEdges(filters)
