@@ -1151,10 +1151,8 @@ const listenEvents = (services: IndexationServices) => ({
         "Invalid number of pages" as const,
       ),
       v.check(
-        (indexation) =>
-          !("releaseDate" in indexation) ||
-          indexation.releaseDate === null ||
-          !!new Date(indexation.releaseDate),
+        ({ releaseDate }) =>
+          releaseDate === null || !Number.isNaN(new Date(releaseDate).getTime()),
         "Invalid release date" as const,
       ),
     ),
