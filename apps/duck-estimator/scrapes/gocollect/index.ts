@@ -33,6 +33,8 @@ const gradingIntervalsForMaxEstimation = [6, 10];
 
 const overviewSelector = '[wire\\:key*="view-state-company-overview-"]';
 
+const OVERVIEW_TIMEOUT = 1500;
+
 type CsvIssue = { publicationcode: string; publicationUrl: string };
 
 export async function scrape() {
@@ -44,7 +46,12 @@ export async function scrape() {
 
   const browser = await firefox.launch();
   const browserContext = await browser.newContext();
-  await browserContext.route(/img.gocollect.com/, (route) => route.abort());
+  const blockedResourceTypes = new Set(["image", "media", "font"]);
+  await browserContext.route("**/*", (route) =>
+    blockedResourceTypes.has(route.request().resourceType())
+      ? route.abort()
+      : route.continue(),
+  );
   const page = await browserContext.newPage();
   const issuePage = await browserContext.newPage();
 
@@ -104,7 +111,7 @@ export async function scrape() {
               async (_contents) => {
                 try {
                   await issuePage.waitForSelector(overviewSelector, {
-                    timeout: 3000,
+                    timeout: OVERVIEW_TIMEOUT,
                   });
                   return _contents;
                 } catch (e) {
