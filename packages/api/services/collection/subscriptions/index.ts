@@ -35,7 +35,6 @@ export default ({ _socket }: UserServices) => ({
 
   createSubscription: ev(
     v.object({
-      id: v.null(),
       publicationcode: v.string(),
       startDate: v.string(),
       endDate: v.string(),

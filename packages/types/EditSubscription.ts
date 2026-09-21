@@ -1,6 +1,9 @@
 export type EditSubscription = {
-  id: number | null;
   publicationcode: string;
   startDate: string;
   endDate: string;
-};
+}|{
+  id: number;
+  publicationcode: string;
+  startDate: string;
+  endDate: string;};
