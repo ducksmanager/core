@@ -156,15 +156,15 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
         data: v.string(),
         issuecode: v.string(),
         isEdgePhoto: v.literal(true),
-        fileName: v.undefined(),
       }),
     ]),
-  )(async ({ issuecode, data, isEdgePhoto, fileName }) => {
+  )(async (input) => {
+    const { issuecode, data, isEdgePhoto } = input;
     const cleanData = data.includes(",") ? data.split(",")[1] : data;
     const targetFilePath = await getTargetFilePath(
       isEdgePhoto
         ? { issuecode, isEdgePhoto }
-        : { issuecode, isEdgePhoto, fileName },
+        : { issuecode, isEdgePhoto, fileName: input.fileName },
     );
 
     const token = socket.data.user!.token;
