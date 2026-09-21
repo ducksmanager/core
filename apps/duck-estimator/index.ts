@@ -14,11 +14,11 @@ import { scrape as seriesam } from "./scrapes/seriesam";
 export type ConsoleArgs = Parameters<typeof console.error>;
 
 const scrapes = [
+  { name: "gocollect", scrape: gocollect },
   { name: "bdm", scrape: bdm },
   { name: "bedetheque", scrape: bedetheque },
   { name: "comicsmania", scrape: comicsmania },
   { name: "seriesam", scrape: seriesam },
-  { name: "gocollect", scrape: gocollect },
 ];
 
 dotenv.config({ path: ".env" });

@@ -7,8 +7,10 @@ import * as v from "valibot";
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
 
+// import { RequiredAuthMiddleware } from "../auth/util";
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";
+// import { createRateLimiter } from "../rate-limit";
 import { getPastecStatus } from "../status";
 
 const listenEvents = () => ({
@@ -17,7 +19,7 @@ const listenEvents = () => ({
       v.string("Invalid URL or base64 string"),
       v.nonEmpty("Invalid URL or base64 string"),
     ),
-    v.pipe(v.picklist([0, 1], "Invalid pastec index")),
+    v.pipe(v.picklist([0, 1], "Invalid pastec index" as const)),
   )(async (urlOrBase64, pastecIndex) => {
     const hostAndPort =
       process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
@@ -135,13 +137,15 @@ const listenEvents = () => ({
   ),
 });
 
-export const { client, server } = useSocketEvents<typeof listenEvents>(
-  namespaces.COVER_ID,
-  {
-    listenEvents,
-    middlewares: [],
-  },
-);
+export const { client, server } = useSocketEvents<
+  typeof listenEvents,
+  Record<string, never>
+>(namespaces.COVER_ID, {
+  listenEvents,
+  middlewares: [
+    // RequiredAuthMiddleware
+  ],
+});
 
 export type ClientEvents = (typeof client)["emitEvents"];
 

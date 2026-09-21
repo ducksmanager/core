@@ -3,7 +3,7 @@
     {{ $t('Chargement…') }}
   </ion-content>
   <template v-else>
-    <camera-preview-overlay v-if="isCameraPreviewShown" />
+    <camera-preview-overlay v-if="ownsCameraPreview" />
     <ion-content v-else-if="!items.length" ref="content">
       <slot v-if="$slots.empty" name="empty" />
       <template v-else>{{ $t('Cette liste est vide.') }}</template>
@@ -104,6 +104,9 @@ const { items, getItemTextFn } = defineProps<{
 const emit = defineEmits<(e: 'items-filtered', items: string[]) => void>();
 
 const { isCameraPreviewShown, filterText, selectedIssuecodes, currentNavigationItem } = storeToRefs(app());
+
+const route = useRoute();
+const ownsCameraPreview = computed(() => isCameraPreviewShown.value && route.path === '/collection');
 
 const content = shallowRef<InstanceType<typeof IonContent>>();
 /** Defer RecycleScroller until ion-content has laid out; first tick had clientHeight 0. */

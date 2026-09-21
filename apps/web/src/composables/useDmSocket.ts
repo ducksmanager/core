@@ -167,7 +167,9 @@ const defaultExport = (options: {
             ttl: 1000, // 1 second only, because we want to always get the latest data but still cache in case of offline
           },
     }),
-    coverId: socket.addNamespace<CoverIdEvents>(namespaces.COVER_ID, {}),
+    coverId: socket.addNamespace<CoverIdEvents>(namespaces.COVER_ID, {
+      session,
+    }),
   };
 };
 
