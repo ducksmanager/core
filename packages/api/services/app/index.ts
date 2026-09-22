@@ -34,9 +34,11 @@ export const getUpdateFileUrl = async (appInfos?: AppInfos) => {
 
 const listenEvents = () => ({
   getBundleUrl: ev(
-    v.object({
-      version: v.string(),
-    }),
+    v.optional(
+      v.object({
+        version: v.string(),
+      }),
+    ),
   )((appInfos) => getUpdateFileUrl(appInfos)),
 });
 

@@ -1091,8 +1091,6 @@ const listenEvents = (services: IndexationServices) => ({
 
   createIssueSuggestion: ev(
     v.object({
-      title: v.string(),
-      description: v.string(),
       publicationcode: v.string(),
       issuenumber: v.string(),
     }),
