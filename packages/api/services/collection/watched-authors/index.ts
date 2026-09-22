@@ -41,7 +41,7 @@ export default ({ _socket }: UserServices) => ({
   updateWatchedAuthor: ev(
     v.object({
       personcode: v.string(),
-      notation: v.number(),
+      notation: v.nullable(v.number()),
     }),
   )(async (data) => {
     try {

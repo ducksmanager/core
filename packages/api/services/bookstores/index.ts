@@ -136,28 +136,24 @@ const listenEvents = ({ _socket }: UserServices) => ({
   }),
 
   createBookstoreComment: ev(
-    v.pipe(
+    v.union([
       v.object({
-        bookstore: v.union([
-          v.object({
-            id: v.number(),
-          }),
-          v.object({
-            name: v.string(),
-            address: v.string(),
-            coordX: v.number(),
-            coordY: v.number(),
-          }),
-        ]),
-        comment: v.object({
-          comment: v.string(),
-          atmosphereRating: v.number(),
-          pricesRating: v.number(),
-          selectionRating: v.number(),
-        }),
+        id: v.number(),
       }),
-    ),
-  )(async ({ bookstore, comment }) => {
+      v.object({
+        name: v.string(),
+        address: v.string(),
+        coordX: v.number(),
+        coordY: v.number(),
+      }),
+    ]),
+    v.object({
+      comment: v.string(),
+      atmosphereRating: v.number(),
+      pricesRating: v.number(),
+      selectionRating: v.number(),
+    }),
+  )(async (bookstore, comment) => {
     const user = _socket.data.user
       ? await prismaDm.user.findUnique({
           where: {

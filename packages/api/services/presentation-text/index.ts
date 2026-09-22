@@ -13,12 +13,10 @@ export type Decision = "approve" | "refuse";
 
 const listenEvents = () => ({
   approveOrDenyPresentationText: ev(
-    v.tuple([
-      v.string(),
-      v.number(),
-      v.union([v.literal("approve"), v.literal("refuse")]),
-    ]),
-  )(async ([sentence, userId, decision]) => {
+    v.string(),
+    v.number(),
+    v.union([v.literal("approve"), v.literal("refuse")]),
+  )(async (sentence, userId, decision) => {
     switch (decision) {
       case "approve":
         {

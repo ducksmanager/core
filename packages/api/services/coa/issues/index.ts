@@ -7,7 +7,7 @@ import * as v from "valibot";
 export default {
   getIssues: ev(
     v.array(v.string()),
-    v.array(v.literal("title", "fullyindexed")),
+    v.array(v.union([v.literal("title"), v.literal("fullyindexed")])),
   )((issuecodes, withFields) =>
     prismaCoa
       .augmentIssueArrayWithInducksData(

@@ -1074,7 +1074,6 @@ const listenEvents = (services: IndexationServices) => ({
   createStorySuggestion: ev(
     v.object({
       storycode: v.string(),
-      title: v.string(),
       entryId: v.number(),
     }),
   )(async (suggestion) =>
@@ -1152,7 +1151,8 @@ const listenEvents = (services: IndexationServices) => ({
       ),
       v.check(
         ({ releaseDate }) =>
-          releaseDate === null || !Number.isNaN(new Date(releaseDate).getTime()),
+          releaseDate === null ||
+          !Number.isNaN(new Date(releaseDate).getTime()),
         "Invalid release date" as const,
       ),
     ),
@@ -1270,7 +1270,7 @@ const listenEvents = (services: IndexationServices) => ({
     v.number(),
     v.object({
       entirepages: v.optional(v.number()),
-      title: v.optional(v.string()),
+      title: v.nullable(v.string()),
       position: v.optional(v.number()),
     }),
   )(async (entryId, data) => {

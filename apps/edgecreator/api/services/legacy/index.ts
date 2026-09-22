@@ -8,12 +8,10 @@ import * as v from "valibot";
 
 const listenEvents = () => ({
   getLegacyDimensions: ev(
-    v.object({
-      publicationcode: v.string(),
-      issuenumber: v.string(),
-    }),
+    v.string(),
+    v.string(),
   )(
-    async ({ publicationcode, issuenumber }) =>
+    async (publicationcode, issuenumber) =>
       prismaEdgeCreator.$queryRaw<
         { optionName: string; optionValue: string }[]
       >`
@@ -33,12 +31,10 @@ const listenEvents = () => ({
   ),
 
   getLegacySteps: ev(
-    v.object({
-      publicationcode: v.string(),
-      issuenumber: v.string(),
-    }),
+    v.string(),
+    v.string(),
   )(
-    async ({ publicationcode, issuenumber }) =>
+    async (publicationcode, issuenumber) =>
       prismaEdgeCreator.$queryRaw<
         {
           stepNumber: number;

@@ -85,9 +85,9 @@ export default ({ _socket }: UserServices) => ({
   addOrChangeIssues: ev(
     v.object({
       issuecodes: v.array(v.string()),
-      purchaseId: v.number(),
-      condition: v.union([v.null(), v.enum(issue_condition)]),
-      labelIds: v.array(v.number()),
+      purchaseId: v.optional(v.nullable(v.number())),
+      condition: v.optional(v.union([v.null(), v.enum(issue_condition)])),
+      labelIds: v.optional(v.array(v.number())),
     }),
   )(async ({ issuecodes, purchaseId, condition, labelIds }) => {
     const user = _socket.data.user;
@@ -117,9 +117,9 @@ export default ({ _socket }: UserServices) => ({
       issuecode: v.string(),
       copies: v.array(
         v.object({
-          id: v.number(),
-          condition: v.enum(issue_condition),
-          purchaseId: v.number(),
+          id: v.nullable(v.number()),
+          condition: v.nullable(v.enum(issue_condition)),
+          purchaseId: v.nullable(v.number()),
           labelIds: v.array(v.number()),
         }),
       ),
@@ -130,7 +130,7 @@ export default ({ _socket }: UserServices) => ({
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
       copies
         .map(({ purchaseId }) => purchaseId)
-        .filter((purchaseId) => !!purchaseId),
+        .filter((purchaseId): purchaseId is number => !!purchaseId),
       userId,
     );
 

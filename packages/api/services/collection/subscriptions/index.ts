@@ -1,4 +1,3 @@
-import type { EditSubscription } from "~dm-types/EditSubscription";
 import type { subscription } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -46,7 +45,6 @@ export default ({ _socket }: UserServices) => ({
   updateSubscription: ev(
     v.number(),
     v.object({
-      id: v.number(),
       publicationcode: v.string(),
       startDate: v.string(),
       endDate: v.string(),
@@ -69,7 +67,11 @@ export default ({ _socket }: UserServices) => ({
 
 export async function upsertSubscription(
   id: number | null,
-  subscription: EditSubscription,
+  subscription: {
+    publicationcode: string;
+    startDate: string;
+    endDate: string;
+  },
   userId: number,
 ) {
   if (!subscription.publicationcode) {
