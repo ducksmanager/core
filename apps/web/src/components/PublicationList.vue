@@ -74,7 +74,7 @@
 <script setup lang="ts">
 const { t: $t } = useI18n();
 
-const { isPublic, filteredList = undefined } = defineProps<{
+const { isPublic, filteredList } = defineProps<{
   isPublic?: boolean;
   filteredList?: string[];
 }>();
@@ -120,7 +120,7 @@ const sortedCountries = $computed(
     Object.keys(totalPerCountry.value).sort(
       (countryCode1, countryCode2) =>
         countryNames.value?.[countryCode1]?.localeCompare(
-          countryNames.value?.[countryCode2],
+          countryNames.value[countryCode2],
         ) || 0,
     ),
 );
@@ -138,11 +138,11 @@ const publicationsPerCountry = $computed(() =>
       ),
 );
 const getSortedPublications = (country: string) =>
-  publicationsPerCountry?.[country]?.sort((a, b) =>
-    (publicationNames.value?.[a] || "").localeCompare(
-      publicationNames.value?.[b] || "",
+  publicationsPerCountry[country].sort((a, b) =>
+    (publicationNames.value[a] || "").localeCompare(
+      publicationNames.value[b] || "",
     ),
-  ) || [];
+  );
 
 watch(
   totalPerPublication,
@@ -155,7 +155,7 @@ watch(
   { immediate: true },
 );
 
-fetchCountryNames();
+void fetchCountryNames();
 </script>
 
 <style scoped lang="scss">

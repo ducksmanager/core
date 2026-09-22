@@ -23,10 +23,11 @@ export const publicCollection = defineStore("publicCollection", () => {
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
       const data = await publicCollectionEvents.getPublicCollection(username);
-      if (data.error) {
+      if ("error" in data) {
         console.error(data.error);
+      } else {
+        issues.value = data.issues;
       }
-      issues.value = data.issues;
     };
   return {
     ...collectionUtils,

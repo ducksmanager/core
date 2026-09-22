@@ -222,6 +222,7 @@ alias: [/collection/compte]
 
 <script setup lang="ts">
 import type { ScopedError } from "socket-call-client";
+import { isEventErrorOf } from "~/composables/useDmSocket";
 
 const { getImagePath } = images();
 
@@ -252,7 +253,7 @@ const { collection: collectionEvents } = inject(socketInjectionKey)!;
 const emptyCollection = async () => {
   if (confirm(t("Votre collection va être vidée. Continuer ?"))) {
     await collectionEvents.emptyCollection();
-    router.push("/collection/show");
+    await router.push("/collection/show");
   }
 };
 
@@ -275,11 +276,11 @@ const updateAccount = () =>
       ].filter((value) => value);
       await updateMarketplaceContactMethods();
     })
-    .catch((e) => {
-      if ("selector" in e) {
+    .catch((e: unknown) => {
+      if (isEventErrorOf(collectionEvents.updateUser, e)) {
         error = e;
       } else {
-        console.error(e.error);
+        console.error(e);
       }
     });
 
@@ -292,11 +293,11 @@ const deleteAccount = async () => {
     )
   ) {
     await collectionEvents.deleteUser();
-    router.push("/logout");
+    await router.push("/logout");
   }
 };
 
-loadMarketplaceContactMethods();
+void loadMarketplaceContactMethods();
 
 watch(
   marketplaceContactMethods,

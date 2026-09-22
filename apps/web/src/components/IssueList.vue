@@ -415,8 +415,7 @@ const emit = defineEmits<{
   (e: "launch-modal", options: LaunchModalOptions): void;
 }>();
 
-let contextMenuComponent:
-  typeof ContextMenuOnSaleByOthers | typeof ContextMenuOwnCollection;
+let contextMenuComponent: Component;
 switch (contextMenuComponentName) {
   case "context-menu-on-sale-by-others":
     contextMenuComponent = ContextMenuOnSaleByOthers;
@@ -463,7 +462,7 @@ const copiesBySelectedIssuecode = $computed(() =>
     return {
       ...acc,
       [issuecode]: [
-        ...(acc[issuecode] || []),
+        ...(issuecode in acc ? acc[issuecode] : []),
         ...filteredUserCopies.filter(
           ({ id: copyId, issuecode: copyIssuecode }) =>
             issueId !== null
@@ -503,10 +502,8 @@ const coaIssues = $computed(
 
 watch(
   $$(coaIssues),
-  () => {
-    if (coaIssues) {
-      fetchIssuecodeDetails(coaIssues.map(({ issuecode }) => issuecode));
-    }
+  async () => {
+    await fetchIssuecodeDetails(coaIssues.map(({ issuecode }) => issuecode));
   },
   { immediate: true },
 );
@@ -519,11 +516,11 @@ const filteredIssues = $computed(
           (filter.possessed && userCopies.length) ||
           (filter.missing && !userCopies.length),
       )
-      ?.map((issue, idx) => ({ ...issue, idx })) || [],
+      .map((issue, idx) => ({ ...issue, idx })) || [],
 );
 
 const filteredIssuesCopyIndexes = $computed(() =>
-  filteredIssues?.reduce<number[]>(
+  filteredIssues.reduce<number[]>(
     (acc, { issuecode }, idx) => [
       ...acc,
       idx === 0
@@ -595,13 +592,13 @@ const deletePublicationIssues = async (issuecodesToDelete: string[]) => {
     });
     selected = [];
     if (!issues?.length) {
-      router.push("/collection/show");
+      await router.push("/collection/show");
     }
   }
 };
 
 const openBook = (issuecode: string) => {
-  currentIssuecodeOpened = coverUrls.value?.[issuecode] ? issuecode : undefined;
+  currentIssuecodeOpened = coverUrls.value[issuecode] ? issuecode : undefined;
 };
 
 const loadIssues = async () => {
@@ -648,7 +645,7 @@ const loadIssues = async () => {
             )
             .map((issue) => ({
               ...issue,
-              key: `${issue.issuecode.replaceAll(" ", "_")}-id-${issue.id}`,
+              key: `${issue.issuecode.replaceAll(" ", "_")}-id-${String(issue.id)}`,
               userCopies: [{ ...issue, copyIndex: 0 }],
             })),
         );
@@ -730,7 +727,7 @@ const toggleWatched = async (key: string) => {
   }
 };
 
-(async () => {
+void (async () => {
   if (customIssues) {
     purchases.value = [];
     labels.value = [];

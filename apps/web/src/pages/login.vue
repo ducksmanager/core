@@ -72,13 +72,13 @@ const login = async () => {
         domain,
       });
 
-      loadUser(true);
+      await loadUser(true);
     },
     (e) => {
       error = e;
     },
-  ).catch((e) => {
-    error = e;
+  ).catch((e: unknown) => {
+    error = e as string;
   });
 };
 
@@ -89,7 +89,7 @@ watch(
       if (route.query.redirect) {
         window.location.href = route.query.redirect as string;
       } else {
-        router.push("/collection");
+        await router.push("/collection");
       }
     }
   },

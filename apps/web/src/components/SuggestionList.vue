@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-const { countrycode = null, sinceLastVisit = false } = defineProps<{
+const { countrycode = null, sinceLastVisit } = defineProps<{
   countrycode?: string;
   sinceLastVisit?: boolean;
 }>();
@@ -89,9 +89,9 @@ const sortedSuggestions = computed(
 );
 
 const getImportance = (score: number) =>
-  sortedSuggestions.value?.maxScore === score
+  sortedSuggestions.value.maxScore === score
     ? 1
-    : sortedSuggestions.value?.minScore === score
+    : sortedSuggestions.value.minScore === score
       ? 3
       : 2;
 
@@ -113,10 +113,10 @@ watch(
     await fetchPublicationNames([
       ...new Set(
         Object.keys(sortedSuggestions.value.issues)
+          .filter((issuecode) => issuecode in issuecodeDetails.value)
           .map(
-            (issuecode) => issuecodeDetails.value[issuecode]?.publicationcode,
-          )
-          .filter(Boolean),
+            (issuecode) => issuecodeDetails.value[issuecode].publicationcode,
+          ),
       ),
     ]);
     loading = false;

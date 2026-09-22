@@ -156,7 +156,7 @@ watch(
     if (newValue && !edgeIndexesToLoad.value.length) {
       const firstBatchSize = Math.min(MAX_BATCH_SIZE, newValue.length || 0);
       edgeIndexesToLoad.value = newValue
-        ?.slice(0, firstBatchSize)
+        .slice(0, firstBatchSize)
         .map((_, idx) => idx);
     }
   },

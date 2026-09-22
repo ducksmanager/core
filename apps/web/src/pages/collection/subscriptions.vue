@@ -188,7 +188,7 @@ watch(
   { immediate: true },
 );
 
-onMounted(() => {
-  loadSubscriptions();
+onMounted(async () => {
+  await loadSubscriptions();
 });
 </script>

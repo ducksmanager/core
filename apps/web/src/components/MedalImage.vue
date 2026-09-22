@@ -66,7 +66,7 @@ const {
   xSmall?: boolean;
   nextLevel?: boolean;
   userLevelPoints: number;
-  contribution: string;
+  contribution: UserContributionTypeEn;
   currentLevel: number;
   pointsDiffNextLevel: number | null;
   levelProgressPercentage: number | null;
@@ -79,9 +79,7 @@ const {
 const { t } = useI18n();
 
 const medalColors = ["bronze", "argent", "or"];
-const level = computed(() =>
-  nextLevel && currentLevel !== null ? currentLevel + 1 : currentLevel,
-);
+const level = computed(() => (nextLevel ? currentLevel + 1 : currentLevel));
 const medalTitle = computed(() => {
   switch (contribution) {
     case "edge_photographer":

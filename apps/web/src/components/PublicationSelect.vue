@@ -31,11 +31,7 @@
 </template>
 
 <script setup lang="ts">
-const {
-  initialCountrycode = undefined,
-  initialPublicationcode = undefined,
-  noButton = false,
-} = defineProps<{
+const { initialCountrycode, initialPublicationcode, noButton } = defineProps<{
   noButton?: boolean;
   initialCountrycode?: string;
   initialPublicationcode?: string;
@@ -47,24 +43,23 @@ let currentPublicationcode = $ref(initialPublicationcode);
 const { fetchPublicationNamesFromCountry, fetchCountryNames } = coa();
 const { countryNames, publicationNames, publicationNamesFullCountries } =
   storeToRefs(coa());
-const countryNamesForPublication = $computed(
-  () =>
-    (countryNames.value &&
-      Object.entries(countryNames.value)
+const countryNamesForPublication = $computed(() =>
+  countryNames.value
+    ? Object.entries(countryNames.value)
         .map(([countrycode, countryName]) => ({
           text: countryName,
           value: countrycode,
         }))
         .sort(({ text: text1 }, { text: text2 }) =>
           (text1 || "").localeCompare(text2),
-        )) ||
-    undefined,
+        )
+    : undefined,
 );
 const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.value.includes(currentCountryCode || "")
     ? Object.keys(publicationNames.value)
         .filter((publicationcode) =>
-          new RegExp(`^${currentCountryCode}/`).test(publicationcode),
+          new RegExp(`^${String(currentCountryCode)}/`).test(publicationcode),
         )
         .map((publicationcode) => ({
           text: publicationNames.value[publicationcode],
@@ -84,9 +79,9 @@ watch($$(currentPublicationcode), (newValue) => {
 
 watch(
   $$(currentCountryCode),
-  (newValue, oldValue) => {
+  async (newValue, oldValue) => {
     if (newValue) {
-      fetchPublicationNamesFromCountry(newValue);
+      await fetchPublicationNamesFromCountry(newValue);
       if (oldValue) {
         currentPublicationcode = undefined;
       }
@@ -97,5 +92,5 @@ watch(
   },
 );
 
-fetchCountryNames();
+void fetchCountryNames();
 </script>

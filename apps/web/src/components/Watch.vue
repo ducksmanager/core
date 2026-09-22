@@ -31,9 +31,9 @@
 </template>
 <script setup lang="ts">
 const {
-  isWatched = undefined,
-  isPublicationWatched = undefined,
-  isIssue = undefined,
+  isWatched,
+  isPublicationWatched,
+  isIssue,
   constantWidth = false,
 } = defineProps<{
   isWatched?: boolean;

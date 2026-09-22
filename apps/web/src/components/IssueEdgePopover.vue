@@ -59,8 +59,7 @@ const { isSharedBookcase } = storeToRefs(bookcase());
 const { user } = storeToRefs(collection());
 const { points } = storeToRefs(users());
 const userPoints = $computed(
-  () =>
-    (user.value && points.value?.[user.value.id][contribution]) || undefined,
+  () => (user.value && points.value[user.value.id][contribution]) || undefined,
 );
 </script>
 

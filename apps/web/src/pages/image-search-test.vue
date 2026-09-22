@@ -114,7 +114,7 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { socketInjectionKey } from "../composables/useDmSocket";
+import { isEventErrorOf, socketInjectionKey } from "../composables/useDmSocket";
 
 const { coverId: coverIdEvents, storySearch: storySearchEvents } =
   inject(socketInjectionKey)!;
@@ -208,18 +208,22 @@ const models = ref<
     (pastecIndex) =>
       ({
         isSelected: true,
-        model: `Legacy (WTD 2-3) - Pastec server ${pastecIndex}`,
+        model: `Legacy (WTD 2-3) - Pastec server ${String(pastecIndex)}`,
         modelData: "covers",
         getIndexSize: () =>
           coverIdEvents
             .getIndexSize()
-            .catch((e) => ({ error: e.error as string }))
+            .catch((e: unknown) => ({
+              error: isEventErrorOf(coverIdEvents.getIndexSize, e)
+                ? e.error
+                : "Unknown error",
+            }))
             .then((result) =>
               "error" in result ? result : result.numberOfImages,
             ),
         run: async (base64: string) => {
           console.log(
-            `Running search from cover with pastec server ${pastecIndex}`,
+            `Running search from cover with pastec server ${String(pastecIndex)}`,
           );
           try {
             const searchResults = await coverIdEvents.searchFromCover(
@@ -249,7 +253,11 @@ const models = ref<
     run: async (base64) => {
       const searchResults = await storySearchEvents
         .findSimilarImages(base64, true)
-        .catch((e) => ({ error: e.error as string }));
+        .catch((e: unknown) => ({
+          error: isEventErrorOf(storySearchEvents.findSimilarImages, e)
+            ? e.error
+            : "Unknown error",
+        }));
       return "results" in searchResults
         ? searchResults.results
         : { error: searchResults.error };
@@ -263,7 +271,11 @@ const models = ref<
     run: async (base64) => {
       const searchResults = await storySearchEvents
         .findSimilarImages(base64, false)
-        .catch((e) => ({ error: e.error as string }));
+        .catch((e: unknown) => ({
+          error: isEventErrorOf(storySearchEvents.findSimilarImages, e)
+            ? e.error
+            : "Unknown error",
+        }));
       return "results" in searchResults
         ? searchResults.results
         : { error: searchResults.error };
@@ -274,7 +286,9 @@ const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
     reader.onerror = reject;
   });
 
@@ -285,7 +299,7 @@ const handleFileChange = async (event: Event) => {
   }
 };
 
-const handleExampleClick = (example: Example) => {
+const handleExampleClick = (example: Example) =>
   fetch(example.url)
     .then((response) => response.blob())
     .then(async (blob) => {
@@ -293,7 +307,6 @@ const handleExampleClick = (example: Example) => {
       isCover.value = example.isCover;
       currentBase64.value = await toBase64(file);
     });
-};
 
 const handleStartWebcam = async () => {
   try {
@@ -393,13 +406,13 @@ const streamAndSearch = async () => {
   }
 };
 
-const toggleStreaming = () => {
+const toggleStreaming = async () => {
   if (isStreaming.value) {
     isStreaming.value = false;
   } else {
     isStreaming.value = true;
     allModelsCompleted.value = true; // Reset to allow immediate capture
-    streamAndSearch();
+    await streamAndSearch();
   }
 };
 
@@ -417,7 +430,7 @@ watch(currentBase64, (base64) => {
       model.time = undefined;
       // Keep model.results to show previous matches
     }
-    nextTick(async () => {
+    void nextTick(async () => {
       const relevantModels = models.value.filter(
         ({ modelData, isSelected }) =>
           modelData === (isCover.value ? "covers" : "story first pages") &&
@@ -441,9 +454,9 @@ watch(currentBase64, (base64) => {
   }
 });
 
-onMounted(async () => {
+onMounted(() => {
   for (const model of models.value) {
-    model.getIndexSize().then((size) => {
+    void model.getIndexSize().then((size) => {
       model.indexSize = size;
     });
   }

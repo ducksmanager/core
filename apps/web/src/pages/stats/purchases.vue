@@ -89,7 +89,7 @@ const { loadCollection, loadPurchases } = collection();
 const { totalPerPublication, issues, purchasesById } =
   storeToRefs(collection());
 
-loadCollection();
+void loadCollection();
 const { t: $t } = useI18n(),
   purchaseTypes = {
     new: $t("Afficher les nouvelles acquisitions"),
@@ -111,12 +111,15 @@ const { t: $t } = useI18n(),
     getIssueDate(issue).isValid() ? getIssueDate(issue).format("YYYY-MM") : "?",
   getIssueDate = (issue: Pick<dm_issue, "purchaseId" | "creationDate">) =>
     dayjs(
-      (issue.purchaseId && purchasesById.value![issue.purchaseId]?.date) ||
-        issue.creationDate,
+      issue.purchaseId &&
+        purchasesById.value &&
+        issue.purchaseId in purchasesById.value
+        ? purchasesById.value[issue.purchaseId].date
+        : issue.creationDate,
     ),
   changeDimension = (dimension: string, value: number) => {
-    if (dimension === "width") width = `${value}px`;
-    else height = `${value}px`;
+    if (dimension === "width") width = `${String(value)}px`;
+    else height = `${String(value)}px`;
   };
 
 let hasPublicationNames = $ref(false),
@@ -128,7 +131,7 @@ let hasPublicationNames = $ref(false),
 const publicationCodesWithOther = $computed(
     () =>
       totalPerPublication.value &&
-      Object.entries(totalPerPublication.value || {})
+      Object.entries(totalPerPublication.value)
         .sort(([, count1], [, count2]) => Math.sign(count2 - count1))
         .filter((_entry, idx) => idx < 20)
         .map(([publicationcode]) => publicationcode)
@@ -174,7 +177,7 @@ const publicationCodesWithOther = $computed(
           if (!publicationCodesWithOther!.includes(publicationcode)) {
             publicationcode = "Other";
           }
-          if (!acc[publicationcode]) {
+          if (!(publicationcode in acc)) {
             acc[publicationcode] = { ...dateAssoc };
           }
           acc[publicationcode][date]++;
@@ -339,7 +342,7 @@ watch(
   { immediate: true },
 );
 
-loadPurchases();
+void loadPurchases();
 </script>
 
 <style scoped lang="scss">

@@ -57,12 +57,12 @@ const {
 
 const store = coa();
 const issue = computed(() =>
-  issuecode ? store.issuecodeDetails?.[issuecode] : propIssue!,
+  issuecode ? store.issuecodeDetails[issuecode] : propIssue!,
 );
 const publicationname = computed(
   () =>
-    issue.value?.publicationcode &&
-    store.publicationNames?.[issue.value.publicationcode],
+    issue.value.publicationcode &&
+    store.publicationNames[issue.value.publicationcode],
 );
 </script>
 

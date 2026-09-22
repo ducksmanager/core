@@ -49,8 +49,7 @@ const {
   coverHeight?: number;
 }>();
 const emit = defineEmits<{
-  (e: "close-book"): void;
-  (e: "book-closed"): void;
+  (e: "close-book" | "book-closed"): void;
 }>();
 const slots = defineSlots<{
   edge(): unknown;

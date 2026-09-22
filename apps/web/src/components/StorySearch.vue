@@ -92,7 +92,7 @@ import type { SimpleStory } from "~dm-types/SimpleStory";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const { withTitle = true, isPublic = false } = defineProps<{
+const { withTitle, isPublic } = defineProps<{
   withTitle?: boolean;
   isPublic?: boolean;
 }>();
@@ -202,8 +202,8 @@ const runSearch = async (value: string) => {
         results: (data.results as SimpleStoryWithPartInfo[]).map((story) => ({
           ...story,
           collectionIssues: story.issues
-            .filter(({ issuecode }) => collectionIssuesByIssuecode[issuecode])
-            .map(({ issuecode }) => collectionIssuesByIssuecode[issuecode]!)
+            .filter(({ issuecode }) => issuecode in collectionIssuesByIssuecode)
+            .map(({ issuecode }) => collectionIssuesByIssuecode[issuecode])
             .flat(),
         })),
       };
@@ -225,7 +225,7 @@ watch($$(search), async (newValue) => {
   }
 });
 
-fetchCountryNames();
+void fetchCountryNames();
 </script>
 
 <style scoped lang="scss">

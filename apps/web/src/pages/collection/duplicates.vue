@@ -33,27 +33,25 @@ const { fetchPublicationNames } = coa();
 watch(
   duplicateIssues,
   async (value) => {
-    if (value) {
-      publicationCodes = [
-        ...new Set(
-          Object.values(value).reduce<string[]>(
-            (acc, issues) => [
-              ...acc,
-              ...issues.map(({ publicationcode }) => publicationcode),
-            ],
-            [],
-          ),
+    publicationCodes = [
+      ...new Set(
+        Object.values(value).reduce<string[]>(
+          (acc, issues) => [
+            ...acc,
+            ...issues.map(({ publicationcode }) => publicationcode),
+          ],
+          [],
         ),
-      ];
+      ),
+    ];
 
-      await fetchPublicationNames(publicationCodes);
-      hasPublicationNames = true;
-    }
+    await fetchPublicationNames(publicationCodes);
+    hasPublicationNames = true;
   },
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   await loadCollection();
 
   await loadIssuesOnSaleByOthers();

@@ -111,10 +111,8 @@ watch($$(endDateAsString), (newValue) => {
 });
 
 defineEmits<{
-  (e: "delete"): void;
   (e: "edit", editSubscription: subscriptionType): void;
-  (e: "start-edit"): void;
-  (e: "cancel-edit"): void;
+  (e: "delete" | "start-edit" | "cancel-edit"): void;
 }>();
 
 const { publicationNames } = storeToRefs(coa());

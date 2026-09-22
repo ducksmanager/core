@@ -140,14 +140,16 @@ const edgeUrl = computed(
       "/gen/",
     )}.${issue.value.issuenumber.replaceAll(" ", "")}.png`,
 );
-const currentIssueEntryDetails = computed(
-  () => issueDetails.value?.[issuecode],
-);
-const issue = computed(() => issuecodeDetails.value?.[issuecode]);
-const entries = computed(() => currentIssueEntryDetails.value?.entries);
-const pagesWithUrl = computed(() => entries.value?.filter(({ url }) => !!url));
+const currentIssueEntryDetails = computed(() => issueDetails.value[issuecode]);
+const issue = computed(() => issuecodeDetails.value[issuecode]);
+const entries = computed(() => currentIssueEntryDetails.value.entries);
+const pagesWithUrl = computed(() => entries.value.filter(({ url }) => !!url));
 const releaseDate = computed(() => {
-  if (!issueDetails.value[issuecode]?.releaseDate) return null;
+  if (
+    !(issuecode in issueDetails.value) ||
+    !issueDetails.value[issuecode].releaseDate
+  )
+    return null;
 
   const parsedDate =
     currentIssueEntryDetails.value.releaseDate?.match(RELEASE_DATE_REGEX);
@@ -180,7 +182,7 @@ const bookClosed = () => {
 };
 
 watch(currentPage, (newValue) => {
-  currentTabIndex.value = entries.value?.findIndex(
+  currentTabIndex.value = entries.value.findIndex(
     (entry) => entry.storycode === pagesWithUrl.value[newValue]?.storycode,
   );
 });
@@ -203,7 +205,7 @@ watch(issue, () => loadBookPages(), { immediate: true });
 watch(
   pagesWithUrl,
   (newValue) => {
-    if (newValue && !newValue.length) {
+    if (!newValue.length) {
       emit("close-book");
       toast.create({
         body: $t(

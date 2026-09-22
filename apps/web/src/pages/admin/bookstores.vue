@@ -42,7 +42,7 @@ const validateBookstoreComment = async ({ id }: bookstoreComment) => {
   await adminBookstoreEvents.approveBookstoreComment(id);
 };
 
-(async () => {
+void (async () => {
   bookstores = await adminBookstoreEvents.getBookstores();
 })();
 </script>
