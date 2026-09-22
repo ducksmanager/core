@@ -5,11 +5,12 @@ import type { Socket } from "socket.io";
 import { SocketClient } from "socket-call-client";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { type ClientEvents as EdgeCreatorEvents } from "~dm-services/edgecreator";
 import namespaces from "~dm-services/namespaces";
 import type { ExportPaths } from "~types/ExportPaths";
-import type { ModelContributor } from "~types/ModelContributor";
 
 import { getSvgPath } from "../../_utils";
 
@@ -33,16 +34,23 @@ const getEdgeCreatorServices = (token: string) => {
 };
 
 const listenEvents = (services: SaveServices) => ({
-  saveEdge: async (parameters: {
-    runExport: boolean;
-    runSubmit: boolean;
-    issuecode: string;
-    contributors: ModelContributor[];
-    content: string;
-  }) => {
+  saveEdge: ev(
+    v.object({
+      runExport: v.boolean(),
+      runSubmit: v.boolean(),
+      issuecode: v.string(),
+      contributors: v.array(
+        v.object({
+          contributionType: v.string(),
+          user: v.object({
+            username: v.string(),
+          }),
+        }),
+      ),
+      content: v.string(),
+    }),
+  )(async ({ runExport, runSubmit, issuecode, contributors, content }) => {
     const { token } = services._socket.handshake.auth;
-    const { runExport, runSubmit, issuecode, contributors, content } =
-      parameters;
     const svgPath = await getSvgPath(runExport, issuecode);
 
     mkdirSync(path.dirname(svgPath), { recursive: true });
@@ -96,7 +104,7 @@ const listenEvents = (services: SaveServices) => ({
       }
       return { results: { paths, isNew: false } };
     }
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

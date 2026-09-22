@@ -14,13 +14,8 @@ import { getEntryPages } from "~dumili-utils/entryPages";
 import prisma from "~prisma/client";
 import type {
   aiKumikoResult,
-  entry,
-  indexation,
-  issueSuggestion,
   page,
   Prisma,
-  storyKindSuggestion,
-  storySuggestion,
 } from "~prisma/client_dumili/client";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
@@ -44,6 +39,9 @@ import { definePDFJSModule, getDocumentProxy, renderPageAsImage } from "unpdf";
 
 import { createExtractorFromData } from "node-unrar-js";
 import { unzipSync } from "fflate";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 await definePDFJSModule(() => import("pdfjs-dist"));
 
@@ -921,8 +919,10 @@ export const handleHttpFileUpload = async (
 };
 
 const listenEvents = (services: IndexationServices) => ({
-  setPageUrl: async (id: number, url: string | null) =>
-    setPageUrl(services, id, url),
+  setPageUrl: ev(
+    v.number(),
+    v.nullable(v.string()),
+  )(async (id, url) => setPageUrl(services, id, url)),
 
   deleteIndexation: async () => {
     const { id: indexationId } = services._socket.data.indexation;
@@ -938,7 +938,7 @@ const listenEvents = (services: IndexationServices) => ({
     return { indexation: services._socket.data.indexation };
   },
 
-  deleteEntry: async (entryId: entry["id"]) => {
+  deleteEntry: ev(v.number())(async (entryId) => {
     const { indexation } = services._socket.data;
     const entry = indexation.entries.find(({ id }) => id === entryId);
     if (!entry) {
@@ -960,9 +960,12 @@ const listenEvents = (services: IndexationServices) => ({
     await refreshIndexation(services);
 
     return { status: "OK" };
-  },
+  }),
 
-  swapPageUrls: async (pageNumber1: number, pageNumber2: number) =>
+  swapPageUrls: ev(
+    v.number(),
+    v.number(),
+  )(async (pageNumber1, pageNumber2) =>
     // In 2 steps so that we don't have to deal with unique constraints
     prisma.indexation
       .update({
@@ -1031,8 +1034,9 @@ const listenEvents = (services: IndexationServices) => ({
           status: "OK" as const,
         };
       }),
+  ),
 
-  acceptIssueSuggestion: async (suggestionId: issueSuggestion["id"] | null) => {
+  acceptIssueSuggestion: ev(v.nullable(v.number()))(async (suggestionId) => {
     if (
       !services._socket.data.indexation.issueSuggestions.some(
         ({ id }) => id === suggestionId,
@@ -1065,11 +1069,14 @@ const listenEvents = (services: IndexationServices) => ({
           status: "OK",
         };
       });
-  },
+  }),
 
-  createStorySuggestion: async (
-    suggestion: Prisma.storySuggestionUncheckedCreateInput,
-  ) =>
+  createStorySuggestion: ev(
+    v.object({
+      storycode: v.string(),
+      entryId: v.number(),
+    }),
+  )(async (suggestion) =>
     prisma.storySuggestion
       .create({
         data: suggestion,
@@ -1080,13 +1087,14 @@ const listenEvents = (services: IndexationServices) => ({
           createdStorySuggestion,
         };
       }),
+  ),
 
-  createIssueSuggestion: async (
-    suggestion: Omit<
-      Prisma.issueSuggestionUncheckedCreateInput,
-      "indexationId"
-    >,
-  ) =>
+  createIssueSuggestion: ev(
+    v.object({
+      publicationcode: v.string(),
+      issuenumber: v.string(),
+    }),
+  )(async (suggestion) =>
     prisma.issueSuggestion
       .create({
         data: {
@@ -1124,25 +1132,30 @@ const listenEvents = (services: IndexationServices) => ({
             return createdIssueSuggestion;
           }),
       ),
+  ),
 
-  updateIndexation: async (
-    indexation: Pick<indexation, "price" | "releaseDate" | "title"> & {
-      numberOfPages: number;
-    },
-  ) => {
+  updateIndexation: ev(
+    v.pipe(
+      v.object({
+        price: v.nullable(v.string()),
+        releaseDate: v.nullable(v.string()),
+        title: v.nullable(v.string()),
+        numberOfPages: v.number(),
+      }),
+      v.check(
+        ({ numberOfPages }) =>
+          numberOfPages >= 4 && numberOfPages <= 996 && numberOfPages % 2 === 0,
+        "Invalid number of pages" as const,
+      ),
+      v.check(
+        ({ releaseDate }) =>
+          releaseDate === null ||
+          !Number.isNaN(new Date(releaseDate).getTime()),
+        "Invalid release date" as const,
+      ),
+    ),
+  )(async (indexation) => {
     const { numberOfPages, ...changes } = indexation;
-    if (changes.releaseDate && !new Date(changes.releaseDate)) {
-      return {
-        error: `Invalid release date`,
-        errorDetails: JSON.stringify({ releaseDate: changes.releaseDate }),
-      };
-    }
-    if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
-      return {
-        error: `Invalid number of pages`,
-        errorDetails: JSON.stringify({ numberOfPages }),
-      };
-    }
     const currentMaxPageNumber = Math.max(
       ...services._socket.data.indexation.pages.map(
         ({ pageNumber }) => pageNumber,
@@ -1183,12 +1196,12 @@ const listenEvents = (services: IndexationServices) => ({
       .then(() => ({
         status: "OK",
       }));
-  },
+  }),
 
-  acceptStorySuggestion: async (
-    entryId: entry["id"],
-    storySuggestionId: storySuggestion["id"] | null,
-  ) => {
+  acceptStorySuggestion: ev(
+    v.number(),
+    v.nullable(v.number()),
+  )(async (entryId, storySuggestionId) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id, storySuggestions }) =>
         (entryId === id && storySuggestionId === null) ||
@@ -1212,12 +1225,12 @@ const listenEvents = (services: IndexationServices) => ({
 
     await refreshIndexation(services);
     return { status: "OK" };
-  },
+  }),
 
-  acceptStoryKindSuggestion: async (
-    entryId: entry["id"],
-    storyKindSuggestionId: storyKindSuggestion["id"] | null,
-  ) => {
+  acceptStoryKindSuggestion: ev(
+    v.number(),
+    v.nullable(v.number()),
+  )(async (entryId, storyKindSuggestionId) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id }) => id === entryId,
     );
@@ -1249,12 +1262,16 @@ const listenEvents = (services: IndexationServices) => ({
     await refreshIndexation(services);
 
     return { status: "OK" };
-  },
+  }),
 
-  updateEntry: async (
-    entryId: entry["id"],
-    data: Partial<Pick<entry, "entirepages" | "title" | "position">>,
-  ) => {
+  updateEntry: ev(
+    v.number(),
+    v.object({
+      entirepages: v.optional(v.number()),
+      title: v.nullable(v.string()),
+      position: v.optional(v.number()),
+    }),
+  )(async (entryId, data) => {
     const entry = services._socket.data.indexation.entries.find(
       ({ id }) => id === entryId,
     );
@@ -1275,12 +1292,12 @@ const listenEvents = (services: IndexationServices) => ({
     await refreshIndexation(services);
 
     return { status: "OK" };
-  },
+  }),
 
-  createEntry: (
-    position: number,
-    includedInEntryId: number | undefined = undefined,
-  ) =>
+  createEntry: ev(
+    v.number(),
+    v.optional(v.number()),
+  )((position, includedInEntryId = undefined) =>
     createEntry(
       services._socket.data.indexation.id,
       position,
@@ -1296,6 +1313,7 @@ const listenEvents = (services: IndexationServices) => ({
         status: "OK",
       };
     }),
+  ),
 });
 
 export const { client, server } = useSocketEvents<

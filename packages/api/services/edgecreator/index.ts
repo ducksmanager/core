@@ -1,4 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -28,7 +30,7 @@ const listenEvents = (services: UserServices) => {
     ...multipleEdgePhotos(services),
 
     // TODO check if usages in SVG models
-    getImagesFromFilename: async (fileName: string) =>
+    getImagesFromFilename: ev(v.string())(async (fileName) =>
       // TODO prismaClient.edgeModel.findMany ?
       (
         await prismaDm.$queryRaw<ImageElement[]>`
@@ -49,8 +51,9 @@ const listenEvents = (services: UserServices) => {
           .split(/\[[^]]+]/)
           .every((stringChunk) => fileName.indexOf(stringChunk) > -1),
       ),
+    ),
 
-    submitEdge: async (issuecode: string) => {
+    submitEdge: ev(v.string())(async (issuecode) => {
       const user = await prismaDm.user.findUniqueOrThrow({
         where: {
           id: _socket.data.user.id,
@@ -64,7 +67,7 @@ const listenEvents = (services: UserServices) => {
       await email.send();
 
       return { url: email.data.ecLink };
-    },
+    }),
   };
 };
 

@@ -21,6 +21,8 @@ import namespaces from "./namespaces";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import { io } from "..";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export type ClientListenEvents = {
   playerJoined: (player: player) => void;
@@ -342,7 +344,7 @@ const listenEvents = (gameServices: GameServices) => {
       _socket.broadcast.emit("matchStarts");
       gameServices.matchStarts();
     },
-    guess: async (personcode: string | null) => {
+    guess: ev(v.nullable(v.string()))(async (personcode) => {
       const haveAllPlayersGuessed = await onGuess(
         gameServices,
         _socket.data.user,
@@ -351,8 +353,8 @@ const listenEvents = (gameServices: GameServices) => {
       if (haveAllPlayersGuessed) {
         return haveAllPlayersGuessed;
       }
-    },
-    disconnect: async (reason: string) => {
+    }),
+    disconnect: ev(v.string())(async (reason) => {
       if (reason !== "client namespace disconnect") {
         if (
           _socket &&
@@ -367,7 +369,7 @@ const listenEvents = (gameServices: GameServices) => {
           );
         }
       }
-    },
+    }),
   };
 };
 

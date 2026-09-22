@@ -83,7 +83,9 @@ export const collection = defineStore("collection", () => {
     watchedAuthors = shallowRef<authorUser[]>(),
     marketplaceContactMethods = ref<string[]>(),
     suggestions =
-      shallowRef<EventOutput<StatsServices, "getSuggestionsForCountry">>(),
+      shallowRef<
+        SuccessfulEventOutput<StatsServices, "getSuggestionsForCountry">
+      >(),
     subscriptions = shallowRef<subscription[]>(),
     popularIssuesInCollection = ref<{
       [issuecode: string]: number;

@@ -2,10 +2,9 @@ import { parse } from "csv-parse/sync";
 import { existsSync, readFileSync } from "fs";
 import { cwd } from "process";
 
-import type {
-  CollectionUpdateMultipleIssues,
-  CollectionUpdateSingleIssue,
-} from "~dm-types/CollectionUpdate";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type { TransactionResults } from "~dm-types/TransactionResults";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -46,7 +45,10 @@ export default ({ _socket }: UserServices) => ({
       );
   },
 
-  setIssuesAside: async (issueIds: number[], buyerId: number) => {
+  setIssuesAside: ev(
+    v.array(v.number()),
+    v.number(),
+  )(async (issueIds, buyerId) => {
     await prismaDm.requestedIssue.createMany({
       data: issueIds.map((issueId) => ({
         issueId,
@@ -54,8 +56,11 @@ export default ({ _socket }: UserServices) => ({
         isBooked: true,
       })),
     });
-  },
-  transferIssues: async (issueIds: number[], buyerId: number) => {
+  }),
+  transferIssues: ev(
+    v.array(v.number()),
+    v.number(),
+  )(async (issueIds, buyerId) => {
     await prismaDm.issue.updateMany({
       data: {
         userId: buyerId,
@@ -75,14 +80,16 @@ export default ({ _socket }: UserServices) => ({
         buyerId,
       },
     });
-  },
+  }),
 
-  addOrChangeIssues: async ({
-    issuecodes,
-    purchaseId,
-    condition,
-    labelIds,
-  }: CollectionUpdateMultipleIssues) => {
+  addOrChangeIssues: ev(
+    v.object({
+      issuecodes: v.array(v.string()),
+      purchaseId: v.optional(v.nullable(v.number())),
+      condition: v.optional(v.union([v.null(), v.enum(issue_condition)])),
+      labelIds: v.optional(v.array(v.number())),
+    }),
+  )(async ({ issuecodes, purchaseId, condition, labelIds }) => {
     const user = _socket.data.user;
 
     let checkedPurchaseId: number | null = null;
@@ -103,17 +110,27 @@ export default ({ _socket }: UserServices) => ({
       checkedPurchaseId,
       labelIds,
     );
-  },
-  addOrChangeCopies: async ({
-    issuecode,
-    copies,
-  }: CollectionUpdateSingleIssue) => {
+  }),
+
+  addOrChangeCopies: ev(
+    v.object({
+      issuecode: v.string(),
+      copies: v.array(
+        v.object({
+          id: v.nullable(v.number()),
+          condition: v.nullable(v.enum(issue_condition)),
+          purchaseId: v.nullable(v.number()),
+          labelIds: v.array(v.number()),
+        }),
+      ),
+    }),
+  )(async ({ issuecode, copies }) => {
     const userId = _socket.data.user.id;
 
     const checkedPurchaseIds = await checkPurchaseIdsBelongToUser(
       copies
         .map(({ purchaseId }) => purchaseId)
-        .filter((purchaseId) => !!purchaseId) as number[],
+        .filter((purchaseId): purchaseId is number => !!purchaseId),
       userId,
     );
 
@@ -127,24 +144,22 @@ export default ({ _socket }: UserServices) => ({
     );
 
     return output;
-  },
+  }),
 
-  getCollectionQuotations: (): Promise<
-    Record<string, InducksIssueQuotationSimple>
-  > =>
+  getCollectionQuotations: () =>
     prismaDm.$queryRaw<InducksIssueQuotationSimple[]>`
-          select
-            issuecode,
-            round(min(estimationmin))                         AS estimationMin,
-            case max(ifnull(estimationmax, 0))
-                when 0 then null
-                else round(max(ifnull(estimationmax, 0))) end AS estimationMax
-          from dm.numeros
-            inner join coa.inducks_issuequotation using (issuecode)
-          where ID_Utilisateur = ${_socket.data.user.id}
-            and estimationmin is not null
-          group by numeros.ID;
-        `.then(getShownQuotations),
+      select
+        issuecode,
+        round(min(estimationmin))                         AS estimationMin,
+        case max(ifnull(estimationmax, 0))
+            when 0 then null
+            else round(max(ifnull(estimationmax, 0))) end AS estimationMax
+      from dm.numeros
+        inner join coa.inducks_issuequotation using (issuecode)
+      where ID_Utilisateur = ${_socket.data.user.id}
+        and estimationmin is not null
+      group by numeros.ID;
+    `.then(getShownQuotations),
 });
 
 const addOrChangeIssues = async (
@@ -153,7 +168,7 @@ const addOrChangeIssues = async (
   condition: issue_condition | undefined,
   purchaseId: number | null | undefined,
   _labelIds: number[] | undefined,
-): Promise<TransactionResults> => {
+) => {
   const existingIssues = await prismaDm.issue.findMany({
     where: {
       issuecode: {

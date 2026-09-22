@@ -1,8 +1,10 @@
-import type { EditSubscription } from "~dm-types/EditSubscription";
 import type { subscription } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export type SubscriptionTransformedStringDates = Omit<
   subscription,
@@ -30,18 +32,28 @@ export default ({ _socket }: UserServices) => ({
         })),
       ),
 
-  createSubscription: async (subscription: EditSubscription) => {
+  createSubscription: ev(
+    v.object({
+      publicationcode: v.string(),
+      startDate: v.string(),
+      endDate: v.string(),
+    }),
+  )(async (subscription) => {
     await upsertSubscription(null, subscription, _socket.data.user.id);
-  },
+  }),
 
-  updateSubscription: async (
-    id: number,
-    subscription: SubscriptionTransformedStringDates,
-  ) => {
+  updateSubscription: ev(
+    v.number(),
+    v.object({
+      publicationcode: v.string(),
+      startDate: v.string(),
+      endDate: v.string(),
+    }),
+  )(async (id, subscription) => {
     await upsertSubscription(id, subscription, _socket.data.user.id);
-  },
+  }),
 
-  deleteSubscription: async (id: number) => {
+  deleteSubscription: ev(v.number())(async (id) => {
     await prismaDm.subscription.deleteMany({
       where: {
         id,
@@ -50,12 +62,16 @@ export default ({ _socket }: UserServices) => ({
         },
       },
     });
-  },
+  }),
 });
 
 export async function upsertSubscription(
   id: number | null,
-  subscription: EditSubscription,
+  subscription: {
+    publicationcode: string;
+    startDate: string;
+    endDate: string;
+  },
   userId: number,
 ) {
   if (!subscription.publicationcode) {

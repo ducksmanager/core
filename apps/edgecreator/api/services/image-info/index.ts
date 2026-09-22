@@ -2,8 +2,11 @@ import axios from "axios";
 import sizeOf from "image-size";
 import { useSocketEvents } from "socket-call-server";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 const listenEvents = () => ({
-  getImageInfo: async (targetUrl: string) => {
+  getImageInfo: ev(v.pipe(v.string()))(async (targetUrl) => {
     const url = targetUrl.startsWith("https://res.cloudinary.com")
       ? targetUrl
       : `${process.env.EDGES_URL!}/${targetUrl}`;
@@ -31,7 +34,7 @@ const listenEvents = () => ({
       error: "Cloudinary error",
       errorDetails: `${targetUrl} : HTTP ${response.status}`,
     };
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

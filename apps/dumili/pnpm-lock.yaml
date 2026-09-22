@@ -66,8 +66,8 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.42(typescript@6.0.3))
       socket-call-client:
-        specifier: ^0.8.0
-        version: 0.8.0(axios-cache-interceptor@1.12.3(axios@1.20.0))(vue@3.5.42(typescript@6.0.3))
+        specifier: ^0.10.0
+        version: 0.10.0(axios-cache-interceptor@1.12.3(axios@1.20.0))(vue@3.5.42(typescript@6.0.3))
       sortablejs:
         specifier: ^1.15.7
         version: 1.15.7
@@ -4482,8 +4482,8 @@ packages:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
     engines: {node: '>=14.16'}
 
-  socket-call-client@0.8.0:
-    resolution: {integrity: sha512-Jjk1KjvofAcDAzlrtu0oIW85u2xadfDeMGEqJQjz+8JA7SsCNKEzh2bw0x4YMLCK+b25nqEeoIcQjGujU77VWA==}
+  socket-call-client@0.10.0:
+    resolution: {integrity: sha512-2VdFULMF991RDjVpIRpj78LHrtzH4LzWe5yJyBFbpQ7OB0xarFc1zr81TcMwqc7+fPusLw1npEjYPPiTBG5VGg==}
     engines: {node: '>=22.0.0'}
     peerDependencies:
       axios-cache-interceptor: ^1.12.0
@@ -9594,7 +9594,7 @@ snapshots:
 
   slash@5.1.0: {}
 
-  socket-call-client@0.8.0(axios-cache-interceptor@1.12.3(axios@1.20.0))(vue@3.5.42(typescript@6.0.3)):
+  socket-call-client@0.10.0(axios-cache-interceptor@1.12.3(axios@1.20.0))(vue@3.5.42(typescript@6.0.3)):
     dependencies:
       socket.io-client: 4.8.3
       vue: 3.5.42(typescript@6.0.3)

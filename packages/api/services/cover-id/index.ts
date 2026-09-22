@@ -1,35 +1,26 @@
 import axios from "axios";
 import https from "https";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import type { SimilarImagesResult } from "~dm-types/CoverSearchResults";
 import { prismaClient as prismaCoverInfo } from "~prisma-schemas/schemas/cover_info/client";
 
-import type { UserServices } from "../../index";
 // import { RequiredAuthMiddleware } from "../auth/util";
 import { getCoverUrls } from "../coa/issue-details";
 import namespaces from "../namespaces";
 // import { createRateLimiter } from "../rate-limit";
 import { getPastecStatus } from "../status";
 
-// const coverSearchRateLimiter = createRateLimiter({
-//   windowMs: Number(process.env.COVER_SEARCH_RATE_LIMIT_WINDOW_MS ?? 60_000),
-//   max: Number(process.env.COVER_SEARCH_RATE_LIMIT_MAX ?? 60),
-// });
-
-const listenEvents = ({ _socket }: UserServices) => ({
-  searchFromCover: async (urlOrBase64: string, pastecIndex = 0) => {
-    if (![0, 1].includes(pastecIndex)) {
-      return { error: "Invalid pastec index" } as const;
-    }
-
-    // const rateLimit = coverSearchRateLimiter.check(String(_socket.data.user.id));
-    // if (!rateLimit.allowed) {
-    //   return {
-    //     error: "Rate limit exceeded",
-    //     retryAfterMs: rateLimit.retryAfterMs,
-    //   } as const;
-    // }
+const listenEvents = () => ({
+  searchFromCover: ev(
+    v.pipe(
+      v.string("Invalid URL or base64 string"),
+      v.nonEmpty("Invalid URL or base64 string"),
+    ),
+    v.pipe(v.optional(v.picklist([0, 1], "Invalid pastec index" as const), 0)),
+  )(async (urlOrBase64, pastecIndex) => {
     const hostAndPort =
       process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
     console.log(`Searching from cover on ${hostAndPort}`);
@@ -39,7 +30,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
             responseType: "arraybuffer",
           })
         ).data
-      : Buffer.from(urlOrBase64.split(";base64,").pop()!, "base64");
+      : Buffer.from(urlOrBase64.split(";base64,").pop() as string, "base64");
 
     const pastecResponse = await getSimilarImages(buffer, hostAndPort);
 
@@ -107,40 +98,43 @@ const listenEvents = ({ _socket }: UserServices) => ({
           ],
       })),
     };
-  },
+  }),
   getIndexSize: async () => getPastecStatus(),
-  getCoverUrl: async (coverId: number) =>
+  getCoverUrl: ev(v.number())(async (coverId) =>
     getCoverUrl(coverId).then(
       (url) => `${process.env.INDUCKS_COVERS_ROOT}/${url}`,
     ),
+  ),
 
-  downloadCover: (coverId: number) =>
-    new Promise((resolve) => {
-      getCoverUrl(coverId).then((coverUrl) => {
-        const data: Uint8Array[] = [];
-        const externalRequest = https.request(
-          {
-            hostname: process.env.INDUCKS_COVERS_ROOT,
-            path: coverUrl,
-          },
-          (res) => {
-            res
-              .on("data", function (chunk) {
-                data.push(chunk);
-              })
-              .on("end", function () {
-                //at this point data is an array of Buffers so Buffer.concat() can make us a new Buffer of all of them together
-                resolve({ buffer: Buffer.concat(data) });
-              });
-          },
-        );
-        externalRequest.on("error", function (err) {
-          console.error(err);
-          resolve({ error: "Error", errorDetails: err.message });
+  downloadCover: ev(v.number())(
+    (coverId) =>
+      new Promise((resolve) => {
+        getCoverUrl(coverId).then((coverUrl) => {
+          const data: Uint8Array[] = [];
+          const externalRequest = https.request(
+            {
+              hostname: process.env.INDUCKS_COVERS_ROOT,
+              path: coverUrl,
+            },
+            (res) => {
+              res
+                .on("data", function (chunk) {
+                  data.push(chunk);
+                })
+                .on("end", function () {
+                  //at this point data is an array of Buffers so Buffer.concat() can make us a new Buffer of all of them together
+                  resolve({ buffer: Buffer.concat(data) });
+                });
+            },
+          );
+          externalRequest.on("error", function (err) {
+            console.error(err);
+            resolve({ error: "Error", errorDetails: err.message });
+          });
+          externalRequest.end();
         });
-        externalRequest.end();
-      });
-    }),
+      }),
+  ),
 });
 
 export const { client, server } = useSocketEvents<
