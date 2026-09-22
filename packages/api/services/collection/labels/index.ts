@@ -7,9 +7,10 @@ export const getUserLabel = async (description: string, userId: number) =>
     where: {
       description_userId: {
         description,
-      userId,
-    }
-  }});
+        userId,
+      },
+    },
+  });
 
 export default ({ _socket }: UserServices) => ({
   getLabels: () =>

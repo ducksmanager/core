@@ -20,10 +20,13 @@ export const checkTodayLimit = (userId: number) =>
     })
     .then((data) => ({
       uploadedFilesToday: data.map(({ fileName }) => fileName),
-    }))
+    }));
 
 export default ({ _socket }: UserServices) => ({
   sendNewEdgePhotoEmail: async (issuecode: string) => {
+    if (typeof issuecode !== "string" || !issuecode) {
+      return { error: "Invalid issuecode" };
+    }
     const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: _socket.data.user.id },
     });

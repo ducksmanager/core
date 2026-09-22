@@ -1,4 +1,4 @@
-import { Scraper } from "bedetheque-scraper";
+import { firefox } from "playwright-firefox";
 
 import { syncScrapeCache } from "~/cache";
 import { readCsvMapping } from "~/csv";
@@ -6,6 +6,7 @@ import { prismaClient } from "~prisma-schemas/schemas/coa/client";
 
 import { type CsvIssue, log, warn } from ".";
 import { getRevue } from "./get-revue";
+import { getSerie } from "./get-serie";
 
 const MAPPING_FILE = "scrapes/bedetheque/coa-mapping.csv";
 
@@ -19,18 +20,21 @@ const skipNonQuoted = false;
 const pageUrl = "revue-Mickey-Le-Journal-De-1934-1944.html";
 const inducksPublicationCode = "fr/JMAG";
 
-const baseUrl = "https://www.bedetheque.com";
+const baseUrl = "https://www.bedetheque.com/";
 const cacheSubfolder = "bedetheque";
+
+const browser = await firefox.launch();
+const page = await browser.newPage();
 
 try {
   const contents = await syncScrapeCache<Awaited<ReturnType<typeof getRevue>>>(
     cacheSubfolder,
     pageUrl + ".json",
-    `${baseUrl}/${pageUrl}`,
-    async (url) =>
+    `${baseUrl}${pageUrl}`,
+    async () =>
       pageUrl.startsWith("revue-")
-        ? await getRevue(baseUrl, pageUrl, cacheSubfolder)
-        : await Scraper.getSerie(url),
+        ? await getRevue(page, baseUrl, pageUrl, cacheSubfolder)
+        : await getSerie(page, baseUrl, pageUrl, cacheSubfolder),
     (contents) => JSON.parse(contents.toString()),
     (contents) => JSON.stringify(contents),
   );
@@ -58,20 +62,19 @@ try {
               issuecode,
             },
           });
-          log(
-            [issuecode, pageUrl, albumNum || "", storedTitle].join(","),
-          );
+          log([issuecode, pageUrl, albumNum || "", storedTitle].join(","));
         }
       } catch (_e) {
         warn(`Issue ${issuecode} not found`);
-        log(
-          ["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","),
-        );
+        log(["?".repeat(10), pageUrl, albumNum || "", storedTitle].join(","));
       }
     }
   }
 } catch (e) {
   warn(e);
+} finally {
+  await page.close();
+  await browser.close();
 }
 
 process.exit(0);

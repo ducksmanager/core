@@ -6,7 +6,6 @@ import { BootstrapVueNextResolver } from "bootstrap-vue-next";
 import { execSync } from "child_process";
 import { readFile as readFileAsync } from "fs/promises";
 import * as path from "path";
-import { fileURLToPath } from "url";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolve from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
@@ -15,9 +14,7 @@ import VueRouter from "vue-router/vite";
 import { VueRouterAutoImports } from "vue-router/unplugin";
 import { defineConfig } from "vite";
 
-import getViteAliases from "../../vite-aliases";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import getViteAliases from "../../vite-aliases.ts";
 
 const gitCommitHash = () => {
   try {
@@ -43,9 +40,9 @@ export default defineConfig({
     include: ["mapbox-gl"],
   },
   resolve: {
-    alias: getViteAliases(path.resolve(__dirname, "../.."), {
-      "~/": `${path.resolve(__dirname, "src")}/`,
-      "~web-translations": path.resolve(__dirname, "translations"),
+    alias: getViteAliases(path.resolve(import.meta.dirname, "../.."), {
+      "~/": `${path.resolve(import.meta.dirname, "src")}/`,
+      "~web-translations": path.resolve(import.meta.dirname, "translations"),
     }),
   },
   plugins: [
@@ -59,7 +56,7 @@ export default defineConfig({
     VueI18n({
       runtimeOnly: false,
       compositionOnly: true,
-      include: [path.resolve(__dirname, "translations/**")],
+      include: [path.resolve(import.meta.dirname, "translations/**")],
     }),
 
     // https://github.com/antfu/unplugin-auto-import

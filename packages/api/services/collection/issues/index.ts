@@ -39,10 +39,10 @@ export default ({ _socket }: UserServices) => ({
       .then(<T extends { labels: { labelId: number }[] }>(issues: T[]) =>
         prismaCoa
           .augmentIssueArrayWithInducksData(
-            issues as (T & { issuecode: string })[]
+            issues as (T & { issuecode: string })[],
           )
           .then((data) => data.filter((issue) => "publicationcode" in issue))
-          .then(prismaDm.replaceLabelsWithLabelIds)
+          .then(prismaDm.replaceLabelsWithLabelIds),
       );
   },
 
@@ -101,7 +101,7 @@ export default ({ _socket }: UserServices) => ({
       issuecodes,
       condition,
       checkedPurchaseId,
-      labelIds
+      labelIds,
     );
   },
   addOrChangeCopies: async ({
@@ -114,7 +114,7 @@ export default ({ _socket }: UserServices) => ({
       copies
         .map(({ purchaseId }) => purchaseId)
         .filter((purchaseId) => !!purchaseId) as number[],
-      userId
+      userId,
     );
 
     const output = await addOrChangeCopies(
@@ -123,7 +123,7 @@ export default ({ _socket }: UserServices) => ({
       copies.map(({ id }) => id),
       copies.map(({ condition }) => condition),
       checkedPurchaseIds,
-      copies.map(({ labelIds }) => labelIds)
+      copies.map(({ labelIds }) => labelIds),
     );
 
     return output;
@@ -152,7 +152,7 @@ const addOrChangeIssues = async (
   issuecodes: string[],
   condition: issue_condition | undefined,
   purchaseId: number | null | undefined,
-  _labelIds: number[] | undefined
+  _labelIds: number[] | undefined,
 ): Promise<TransactionResults> => {
   const existingIssues = await prismaDm.issue.findMany({
     where: {
@@ -189,7 +189,7 @@ const addOrChangeIssues = async (
       (issuecode) =>
         !existingIssues
           .map(({ issuecode: existingIssuecode }) => existingIssuecode)
-          .includes(issuecode)
+          .includes(issuecode),
     )
     .map((issuecode) =>
       prismaDm.issue.create({
@@ -200,7 +200,7 @@ const addOrChangeIssues = async (
           userId,
           creationDate: new Date(),
         },
-      })
+      }),
     );
   await prismaDm.$transaction(insertOperations);
   // TODO handle labels on multiple issues
@@ -235,20 +235,25 @@ const addOrChangeCopies = async (
   issueIds: (number | null)[],
   conditions: (issue_condition | null)[],
   purchaseIds: (number | null)[],
-  labelIds: (number[] | undefined)[]
+  labelIds: (number[] | undefined)[],
 ): Promise<TransactionResults> => {
-  let operations = [], deleteOperations = [];
+  let operations = [],
+    deleteOperations = [];
   const previousIssueIds = await prismaDm.issue.findMany({
     where: {
       userId,
       issuecode,
     },
   });
-  const deletedIssueIds = previousIssueIds.filter(({ id }) => !issueIds.includes(id));
+  const deletedIssueIds = previousIssueIds.filter(
+    ({ id }) => !issueIds.includes(id),
+  );
   if (deletedIssueIds.length) {
-    deleteOperations = deletedIssueIds.map(({ id }) => prismaDm.issue.delete({
-      where: { id },
-    }));
+    deleteOperations = deletedIssueIds.map(({ id }) =>
+      prismaDm.issue.delete({
+        where: { id },
+      }),
+    );
     await prismaDm.$transaction(deleteOperations);
   }
   if (issueIds.length) {
@@ -300,7 +305,7 @@ const addOrChangeCopies = async (
               labelId,
               issueId,
             })) || [],
-        })
+        }),
       );
     await prismaDm.$transaction(newIssueLabelsOperations);
   }
@@ -312,12 +317,10 @@ const addOrChangeCopies = async (
 
 export const resetDemo = async () => {
   const demo = (await prismaDm.demo.findUnique({ where: { id: 1 } }))!;
-  if (
-    !(
-      getHoursFromDate(demo.lastReset) < getHoursFromDate(new Date()) ||
-      demo.lastReset.getTime() + 3_600_000 < new Date().getTime()
-    )
-  ) {
+  if (!(
+    getHoursFromDate(demo.lastReset) < getHoursFromDate(new Date()) ||
+    demo.lastReset.getTime() + 3_600_000 < new Date().getTime()
+  )) {
     return;
   }
 
@@ -356,7 +359,7 @@ export const resetDemo = async () => {
 
   const csvPurchases = parse<CsvPurchase>(
     readFileSync(`${csvPath}demo_purchases.csv`),
-    { columns: true }
+    { columns: true },
   );
   await prismaDm.purchase.createMany({
     data: csvPurchases.map(({ date, description }) => ({
@@ -377,7 +380,7 @@ export const resetDemo = async () => {
 
 const deleteUserData = async (
   user: user,
-  issuesOnly = false
+  issuesOnly = false,
 ): Promise<void> => {
   await prismaDm.issue.deleteMany({ where: { userId: user.id } });
 

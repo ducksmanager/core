@@ -11,6 +11,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,
@@ -58,5 +60,5 @@
   "exclude": [
     "dist",
     "node_modules"
-  ],
+  ]
 }

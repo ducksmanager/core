@@ -6,9 +6,8 @@ import type { PoolConnection } from "mariadb";
 import { createPool } from "mariadb";
 import * as process from "process";
 
-import type { authorUser, issue as dmIssue } from "~prisma-schemas/schemas/dm";
+import type { issue as dmIssue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-import type { authorStory } from "~prisma-schemas/schemas/dm_stats";
 import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/client";
 
 dotenv.config();
@@ -157,6 +156,12 @@ connect().then(async () => {
     ).map((issue) => issue as dmIssue & { issuecode: string }),
   });
 
+  console.log("ANALYZING TABLES auteurs_pseudos, numeros_simple");
+  await runQueryOnDirectConnection(
+    "ANALYZE TABLE auteurs_pseudos, numeros_simple",
+    DATABASE_NAME_DM_STATS_NEW,
+  );
+
   console.log("Creating storyIssue entries");
   await runQueryOnDirectConnection(
     `insert into histoires_publications(storycode, issuecode)
@@ -198,28 +203,27 @@ connect().then(async () => {
   );
 
   console.log("Creating missingStoryForUser entries");
-  await prismaDmStats.missingStoryForUser.createMany({
-    data: await prismaDmStats.$queryRaw<
-      (Pick<authorUser, "userId"> &
-        Pick<authorStory, "personcode" | "storycode">)[]
-    >`
-      select a_p.ID_User AS userId,
-        a_h.personcode,
-        a_h.storycode
-      from auteurs_pseudos a_p
-            inner join auteurs_histoires a_h on a_p.NomAuteurAbrege = a_h.personcode
-            inner join histoires_publications h_pub using (storycode)
-      where not exists(
-                    select 1
-                    from histoires_publications h_pub
-                          inner join numeros_simple n using (issuecode)
-                    where a_h.storycode = h_pub.storycode
-                          and a_p.ID_User = n.ID_Utilisateur
-            )
-      group by a_p.ID_User,
-            a_h.personcode,
-            a_h.storycode`,
-  });
+  await runQueryOnDirectConnection(
+    `insert into utilisateurs_histoires_manquantes(ID_User, personcode, storycode)
+    select distinct a_p.ID_User,
+      a_h.personcode,
+      a_h.storycode
+    from auteurs_pseudos a_p
+      inner join auteurs_histoires a_h on a_p.NomAuteurAbrege = a_h.personcode
+    where exists(
+            select 1
+            from histoires_publications h_pub
+            where h_pub.storycode = a_h.storycode
+          )
+      and not exists(
+            select 1
+            from histoires_publications h_pub
+              inner join numeros_simple n using (issuecode)
+            where h_pub.storycode = a_h.storycode
+              and n.ID_Utilisateur = a_p.ID_User
+          )`,
+    DATABASE_NAME_DM_STATS_NEW,
+  );
 
   console.log("ANALYZING TABLE utilisateurs_histoires_manquantes");
   await runQueryOnDirectConnection(

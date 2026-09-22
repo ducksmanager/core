@@ -30,14 +30,14 @@ export default () =>
         data = dbStatus;
         break;
       }
-      
+
       case "/status/pastecsearch":
       case "/status/pastecsearch/0":
-      data = await getPastecSearchStatus(0);
-      break;
+        data = await getPastecSearchStatus(0);
+        break;
       case "/status/pastecsearch/1":
-      data = await getPastecSearchStatus(1);
-      break;
+        data = await getPastecSearchStatus(1);
+        break;
 
       case "/status/pastec":
         data = await getPastecStatus();
@@ -177,9 +177,9 @@ export default () =>
                       issue,
                       entries,
                     };
-                  } catch (error) {
+                  } catch {
                     res.writeHead(404);
-                    res.end(error);
+                    res.end();
                     return;
                   }
                 } else {

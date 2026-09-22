@@ -8,10 +8,14 @@ import { readCsvMapping } from "~/csv";
 import { prismaClient } from "~prisma-schemas/schemas/coa/client";
 import type { ConsoleArgs } from "~/index";
 
-export const error = (...args: ConsoleArgs) => console.error(`[gocollect]`, ...args);
-export const log = (...args: ConsoleArgs) => console.log(`[gocollect]`, ...args);
-export const info = (...args: ConsoleArgs) => console.log(`[gocollect]`, ...args);
-export const debug = (...args: ConsoleArgs) => console.debug(`[gocollect]`, ...args);
+export const error = (...args: ConsoleArgs) =>
+  console.error(`[gocollect]`, ...args);
+export const log = (...args: ConsoleArgs) =>
+  console.log(`[gocollect]`, ...args);
+export const info = (...args: ConsoleArgs) =>
+  console.log(`[gocollect]`, ...args);
+export const debug = (...args: ConsoleArgs) =>
+  console.debug(`[gocollect]`, ...args);
 
 const MAPPING_FILE = "scrapes/gocollect/coa-mapping.csv";
 const ROOT_URL = "https://gocollect.com/app/comics/";
@@ -29,6 +33,8 @@ const gradingIntervalsForMaxEstimation = [6, 10];
 
 const overviewSelector = '[wire\\:key*="view-state-company-overview-"]';
 
+const OVERVIEW_TIMEOUT = 1500;
+
 type CsvIssue = { publicationcode: string; publicationUrl: string };
 
 export async function scrape() {
@@ -40,7 +46,12 @@ export async function scrape() {
 
   const browser = await firefox.launch();
   const browserContext = await browser.newContext();
-  await browserContext.route(/img.gocollect.com/, (route) => route.abort());
+  const blockedResourceTypes = new Set(["image", "media", "font"]);
+  await browserContext.route("**/*", (route) =>
+    blockedResourceTypes.has(route.request().resourceType())
+      ? route.abort()
+      : route.continue(),
+  );
   const page = await browserContext.newPage();
   const issuePage = await browserContext.newPage();
 
@@ -64,9 +75,11 @@ export async function scrape() {
         const selector = `div.grid[wire\\:key*="grades"] a`;
         await page.waitForSelector(selector);
         const issueElementsLocator = page.locator(selector);
-        const issueLinks = new Set(await issueElementsLocator.evaluateAll((e) =>
-          e.map((el) => (el as HTMLAnchorElement).href),
-        )).values();
+        const issueLinks = new Set(
+          await issueElementsLocator.evaluateAll((e) =>
+            e.map((el) => (el as HTMLAnchorElement).href),
+          ),
+        ).values();
 
         for (const issueLinkHref of issueLinks) {
           log(`Scraping ${issueLinkHref}`);
@@ -97,7 +110,9 @@ export async function scrape() {
               },
               async (_contents) => {
                 try {
-                  await issuePage.waitForSelector(overviewSelector, { timeout: 3000 });
+                  await issuePage.waitForSelector(overviewSelector, {
+                    timeout: OVERVIEW_TIMEOUT,
+                  });
                   return _contents;
                 } catch (e) {
                   error(`Error while processing page content: ${e}`);

@@ -308,7 +308,9 @@ export const coa = defineStore("coa", () => {
     fetchIssueUrls = async (issuecode: string) => {
       if (!(issuecode in issueDetails.value)) {
         const newIssueDetails = await events.getIssueDetails(issuecode);
-
+        if ("error" in newIssueDetails) {
+          return;
+        }
         issueDetails.value = {
           ...toRaw(issueDetails.value),
           [issuecode]: addPartInfo(newIssueDetails),

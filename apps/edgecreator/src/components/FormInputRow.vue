@@ -75,7 +75,9 @@ const isMultiple = computed(() =>
   stepOptionsWithMultipleValues.value.includes(optionName),
 );
 
-const inputValue = defineModel<PossibleInputValueType>();
+const inputValue = defineModel<PossibleInputValueType>({
+  required: true,
+});
 
 const shouldWaitForBlurToUpdate = computed(() =>
   ["text", "font"].includes(optionName),

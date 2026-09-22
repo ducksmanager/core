@@ -8,7 +8,11 @@ export default class extends Email {
     ? import.meta.dirname
     : `/app/emails/bookstore-reported-closed`;
 
-  constructor(data: { username: string, bookstoreId: number, bookstoreName: string }) {
+  constructor(data: {
+    username: string;
+    bookstoreId: number;
+    bookstoreName: string;
+  }) {
     super();
     this.data = data;
   }

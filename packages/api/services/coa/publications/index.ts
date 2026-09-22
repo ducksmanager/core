@@ -3,10 +3,12 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 export default {
   getPublicationLanguagecode: (publicationcode: string) =>
-    prismaCoa.inducks_publication.findUnique({
-      where: { publicationcode },
-      select: { languagecode: true },
-    }).then((publication) => publication?.languagecode ?? null),
+    prismaCoa.inducks_publication
+      .findUnique({
+        where: { publicationcode },
+        select: { languagecode: true },
+      })
+      .then((publication) => publication?.languagecode ?? null),
 
   getPublicationListFromCountrycodes: (countrycodes: string[]) =>
     getPublicationTitles({

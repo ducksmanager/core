@@ -153,8 +153,8 @@ declare module 'vue-router/auto-routes' {
     '/collection/user/[username]/[[...all]]': RouteRecordInfo<
       '/collection/user/[username]/[[...all]]',
       '/collection/user/:username/:all(.*)?',
-      { username: ParamValue<true>, all?: ParamValueZeroOrOne<true> },
-      { username: ParamValue<false>, all?: ParamValueZeroOrOne<false> },
+      { all?: ParamValueZeroOrOne<true>, username: ParamValue<true> },
+      { all?: ParamValueZeroOrOne<false>, username: ParamValue<false> },
       | never
     >,
     '/demo': RouteRecordInfo<

@@ -51,16 +51,21 @@ export const getInducksIssuecodesBetween = async (
   if (!issuecodeEnd) {
     issuecodeEnd = issuecodeStart;
   }
-  const publicationcode = (
-    await prismaCoa.inducks_issue.findFirstOrThrow({
-      where: {
-        issuecode: issuecodeStart,
-      },
-      select: {
-        publicationcode: true,
-      },
-    })
-  ).publicationcode;
+  const startIssue = await prismaCoa.inducks_issue.findFirst({
+    where: {
+      issuecode: issuecodeStart,
+    },
+    select: {
+      publicationcode: true,
+    },
+  });
+  if (!startIssue) {
+    console.error(
+      ` No issue found in COA for issue code ${issuecodeStart}, skipping`,
+    );
+    return [];
+  }
+  const { publicationcode } = startIssue;
 
   const coaIssues = (
     await prismaCoa.inducks_issue.findMany({
@@ -96,7 +101,7 @@ export const getInducksIssuecodesBetween = async (
 };
 
 export const getAll = () =>
-   prismaCoa.inducks_issuequotation_raw.findMany({
+  prismaCoa.inducks_issuequotation_raw.findMany({
     orderBy: [
       {
         issuecode: "asc",

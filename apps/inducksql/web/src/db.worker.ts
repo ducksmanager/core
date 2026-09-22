@@ -85,7 +85,7 @@ const select = (sql: string, bind?: BindingSpec) => {
 };
 
 const runQuery = (sql: string, limit?: number): QueryResult => {
-  let plan: string[] = [];
+  let plan: string[];
   try {
     plan = db()
       .selectObjects(`EXPLAIN QUERY PLAN ${sql}`)

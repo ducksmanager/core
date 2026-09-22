@@ -13,7 +13,7 @@ import { DynamicPublicDirectory } from "vite-multiple-assets";
 import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 
-import getViteAliases from "../../vite-aliases";
+import getViteAliases from "../../vite-aliases.ts";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -26,11 +26,14 @@ export default defineConfig(({ mode }) => ({
       "@vueuse/core",
       "bootstrap-vue-next",
     ],
-    alias: getViteAliases(path.resolve(__dirname, "../.."), {
-      "~": `${path.resolve(__dirname, "src")}/`,
-      "~web": path.resolve(__dirname, "../web"),
-      "~edgecreator-services": path.resolve(__dirname, "api/services"),
-      "~types/": `${path.resolve(__dirname, "types")}/`,
+    alias: getViteAliases(path.resolve(import.meta.dirname, "../.."), {
+      "~": `${path.resolve(import.meta.dirname, "src")}/`,
+      "~web": path.resolve(import.meta.dirname, "../web"),
+      "~edgecreator-services": path.resolve(
+        import.meta.dirname,
+        "api/services",
+      ),
+      "~types/": `${path.resolve(import.meta.dirname, "types")}/`,
     }),
   },
 
@@ -58,7 +61,7 @@ export default defineConfig(({ mode }) => ({
     VueI18n({
       runtimeOnly: false,
       compositionOnly: true,
-      include: [path.resolve(__dirname, "..", "locales/**")],
+      include: [path.resolve(import.meta.dirname, "..", "locales/**")],
     }),
 
     // https://github.com/antfu/unplugin-auto-import

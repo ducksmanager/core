@@ -1,1 +1,0 @@
-insert into cover_imports(coverid,import_error) values (_COVERID_,'_ERROR_MESSAGE_');

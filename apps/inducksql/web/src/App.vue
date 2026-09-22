@@ -60,7 +60,7 @@ const share = computed(() =>
   </p>
 
   <main v-else>
-    <SchemaSidebar :objects="schema" :selected="selected" @select="select" />
+    <schema-sidebar :objects="schema" :selected="selected" @select="select" />
     <div class="panel">
       <nav class="tabs">
         <button :class="{ active: view === 'query' }" @click="view = 'query'">
@@ -74,12 +74,12 @@ const share = computed(() =>
           {{ selected ?? "Table" }}
         </button>
       </nav>
-      <TableDetail
+      <table-detail
         v-if="view === 'table' && selected"
         :table="selected"
         :objects="schema"
       />
-      <QueryPanel v-else />
+      <query-panel v-else />
     </div>
   </main>
 </template>

@@ -11,14 +11,14 @@ import { scrape as comicsmania } from "./scrapes/comicsmania";
 import { scrape as gocollect } from "./scrapes/gocollect";
 import { scrape as seriesam } from "./scrapes/seriesam";
 
-export type ConsoleArgs = Parameters<typeof console.error>
+export type ConsoleArgs = Parameters<typeof console.error>;
 
 const scrapes = [
+  { name: "gocollect", scrape: gocollect },
   { name: "bdm", scrape: bdm },
   { name: "bedetheque", scrape: bedetheque },
   { name: "comicsmania", scrape: comicsmania },
   { name: "seriesam", scrape: seriesam },
-  { name: "gocollect", scrape: gocollect },
 ];
 
 dotenv.config({ path: ".env" });
@@ -44,12 +44,12 @@ const runScrapes = async () => {
       await scrape();
       results[index] = { status: "fulfilled", value: undefined };
       console.log(
-        `Scrape done for ${name}, end date: ${new Date().toISOString()}`
+        `Scrape done for ${name}, end date: ${new Date().toISOString()}`,
       );
     } catch (reason) {
       results[index] = { status: "rejected", reason };
       console.error(
-        `Scrape failed for ${name}, end date: ${new Date().toISOString()}`
+        `Scrape failed for ${name}, end date: ${new Date().toISOString()}`,
       );
     }
   }
@@ -57,13 +57,11 @@ const runScrapes = async () => {
 
 await Promise.all(
   Array.from({ length: Math.min(CONCURRENT_SCRAPES, scrapes.length) }, () =>
-    runScrapes()
-  )
+    runScrapes(),
+  ),
 );
 
-const hasFailed = results.some(
-  (result) => result.status === "rejected"
-);
+const hasFailed = results.some((result) => result.status === "rejected");
 
 await writeCsvMapping(await getAll());
 exec("sh bump-dump.sh", (error, stdout, stderr) => {
@@ -81,7 +79,7 @@ exec("sh bump-dump.sh", (error, stdout, stderr) => {
     results.forEach((result, index) => {
       if (result.status === "rejected") {
         console.error(
-          `Scrape failed for ${scrapes[index].name}: ${result.reason}`
+          `Scrape failed for ${scrapes[index].name}: ${result.reason}`,
         );
       }
     });

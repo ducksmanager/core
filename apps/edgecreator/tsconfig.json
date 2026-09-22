@@ -40,7 +40,7 @@
       ],
       "~types/*": [
         "./types/*"
-      ],
+      ]
     },
     "types": [
       "vite/client",
@@ -57,7 +57,7 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.vue",
-    "types/*.ts",
+    "types/*.ts"
   ],
   "exclude": [
     "api",

@@ -3,6 +3,7 @@ services:
     container_name: db
     image: "mariadb:12.2"
     restart: always
+    mem_limit: 10g
     volumes:
       - db:/var/lib/mysql
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
@@ -19,7 +20,7 @@ services:
         "--net-write-timeout=1800",
         "--innodb-ft-min-token-size=1",
         "--ft-min-word-len=1",
-        "--innodb-buffer-pool-size=12G",
+        "--innodb-buffer-pool-size=8G",
         "--innodb-io-capacity=2000",
         "--innodb-io-capacity-max=4000",
         "--innodb-read-io-threads=8",

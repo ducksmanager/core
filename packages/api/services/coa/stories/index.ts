@@ -13,7 +13,7 @@ const getStoryAndStoryversionDetails = async (
     searchResults.map(({ storycode }) => storycode),
   );
 
-  if (!("stories" in storyDetailsOutput)) {
+  if ("error" in storyDetailsOutput) {
     return {
       error: `Error when calling getStoryDetails`,
     };
@@ -75,20 +75,22 @@ const getFullStoriesFromKeywords = async (keywords: string[]) => {
 };
 
 const getStoryDetails = async (storycodes: string[]) =>
-  !storycodes.length
-    ? {
-        stories: {} as Record<string, inducks_story>,
-        storyUrls: {} as Record<string, string>,
-      }
-    : Promise.all([
-        prismaCoa.inducks_story.findMany({
-          where: {
-            storycode: { in: storycodes },
-          },
-        }),
-        prismaCoa.$queryRaw<
-          { storycode: string; sitecodeAndUrl: `${string}|${string}` }[]
-        >`
+  !Array.isArray(storycodes)
+    ? { error: "Invalid storycodes" }
+    : !storycodes.length
+      ? {
+          stories: {} as Record<string, inducks_story>,
+          storyUrls: {} as Record<string, string>,
+        }
+      : Promise.all([
+          prismaCoa.inducks_story.findMany({
+            where: {
+              storycode: { in: storycodes },
+            },
+          }),
+          prismaCoa.$queryRaw<
+            { storycode: string; sitecodeAndUrl: `${string}|${string}` }[]
+          >`
             SELECT storycode, CONCAT(sitecode,'|', url) AS sitecodeAndUrl
             FROM (
               SELECT s.storycode,
@@ -112,17 +114,20 @@ const getStoryDetails = async (storycodes: string[]) =>
             ) ranked
             WHERE rn = 1
             ORDER BY storycode`,
-      ])
-        .then(([stories, storyUrls]) => ({
-          stories: stories.groupBy("storycode"),
-          storyUrls: storyUrls
-            .map(({ sitecodeAndUrl, storycode }) => {
-              const [sitecode, urlPart] = sitecodeAndUrl.split("|");
-              return { storycode, url: getPrefixedEntryurl(urlPart, sitecode) };
-            })
-            .groupBy("storycode", "url"),
-        }))
-        .catch((e) => ({ error: "Error", errorDetails: e }));
+        ])
+          .then(([stories, storyUrls]) => ({
+            stories: stories.groupBy("storycode"),
+            storyUrls: storyUrls
+              .map(({ sitecodeAndUrl, storycode }) => {
+                const [sitecode, urlPart] = sitecodeAndUrl.split("|");
+                return {
+                  storycode,
+                  url: getPrefixedEntryurl(urlPart, sitecode),
+                };
+              })
+              .groupBy("storycode", "url"),
+          }))
+          .catch((e) => ({ error: "Error", errorDetails: e }));
 
 const getStoryversionsDetails = (storyversioncodes: string[]) =>
   prismaCoa.inducks_storyversion

@@ -57,6 +57,6 @@
     "prisma/client_dumili/**/*.ts",
     "prisma/client.ts",
     "scripts/**/*.mjs",
-    "services/**/*.ts",
+    "services/**/*.ts"
   ]
 }

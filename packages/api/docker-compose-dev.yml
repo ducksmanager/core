@@ -14,8 +14,10 @@ services:
         "/pastec/visualWordsORB.dat",
       ]
     volumes:
-      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+      - ./pastec-index-last.dat:/pastec-index-last.dat
 
+  # Boots from the index pastec-improved wrote; a second writer to the same file
+  # would just clobber the first.
   pastec-kp1000-flann200:
     container_name: pastec-kp1000-flann200
     image: "bperel/pastec:kp1000-flann200"

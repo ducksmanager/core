@@ -13,9 +13,12 @@ type CsvIssue = {
   issueCellRegex: string;
 };
 
-export const error = (...args: ConsoleArgs) => console.error(`[comicsmania]`, ...args);
-export const log = (...args: ConsoleArgs) => console.log(`[comicsmania]`, ...args);
-export const info = (...args: ConsoleArgs) => console.log(`[comicsmania]`, ...args);
+export const error = (...args: ConsoleArgs) =>
+  console.error(`[comicsmania]`, ...args);
+export const log = (...args: ConsoleArgs) =>
+  console.log(`[comicsmania]`, ...args);
+export const info = (...args: ConsoleArgs) =>
+  console.log(`[comicsmania]`, ...args);
 
 const publicationsWithIssues: CsvIssue[] = [];
 const quotations: Parameters<typeof createQuotations>[0] = [];

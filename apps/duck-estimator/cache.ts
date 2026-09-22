@@ -21,9 +21,10 @@ export const syncScrapeCache = async <T>(
   postGetFromCacheTransformFn: (buffer: Buffer) => T,
   preSetInCacheTransformFn: (output: T) => string | Promise<string>,
 ) => {
-
-  const error = (...args: ConsoleArgs) => console.error(`[${scrapeDirName}]`, ...args);
-  const debug = (...args: ConsoleArgs) => console.debug(`[${scrapeDirName}]`, ...args);
+  const error = (...args: ConsoleArgs) =>
+    console.error(`[${scrapeDirName}]`, ...args);
+  const debug = (...args: ConsoleArgs) =>
+    console.debug(`[${scrapeDirName}]`, ...args);
 
   const cacheDirName = `${getCacheDir()}/${scrapeDirName}`;
   const cacheFileName = `${cacheDirName}/${fileName}`;
