@@ -81,14 +81,14 @@ export const marketplace = defineStore("marketplace", () => {
       await loadIssueRequestsAsBuyer();
     },
     loadContactMethods = async (userId: number) => {
-      const result = await collectionEvents.getContactMethods(userId);
-      switch (result.error) {
-        case undefined:
+      await collectionEvents
+        .getContactMethods(userId)
+        .then((result) => {
           contactMethods.value[userId] = result;
-          break;
-        default:
-          console.error(result.error, result.errorDetails);
-      }
+        })
+        .catch((e) => {
+          console.error(e.error, e.errorDetails);
+        });
     },
     loadIssueRequestsAsBuyer = async (ignoreCache = false) => {
       if (
