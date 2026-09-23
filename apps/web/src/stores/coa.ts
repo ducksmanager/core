@@ -114,11 +114,14 @@ export const coa = defineStore("coa", () => {
         (issuecode) => !existingIssuecodes.has(issuecode),
       );
       if (newIssuecodes.length) {
-        const newIssueQuotations =
-          await events.getQuotationsByIssuecodes(newIssuecodes);
-        if (!("error" in newIssueQuotations)) {
-          addIssueQuotations(newIssueQuotations.quotations);
-        }
+        await events
+          .getQuotationsByIssuecodes(newIssuecodes)
+          .then((newIssueQuotations) => {
+            addIssueQuotations(newIssueQuotations.quotations);
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
       }
     },
     addIssueQuotations = (
@@ -226,17 +229,21 @@ export const coa = defineStore("coa", () => {
         (storycode) => !existingStorycodes.has(storycode),
       );
       if (newStorycodes.length) {
-        const newStoryDetails = await events.getStoryDetails(newStorycodes);
-        if (!("error" in newStoryDetails)) {
-          storyDetails.value = {
-            ...toRaw(storyDetails.value),
-            ...newStoryDetails.stories,
-          };
-          storyUrls.value = {
-            ...toRaw(storyUrls.value),
-            ...newStoryDetails.storyUrls,
-          };
-        }
+        await events
+          .getStoryDetails(newStorycodes)
+          .then((newStoryDetails) => {
+            storyDetails.value = {
+              ...toRaw(storyDetails.value),
+              ...newStoryDetails.stories,
+            };
+            storyUrls.value = {
+              ...toRaw(storyUrls.value),
+              ...newStoryDetails.storyUrls,
+            };
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
       }
     },
     fetchStoryversionDetails = async (storyversioncodes: string[]) => {
@@ -247,14 +254,17 @@ export const coa = defineStore("coa", () => {
         (storyversion) => !existingStoryversioncodes.has(storyversion),
       );
       if (newStoryversioncodes.length) {
-        const newStoryversionDetails =
-          await events.getStoryversionsDetails(newStoryversioncodes);
-        if (!("error" in newStoryversionDetails)) {
-          storyversionDetails.value = {
-            ...toRaw(storyversionDetails.value),
-            ...newStoryversionDetails.storyversions,
-          };
-        }
+        await events
+          .getStoryversionsDetails(newStoryversioncodes)
+          .then((newStoryversionDetails) => {
+            storyversionDetails.value = {
+              ...toRaw(storyversionDetails.value),
+              ...newStoryversionDetails.storyversions,
+            };
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
       }
     },
     fetchIssuecodesByPublicationcode = async (publicationcodes: string[]) => {
@@ -312,14 +322,17 @@ export const coa = defineStore("coa", () => {
       events.getIssueCoverDetails(issuecodes),
     fetchIssueUrls = async (issuecode: string) => {
       if (!(issuecode in issueDetails.value)) {
-        const newIssueDetails = await events.getIssueDetails(issuecode);
-        if ("error" in newIssueDetails) {
-          return;
-        }
-        issueDetails.value = {
-          ...toRaw(issueDetails.value),
-          [issuecode]: addPartInfo(newIssueDetails),
-        };
+        await events
+          .getIssueDetails(issuecode)
+          .then((newIssueDetails) => {
+            issueDetails.value = {
+              ...toRaw(issueDetails.value),
+              [issuecode]: addPartInfo(newIssueDetails),
+            };
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
       }
     };
 
