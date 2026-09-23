@@ -26,14 +26,17 @@ export default () => {
         return;
       }
       nextTick(async () => {
-        coverIdEvents.searchFromCover(url).then((results) => {
-          if ("error" in results) {
-            console.error(results.error);
-          } else {
+        coverIdEvents
+          .searchFromCover(url)
+          .then((results) => {
             hint.applyHintsFromCoverSearch(results);
-          }
-          console.log("Recherche par image terminée");
-        });
+          })
+          .catch((e) => {
+            console.error(e.error);
+          })
+          .finally(() => {
+            console.log("Recherche par image terminée");
+          });
       });
     } else {
       console.warn("La première page n'est pas une couverture");

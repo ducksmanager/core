@@ -90,8 +90,14 @@ const storycodes = computed(() =>
 const storiesWithDetails = computedAsync(
   () =>
     Promise.all([
-      coaEvents.getStoriesStoryjobs(storycodes.value),
-      coaEvents.getStoriesHeroCharacter(storycodes.value),
+      coaEvents.getStoriesStoryjobs(storycodes.value).catch((e) => {
+        console.error(e.error);
+        return e;
+      }),
+      coaEvents.getStoriesHeroCharacter(storycodes.value).catch((e) => {
+        console.error(e.error);
+        return e;
+      }),
     ]).then(([storyjobs, heroCharacter]) =>
       buildStoriesWithDetails(storycodes.value, storyjobs, heroCharacter),
     ),

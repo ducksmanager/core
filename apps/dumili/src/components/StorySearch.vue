@@ -91,15 +91,13 @@ const runSearch = async (value: string) => {
       searchType.value === "byStoryTitle"
         ? await coaEvents.getFullStoriesFromKeywords(value.split(" "))
         : await coaEvents.searchStoryByStorycode(value);
-    if ("error" in response) {
-      console.error(response.error);
-      storyResults.value = [];
-    } else {
-      storyResults.value = response.stories;
-      for (const searchResult of response.stories) {
-        storyUrls.value[searchResult.storycode] = searchResult.url;
-      }
+    storyResults.value = response.stories;
+    for (const searchResult of response.stories) {
+      storyUrls.value[searchResult.storycode] = searchResult.url;
     }
+  } catch (e) {
+    console.error((e as { error?: string }).error ?? e);
+    storyResults.value = [];
   } finally {
     isSearching.value = false;
     // The input value has changed since the beginning of the search, searching again
