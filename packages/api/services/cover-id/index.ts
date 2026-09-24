@@ -17,7 +17,7 @@ import { getPastecStatus } from "../status";
 //   max: Number(process.env.COVER_SEARCH_RATE_LIMIT_MAX ?? 60),
 // });
 
-const listenEvents = ({ _socket }: UserServices) => ({
+const listenEvents = (_services: UserServices) => ({
   searchFromCover: async (urlOrBase64: string, pastecIndex = 0) => {
     if (![0, 1].includes(pastecIndex)) {
       return { error: "Invalid pastec index" } as const;

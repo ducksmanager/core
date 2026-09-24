@@ -14,7 +14,7 @@
         :id="`page-image-${idx}`"
         :key="id"
         v-element-visibility="[
-          (visible) => {
+          (visible: boolean) => {
             if (visible) {
               imagesInViewport.add(id);
             } else {

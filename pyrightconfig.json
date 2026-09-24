@@ -2,6 +2,8 @@
     "include": [
         "apps/dumili/kumiko",
         "apps/dumili/paddleocr",
+        "apps/quackinator/src",
+        "apps/quackinator/tests",
         "packages/duckguessr-ml",
     ],
     "exclude": [

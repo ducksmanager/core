@@ -1,0 +1,48 @@
+services:
+  quackinator-api:
+    container_name: quackinator-api
+    image: ghcr.io/bperel/quackinator-api
+    restart: always
+    environment:
+      # Dumili mounts the game's components in its own page, so the browser
+      # reaches this API cross-origin. Sessions are created server-side by
+      # dumili-api, which is where the database to seed them from is.
+      QUACKINATOR_CORS_ORIGINS: '["https://dumili.ducksmanager.net","https://quackinator.ducksmanager.net"]'
+    volumes:
+      # Written by the ETL, read by the API. The API never touches the database.
+      - /data/quackinator:/app/data:ro
+    # dumili-api reaches this at quackinator-api:8000 over public-network,
+    # which both are already on.
+    networks:
+      - public-network
+
+  quackinator-app:
+    container_name: quackinator-app
+    image: ghcr.io/bperel/quackinator-app
+    restart: always
+    networks:
+      - public-network
+
+  # Offline. Rebuilds data/index from the `coa` database — the same one
+  # apps/coa-updater reads — and exits. Not part of `up`.
+  quackinator-etl:
+    profiles: ["etl"]
+    image: ghcr.io/bperel/quackinator-api
+    environment:
+      QUACKINATOR_DB_HOST: db
+      QUACKINATOR_DB_PORT: 3306
+      QUACKINATOR_DB_NAME: coa
+      QUACKINATOR_INDEX_DIR: /app/data/index
+    env_file:
+      - ../../packages/api/.env
+    volumes:
+      - /data/quackinator:/app/data
+    command: ["python", "-m", "quackinator.etl"]
+    networks:
+      - dm-db-network
+
+networks:
+  public-network:
+    external: true
+  dm-db-network:
+    external: true

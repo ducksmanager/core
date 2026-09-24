@@ -20,6 +20,7 @@ import type {
   page,
   Prisma,
   storyKindSuggestion,
+  quackinatorFamily,
   storySuggestion,
 } from "~prisma/client_dumili/client";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
@@ -30,6 +31,12 @@ import { OptionalAuthMiddleware } from "../_auth";
 import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
+import {
+  canRunOn as canRunQuackinatorOn,
+  recordQuackinatorAnswer,
+  resetQuackinatorSession,
+  startQuackinatorSession,
+} from "./quackinator";
 import {
   getStoriesFromImage,
   getFullStoriesFromKeywords,
@@ -162,12 +169,20 @@ const entryStoryInclude = {
     include: {
       aiStorySuggestion: {
         include: {
+          // Both scores, because the wizard ranks these suggestions before it
+          // asks anything and the two tools score on different scales — see
+          // ~dumili-utils/aiSuggestionConfidence.
           aiStorySearchPossibleStory: true,
+          aiOcrPossibleStory: true,
         },
       },
     },
   },
   includedInEntry: true,
+  // Only the answer count is of interest to the client — enough to say whether
+  // reopening resumes something. The answers themselves are replayed
+  // server-side and never leave this process.
+  quackinatorSession: { include: { _count: { select: { answers: true } } } },
 } as const;
 
 const indexationPayloadInclude = {
@@ -287,6 +302,7 @@ export type IndexationServerSentStartEvents = {
   reportCreateAiStorySuggestions: (entryId: number) => void;
   reportRunOcrOnImage: (imageId: number) => void;
   reportRunStorySearchOnImage: (imageId: number) => void;
+  reportStartQuackinatorSession: (entryId: number) => void;
   reportDocumentAnalyzed: (pageNumbers: number[]) => void;
   reportDocumentPageUploaded: (pageNumber: number) => void;
 };
@@ -1065,6 +1081,51 @@ const listenEvents = (services: IndexationServices) => ({
           status: "OK",
         };
       });
+  },
+
+  /**
+   * Open Quackinator on one entry, seeded with what Dumili already knows.
+   *
+   * Deliberately not part of the pipeline in `getFullIndexation`: the other
+   * three tools infer and move on, while this one costs the reader twenty
+   * questions, so it only ever runs because they asked for it.
+   */
+  startQuackinatorSession: async (entryId: number) => {
+    const indexation = services._socket.data.indexation;
+    const entry = indexation.entries.find(({ id }) => id === entryId);
+    if (!entry) {
+      return { error: "This indexation has no such entry" };
+    }
+    if (!canRunQuackinatorOn(entry)) {
+      return { error: "Quackinator only identifies comic stories" };
+    }
+    services.reportStartQuackinatorSession(entryId);
+    try {
+      const result = await startQuackinatorSession(indexation, entry);
+      if ("error" in result) {
+        return result;
+      }
+      await refreshIndexation(services, false);
+      return result;
+    } finally {
+      services.reportStartQuackinatorSessionEnd(entryId);
+    }
+  },
+
+  /** One answer, as the reader gives it, so reopening the entry resumes. */
+  recordQuackinatorAnswer: async (
+    entryId: number,
+    answer: {
+      family: quackinatorFamily;
+      code: string;
+      option: number | null;
+    },
+  ) => recordQuackinatorAnswer(entryId, answer),
+
+  resetQuackinatorSession: async (entryId: number) => {
+    const result = await resetQuackinatorSession(entryId);
+    await refreshIndexation(services, false);
+    return result;
   },
 
   createStorySuggestion: async (

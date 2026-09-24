@@ -15,34 +15,30 @@
         }}
       </template>
     </b-dropdown>
-    <ul class="position-relative navbar-nav z-4 col col-10">
-      <div class="position-absolute w-100">
-        <b-form-input
-          v-model="search"
-          autofocus
-          list="search"
-          :placeholder="$t('Rechercher une histoire')"
-        />
-        <datalist v-if="storyResults && !isSearching">
-          <option v-if="!storyResults.length">
-            {{ $t("Aucun résultat.") }}
-          </option>
-          <b-dropdown-item
-            v-for="searchResult in storyResults"
-            :key="searchResult.storycode"
-            link-class="h-100p"
-            class="d-flex align-items-center"
-            @click="emit('story-selected', searchResult.storycode)"
-          >
-            <StoryWithImage :storycode="searchResult.storycode">
-              <template #prefix>
-                <story-kind-badge :kind="searchResult.kind as storyKind" />
-              </template>
-            </StoryWithImage>
-          </b-dropdown-item>
-        </datalist>
-      </div>
-    </ul>
+    <div class="position-relative col col-10">
+      <b-form-input
+        v-model="search"
+        autofocus
+        :placeholder="$t('Rechercher une histoire')"
+      />
+      <ul v-if="storyResults && !isSearching" class="search-results">
+        <li v-if="!storyResults.length" class="no-results">
+          {{ $t("Aucun résultat.") }}
+        </li>
+        <li
+          v-for="searchResult in storyResults"
+          :key="searchResult.storycode"
+          class="search-result"
+          @click="emit('story-selected', searchResult.storycode)"
+        >
+          <StoryWithImage :storycode="searchResult.storycode">
+            <template #prefix>
+              <story-kind-badge :kind="searchResult.kind as storyKind" />
+            </template>
+          </StoryWithImage>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -118,33 +114,44 @@ watch(search, async (newValue) => {
 </script>
 
 <style scoped lang="scss">
-datalist {
-  $margin: calc(var(--bs-gutter-x) * 0.5);
-  display: block;
+.search-results {
+  // Same containing block as the input, so `width: 100%` is the input's width.
   position: absolute;
-  width: calc(100% - #{$margin});
-  margin: 26px $margin;
+  top: 100%;
   left: 0;
+  width: 100%;
+  z-index: 5;
+
+  max-height: 16rem;
+  overflow-y: auto;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
   background: #eee;
-  padding-left: 0;
+  border: 1px solid #888;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
 
-  :deep(.dropdown-item) {
-    cursor: pointer;
-    height: 26px;
-    padding: 5px;
-    overflow: auto;
-    border-bottom: 1px solid #888;
-    color: #888;
+.search-result {
+  height: 7rem;
+  overflow: hidden;
+  padding: 0.25rem;
+  border-bottom: 1px solid #ccc;
+  color: #333;
+  cursor: pointer;
 
-    :deep(a) {
-      .issue-condition {
-        display: inline-block;
-
-        &:before {
-          margin-top: -12px;
-        }
-      }
-    }
+  &:last-child {
+    border-bottom: none;
   }
+
+  &:hover {
+    background: #ddd;
+  }
+}
+
+.no-results {
+  padding: 0.5rem;
+  color: #666;
 }
 </style>

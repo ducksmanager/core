@@ -1,0 +1,61 @@
+[tools]
+python = "3.11"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+PYTHONPATH = "src"
+
+[tasks.install]
+description = "Install the project and dev dependencies"
+run = "python -m ensurepip --upgrade && python -m pip install -e '.[dev]'"
+
+[tasks.etl]
+description = "Rebuild the story index from MariaDB"
+run = "python -m quackinator.etl"
+
+[tasks.facts]
+description = "Write the README figures the built index can answer"
+run = "python -m quackinator.facts"
+
+[tasks.dump-facts]
+description = "Write the README figures only the MariaDB dump can answer"
+run = "python -m quackinator.etl.facts"
+
+[tasks.holdout]
+description = "Measure how often a reader's printing is one Inducks does not have"
+run = "python -m quackinator.etl.holdout"
+
+[tasks.sim]
+description = "Benchmark the inference engine and update the README's table"
+run = "python -m quackinator.engine.simulate"
+
+[tasks.sim-all]
+description = "Benchmark every documented row; refreshes every README table"
+run = "python -m quackinator.engine.simulate --all"
+
+[tasks.api]
+description = "Run the API for the Vue frontend"
+run = "uvicorn quackinator.api.app:app --reload --port 8000"
+
+[tasks.ui-install]
+description = "Install frontend dependencies"
+dir = "frontend"
+run = "pnpm install --ignore-workspace"
+
+[tasks.ui]
+description = "Run the Vue frontend (proxies /api to :8000)"
+dir = "frontend"
+run = "pnpm run dev"
+
+[tasks.ui-build]
+description = "Typecheck and build the Vue frontend"
+dir = "frontend"
+run = "pnpm run build"
+
+[tasks.test]
+description = "Run the test suite"
+run = "pytest -q"
+
+[tasks.lint]
+description = "Lint and format check"
+run = "ruff check src tests"

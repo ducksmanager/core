@@ -11,6 +11,22 @@
         <StorySuggestionList v-model="entry" />
         <StorySuggestionsTooltip v-if="!entry.includedInEntry" :entry="entry" />
       </div>
+      <b-button
+        class="mt-2 d-flex align-items-center gap-1"
+        variant="outline-light"
+        size="sm"
+        @click="showQuackinator = true"
+      >
+        <i-bi-lightbulb-fill />
+        {{
+          answersSoFar
+            ? $t("Reprendre l'identification ({n} réponses)", {
+                n: answersSoFar,
+              })
+            : $t("Identifier")
+        }}
+      </b-button>
+      <QuackinatorModal v-model="entry" v-model:show="showQuackinator" />
     </b-form-group>
     <b-form-group class="mb-3 title" :label="$t('Titre')">
       <suggestion-list
@@ -110,6 +126,12 @@ const { languagecode } = storeToRefs(suggestions());
 const { deleteEntry } = suggestions();
 
 const deleteEntryModalId = ref();
+
+const showQuackinator = ref(false);
+
+const answersSoFar = computed(
+  () => entry.value.quackinatorSession?._count.answers ?? 0,
+);
 
 const previousTitles = ref<string[]>([]);
 const showIncludesOtherEntriesSection = ref(

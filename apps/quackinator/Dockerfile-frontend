@@ -1,0 +1,11 @@
+FROM node:26-slim AS build
+WORKDIR /app
+
+COPY apps/quackinator/frontend/package.json /app/
+RUN npm install
+
+COPY apps/quackinator/frontend /app/
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html

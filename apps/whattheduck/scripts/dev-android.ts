@@ -24,7 +24,7 @@ async function main() {
 
   const { spawn } = await import('child_process');
   const cmd =
-    'pnpm cap:update && pnpm update-android-capacitor-config && concurrently --kill-others-on-fail -n android,dev "ionic cap run android --external --target Pixel_3_API_31 --public-host=$(ipconfig getifaddr en0)" "pnpm dev:server"';
+    'pnpm cap:update && pnpm update-android-capacitor-config && concurrently --kill-others-on-fail -n android,dev "ionic cap run android --external --target "Medium_Phone_2" --public-host=$(ipconfig getifaddr en0)" "pnpm dev:server"';
   const dev = spawn('sh', ['-c', cmd], {
     cwd: scriptDir,
     stdio: 'inherit',

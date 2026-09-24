@@ -7,8 +7,8 @@ android {
         compileSdk = rootProject.ext.compileSdkVersion
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 152
-        versionName "3.0.42"
+        versionCode 154
+        versionName "3.0.44"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -23,6 +23,9 @@ android {
         release {
             ndk {
                 debugSymbolLevel = 'FULL'
+            }
+            optimization {
+                enable = true
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

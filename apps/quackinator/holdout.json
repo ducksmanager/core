@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-03",
+  "held_out": 0.1,
+  "seed": 11,
+  "signals": {
+    "country": {
+      "held": 176434,
+      "labels": 77,
+      "miss": 50.13772855572055
+    },
+    "decade": {
+      "held": 165589,
+      "labels": 10,
+      "miss": 36.19262149055795
+    },
+    "language": {
+      "held": 176454,
+      "labels": 76,
+      "miss": 49.640132839153544
+    },
+    "magazine": {
+      "held": 176434,
+      "labels": 6242,
+      "miss": 82.26872371538366
+    }
+  }
+}

@@ -36,6 +36,22 @@ const config: CapacitorConfig = {
   ios: {
     scheme: 'What The Duck',
   },
+  plugins: {
+    // Inert until @capacitor/splash-screen is installed; kept so the intent is not lost.
+    SplashScreen: {
+      launchShowDuration: 3000,
+      launchAutoHide: false,
+      androidScaleType: 'CENTER_INSIDE',
+      splashFullScreen: false,
+      splashImmersive: false,
+      backgroundColor: '#1C3461',
+      androidSplashResourceName: 'splash',
+    },
+    CapacitorUpdater: {
+      updateUrl: 'https://api.ducksmanager.net/app/updates',
+      statsUrl: '',
+    },
+  },
 };
 
 export default config;

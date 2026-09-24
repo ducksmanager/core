@@ -1,0 +1,7 @@
+quackinator.ducksmanager.net {
+    reverse_proxy quackinator-app
+}
+
+api.quackinator.ducksmanager.net {
+    reverse_proxy quackinator-api:8000
+}
