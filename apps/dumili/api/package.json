@@ -29,8 +29,8 @@
     "@opentelemetry/instrumentation-socket.io": "^0.46.1",
     "@opentelemetry/sdk-trace-base": "^2.11.0",
     "@prisma/client": "^7.10.0",
-    "@sentry/node": "^10.74.0",
-    "@sentry/profiling-node": "^10.74.0",
+    "@sentry/node": "^10.75.3",
+    "@sentry/profiling-node": "^10.75.3",
     "axios": "^1.20.0",
     "axios-cache-interceptor": "^1.12.3",
     "busboy": "^1.6.0",
@@ -51,18 +51,18 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@sentry/cli": "^3.7.0",
+    "@sentry/cli": "^3.8.0",
     "@socket.io/admin-ui": "^0.5.1",
     "@types/busboy": "^1.5.4",
     "@types/i18n": "^0.13.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.9.7",
+    "@types/node": "^25.9.8",
     "concurrently": "^10.0.5",
-    "eslint": "^10.10.0",
+    "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "prisma": "^7.10.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0"
+    "typescript-eslint": "^8.70.1"
   }
 }

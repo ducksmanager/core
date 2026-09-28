@@ -22,12 +22,15 @@ export const publicCollection = defineStore("publicCollection", () => {
   const collectionUtils = useCollection(issues),
     loadPublicCollection = async (username: string) => {
       publicUsername.value = username;
-      const data = await publicCollectionEvents.getPublicCollection(username);
-      if ("error" in data) {
-        console.error(data.error);
-      } else {
-        issues.value = data.issues;
-      }
+      await publicCollectionEvents
+        .getPublicCollection(username)
+        .then((data) => {
+          issues.value = data.issues;
+        })
+        .catch((e) => {
+          console.error(e.error);
+          issues.value = undefined;
+        });
     };
   return {
     ...collectionUtils,

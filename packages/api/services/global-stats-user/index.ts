@@ -66,7 +66,8 @@ const userListenEvents = ({ _socket }: UserServices) => ({
           },
         },
         aboveMe: {
-          userId: (myRank - 1 in userScores) ? userScores[myRank - 1]?.userId : null,
+          userId:
+            myRank - 1 in userScores ? userScores[myRank - 1]?.userId : null,
         },
       };
     }

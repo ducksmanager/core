@@ -34,11 +34,10 @@ const {
 
 const open = defineModel<boolean>("open", { default: false });
 
-const markerRef = ref<InstanceType<typeof MapboxMarker>>();
+const markerRef = ref();
 
 const syncPopupOpen = () => {
-  const m = markerRef.value as
-    (InstanceType<typeof MapboxMarker> & { marker: Marker }) | null;
+  const m = markerRef.value;
   const marker = m?.marker;
   if (!marker) return;
   const popup = marker.getPopup();
@@ -70,11 +69,7 @@ let detachPopupListeners: (() => void) | undefined;
 
 watch(
   () => {
-    const m = markerRef.value as
-      | (InstanceType<typeof MapboxMarker> & {
-          popup: import("vue").ComputedRef<Popup | undefined>;
-        })
-      | null;
+    const m = markerRef.value;
     return m?.popup ? unref(m.popup) : null;
   },
   (popup) => {
