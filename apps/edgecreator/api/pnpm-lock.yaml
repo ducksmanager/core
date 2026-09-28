@@ -48,11 +48,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       socket-call-client:
-        specifier: ^0.8.0
-        version: 0.8.0(vue@3.5.22(typescript@6.0.3))
+        specifier: ^0.10.0
+        version: 0.10.0(vue@3.5.22(typescript@6.0.3))
       socket-call-server:
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.12.0
+        version: 0.12.0
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
@@ -808,8 +808,8 @@ packages:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
 
-  engine.io-client@6.6.6:
-    resolution: {integrity: sha512-iY6QdftLQ9pyiPoX082bpf/u1UewnOaJrtJIF9T0++QB34lZrj0uP+Q/bj8AlUsAxqhnkTV2BS8SBZSxOmoV5Q==}
+  engine.io-client@6.6.7:
+    resolution: {integrity: sha512-GyAvmPA7gnRCpDQbYACAy79Lg4ewevrmaPzySZz0OVvgyZc3gEfLLqPTYk8wVBScjOEpM9ZO4KryyFpVItjGEA==}
 
   engine.io-parser@5.2.3:
     resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
@@ -1485,8 +1485,8 @@ packages:
     resolution: {integrity: sha512-6x6dK6zJdpTzF4sQeNYxwtvBzf6Eg4GtlesS94HOvTudUeyK2WXAaIfmDgsyslYrRBeFIlsi54AYsFGUuhmvrQ==}
     engines: {node: '>= 0.4'}
 
-  socket-call-client@0.8.0:
-    resolution: {integrity: sha512-Jjk1KjvofAcDAzlrtu0oIW85u2xadfDeMGEqJQjz+8JA7SsCNKEzh2bw0x4YMLCK+b25nqEeoIcQjGujU77VWA==}
+  socket-call-client@0.10.0:
+    resolution: {integrity: sha512-2VdFULMF991RDjVpIRpj78LHrtzH4LzWe5yJyBFbpQ7OB0xarFc1zr81TcMwqc7+fPusLw1npEjYPPiTBG5VGg==}
     engines: {node: '>=22.0.0'}
     peerDependencies:
       axios-cache-interceptor: ^1.12.0
@@ -1495,15 +1495,20 @@ packages:
       axios-cache-interceptor:
         optional: true
 
-  socket-call-server@0.9.0:
-    resolution: {integrity: sha512-yh3KIhXlp0jaE5x/XYs+vG5sZjZbsyzTBL9jyJqa2SXJoVhnqjiqk0l6LVtxagpjeMvhTa/UgQYx1L36TShavg==}
+  socket-call-server@0.12.0:
+    resolution: {integrity: sha512-3gJP+03tspzEfLMak8BRRuVJFuWAKsZHatN74rKDPp4jLNpRim6p8MALx9Qbk3B8n1muXl4tMzYrroHa4of4ig==}
     engines: {node: '>=22.0.0'}
+    peerDependencies:
+      valibot: ^1.0.0
+    peerDependenciesMeta:
+      valibot:
+        optional: true
 
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
 
-  socket.io-client@4.8.3:
-    resolution: {integrity: sha512-uP0bpjWrjQmUt5DTHq9RuoCBdFJF10cdX9X+a368j/Ft0wmaVgxlrjvK3kjvgCODOMMOz9lcaRzxmso0bTWZ/g==}
+  socket.io-client@4.8.4:
+    resolution: {integrity: sha512-7wjKAvVXYOJsbmUgkWbnhPD4bFpkqrUR0++XOjpGFmqDqsqV1CI93VTraeExLxpjxEqrWgFoSRZu1ihjLWfkAA==}
     engines: {node: '>=10.0.0'}
 
   socket.io-parser@4.2.7:
@@ -2438,7 +2443,7 @@ snapshots:
 
   encodeurl@2.0.0: {}
 
-  engine.io-client@6.6.6:
+  engine.io-client@6.6.7:
     dependencies:
       '@socket.io/component-emitter': 3.1.2
       debug: 4.4.3
@@ -3174,16 +3179,16 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  socket-call-client@0.8.0(vue@3.5.22(typescript@6.0.3)):
+  socket-call-client@0.10.0(vue@3.5.22(typescript@6.0.3)):
     dependencies:
-      socket.io-client: 4.8.3
+      socket.io-client: 4.8.4
       vue: 3.5.22(typescript@6.0.3)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  socket-call-server@0.9.0:
+  socket-call-server@0.12.0:
     dependencies:
       socket.io: 4.8.3
     transitivePeerDependencies:
@@ -3200,11 +3205,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket.io-client@4.8.3:
+  socket.io-client@4.8.4:
     dependencies:
       '@socket.io/component-emitter': 3.1.2
       debug: 4.4.3
-      engine.io-client: 6.6.6
+      engine.io-client: 6.6.7
       socket.io-parser: 4.2.7
     transitivePeerDependencies:
       - bufferutil

@@ -58,6 +58,8 @@ export default [
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-useless-default-assignment": "off",
+      "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
+
       "arrow-body-style": ["error", "as-needed"],
 
       "vue/component-name-in-template-casing": [

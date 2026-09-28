@@ -125,10 +125,10 @@ const listenEvents = () => ({
           points: await getMedalPoints(userIds),
           stats: await getUsersQuickStats(userIds),
         }
-      : {
+      : ({
           error: "Bad request",
           errorDetails: "Empty user IDs list",
-        },
+        } as const),
 });
 
 export const { client, server } = useSocketEvents<typeof listenEvents>(

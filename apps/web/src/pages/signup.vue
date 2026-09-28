@@ -90,7 +90,7 @@ const signup = async () => {
       password,
       email,
     })
-    .catch((e: unknown) => {
+    .catch((e) => {
       if (isEventErrorOf(authEvents.signup, e)) {
         error = {
           selector: e.selector,

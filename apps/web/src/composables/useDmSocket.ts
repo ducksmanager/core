@@ -62,7 +62,7 @@ const defaultExport = (options: {
   const storySearchSocket = inject("storySearchSocket") as SocketClient;
 
   for (const eachSocket of [socket, storySearchSocket]) {
-    eachSocket.onConnectError = typeof onConnectError;
+    eachSocket.onConnectError = onConnectError;
   }
 
   return {
