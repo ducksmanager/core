@@ -92,7 +92,7 @@ import type { SimpleStory } from "~dm-types/SimpleStory";
 
 import { socketInjectionKey } from "../composables/useDmSocket";
 
-const { withTitle, isPublic } = defineProps<{
+const { withTitle = true, isPublic = false } = defineProps<{
   withTitle?: boolean;
   isPublic?: boolean;
 }>();

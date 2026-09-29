@@ -59,7 +59,7 @@ const publicationNamesForCurrentCountry = $computed(() =>
   publicationNamesFullCountries.value.includes(currentCountryCode || "")
     ? Object.keys(publicationNames.value)
         .filter((publicationcode) =>
-          new RegExp(`^${String(currentCountryCode)}/`).test(publicationcode),
+          publicationcode.startsWith(`${String(currentCountryCode)}/`),
         )
         .map((publicationcode) => ({
           text: publicationNames.value[publicationcode],
