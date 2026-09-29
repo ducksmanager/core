@@ -115,7 +115,7 @@ watch(book, (newValue, oldValue) => {
     newValue.loadFromHTML(container.value!.querySelectorAll(".page"));
 
     newValue.on("flip", ({ data }) => {
-      currentPage.value = parseInt(data.toString());
+      currentPage.value = Number(data);
     });
 
     setTimeout(() => {

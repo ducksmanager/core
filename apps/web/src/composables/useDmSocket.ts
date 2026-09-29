@@ -31,11 +31,7 @@ import { type ClientEvents as StorySearchEvents } from "~dm-services/story-searc
 const defaultExport = (options: {
   cacheStorage?: AxiosStorage;
   disableCollectionCache?: boolean;
-  onConnectError: (
-    e: Error,
-    namespace: string,
-    eventName?: string,
-  ) => Promise<void> | void;
+  onConnectError: (e: Error, namespace: string, eventName?: string) => void;
   onConnected?: (namespace: string) => void;
   session: {
     getToken: () => Promise<string | null | undefined>;

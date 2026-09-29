@@ -25,8 +25,8 @@
 
 <script setup lang="ts">
 const {
-  issuecode = undefined,
-  issue: propIssue = undefined,
+  issuecode,
+  issue: propIssue,
   clickable = false,
   hideCondition = false,
   noWrap = true,

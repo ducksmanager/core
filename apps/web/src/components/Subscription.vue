@@ -88,14 +88,10 @@ const { isEdit, subscription } = defineProps<{
 const editSubscription = $ref(subscription);
 
 const startDateAsString = $ref(
-  editSubscription.startDate
-    ? editSubscription.startDate.toISOString().split("T")[0]
-    : "",
+  editSubscription.startDate.toISOString().split("T")[0],
 );
 const endDateAsString = $ref(
-  editSubscription.endDate
-    ? editSubscription.endDate.toISOString().split("T")[0]
-    : "",
+  editSubscription.endDate.toISOString().split("T")[0],
 );
 
 watch($$(startDateAsString), (newValue) => {

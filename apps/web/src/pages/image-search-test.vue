@@ -329,12 +329,14 @@ const captureFrame = () => {
 
   ctx.drawImage(video, 0, 0);
   canvas.toBlob(
-    async (blob) => {
+    (blob) => {
       if (blob) {
         const file = new File([blob], "webcam-capture.jpg", {
           type: "image/jpeg",
         });
-        currentBase64.value = await toBase64(file);
+        void toBase64(file).then((base64) => {
+          currentBase64.value = base64;
+        });
       }
     },
     "image/jpeg",
@@ -361,13 +363,12 @@ const captureFrameAsync = (): Promise<string> =>
 
     ctx.drawImage(video, 0, 0);
     canvas.toBlob(
-      async (blob) => {
+      (blob) => {
         if (blob) {
           const file = new File([blob], "webcam-capture.jpg", {
             type: "image/jpeg",
           });
-          const base64 = await toBase64(file);
-          resolve(base64);
+          toBase64(file).then(resolve, reject);
         } else {
           reject(new Error("Failed to create blob"));
         }
@@ -393,6 +394,8 @@ const streamAndSearch = async () => {
     }
 
     // Check if streaming was stopped while waiting
+    // TS keeps the narrowing from the loop condition across the await above
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!isStreaming.value) break;
 
     // Capture and search

@@ -44,9 +44,7 @@ const cacheControl = (ignoreCache: boolean) =>
   (ignoreCache ? [{ disableCache: true }] : []) as [{ disableCache: boolean }];
 
 export const collection = defineStore("collection", () => {
-  const route = useRoute<
-    "/collection/user/[username]/[[...all]]" | "/bookcase/show/[username]"
-  >();
+  const route = useRoute();
   const {
     collection: collectionEvents,
     stats: statsEvents,
@@ -57,7 +55,7 @@ export const collection = defineStore("collection", () => {
   const issues = shallowRef<EventOutput<CollectionServices, "getIssues">>();
 
   const labelFiltersQueryParams =
-    useUrlSearchParams<Record<Filter, "true">>("hash-params");
+    useUrlSearchParams<Partial<Record<Filter, string>>>("hash-params");
 
   const collectionUtils = useCollection(issues),
     watchedPublicationsWithSales = shallowRef<string[]>(),
@@ -98,7 +96,7 @@ export const collection = defineStore("collection", () => {
     user = shallowRef<
       SuccessfulEventOutput<CollectionServices, "getUser"> | undefined | null
     >(),
-    isPublicCollection = computed(() => route.params.username !== undefined),
+    isPublicCollection = computed(() => "username" in route.params),
     userPermissions =
       shallowRef<EventOutput<CollectionServices, "getUserPermissions">>(),
     previousVisit = ref<Date>(),

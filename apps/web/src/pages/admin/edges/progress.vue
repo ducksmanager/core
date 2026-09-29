@@ -89,11 +89,11 @@ meta:
               <span
                 class="num bordered"
                 :class="{
-                available: issuesForPublication
-                  .map(({ issuecode }) => issuecode)
-                  ?.includes(inducksIssuecode),
-                owned: issuesByIssuecode[inducksIssuecode]!!,
-              }"
+                  available: issuesForPublication
+                    .map(({ issuecode }) => issuecode)
+                    ?.includes(inducksIssuecode),
+                  owned: issuesByIssuecode[inducksIssuecode]!!,
+                }"
                 :title="inducksIssuecode"
                 @click="open(inducksIssuecode)"
                 >&nbsp;</span
@@ -190,11 +190,13 @@ const sortedBookcase = computed(() =>
       ? []
       : issuecodesByPublicationcode.value[publicationcode].map((issuecode) => ({
           id: 0,
-          edgeId: publishedEdgesByPublicationcode?.[publicationcode]
-            .map(({ issuecode }) => issuecode)
-            .includes(issuecode)
-            ? 1
-            : 0,
+          edgeId:
+            publicationcode in publishedEdgesByPublicationcode &&
+            publishedEdgesByPublicationcode[publicationcode].some(
+              (edge) => edge.issuecode === issuecode,
+            )
+              ? 1
+              : 0,
           publicationcode,
           issuecode,
           creationDate: new Date(),
