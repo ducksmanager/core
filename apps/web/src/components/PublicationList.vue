@@ -79,10 +79,12 @@ const { isPublic, filteredList } = defineProps<{
   filteredList?: string[];
 }>();
 
-const route = useRoute();
+const publicationListRoute = useRoute();
 
 const username = $computed(
-  () => "username" in route.params && route.params.username,
+  () =>
+    "username" in publicationListRoute.params &&
+    publicationListRoute.params.username,
 );
 
 const searchParams = $computed(() => document.location.search);

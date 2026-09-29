@@ -42,7 +42,7 @@ const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
     [...countryCodes].sort((countryCodeA, countryCodeB) =>
-      countryNames.value![countryCodeA]?.localeCompare(
+      countryNames.value![countryCodeA].localeCompare(
         countryNames.value![countryCodeB],
       ),
     ),

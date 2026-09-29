@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { MapboxMarker } from "@studiometa/vue-mapbox-gl";
-import type { Marker, Popup } from "mapbox-gl";
+import type { Popup } from "mapbox-gl";
 import { onBeforeUnmount, ref, unref, watch } from "vue";
 
 const {
