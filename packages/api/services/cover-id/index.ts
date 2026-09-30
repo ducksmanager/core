@@ -19,7 +19,10 @@ const listenEvents = () => ({
       v.string("Invalid URL or base64 string"),
       v.nonEmpty("Invalid URL or base64 string"),
     ),
-    v.pipe(v.optional(v.picklist([0, 1], "Invalid pastec index" as const), 0)),
+    v.pipe(
+      v.optional(v.number(), 0),
+      v.picklist([0, 1], "Invalid pastec index" as const),
+    ),
   )(async (urlOrBase64, pastecIndex) => {
     const hostAndPort =
       process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];

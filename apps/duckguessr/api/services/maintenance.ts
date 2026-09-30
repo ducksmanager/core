@@ -64,13 +64,11 @@ const listenEvents = () => ({
     });
   }),
   updateMaintenanceData: ev(
-    v.pipe(
-      v.array(
-        v.object({
-          sitecodeUrl: v.string(),
-          decision: v.enum(entryurlDetailsDecision),
-        }),
-      ),
+    v.array(
+      v.object({
+        sitecodeUrl: v.string(),
+        decision: v.enum(entryurlDetailsDecision),
+      }),
     ),
   )(async (data) =>
     prisma.$transaction(
