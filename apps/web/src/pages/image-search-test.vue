@@ -116,8 +116,8 @@ meta:
 <script setup lang="ts">
 import { isEventErrorOf, socketInjectionKey } from "../composables/useDmSocket";
 
-const { coverId: coverIdEvents, storySearch: storySearchEvents } =
-  inject(socketInjectionKey)!;
+const { coverId: coverIdEvents, storySearch } = inject(socketInjectionKey)!;
+const storySearchEvents = storySearch!;
 
 const currentBase64 = ref<string>();
 const isCover = ref(true);

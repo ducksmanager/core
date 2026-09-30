@@ -55,9 +55,13 @@ const defaultExport = (options: {
       .diff(now);
   };
 
-  const storySearchSocket = inject("storySearchSocket") as SocketClient;
+  const storySearchSocket = inject<SocketClient | undefined>(
+    "storySearchSocket",
+    undefined,
+  );
 
   for (const eachSocket of [socket, storySearchSocket]) {
+    if (!eachSocket) continue;
     eachSocket.onConnectError = onConnectError;
     if (onConnected) {
       eachSocket.onConnected = onConnected;
@@ -139,7 +143,7 @@ const defaultExport = (options: {
       },
     ),
     events: socket.addNamespace<EventsEvents>(namespaces.EVENTS, {}),
-    storySearch: storySearchSocket.addNamespace<StorySearchEvents>(
+    storySearch: storySearchSocket?.addNamespace<StorySearchEvents>(
       namespaces.STORY_SEARCH,
       {},
     ),
