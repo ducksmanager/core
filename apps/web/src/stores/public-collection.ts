@@ -1,6 +1,6 @@
 import useCollection from "../composables/useCollection";
 import { socketInjectionKey } from "../composables/useDmSocket";
-import { EventOutput } from "socket-call-client";
+import { SuccessfulEventOutput } from "socket-call-client";
 import type { ClientEvents as PublicCollectionServices } from "~dm-services/public-collection";
 
 export const publicCollection = defineStore("publicCollection", () => {
@@ -9,7 +9,10 @@ export const publicCollection = defineStore("publicCollection", () => {
 
   const issues =
       shallowRef<
-        EventOutput<PublicCollectionServices, "getPublicCollection">["issues"]
+        SuccessfulEventOutput<
+          PublicCollectionServices,
+          "getPublicCollection"
+        >["issues"]
       >(),
     publicUsername = ref<string>(),
     publicationUrlRoot = computed(

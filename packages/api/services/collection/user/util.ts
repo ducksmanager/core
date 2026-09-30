@@ -1,7 +1,7 @@
 import type { user } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
-
-import { getHashedPassword, isValidEmail } from "../../auth/util";
+import * as v from "valibot";
+import { getHashedPassword } from "../../auth/util";
 
 type PrismaDmTransaction = Parameters<
   Parameters<typeof prismaDm.$transaction>[0]
@@ -126,7 +126,7 @@ export class EmailUpdateValidation extends Validation {
 
 export class EmailValidation extends Validation {
   run = async ({ email }: Pick<user, "email">) => {
-    if (!isValidEmail(email)) {
+    if (!v.is(v.pipe(v.string(), v.email()), email)) {
       return {
         message: "Adresse e-mail invalide",
         selector: "#email",

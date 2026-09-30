@@ -4,8 +4,11 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { UserServices } from "../../../../index";
 import { getIssuesForSale } from "..";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export default ({ _socket }: UserServices) => ({
-  getContactMethods: async (sellerId: number) => {
+  getContactMethods: ev(v.number())(async (sellerId) => {
     const issuesForSale = await getIssuesForSale(_socket.data.user.id);
     if (!issuesForSale.some((issue) => issue.userId === sellerId)) {
       return { error: "Invalid seller ID", errorDetails: String(sellerId) };
@@ -28,5 +31,5 @@ export default ({ _socket }: UserServices) => ({
       }),
       {},
     );
-  },
+  }),
 });

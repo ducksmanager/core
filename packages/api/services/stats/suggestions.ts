@@ -9,17 +9,20 @@ import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/
 
 import type { UserServices } from "../../index";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
 }
 
 export default ({ _socket }: UserServices) => ({
-  getSuggestionsForCountry: async (
-    countrycode: string,
-    sincePreviousVisit: "since_previous_visit" | "_",
-    limit: number,
-  ) => {
+  getSuggestionsForCountry: ev(
+    v.string(),
+    v.union([v.literal("since_previous_visit"), v.literal("_")]),
+    v.number(),
+  )(async (countrycode, sincePreviousVisit, limit) => {
     const user = _socket.data.user;
     const since =
       sincePreviousVisit === "since_previous_visit"
@@ -46,7 +49,7 @@ export default ({ _socket }: UserServices) => ({
         ),
       ),
     ).then((results) => results.groupBy("sort"));
-  },
+  }),
 });
 
 type SuggestedPublications = {
