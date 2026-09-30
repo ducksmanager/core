@@ -26,9 +26,7 @@ export const checkTodayLimit = (userId: number) =>
 
 export default ({ _socket }: UserServices) => ({
   sendNewEdgePhotoEmail: ev(
-    v.config(v.pipe(v.string(), v.nonEmpty()), {
-      message: "Invalid issuecode",
-    }),
+    v.pipe(v.string("Invalid issuecode"), v.nonEmpty("Invalid issuecode")),
   )(async (issuecode: string) => {
     const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: _socket.data.user.id },

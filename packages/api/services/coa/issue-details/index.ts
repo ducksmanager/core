@@ -36,9 +36,7 @@ export const getPopularityByIssuecodes = async (issuecodes: string[]) =>
 
 export default {
   getIssueDetails: ev(
-    v.config(v.pipe(v.string(), v.nonEmpty()), {
-      message: "Invalid issuecode",
-    }),
+    v.pipe(v.string("Invalid issuecode"), v.nonEmpty("Invalid issuecode")),
   )(async (issuecode) => {
     const issue = await prismaCoa.inducks_issue.findFirst({
       where: { issuecode },
