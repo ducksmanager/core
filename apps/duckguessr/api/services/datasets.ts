@@ -38,9 +38,9 @@ const listenEvents = () => ({
   previewDataset: ev(
     v.pipe(
       v.object({
-        personNationalityFilter: v.union([v.array(v.string()), v.undefined()]),
-        oldestDateFilterMin: v.union([v.number(), v.undefined()]),
-        oldestDateFilterMax: v.union([v.number(), v.undefined()]),
+        personNationalityFilter: v.optional(v.array(v.string())),
+        oldestDateFilterMin: v.optional(v.number()),
+        oldestDateFilterMax: v.optional(v.number()),
       }),
       v.check(
         ({ personNationalityFilter }) =>

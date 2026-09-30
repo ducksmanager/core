@@ -116,7 +116,7 @@
                         </label>
                         <b-form-input
                           id="oldest-date-filter"
-                          v-model="filters.oldestDateFilterMin"
+                          v-model.number="filters.oldestDateFilterMin"
                           :disabled="!filters.oldestDateFilterMin"
                           type="range"
                           size="lg"
@@ -134,7 +134,7 @@
                         </label>
                         <b-form-input
                           id="newest-date-filter"
-                          v-model="filters.oldestDateFilterMax"
+                          v-model.number="filters.oldestDateFilterMax"
                           :disabled="!filters.oldestDateFilterMax"
                           type="range"
                           :min="1900"

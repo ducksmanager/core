@@ -88,7 +88,11 @@ export default ({ _socket }: UserServices) => ({
         .$transaction(async (transaction) => {
           const scopedError = await validate(
             transaction,
-            { ...input, userId: _socket.data.user.id },
+            {
+              ...input,
+              id: _socket.data.user.id,
+              userId: _socket.data.user.id,
+            },
             validators,
           );
           if (scopedError) {

@@ -1149,8 +1149,7 @@ const listenEvents = (services: IndexationServices) => ({
       ),
       v.check(
         ({ releaseDate }) =>
-          releaseDate === null ||
-          !Number.isNaN(new Date(releaseDate).getTime()),
+          !releaseDate || !Number.isNaN(new Date(releaseDate).getTime()),
         "Invalid release date" as const,
       ),
     ),
@@ -1268,7 +1267,7 @@ const listenEvents = (services: IndexationServices) => ({
     v.number(),
     v.object({
       entirepages: v.optional(v.number()),
-      title: v.nullable(v.string()),
+      title: v.nullish(v.string()),
       position: v.optional(v.number()),
     }),
   )(async (entryId, data) => {

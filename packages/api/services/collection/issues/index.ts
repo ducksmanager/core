@@ -16,6 +16,15 @@ import type { UserServices } from "../../../index";
 import { getShownQuotations } from "../../coa/quotations";
 import { checkPurchaseIdsBelongToUser, deleteIssues } from "./util";
 
+// WhatTheDuck's "no purchase date" radio option carries '' because a null value can't be selected
+const purchaseIdSchema = v.union([
+  v.nullable(v.number()),
+  v.pipe(
+    v.literal(""),
+    v.transform(() => null),
+  ),
+]);
+
 export default ({ _socket }: UserServices) => ({
   getIssues: async () => {
     if (_socket.data.user.username === "demo") {
@@ -85,7 +94,7 @@ export default ({ _socket }: UserServices) => ({
   addOrChangeIssues: ev(
     v.object({
       issuecodes: v.array(v.string()),
-      purchaseId: v.optional(v.nullable(v.number())),
+      purchaseId: v.optional(purchaseIdSchema),
       condition: v.optional(v.union([v.null(), v.enum(issue_condition)])),
       labelIds: v.optional(v.array(v.number())),
     }),
@@ -119,7 +128,7 @@ export default ({ _socket }: UserServices) => ({
         v.object({
           id: v.nullable(v.number()),
           condition: v.nullable(v.enum(issue_condition)),
-          purchaseId: v.nullable(v.number()),
+          purchaseId: purchaseIdSchema,
           labelIds: v.array(v.number()),
         }),
       ),
