@@ -319,12 +319,14 @@ const processRawData = async () => {
   const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
   const issueCodes = rawData
     .split("\n")
-    .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+    .filter(
+      (row: string) => !row.startsWith("country") && REGEX_VALID_ROW.test(row),
+    )
     .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
   await fetchIssuecodeDetails(issueCodes);
 
   const issues = issueCodes.filter(
-    (issueCode) => issueCode in issuecodeDetails,
+    (issueCode) => issueCode in issuecodeDetails.value,
   );
   if (issues.length) {
     issuesToImport = issues;

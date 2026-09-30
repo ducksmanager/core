@@ -40,7 +40,7 @@ const defaultExport = (options: {
   };
 }) => {
   const socket = inject("dmSocket") as SocketClient;
-  const { session, cacheStorage, onConnectError } = options;
+  const { session, cacheStorage, onConnectError, onConnected } = options;
   const until4am = () => {
     const now = dayjs();
     let coaCacheExpiration = dayjs();
@@ -59,6 +59,9 @@ const defaultExport = (options: {
 
   for (const eachSocket of [socket, storySearchSocket]) {
     eachSocket.onConnectError = onConnectError;
+    if (onConnected) {
+      eachSocket.onConnected = onConnected;
+    }
   }
 
   return {

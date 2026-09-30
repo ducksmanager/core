@@ -54,16 +54,13 @@ export const marketplace = defineStore("marketplace", () => {
       () =>
         issueRequestsAsBuyer.value
           ?.filter(({ issueId }) => issueId in issuesOnSaleById.value)
-          .reduce<{ [userId: number]: number[] }>(
-            (acc, { issueId }) => ({
+          .reduce<{ [userId: number]: number[] }>((acc, { issueId }) => {
+            const { userId } = issuesOnSaleById.value[issueId];
+            return {
               ...acc,
-              [issuesOnSaleById.value[issueId].userId]: [
-                ...acc[issuesOnSaleById.value[issueId].userId],
-                issueId,
-              ],
-            }),
-            {},
-          ) || {},
+              [userId]: [...(userId in acc ? acc[userId] : []), issueId],
+            };
+          }, {}) || {},
     ),
     issuesOnSaleById = computed(
       () => issuesOnSaleByOthers.value?.groupBy("id") || {},

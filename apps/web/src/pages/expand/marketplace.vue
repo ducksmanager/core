@@ -114,7 +114,9 @@ alias: [/agrandir/marketplace]
       :publicationcode="publicationcode"
       :custom-issues="
         userIdFilter
-          ? (issues as ServiceIssues)?.filter(({ userId }) => userId === userIdFilter) || []
+          ? (issues as ServiceIssues)?.filter(
+              ({ userId }) => userId === userIdFilter,
+            ) || []
           : (issues as ServiceIssues)
       "
       on-sale-by-others
@@ -264,7 +266,13 @@ void (async () => {
   await loadIssueRequestsAsBuyer();
 
   await fetchStats(sellerUserIds.value);
-  await fetchPublicationNames(Object.keys(issuesOnSaleByOthers.value || {}));
+  await fetchPublicationNames([
+    ...new Set(
+      issuesOnSaleByOthers.value?.map(
+        ({ issuecode }) => issuecode.split(" ")[0],
+      ),
+    ),
+  ]);
   hasPublicationNames = true;
 })();
 </script>

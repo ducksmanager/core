@@ -230,7 +230,7 @@
                         {{ boughtOnTextPrefix }}
                         {{
                           dayjs(
-                            purchases.find(({ id }) => id === purchaseId)!.date
+                            purchases.find(({ id }) => id === purchaseId)!.date,
                           ).format("L")
                         }}
                       </title>
@@ -312,7 +312,7 @@
             variant="danger"
             @click="
               deletePublicationIssues(
-                userIssuesForPublication!.map(({ issuecode }) => issuecode)
+                userIssuesForPublication!.map(({ issuecode }) => issuecode),
               )
             "
           >
@@ -503,6 +503,7 @@ const coaIssues = $computed(
 watch(
   $$(coaIssues),
   async () => {
+    if (!(publicationcode in issuesByPublicationcode.value)) return;
     await fetchIssuecodeDetails(coaIssues.map(({ issuecode }) => issuecode));
   },
   { immediate: true },

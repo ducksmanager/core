@@ -74,6 +74,7 @@ const loadIssueUrls = async () => {
     await fetchIssueUrls(issuecode);
     isCoverLoading = false;
 
+    if (!(issuecode in issueDetails.value)) return;
     const possibleCoverUrl = issueDetails.value[issuecode].entries.find(
       ({ kind }) => kind === "c",
     )?.url;

@@ -60,12 +60,12 @@ const { t: $t } = useI18n(),
     number: $t("Afficher en valeurs réelles"),
     percentage: $t("Afficher en pourcentages"),
   },
-  labels = $computed(
-    () =>
-      hasCoaData &&
-      totalPerPublicationUniqueIssuecodesSorted.value.map(
-        ([publicationcode]) => publicationNames.value[publicationcode],
-      ),
+  labels = $computed(() =>
+    hasCoaData
+      ? totalPerPublicationUniqueIssuecodesSorted.value.map(
+          ([publicationcode]) => publicationNames.value[publicationcode],
+        )
+      : undefined,
   ),
   values = $computed(() => {
     if (!hasCoaData) {
@@ -105,6 +105,7 @@ watch(
 watch(
   $$(labels),
   (newValue) => {
+    if (!newValue) return;
     height = `${String(100 + 30 * newValue.length)}px`;
   },
   { immediate: true },
