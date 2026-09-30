@@ -138,7 +138,7 @@ const getTargetFilePath = async ({
   return filePath;
 };
 
-export type UploadServices = NamespaceProxyTarget<
+type UploadServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SessionData>,
   Record<string, never>
 >;

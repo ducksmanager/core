@@ -1,5 +1,3 @@
-import type { Socket } from "socket.io";
-import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 import { ev } from "socket-call-server/valibot";
 import * as v from "valibot";
@@ -8,11 +6,6 @@ import prisma from "../prisma/client";
 import { entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
-
-export type MaintenanceServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents>,
-  Record<string, never>
->;
 
 const listenEvents = () => ({
   getMaintenanceData: async () => prisma.$queryRaw<

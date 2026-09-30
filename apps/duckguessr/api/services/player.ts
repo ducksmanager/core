@@ -15,7 +15,7 @@ export type ClientListenEvents = {
   loginFailed: () => void;
 };
 
-export type PlayerServices = NamespaceProxyTarget<
+type PlayerServices = NamespaceProxyTarget<
   Socket<
     typeof listenEvents,
     ClientListenEvents,

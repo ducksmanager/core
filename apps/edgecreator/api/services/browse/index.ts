@@ -14,7 +14,7 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import type { SessionData } from "../../index";
 import { getEdgesPath } from "../../index";
 
-export type BrowseServices = NamespaceProxyTarget<
+type BrowseServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SessionData>,
   Record<string, never>
 >;

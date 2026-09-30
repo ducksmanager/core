@@ -11,7 +11,7 @@ import { createGameSocket } from "./game";
 import { ev } from "socket-call-server/valibot";
 import * as v from "valibot";
 
-export type MatchServices = NamespaceProxyTarget<
+type MatchServices = NamespaceProxyTarget<
   Socket<
     typeof listenEvents,
     Record<string, never>,

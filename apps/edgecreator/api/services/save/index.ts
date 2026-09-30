@@ -14,7 +14,7 @@ import type { ExportPaths } from "~types/ExportPaths";
 
 import { getSvgPath } from "../../_utils";
 
-export type SaveServices = NamespaceProxyTarget<
+type SaveServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, { token: string }>,
   Record<string, never>
 >;

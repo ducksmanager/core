@@ -39,7 +39,7 @@ export type ClientListenEvents = {
   firstRoundWillStartSoon: (firstRoundStartDate: Date) => void;
 };
 
-export type GameServices = NamespaceProxyTarget<
+type GameServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, ClientListenEvents, object, SocketGameData>,
   ClientListenEvents
 >;
