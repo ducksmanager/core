@@ -10,7 +10,7 @@ import type {
   UnfinishedRound,
 } from "./roundWithScoresAndAuthor";
 
-export interface GamePlayerWithFullPlayer extends gamePlayer {
+interface GamePlayerWithFullPlayer extends gamePlayer {
   player: player;
 }
 

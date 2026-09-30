@@ -46,7 +46,7 @@ export interface FrameSize {
   height: number;
 }
 
-export type PreparedFrame =
+type PreparedFrame =
   | { status: 'ready'; dataUrl: string; size: FrameSize; metrics: FrameMetrics }
   | { status: 'skipped'; reason: 'blurry' | 'unchanged'; metrics: FrameMetrics };
 

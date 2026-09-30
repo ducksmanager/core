@@ -8,7 +8,7 @@ import {
   computePublicationcode,
 } from "./overrideNullableCodes";
 
-export type Augmented = {
+type Augmented = {
   issuecode: string;
   publicationcode: string;
   issuenumber: string;
