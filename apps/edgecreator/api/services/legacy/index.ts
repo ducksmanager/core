@@ -1,6 +1,4 @@
-import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
-import type { Socket } from "socket.io";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
 const listenEvents = () => ({
@@ -62,10 +60,5 @@ export const { client, server } = useSocketEvents<
   listenEvents,
   middlewares: [],
 });
-
-export type LegacyServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents, object, object, { token: string }>,
-  Record<string, never>
->;
 
 export type ClientEvents = (typeof client)["emitEvents"];

@@ -1,13 +1,7 @@
-import { type Socket } from "socket.io";
-import { type NamespaceProxyTarget, useSocketEvents } from "socket-call-server";
+import { useSocketEvents } from "socket-call-server";
 
 import prisma from "../prisma/client";
 import namespaces from "./namespaces";
-
-export type HomeServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents>,
-  Record<string, never>
->;
 
 const convertUrlToBase64 = async (url: string): Promise<string | null> => {
   try {

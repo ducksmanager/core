@@ -1,5 +1,3 @@
-import type { Socket } from "socket.io";
-import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { Prisma } from "~prisma-schemas/client_dm/client";
@@ -7,11 +5,6 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import prisma from "../prisma/client";
 import namespaces from "./namespaces";
-
-export type DatasetsServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents>,
-  Record<string, never>
->;
 
 const listenEvents = () => ({
   getDatasets: async () => prisma.$queryRaw<

@@ -9,7 +9,7 @@ import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
 import { createGameSocket } from "./game";
 
-export type MatchServices = NamespaceProxyTarget<
+type MatchServices = NamespaceProxyTarget<
   Socket<
     typeof listenEvents,
     Record<string, never>,

@@ -13,7 +13,7 @@ import type { ModelContributor } from "~types/ModelContributor";
 
 import { getSvgPath } from "../../_utils";
 
-export type SaveServices = NamespaceProxyTarget<
+type SaveServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, { token: string }>,
   Record<string, never>
 >;

@@ -5,7 +5,6 @@ export type CurrentGame = NonNullable<
   Awaited<ReturnType<typeof getGameWithRoundsDatasetPlayers>>
 >;
 
-export type InterServerEvents = Record<string, never>;
 export type SocketGameData = {
   user: player;
   currentRound: round;

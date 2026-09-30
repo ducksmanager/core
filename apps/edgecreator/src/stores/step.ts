@@ -16,7 +16,7 @@ export type Options = StepOption[];
 
 export type OptionsArray = OptionNameAndValue[];
 
-export interface Dimensions {
+interface Dimensions {
   issuecode: string;
   width: number;
   height: number;
