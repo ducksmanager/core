@@ -97,3 +97,4 @@ app/src/main/assets/public
 
 # Generated Config files
 app/src/main/res/xml/config.xml
+app/src/main/assets/capacitor.config.json

@@ -43,6 +43,7 @@ export const createMockEntry = (
     acceptedStorySuggestionId: null,
     acceptedStoryKindSuggestionId: null,
     indexationId: "mock-indexation-id",
+    quackinatorSession: null,
     entrycomment: null,
     part: null,
     brokenpagenumerator: 0,

@@ -55,6 +55,7 @@ declare global {
   const getCurrentLocaleShortKey: typeof import('../../web/src/composables/useLocales').getCurrentLocaleShortKey
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
+  const getPanelRows: typeof import('../../../packages/types/panelRows').getPanelRows
   const h: typeof import('vue').h
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const images: typeof import('../../web/src/stores/images').images
@@ -462,6 +463,9 @@ declare global {
   // @ts-ignore
   export type { WantedEdge } from '../../../packages/types/WantedEdge'
   import('../../../packages/types/WantedEdge')
+  // @ts-ignore
+  export type { PanelBox } from '../../../packages/types/panelRows'
+  import('../../../packages/types/panelRows')
 }
 
 // for vue template auto import
@@ -516,6 +520,7 @@ declare module 'vue' {
     readonly getCurrentLocaleShortKey: UnwrapRef<typeof import('../../web/src/composables/useLocales')['getCurrentLocaleShortKey']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
+    readonly getPanelRows: UnwrapRef<typeof import('../../../packages/types/panelRows')['getPanelRows']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly images: UnwrapRef<typeof import('../../web/src/stores/images')['images']>

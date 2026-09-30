@@ -1,6 +1,6 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "client_dumili"
+  provider = "prisma-client"
+  output   = "client_dumili"
 }
 
 datasource db {
@@ -27,6 +27,7 @@ model entry {
   acceptedStory                 storySuggestion?      @relation("entry_accepted_story_suggested_idTostory_suggestion", fields: [acceptedStorySuggestionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "entry_story_suggestion_id_fk")
   storyKindSuggestions          storyKindSuggestion[] @relation("story_kind_suggestion_entry_idToentry")
   storySuggestions              storySuggestion[]
+  quackinatorSession            quackinatorSession?
 
   @@index([acceptedStoryKindSuggestionId], map: "entry_story_kind_suggestion_id_fk")
   @@index([acceptedStorySuggestionId], map: "entry_story_suggestion_id_fk")
@@ -64,15 +65,15 @@ model page {
 }
 
 model indexation {
-  id                        String            @id @db.VarChar(36) @default(uuid())
+  id                        String            @id @default(uuid()) @db.VarChar(36)
   acceptedIssueSuggestionId Int?              @map("accepted_issue_suggestion_id")
-  dmUserId                  Int?               @map("dm_user_id")
+  dmUserId                  Int?              @map("dm_user_id")
   title                     String?           @db.VarChar(158)
   price                     String?           @db.VarChar(150)
   releaseDate               String?           @map("release_date") @db.VarChar(10)
   entries                   entry[]
   acceptedIssueSuggestion   issueSuggestion?  @relation("indexation_accepted_issue_suggestion_idToissue_suggestion", fields: [acceptedIssueSuggestionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "indexation_issue_suggestion_id_fk")
-  user                      user?              @relation(fields: [dmUserId], references: [dmId], onUpdate: Restrict, map: "indexation_user_dm_id_fk")
+  user                      user?             @relation(fields: [dmUserId], references: [dmId], onUpdate: Restrict, map: "indexation_user_dm_id_fk")
   issueSuggestions          issueSuggestion[]
   pages                     page[]
 
@@ -98,17 +99,70 @@ model storyKindSuggestion {
 }
 
 model storySuggestion {
-  id                  Int                @id @default(autoincrement())
-  storycode           String             @db.VarChar(19)
-  entryId             Int                @map("entry_id")
-  aiStorySuggestionId Int?               @map("ai_story_suggestion_id")
-  acceptedOnEntries   entry[]            @relation("entry_accepted_story_suggested_idTostory_suggestion")
-  aiStorySuggestion   aiStorySuggestion? @relation(fields: [aiStorySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_story_suggestion_id_fk")
-  entry               entry              @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
+  id                   Int                 @id @default(autoincrement())
+  storycode            String              @db.VarChar(19)
+  entryId              Int                 @map("entry_id")
+  aiStorySuggestionId  Int?                @map("ai_story_suggestion_id")
+  quackinatorSessionId Int?                @map("quackinator_session_id")
+  acceptedOnEntries    entry[]             @relation("entry_accepted_story_suggested_idTostory_suggestion")
+  aiStorySuggestion    aiStorySuggestion?  @relation(fields: [aiStorySuggestionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "story_suggestion_ai_story_suggestion_id_fk")
+  quackinatorSession   quackinatorSession? @relation(fields: [quackinatorSessionId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "story_suggestion_quackinator_session_id_fk")
+  entry                entry               @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "story_suggestion_entry_id_fk")
 
   @@unique([entryId, storycode], map: "story_suggestion_entry_id_storycode_uindex")
   @@index([aiStorySuggestionId], map: "story_suggestion_ai_story_suggestion_id_fk")
+  @@index([quackinatorSessionId], map: "story_suggestion_quackinator_session_id_fk")
   @@map("story_suggestion")
+}
+
+// A reader narrowing one entry down by answering Quackinator's questions.
+//
+// The engine holds its belief in process memory and loses it on restart, so
+// there is nothing here to restore — resuming replays `answers` into a fresh
+// session. Everything else a session starts from (the entry's page count, the
+// issue's year, Kumiko's layout, the OCR and image-search shortlists) is read
+// straight out of this database each time, so it is never stored twice.
+model quackinatorSession {
+  id               Int                 @id @default(autoincrement())
+  entryId          Int                 @unique(map: "quackinator_session_entry_id_uindex") @map("entry_id")
+  remoteSessionId  String?             @map("remote_session_id") @db.VarChar(32)
+  // Quackinator's fingerprint over what a stored answer is keyed on. When it
+  // moves, `answers` may no longer replay; see GET /api/health there.
+  indexFingerprint String?             @map("index_fingerprint") @db.VarChar(64)
+  entry            entry               @relation(fields: [entryId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "quackinator_session_entry_id_fk")
+  answers          quackinatorAnswer[]
+  pickedStories    storySuggestion[]
+
+  @@map("quackinator_session")
+}
+
+// What the reader said, keyed so it survives an index rebuild.
+//
+// Only the character and plot families are stored. Their option list is a fixed
+// yes/no, so an index recorded today still means the same thing tomorrow, while
+// every other question in the bank is re-condensed against the live belief each
+// turn and its option numbers mean nothing outside that turn.
+model quackinatorAnswer {
+  id        Int                @id @default(autoincrement())
+  sessionId Int                @map("session_id")
+  family    quackinatorFamily
+  // Inducks code of the character, or the plot term itself. The stable
+  // identity — Quackinator's question key embeds a display name that moves
+  // with the language its index was built in.
+  code      String             @db.VarChar(64)
+  // 0 yes, 1 no, null "don't know" — which still cost a turn and still told
+  // the selector something, so it is replayed rather than dropped.
+  option    Int?               @db.TinyInt
+  position  Int
+  session   quackinatorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "quackinator_answer_session_id_fk")
+
+  @@unique([sessionId, family, code], map: "quackinator_answer_unique")
+  @@map("quackinator_answer")
+}
+
+enum quackinatorFamily {
+  char
+  plot
 }
 
 model issueSuggestion {
@@ -218,8 +272,8 @@ model aiStorySuggestion {
 }
 
 model user {
-  dmId            Int          @id @map("dm_id")
-  indexation      indexation[]
+  dmId       Int          @id @map("dm_id")
+  indexation indexation[]
 }
 
 model storyKindRows {
