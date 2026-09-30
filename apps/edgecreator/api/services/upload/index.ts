@@ -150,7 +150,13 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
         data: v.string(),
         issuecode: v.string(),
         isEdgePhoto: v.literal(false),
-        fileName: v.string(),
+        fileName: v.pipe(
+          v.string(),
+          v.check(
+            (fileName) => !/[/\\]/.test(fileName) && !fileName.includes(".."),
+            "Invalid file name" as const,
+          ),
+        ),
       }),
       v.object({
         data: v.string(),

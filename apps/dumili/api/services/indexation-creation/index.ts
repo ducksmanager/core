@@ -19,7 +19,16 @@ type IndexationCreationServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket }: IndexationCreationServices) => ({
-  create: ev(v.number())(async (numberOfPages) =>
+  create: ev(
+    v.pipe(
+      v.number(),
+      v.check(
+        (numberOfPages) =>
+          numberOfPages >= 4 && numberOfPages <= 996 && numberOfPages % 2 === 0,
+        "Invalid number of pages" as const,
+      ),
+    ),
+  )(async (numberOfPages) =>
     prisma.indexation
       .create({
         data: {

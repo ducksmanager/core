@@ -27,18 +27,11 @@ export type PlayerServices = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-const playerValidation = v.object({
-  id: v.number(),
-  username: v.string(),
-  ducksmanagerId: v.nullable(v.number()),
-  avatar: v.string(),
-});
-
 const listenEvents = ({ _socket }: PlayerServices) => ({
   getPlayer: () => Promise.resolve(_socket.data.user),
 
-  updateUser: ev(playerValidation)(async (updatedPlayer) =>
-    updatePlayer(updatedPlayer.id, updatedPlayer),
+  updateUser: ev(v.object({ avatar: v.string() }))(async ({ avatar }) =>
+    updatePlayer(_socket.data.user.id, { avatar }),
   ),
 
   getStats: ev(v.optional(v.number()))(async (gameId) => {

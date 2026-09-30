@@ -96,6 +96,9 @@ export async function upsertSubscription(
     startDate: new Date(subscription.startDate),
     endDate: new Date(subscription.endDate),
   };
+  if (Object.values(dates).some((date) => Number.isNaN(date.getTime()))) {
+    return null;
+  }
   await prismaDm.subscription.upsert({
     update: dates,
     create: {
