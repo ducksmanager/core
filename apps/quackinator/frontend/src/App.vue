@@ -1,14 +1,3 @@
-<script setup lang="ts">
-/**
- * The standalone site: the game, plus the page around it.
- *
- * Everything that is the *game* lives in `QuackinatorGame`, so that a host
- * embedding it — Dumili mounts it in a modal on the entry it is indexing —
- * gets the same component this page does rather than a second copy of it.
- */
-import QuackinatorGame from "~quackinator/components/QuackinatorGame.vue";
-</script>
-
 <template>
   <div class="page">
     <header class="header">
@@ -29,6 +18,17 @@ import QuackinatorGame from "~quackinator/components/QuackinatorGame.vue";
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+/**
+ * The standalone site: the game, plus the page around it.
+ *
+ * Everything that is the *game* lives in `QuackinatorGame`, so that a host
+ * embedding it — Dumili mounts it in a modal on the entry it is indexing —
+ * gets the same component this page does rather than a second copy of it.
+ */
+import QuackinatorGame from "~quackinator/components/QuackinatorGame.vue";
+</script>
 
 <style scoped>
 .page {

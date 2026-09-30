@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import { computed } from "vue";
-
-import {
-  candidatesLeft,
-  formatCount,
-  formatPercent,
-  roughCount,
-} from "~quackinator/format";
-
-/**
- * The bar tracks confidence in the leading story, not how far the search has
- * narrowed. Spread (`storyEntropyBits`) is shown alongside it as context — over
- * stories, never over storyversions — because it is not monotone: ruling out a
- * concentrated group and leaving a diffuse one
- * raises it even as the leading guess improves. Presenting that as progress made
- * the app look like it was going backwards on perfectly good answers.
- */
-const props = defineProps<{
-  storyEntropyBits: number;
-  startingBits: number;
-  progress: number;
-  confidence: number;
-  questionsAsked: number;
-}>();
-
-const spread = computed(() => candidatesLeft(props.storyEntropyBits));
-const total = computed(() => candidatesLeft(props.startingBits));
-</script>
-
 <template>
   <div class="meter">
     <div class="labels">
@@ -59,6 +29,36 @@ const total = computed(() => candidatesLeft(props.startingBits));
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+import {
+  candidatesLeft,
+  formatCount,
+  formatPercent,
+  roughCount,
+} from "~quackinator/format";
+
+/**
+ * The bar tracks confidence in the leading story, not how far the search has
+ * narrowed. Spread (`storyEntropyBits`) is shown alongside it as context — over
+ * stories, never over storyversions — because it is not monotone: ruling out a
+ * concentrated group and leaving a diffuse one
+ * raises it even as the leading guess improves. Presenting that as progress made
+ * the app look like it was going backwards on perfectly good answers.
+ */
+const { storyEntropyBits, startingBits } = defineProps<{
+  storyEntropyBits: number;
+  startingBits: number;
+  progress: number;
+  confidence: number;
+  questionsAsked: number;
+}>();
+
+const spread = computed(() => candidatesLeft(storyEntropyBits));
+const total = computed(() => candidatesLeft(startingBits));
+</script>
 
 <style scoped>
 .meter {

@@ -1,26 +1,3 @@
-<script setup lang="ts">
-import { computed } from "vue";
-
-import type { Question } from "~quackinator/types";
-
-const props = defineProps<{
-  question: Question;
-  busy: boolean;
-  index: number;
-}>();
-
-const emit = defineEmits<{ answer: [option: number | null] }>();
-
-/**
- * Yes/No questions get two wide buttons; a condensed page-count or language
- * question gets a grid. The reader is likely holding the magazine in one hand,
- * so targets stay large either way.
- */
-const layout = computed(() =>
-  props.question.options.length <= 2 ? "binary" : "grid",
-);
-</script>
-
 <template>
   <section class="card" :aria-busy="busy">
     <p class="index">Question {{ index }}</p>
@@ -72,6 +49,29 @@ const layout = computed(() =>
     </p>
   </section>
 </template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+import type { Question } from "~quackinator/types";
+
+const { question, busy, index } = defineProps<{
+  question: Question;
+  busy: boolean;
+  index: number;
+}>();
+
+const emit = defineEmits<{ (e: "answer", option: number | null): void }>();
+
+/**
+ * Yes/No questions get two wide buttons; a condensed page-count or language
+ * question gets a grid. The reader is likely holding the magazine in one hand,
+ * so targets stay large either way.
+ */
+const layout = computed(() =>
+  question.options.length <= 2 ? "binary" : "grid",
+);
+</script>
 
 <style scoped>
 .card {

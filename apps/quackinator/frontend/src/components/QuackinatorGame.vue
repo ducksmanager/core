@@ -1,73 +1,3 @@
-<script setup lang="ts">
-/**
- * The game, with nothing around it.
- *
- * `App.vue` is this component plus a page: a heading, a tagline and a footer,
- * which are the standalone site rather than the game. Everything a host embeds
- * is here, and everything here works without one — the standalone app passes no
- * props at all and gets the session it has always had.
- *
- * The two things a host needs that a reader does not are both optional: an
- * `initialTurn`, because a host seeds its session server-side where its own
- * database is, and `pickable`, because a host is going to *record* the answer
- * and so the reader has to be able to commit to a row.
- */
-import { onMounted, watch } from "vue";
-
-import type { Api } from "~quackinator/api";
-import AnswerTrail from "~quackinator/components/AnswerTrail.vue";
-import AuthorBox from "~quackinator/components/AuthorBox.vue";
-import GuessList from "~quackinator/components/GuessList.vue";
-import ProgressMeter from "~quackinator/components/ProgressMeter.vue";
-import QuestionCard from "~quackinator/components/QuestionCard.vue";
-import { type AnswerEvent, useGame } from "~quackinator/composables/useGame";
-import { formatPercent } from "~quackinator/format";
-import type { Turn } from "~quackinator/types";
-
-const props = withDefaults(
-  defineProps<{
-    /** Defaults to the standalone app's own origin. */
-    api?: Api;
-    /** A session created elsewhere, already seeded. */
-    initialTurn?: Turn;
-    /** Offer "That's the one" on each guess. */
-    pickable?: boolean;
-    /** Let the reader throw the session away and start clean. */
-    restartable?: boolean;
-  }>(),
-  {
-    api: undefined,
-    initialTurn: undefined,
-    pickable: false,
-    restartable: true,
-  },
-);
-
-const emit = defineEmits<{
-  /** Every answer as the reader gives it, for a host that stores them. */
-  answered: [answer: AnswerEvent];
-  /** The reader committed to a guess. */
-  picked: [storycode: string];
-}>();
-
-const game = useGame({
-  api: props.api,
-  initialTurn: props.initialTurn,
-  onAnswered: (answer) => emit("answered", answer),
-});
-
-onMounted(() => game.start());
-
-// A host that swaps in a different session — reopening on another entry —
-// should get that session, not the one already on screen.
-watch(
-  () => props.initialTurn,
-  (turn) => turn && game.adopt(turn),
-);
-
-defineExpose({ game });
-</script>
-
 <template>
   <div class="game">
     <p v-if="game.error.value" class="error" role="alert">
@@ -164,6 +94,73 @@ defineExpose({ game });
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+/**
+ * The game, with nothing around it.
+ *
+ * `App.vue` is this component plus a page: a heading, a tagline and a footer,
+ * which are the standalone site rather than the game. Everything a host embeds
+ * is here, and everything here works without one — the standalone app passes no
+ * props at all and gets the session it has always had.
+ *
+ * The two things a host needs that a reader does not are both optional: an
+ * `initialTurn`, because a host seeds its session server-side where its own
+ * database is, and `pickable`, because a host is going to *record* the answer
+ * and so the reader has to be able to commit to a row.
+ */
+import { onMounted, watch } from "vue";
+
+import type { Api } from "~quackinator/api";
+import AnswerTrail from "~quackinator/components/AnswerTrail.vue";
+import AuthorBox from "~quackinator/components/AuthorBox.vue";
+import GuessList from "~quackinator/components/GuessList.vue";
+import ProgressMeter from "~quackinator/components/ProgressMeter.vue";
+import QuestionCard from "~quackinator/components/QuestionCard.vue";
+import { type AnswerEvent, useGame } from "~quackinator/composables/useGame";
+import { formatPercent } from "~quackinator/format";
+import type { Turn } from "~quackinator/types";
+
+const {
+  api = undefined,
+  initialTurn = undefined,
+  pickable = false,
+  restartable = true,
+} = defineProps<{
+  /** Defaults to the standalone app's own origin. */
+  api?: Api;
+  /** A session created elsewhere, already seeded. */
+  initialTurn?: Turn;
+  /** Offer "That's the one" on each guess. */
+  pickable?: boolean;
+  /** Let the reader throw the session away and start clean. */
+  restartable?: boolean;
+}>();
+
+const emit = defineEmits<{
+  /** Every answer as the reader gives it, for a host that stores them. */
+  (e: "answered", answer: AnswerEvent): void;
+  /** The reader committed to a guess. */
+  (e: "picked", storycode: string): void;
+}>();
+
+const game = useGame({
+  api,
+  initialTurn,
+  onAnswered: (answer) => emit("answered", answer),
+});
+
+onMounted(() => game.start());
+
+// A host that swaps in a different session — reopening on another entry —
+// should get that session, not the one already on screen.
+watch(
+  () => initialTurn,
+  (turn) => turn && game.adopt(turn),
+);
+
+defineExpose({ game });
+</script>
 
 <style scoped>
 .game {

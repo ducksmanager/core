@@ -1,9 +1,3 @@
-<script setup lang="ts">
-import type { AnsweredQuestion } from "~quackinator/types";
-
-defineProps<{ trail: AnsweredQuestion[] }>();
-</script>
-
 <template>
   <details v-if="trail.length" class="trail">
     <summary>Your answers ({{ trail.length }})</summary>
@@ -15,6 +9,12 @@ defineProps<{ trail: AnsweredQuestion[] }>();
     </ol>
   </details>
 </template>
+
+<script setup lang="ts">
+import type { AnsweredQuestion } from "~quackinator/types";
+
+defineProps<{ trail: AnsweredQuestion[] }>();
+</script>
 
 <style scoped>
 .trail {

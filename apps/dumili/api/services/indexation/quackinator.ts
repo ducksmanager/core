@@ -94,9 +94,9 @@ const inferredPanels = (indexation: FullIndexation, entry: FullEntry) => {
 /** The year printed on the magazine, which the indexer is holding. */
 const releaseYear = (indexation: FullIndexation) => {
   const year = Number((indexation.releaseDate ?? "").slice(0, 4));
-  // Inducks' own decade scale starts in the 1830s; anything below is a typo
+  // Inducks' own decade scale starts in the 1930s; anything below is a typo
   // rather than a date, and Quackinator would decline it anyway.
-  return year >= 1830 && year <= 2100 ? year : null;
+  return year >= 1930 && year <= 2100 ? year : null;
 };
 
 /**

@@ -109,7 +109,7 @@ def test_the_decade_is_answered_with_a_year(engine):
 
 def test_a_year_outside_the_indexed_decades_is_declined(engine):
     session = Session(engine=engine)
-    assert session.apply_fact("decade", 1830) is False
+    assert session.apply_fact("decade", 1930) is False
 
 
 def test_an_answer_replays_by_code(engine):

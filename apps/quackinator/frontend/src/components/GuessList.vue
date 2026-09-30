@@ -1,63 +1,3 @@
-<script setup lang="ts">
-import { computed, ref } from "vue";
-
-import { formatPercent, isBareCode } from "~quackinator/format";
-import type { Guess } from "~quackinator/types";
-
-const props = withDefaults(
-  defineProps<{
-    guesses: Guess[];
-    busy: boolean;
-    final: boolean;
-    /**
-     * Offer "That's the one" beside each rejection.
-     *
-     * Off for the standalone reader, who has nowhere to put the answer and is
-     * told it by the list itself. On for a host that is going to *record* the
-     * pick — Dumili writes it to the entry it is indexing — where the reader
-     * has to be able to commit to a row rather than just read it.
-     */
-    pickable?: boolean;
-  }>(),
-  { pickable: false },
-);
-
-const emit = defineEmits<{
-  reject: [storycode: string];
-  pick: [storycode: string];
-}>();
-
-const INDUCKS_STORY = "https://inducks.org/story.php?c=";
-
-/**
- * Scans that did not load. Keyed by URL rather than by storycode: a story keeps
- * its URL as the list reorders, and a mirror that is down fails every row the
- * same way, so one failure per URL is remembered rather than retried on each
- * re-render.
- */
-const failed = ref(new Set<string>());
-
-function pictureFor(guess: Guess): string | null {
-  const url = guess.thumbnail_url;
-  return url && !failed.value.has(url) ? url : null;
-}
-
-/**
- * Whether to give every row a picture frame, empty ones included.
- *
- * The 5% of stories nobody has scanned would otherwise shift their title left
- * and break the column, so an empty frame is the lesser evil — but only while
- * some row in the list actually has a picture. Where none does, five empty
- * frames are pure furniture and the list goes back to looking exactly as it did
- * before scans existed: the mirror switched off server-side, or every scan in
- * the shortlist failing to load, which is what a mirror that is down looks like
- * from here.
- */
-const showPictures = computed(() =>
-  props.guesses.some((guess) => pictureFor(guess)),
-);
-</script>
-
 <template>
   <section class="panel">
     <h3 class="heading">
@@ -142,6 +82,61 @@ const showPictures = computed(() =>
     </ol>
   </section>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+
+import { formatPercent, isBareCode } from "~quackinator/format";
+import type { Guess } from "~quackinator/types";
+
+const { guesses, pickable = false } = defineProps<{
+  guesses: Guess[];
+  busy: boolean;
+  final: boolean;
+  /**
+   * Offer "That's the one" beside each rejection.
+   *
+   * Off for the standalone reader, who has nowhere to put the answer and is
+   * told it by the list itself. On for a host that is going to *record* the
+   * pick — Dumili writes it to the entry it is indexing — where the reader
+   * has to be able to commit to a row rather than just read it.
+   */
+  pickable?: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "reject", storycode: string): void;
+  (e: "pick", storycode: string): void;
+}>();
+
+const INDUCKS_STORY = "https://inducks.org/story.php?c=";
+
+/**
+ * Scans that did not load. Keyed by URL rather than by storycode: a story keeps
+ * its URL as the list reorders, and a mirror that is down fails every row the
+ * same way, so one failure per URL is remembered rather than retried on each
+ * re-render.
+ */
+const failed = ref(new Set<string>());
+
+const pictureFor = (guess: Guess): string | null => {
+  const url = guess.thumbnail_url;
+  return url && !failed.value.has(url) ? url : null;
+};
+
+/**
+ * Whether to give every row a picture frame, empty ones included.
+ *
+ * The 5% of stories nobody has scanned would otherwise shift their title left
+ * and break the column, so an empty frame is the lesser evil — but only while
+ * some row in the list actually has a picture. Where none does, five empty
+ * frames are pure furniture and the list goes back to looking exactly as it did
+ * before scans existed: the mirror switched off server-side, or every scan in
+ * the shortlist failing to load, which is what a mirror that is down looks like
+ * from here.
+ */
+const showPictures = computed(() => guesses.some((guess) => pictureFor(guess)));
+</script>
 
 <style scoped>
 .actions {

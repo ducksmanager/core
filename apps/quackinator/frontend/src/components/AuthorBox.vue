@@ -1,13 +1,68 @@
+<template>
+  <section class="card" :aria-busy="busy">
+    <p class="index">Before we start</p>
+    <h2 class="prompt">Does the first page name who wrote or drew it?</h2>
+    <p class="hint">
+      Many printings don't credit anyone — if yours doesn't, skip this. When it
+      is there, it narrows things down more than any question can.
+    </p>
+
+    <label class="field">
+      <span class="sr-only">Author or artist name</span>
+      <input
+        v-model="query"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Type a name from the page…"
+        :disabled="busy"
+      />
+    </label>
+
+    <ul v-if="matches.length" class="matches">
+      <li v-for="match in matches" :key="match.creator">
+        <button type="button" :disabled="busy" @click="emit('pick', match)">
+          <span class="name">{{ match.name }}</span>
+          <!-- Inducks stores one canonical spelling; the page may print another. -->
+          <span v-if="match.matched !== match.name" class="alias">
+            printed as {{ match.matched }}
+          </span>
+          <span class="count"
+            >{{ match.stories.toLocaleString() }} stories</span
+          >
+        </button>
+      </li>
+    </ul>
+
+    <p v-else-if="query.trim().length >= 2 && !searching" class="empty">
+      No one by that name in Inducks. Check the spelling, or skip.
+    </p>
+
+    <button
+      type="button"
+      class="unsure"
+      :disabled="busy"
+      @click="emit('dismiss')"
+    >
+      No names printed — start the questions
+    </button>
+  </section>
+</template>
+
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
 import type { CreatorMatch } from "~quackinator/types";
 
-const props = defineProps<{ busy: boolean }>();
+const { busy } = defineProps<{ busy: boolean }>();
 const emit = defineEmits<{
-  search: [query: string, resolve: (matches: CreatorMatch[]) => void];
-  pick: [match: CreatorMatch];
-  dismiss: [];
+  (
+    e: "search",
+    query: string,
+    resolve: (matches: CreatorMatch[]) => void,
+  ): void;
+  (e: "pick", match: CreatorMatch): void;
+  (e: "dismiss"): void;
 }>();
 
 const query = ref("");
@@ -40,61 +95,6 @@ watch(query, (value) => {
   }, 150);
 });
 </script>
-
-<template>
-  <section class="card" :aria-busy="props.busy">
-    <p class="index">Before we start</p>
-    <h2 class="prompt">Does the first page name who wrote or drew it?</h2>
-    <p class="hint">
-      Many printings don't credit anyone — if yours doesn't, skip this. When it
-      is there, it narrows things down more than any question can.
-    </p>
-
-    <label class="field">
-      <span class="sr-only">Author or artist name</span>
-      <input
-        v-model="query"
-        type="text"
-        autocomplete="off"
-        spellcheck="false"
-        placeholder="Type a name from the page…"
-        :disabled="props.busy"
-      />
-    </label>
-
-    <ul v-if="matches.length" class="matches">
-      <li v-for="match in matches" :key="match.creator">
-        <button
-          type="button"
-          :disabled="props.busy"
-          @click="emit('pick', match)"
-        >
-          <span class="name">{{ match.name }}</span>
-          <!-- Inducks stores one canonical spelling; the page may print another. -->
-          <span v-if="match.matched !== match.name" class="alias">
-            printed as {{ match.matched }}
-          </span>
-          <span class="count"
-            >{{ match.stories.toLocaleString() }} stories</span
-          >
-        </button>
-      </li>
-    </ul>
-
-    <p v-else-if="query.trim().length >= 2 && !searching" class="empty">
-      No one by that name in Inducks. Check the spelling, or skip.
-    </p>
-
-    <button
-      type="button"
-      class="unsure"
-      :disabled="props.busy"
-      @click="emit('dismiss')"
-    >
-      No names printed — start the questions
-    </button>
-  </section>
-</template>
 
 <style scoped>
 .card {
