@@ -137,27 +137,23 @@ const onFileAdded = async (file: UppyFile<UploadMeta, UploadBody>) => {
 
     const results = await uploadServices.uploadFromBase64(uploadParams);
 
-    if ("error" in results) {
-      const details = String(results.errorDetails ?? $t("Upload failed"));
-      uploadError.value = details;
-      uploadProgress.value = 0;
-      window.alert(details);
-    } else {
-      if (photo && !multiple) {
-        mainStore.photoUrls[edge!.issuenumber] = (
-          results as { fileName: string }
-        ).fileName;
-      }
-
-      mainStore.loadItems({
-        itemType: photo ? "photos" : "elements",
-      });
-      uploadProgress.value = 100;
+    if (photo && !multiple) {
+      mainStore.photoUrls[edge!.issuenumber] = (
+        results as { fileName: string }
+      ).fileName;
     }
+
+    mainStore.loadItems({
+      itemType: photo ? "photos" : "elements",
+    });
+    uploadProgress.value = 100;
   } catch (error) {
     const errorText =
       typeof error === "object" && error && "error" in error
-        ? String(error.error)
+        ? String(
+            ("errorDetails" in error && error.errorDetails) ||
+              $t("Upload failed"),
+          )
         : String(error);
 
     uploadError.value = errorText;

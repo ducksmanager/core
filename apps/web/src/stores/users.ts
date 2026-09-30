@@ -56,18 +56,21 @@ export const users = defineStore("users", () => {
       }
       if (!missingUserIds.length) return;
 
-      const data =
-        await globalStatsEvents.getUsersPointsAndStats(missingUserIds);
-      if (!("error" in data)) {
-        points.value = {
-          ...points.value,
-          ...data.points,
-        };
-        stats.value = {
-          ...stats.value,
-          ...data.stats,
-        };
-      }
+      await globalStatsEvents
+        .getUsersPointsAndStats(missingUserIds)
+        .then((data) => {
+          points.value = {
+            ...points.value,
+            ...data.points,
+          };
+          stats.value = {
+            ...stats.value,
+            ...data.stats,
+          };
+        })
+        .catch((e) => {
+          console.error(e.error);
+        });
     },
     fetchBookcaseContributors = async () => {
       if (!bookcaseContributors.value) {

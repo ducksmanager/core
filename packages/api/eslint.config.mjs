@@ -12,13 +12,15 @@ export default defineConfig(
   prettierPlugin,
   {
     ignores: [
-      "**/node_modules",
-      "**/dist",
-      "**/bundle.mjs",
-      "**/model",
       "**/*.d.ts",
-      "prisma/client_*",
+      "**/bundle.mjs",
+      "**/covers",
+      "**/dist",
+      "**/model",
+      "**/node_modules",
+      "**/venv",
       "eslint.config.mjs",
+      "prisma/client_*",
     ],
   },
   {

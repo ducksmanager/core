@@ -73,41 +73,43 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcase = async () => {
       if (!bookcaseContents.value) {
-        const response = await userBookcaseEvents.getBookcase(
-          bookcaseUsername.value!,
-        );
-        if ("error" in response) {
-          switch (response.error) {
-            case "Forbidden":
-              isPrivateBookcase.value = true;
-              return;
-            case "Not found":
-              isUserNotExisting.value = true;
-              return;
-          }
-        } else {
-          bookcaseContents.value = response.edges;
-          for (const issue of bookcaseContents.value) {
-            coa().issuecodeDetails[issue.issuecode] = {
-              issuecode: issue.issuecode,
-              publicationcode: issue.publicationcode,
-              issuenumber: issue.issuenumber,
-              title: issue.title,
-            };
-          }
-        }
+        await userBookcaseEvents
+          .getBookcase(bookcaseUsername.value!)
+          .then((response) => {
+            bookcaseContents.value = response.edges;
+            for (const issue of bookcaseContents.value) {
+              coa().issuecodeDetails[issue.issuecode] = {
+                issuecode: issue.issuecode,
+                publicationcode: issue.publicationcode,
+                issuenumber: issue.issuenumber,
+                title: issue.title,
+              };
+            }
+          })
+          .catch((e) => {
+            switch (e.error) {
+              case "Forbidden":
+                isPrivateBookcase.value = true;
+                break;
+              case "Not found":
+                isUserNotExisting.value = true;
+                break;
+              default:
+                console.error(e.error);
+            }
+          });
       }
     },
     loadBookcaseOptions = async () => {
       if (!bookcaseOptions.value) {
-        const response = await userBookcaseEvents.getBookcaseOptions(
-          bookcaseUsername.value!,
-        );
-        if ("error" in response) {
-          console.error(response.error);
-        } else {
-          bookcaseOptions.value = response;
-        }
+        await userBookcaseEvents
+          .getBookcaseOptions(bookcaseUsername.value!)
+          .then((response) => {
+            bookcaseOptions.value = response;
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
       }
     },
     updateBookcaseOptions = async () => {
@@ -115,14 +117,14 @@ export const bookcase = defineStore("bookcase", () => {
     },
     loadBookcaseOrder = async () => {
       if (!bookcaseOrder.value) {
-        const response = await userBookcaseEvents.getBookcaseOrder(
-          bookcaseUsername.value!,
-        );
-        if ("error" in response) {
-          console.error(response.error);
-        } else {
-          bookcaseOrder.value = response.publicationCodes;
-        }
+        await userBookcaseEvents
+          .getBookcaseOrder(bookcaseUsername.value!)
+          .then((response) => {
+            bookcaseOrder.value = response.publicationCodes;
+          })
+          .catch((e) => {
+            console.error(e.error);
+          });
       }
     },
     updateBookcaseOrder = async () => {

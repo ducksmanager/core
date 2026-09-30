@@ -203,15 +203,19 @@ const addCrop = () => {
 };
 const uploadAll = async () => {
   for (const crop of crops.value.filter(({ sent }) => !sent)) {
-    const uploadResults = await uploadEvents.uploadFromBase64({
-      issuecode: crop.issuecode!,
-      data: crop.url,
-      isEdgePhoto: true,
-    });
-    if ("error" in uploadResults) {
-      window.alert(uploadResults.errorDetails);
+    const uploadResults = await uploadEvents
+      .uploadFromBase64({
+        issuecode: crop.issuecode!,
+        data: crop.url,
+        isEdgePhoto: true,
+      })
+      .catch((e) => {
+        window.alert(e.errorDetails);
+      });
+    if (!uploadResults) {
       return;
-    } else if ("fileName" in uploadResults) {
+    }
+    if ("fileName" in uploadResults) {
       crop.photoFileName = uploadResults.fileName;
     }
     await nextTick().then(async () => {
