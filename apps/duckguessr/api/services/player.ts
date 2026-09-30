@@ -29,8 +29,8 @@ const listenEvents = ({ _socket }: PlayerServices) => ({
     return Promise.resolve(_socket.data.user);
   },
 
-  updateUser: async (updatedPlayer: player) =>
-    updatePlayer(updatedPlayer.id, updatedPlayer),
+  updateUser: async ({ avatar }: player) =>
+    updatePlayer(_socket.data.user.id, { avatar }),
 
   getStats: async (gameId?: number) => {
     const playerIdsToQuery = [_socket.data.user.id];

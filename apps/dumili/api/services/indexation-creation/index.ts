@@ -16,8 +16,14 @@ type IndexationCreationServices = NamespaceProxyTarget<
 >;
 
 const listenEvents = ({ _socket }: IndexationCreationServices) => ({
-  create: async (numberOfPages: number) =>
-    prisma.indexation
+  create: async (numberOfPages: number) => {
+    if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
+      return {
+        error: `Invalid number of pages`,
+        errorDetails: JSON.stringify({ numberOfPages }),
+      } as const;
+    }
+    return prisma.indexation
       .create({
         data: {
           dmUserId: _socket.data.user?.id || null,
@@ -43,7 +49,8 @@ const listenEvents = ({ _socket }: IndexationCreationServices) => ({
           },
         }),
       )
-      .then((entry) => entry.indexationId),
+      .then((entry) => entry.indexationId);
+  },
 });
 
 const { client, server } = useSocketEvents<

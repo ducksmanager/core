@@ -158,6 +158,9 @@ const listenEvents = ({ _socket: socket }: UploadServices) => ({
     ),
   ) => {
     const { issuecode, data, isEdgePhoto, fileName } = parameters;
+    if (!isEdgePhoto && (/[/\\]/.test(fileName) || fileName.includes(".."))) {
+      return { error: "Invalid file name" } as const;
+    }
     const cleanData = data.includes(",") ? data.split(",")[1] : data;
     const targetFilePath = await getTargetFilePath(
       isEdgePhoto
