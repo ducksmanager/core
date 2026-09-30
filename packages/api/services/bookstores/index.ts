@@ -141,7 +141,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
         id: v.number(),
       }),
       v.object({
-        name: v.string(),
+        name: v.pipe(v.string(), v.nonEmpty()),
         address: v.string(),
         coordX: v.number(),
         coordY: v.number(),

@@ -16,7 +16,6 @@ import type { UserServices } from "../../../index";
 import { getShownQuotations } from "../../coa/quotations";
 import { checkPurchaseIdsBelongToUser, deleteIssues } from "./util";
 
-// WhatTheDuck's "no purchase date" radio option carries '' because a null value can't be selected
 const purchaseIdSchema = v.union([
   v.nullable(v.number()),
   v.pipe(

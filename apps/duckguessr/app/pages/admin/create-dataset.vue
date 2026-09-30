@@ -237,12 +237,9 @@
                   Preview Matches
                 </h3>
 
-                <div
-                  v-if="datasetPreview && 'errors' in datasetPreview"
-                  class="mb-4"
-                >
+                <div v-if="datasetPreviewErrors.length" class="mb-4">
                   <b-alert
-                    v-for="error in datasetPreview.errors"
+                    v-for="error in datasetPreviewErrors"
                     :key="error"
                     variant="warning"
                     :model-value="true"
@@ -346,6 +343,7 @@ const countryNames = ref({
 });
 
 const datasetPreview = ref<EventOutput<DatasetsEmitEvents, "previewDataset">>();
+const datasetPreviewErrors = ref<string[]>([]);
 
 const isCalculatingDatasetPreview = ref(false);
 
@@ -479,6 +477,7 @@ watch(
     console.log("Filters changed, updating matches...");
     isCalculatingDatasetPreview.value = true;
     datasetPreview.value = undefined;
+    datasetPreviewErrors.value = [];
     datasetsSocket
       .previewDataset({
         personNationalityFilter: filters.value.personNationalityFilter,
@@ -490,7 +489,7 @@ watch(
         datasetPreview.value = result;
       })
       .catch((error) => {
-        console.error("Error previewing dataset:", error);
+        datasetPreviewErrors.value = [error.error];
       })
       .finally(() => {
         isCalculatingDatasetPreview.value = false;
