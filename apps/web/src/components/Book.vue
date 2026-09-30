@@ -49,8 +49,7 @@ const {
   coverHeight?: number;
 }>();
 const emit = defineEmits<{
-  (e: "close-book"): void;
-  (e: "book-closed"): void;
+  (e: "close-book" | "book-closed"): void;
 }>();
 const slots = defineSlots<{
   edge(): unknown;
@@ -116,7 +115,7 @@ watch(book, (newValue, oldValue) => {
     newValue.loadFromHTML(container.value!.querySelectorAll(".page"));
 
     newValue.on("flip", ({ data }) => {
-      currentPage.value = parseInt(data.toString());
+      currentPage.value = Number(data);
     });
 
     setTimeout(() => {

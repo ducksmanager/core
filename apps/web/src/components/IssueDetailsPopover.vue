@@ -58,7 +58,7 @@ const { publicationNames, issueDetails, issuecodeDetails, coverUrls } =
 watch(
   () => issuecode,
   () => {
-    if (issuecodeDetails.value[issuecode]) {
+    if (issuecode in issuecodeDetails.value) {
       ({ publicationcode } = issuecodeDetails.value[issuecode]);
     }
   },
@@ -70,11 +70,12 @@ const cloudinaryBaseUrl =
 
 const loadIssueUrls = async () => {
   isCoverLoading = true;
-  nextTick(async () => {
+  await nextTick(async () => {
     await fetchIssueUrls(issuecode);
     isCoverLoading = false;
 
-    const possibleCoverUrl = issueDetails.value?.[issuecode]?.entries?.find(
+    if (!(issuecode in issueDetails.value)) return;
+    const possibleCoverUrl = issueDetails.value[issuecode].entries.find(
       ({ kind }) => kind === "c",
     )?.url;
     fullUrl = possibleCoverUrl

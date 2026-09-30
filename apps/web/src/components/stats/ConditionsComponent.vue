@@ -23,7 +23,7 @@ import type { Condition } from "../../composables/useCondition";
 const {
   conditions,
   numberPerCondition,
-  style = undefined,
+  style,
   legendColor = "white",
 } = defineProps<{
   conditions: Condition<boolean>[];
@@ -67,7 +67,7 @@ const options = computed((): ChartOptions<"pie"> => ({
           const percentage = parseFloat(
             ((currentValue / total) * 100).toFixed(1),
           );
-          return `${currentValue} (${percentage}%)`;
+          return `${String(currentValue)} (${String(percentage)}%)`;
         },
       },
     },

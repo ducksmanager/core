@@ -17,7 +17,7 @@ export type BookcaseEdgeWithPopularity = BookcaseEdge & {
 };
 
 export const bookcase = defineStore("bookcase", () => {
-  const route = useRoute<"/bookcase/show/[username]">();
+  const route = useRoute();
 
   const {
     privateBookcase: privateBookcaseEvents,
@@ -36,7 +36,7 @@ export const bookcase = defineStore("bookcase", () => {
       shallowRef<SuccessfulEventOutput<BookcaseEvents, "getBookcaseOptions">>(),
     bookcaseOrder = ref<string[]>(),
     edgeIndexToLoad = ref(0),
-    isSharedBookcase = computed(() => route.params.username !== undefined),
+    isSharedBookcase = computed(() => "username" in route.params),
     bookcaseWithPopularities = computed(
       () =>
         ((isSharedBookcase.value

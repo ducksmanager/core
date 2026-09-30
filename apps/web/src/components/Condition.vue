@@ -30,8 +30,7 @@ const currentCondition = $computed(() => {
   if (value !== undefined) {
     return (
       conditions.find(
-        ({ dbValue: conditionValue }) =>
-          (value?.toString() || null) === conditionValue,
+        ({ dbValue: conditionValue }) => value === conditionValue,
       ) || conditions.find(({ dbValue }) => dbValue === null)!
     );
   } else if (issuecode) {

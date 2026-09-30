@@ -1,4 +1,4 @@
-import type { Errorable } from "socket-call-server";
+import type { ScopedError } from "socket-call-server";
 
 import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
@@ -42,7 +42,12 @@ export default ({ _socket }: UserServices) => ({
     });
   },
 
-  updateUser: async (input: UserForAccountForm) => {
+  updateUser: async (
+    input: UserForAccountForm,
+  ): Promise<
+    | { hasRequestedPresentationSentenceUpdate: boolean }
+    | ScopedError<"Bad request">
+  > => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
       new DiscordIdValidation(),
@@ -59,63 +64,49 @@ export default ({ _socket }: UserServices) => ({
         new OldPasswordValidation(),
       ];
     }
-    return new Promise<
-      Errorable<
-        { hasRequestedPresentationSentenceUpdate: boolean },
-        "Bad request"
-      >
-    >((resolve) => {
-      let hasResolved = false;
-      prismaDm
-        .$transaction(async (transaction) => {
-          const scopedError = await validate(transaction, input, validators);
-          if (scopedError) {
-            resolve({ error: "Bad request", ...scopedError } as const);
-            hasResolved = true;
-          }
-        })
-        .then(async () => {
-          if (!hasResolved) {
-            if (input.password) {
-              await prismaDm.user.update({
-                data: {
-                  password: getHashedPassword(input.password),
-                },
-                where: {
-                  id: _socket.data.user.id,
-                },
-              });
-            }
-            const updatedUser = await prismaDm.user.update({
-              data: {
-                discordId: input.discordId || undefined,
-                email: input.email,
-                allowSharing: input.allowSharing,
-                marketplaceAcceptsExchanges: input.marketplaceAcceptsExchanges,
-              },
-              where: { id: _socket.data.user.id },
-            });
-            if (updatedUser.presentationText !== input.presentationText) {
-              if (!input.presentationText) {
-                await prismaDm.user.update({
-                  data: {
-                    presentationText: null,
-                  },
-                  where: { id: _socket.data.user.id },
-                });
-              } else {
-                hasRequestedPresentationSentenceUpdate = true;
-                await new PresentationSentenceRequested({
-                  user: updatedUser,
-                  presentationText: input.presentationText,
-                }).send();
-              }
-            }
-            resolve({
-              hasRequestedPresentationSentenceUpdate,
-            } as const);
-          }
-        });
+    const scopedError = await prismaDm.$transaction((transaction) =>
+      validate(transaction, input, validators),
+    );
+    if (scopedError) {
+      return { error: "Bad request", ...scopedError } as const;
+    }
+    if (input.password) {
+      await prismaDm.user.update({
+        data: {
+          password: getHashedPassword(input.password),
+        },
+        where: {
+          id: _socket.data.user.id,
+        },
+      });
+    }
+    const updatedUser = await prismaDm.user.update({
+      data: {
+        discordId: input.discordId || undefined,
+        email: input.email,
+        allowSharing: input.allowSharing,
+        marketplaceAcceptsExchanges: input.marketplaceAcceptsExchanges,
+      },
+      where: { id: _socket.data.user.id },
     });
+    if (updatedUser.presentationText !== input.presentationText) {
+      if (!input.presentationText) {
+        await prismaDm.user.update({
+          data: {
+            presentationText: null,
+          },
+          where: { id: _socket.data.user.id },
+        });
+      } else {
+        hasRequestedPresentationSentenceUpdate = true;
+        await new PresentationSentenceRequested({
+          user: updatedUser,
+          presentationText: input.presentationText,
+        }).send();
+      }
+    }
+    return {
+      hasRequestedPresentationSentenceUpdate,
+    } as const;
   },
 });

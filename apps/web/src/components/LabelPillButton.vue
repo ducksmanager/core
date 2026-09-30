@@ -15,7 +15,7 @@
 <script setup lang="ts">
 const isPressed = defineModel<boolean>("pressed", { required: true });
 
-const { description, icon = undefined } = defineProps<{
+const { description, icon } = defineProps<{
   description: string;
   icon?: Component;
 }>();

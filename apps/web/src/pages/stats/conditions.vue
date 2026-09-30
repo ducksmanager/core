@@ -11,5 +11,5 @@ const { loadCollection, numberPerCondition } = collection();
 
 const { conditionsWithoutMissing } = useCondition();
 
-loadCollection();
+void loadCollection();
 </script>

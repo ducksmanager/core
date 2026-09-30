@@ -9,10 +9,9 @@ import { buildWebStorage } from "socket-call-client";
 
 import { socketInjectionKey } from "./composables/useDmSocket";
 import { register as registerLocaleTimeAgo } from "timeago.js";
-import fr from "timeago.js/lib/lang/fr";
+import fr from "timeago.js/esm/lang/fr";
 
-/** @ts-expect-error - fr.default is a function */
-registerLocaleTimeAgo("fr", fr.default);
+registerLocaleTimeAgo("fr", fr);
 
 let isReady = $ref(false);
 
@@ -21,9 +20,14 @@ const socket = useDmSocket({
   disableCollectionCache: true,
   onConnected: () => {
     if (!isReady) {
-      collection().loadUser();
+      void collection()
+        .loadUser()
+        .then(() => {
+          isReady = true;
+        });
+    } else {
+      isReady = true;
     }
-    isReady = true;
   },
   onConnectError: (e) => {
     console.error(e);

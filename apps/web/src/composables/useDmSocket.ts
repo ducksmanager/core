@@ -1,5 +1,10 @@
 import dayjs from "dayjs";
-import type { AxiosStorage, SocketClient } from "socket-call-client";
+import {
+  SocketCallError,
+  type AxiosStorage,
+  type EventPromise,
+  type SocketClient,
+} from "socket-call-client";
 
 import { type ClientEvents as AppEvents } from "~dm-services/app";
 import { type ClientEvents as AuthEvents } from "~dm-services/auth";
@@ -26,11 +31,7 @@ import { type ClientEvents as StorySearchEvents } from "~dm-services/story-searc
 const defaultExport = (options: {
   cacheStorage?: AxiosStorage;
   disableCollectionCache?: boolean;
-  onConnectError: (
-    e: Error,
-    namespace: string,
-    eventName?: string,
-  ) => Promise<void> | void;
+  onConnectError: (e: Error, namespace: string, eventName?: string) => void;
   onConnected?: (namespace: string) => void;
   session: {
     getToken: () => Promise<string | null | undefined>;
@@ -54,14 +55,16 @@ const defaultExport = (options: {
       .diff(now);
   };
 
-  const storySearchSocket = inject("storySearchSocket") as SocketClient;
+  const storySearchSocket = inject<SocketClient | undefined>(
+    "storySearchSocket",
+    undefined,
+  );
 
   for (const eachSocket of [socket, storySearchSocket]) {
-    if (eachSocket) {
-      eachSocket.onConnectError = onConnectError;
-      if (onConnected) {
-        eachSocket.onConnected = onConnected;
-      }
+    if (!eachSocket) continue;
+    eachSocket.onConnectError = onConnectError;
+    if (onConnected) {
+      eachSocket.onConnected = onConnected;
     }
   }
 
@@ -178,3 +181,10 @@ export default defaultExport;
 export const socketInjectionKey = Symbol() as InjectionKey<
   ReturnType<typeof defaultExport>
 >;
+
+/** Narrows a `.catch((e: unknown) => …)` variable to the error payloads the
+ * given event can reject with, keeping their literal `error` values. */
+export const isEventErrorOf = <E>(
+  _event: (...args: never) => EventPromise<unknown, E>,
+  e: unknown,
+): e is E => e instanceof SocketCallError;

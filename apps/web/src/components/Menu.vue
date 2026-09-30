@@ -32,7 +32,7 @@ const { title = null, items } = defineProps<{
   items: readonly {
     route: keyof RouteNamedMap;
     text: string;
-    isNew?: boolean | false;
+    isNew?: boolean;
   }[];
 }>();
 const { name: routeName } = useRoute();

@@ -33,8 +33,8 @@ importers:
         specifier: ^0.33.5
         version: 0.33.5
       socket-call-server:
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.12.0
+        version: 0.12.0(valibot@1.4.2(typescript@6.0.3))
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1392,9 +1392,14 @@ packages:
   simple-swizzle@0.2.4:
     resolution: {integrity: sha512-nAu1WFPQSMNr2Zn9PGSZK9AGn4t/y97lEm+MXTtUDwfP0ksAIX4nO+6ruD9Jwut4C49SB1Ws+fbXsm/yScWOHw==}
 
-  socket-call-server@0.9.0:
-    resolution: {integrity: sha512-yh3KIhXlp0jaE5x/XYs+vG5sZjZbsyzTBL9jyJqa2SXJoVhnqjiqk0l6LVtxagpjeMvhTa/UgQYx1L36TShavg==}
+  socket-call-server@0.12.0:
+    resolution: {integrity: sha512-3gJP+03tspzEfLMak8BRRuVJFuWAKsZHatN74rKDPp4jLNpRim6p8MALx9Qbk3B8n1muXl4tMzYrroHa4of4ig==}
     engines: {node: '>=22.0.0'}
+    peerDependencies:
+      valibot: ^1.0.0
+    peerDependenciesMeta:
+      valibot:
+        optional: true
 
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
@@ -2885,9 +2890,11 @@ snapshots:
     dependencies:
       is-arrayish: 0.3.4
 
-  socket-call-server@0.9.0:
+  socket-call-server@0.12.0(valibot@1.4.2(typescript@6.0.3)):
     dependencies:
       socket.io: 4.8.3
+    optionalDependencies:
+      valibot: 1.4.2(typescript@6.0.3)
     transitivePeerDependencies:
       - bufferutil
       - supports-color

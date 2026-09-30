@@ -89,11 +89,11 @@ meta:
               <span
                 class="num bordered"
                 :class="{
-                available: issuesForPublication
-                  .map(({ issuecode }) => issuecode)
-                  ?.includes(inducksIssuecode),
-                owned: issuesByIssuecode[inducksIssuecode]!!,
-              }"
+                  available: issuesForPublication
+                    .map(({ issuecode }) => issuecode)
+                    ?.includes(inducksIssuecode),
+                  owned: issuesByIssuecode[inducksIssuecode]!!,
+                }"
                 :title="inducksIssuecode"
                 @click="open(inducksIssuecode)"
                 >&nbsp;</span
@@ -184,27 +184,32 @@ const sortedBookcase = computed(() =>
   Object.values(showEdgesForPublication).reduce<
     Record<string, BookcaseEdgeWithPopularity[]>
   >((acc, publicationcode) => {
-    acc[publicationcode] =
-      issuecodesByPublicationcode.value[publicationcode]?.map((issuecode) => ({
-        id: 0,
-        edgeId: publishedEdgesByPublicationcode?.[publicationcode]
-          .map(({ issuecode }) => issuecode)
-          .includes(issuecode)
-          ? 1
-          : 0,
-        publicationcode,
-        issuecode,
-        creationDate: new Date(),
-        sprites: [],
-        points: 0,
-        slug: "",
-        timestamp: new Date().getTime(),
-      })) || [];
+    acc[publicationcode] = !(
+      publicationcode in issuecodesByPublicationcode.value
+    )
+      ? []
+      : issuecodesByPublicationcode.value[publicationcode].map((issuecode) => ({
+          id: 0,
+          edgeId:
+            publicationcode in publishedEdgesByPublicationcode &&
+            publishedEdgesByPublicationcode[publicationcode].some(
+              (edge) => edge.issuecode === issuecode,
+            )
+              ? 1
+              : 0,
+          publicationcode,
+          issuecode,
+          creationDate: new Date(),
+          sprites: [],
+          points: 0,
+          slug: "",
+          timestamp: new Date().getTime(),
+        }));
     return acc;
   }, {}),
 );
 
-(async () => {
+void (async () => {
   mostWanted = await edgesEvents.getWantedEdges();
 
   publishedEdges = await edgesEvents.getPublishedEdges();

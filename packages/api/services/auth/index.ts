@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import type { Errorable } from "socket-call-server";
+import type { Errorable, ScopedError } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { prismaClient } from "~prisma-schemas/schemas/dm/client";
@@ -32,7 +32,7 @@ const listenEvents = () => ({
     }),
   requestTokenForForgotPassword: async (email: string) => {
     if (!isValidEmail(email)) {
-      return { error: "Invalid email" };
+      return { error: "Invalid email" as const };
     } else {
       const user = await prismaClient.user.findFirst({
         where: { email },
@@ -55,7 +55,7 @@ const listenEvents = () => ({
         console.log(
           `A visitor requested to reset a password for an invalid e-mail: ${email}`,
         );
-        return { error: "Invalid email" };
+        return { error: "Invalid email" as const };
       }
     }
   },
@@ -112,49 +112,49 @@ const listenEvents = () => ({
 
   getCsrf: async () => "",
 
-  signup: (input: { username: string; password: string; email: string }) =>
-    new Promise<Errorable<string, "Bad request">>((resolve) => {
-      console.log(`signup with user ${input.username}`);
-      prismaDm.$transaction(async (transaction) => {
-        const scopedError = await validate(transaction, input, [
-          new UsernameValidation(),
-          new UsernameCreationValidation(),
-          new EmailValidation(),
-          new EmailCreationValidation(),
-          new PasswordValidation(),
-        ]);
-        if (scopedError) {
-          resolve({ error: "Bad request", ...scopedError } as const);
-        } else {
-          const { username, password, email } = input;
-          const hashedPassword = getHashedPassword(password);
-          const user = await transaction.user.create({
-            data: {
-              username,
-              password: hashedPassword,
-              email,
-              signupDate: new Date(),
-            },
-          });
-
-          const privileges = (
-            await transaction.userPermission.findMany({
-              where: {
-                username,
-              },
-            })
-          ).groupBy("role", "privilege");
-          const token = generateAccessToken({
-            id: user.id,
-            username,
-            hashedPassword,
-            privileges,
-          });
-
-          resolve(token);
-        }
+  signup: (input: {
+    username: string;
+    password: string;
+    email: string;
+  }): Promise<string | ScopedError<"Bad request">> => {
+    console.log(`signup with user ${input.username}`);
+    return prismaDm.$transaction(async (transaction) => {
+      const scopedError = await validate(transaction, input, [
+        new UsernameValidation(),
+        new UsernameCreationValidation(),
+        new EmailValidation(),
+        new EmailCreationValidation(),
+        new PasswordValidation(),
+      ]);
+      if (scopedError) {
+        return { error: "Bad request", ...scopedError } as const;
+      }
+      const { username, password, email } = input;
+      const hashedPassword = getHashedPassword(password);
+      const user = await transaction.user.create({
+        data: {
+          username,
+          password: hashedPassword,
+          email,
+          signupDate: new Date(),
+        },
       });
-    }),
+
+      const privileges = (
+        await transaction.userPermission.findMany({
+          where: {
+            username,
+          },
+        })
+      ).groupBy("role", "privilege");
+      return generateAccessToken({
+        id: user.id,
+        username,
+        hashedPassword,
+        privileges,
+      });
+    });
+  },
 
   login: async ({
     username,
@@ -175,7 +175,7 @@ const listenEvents = () => ({
 
       return token;
     } else {
-      return { error: "Invalid username or password" };
+      return { error: "Invalid username or password" as const };
     }
   },
 

@@ -66,8 +66,8 @@ importers:
         specifier: npm:sharp@0.34.5
         version: sharp@0.34.5
       socket-call-server:
-        specifier: ^0.9.0
-        version: 0.9.0
+        specifier: ^0.12.0
+        version: 0.12.0
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1783,9 +1783,14 @@ packages:
     resolution: {integrity: sha512-a2B9Y0KlNXl9u/vsW6sTIu9vGEpfKu2wRV6l1H3XEas/0gUIzGzBoP/IouTcUQbm9JWZLH3COxyn03TYlFax6w==}
     engines: {node: '>=10'}
 
-  socket-call-server@0.9.0:
-    resolution: {integrity: sha512-yh3KIhXlp0jaE5x/XYs+vG5sZjZbsyzTBL9jyJqa2SXJoVhnqjiqk0l6LVtxagpjeMvhTa/UgQYx1L36TShavg==}
+  socket-call-server@0.12.0:
+    resolution: {integrity: sha512-3gJP+03tspzEfLMak8BRRuVJFuWAKsZHatN74rKDPp4jLNpRim6p8MALx9Qbk3B8n1muXl4tMzYrroHa4of4ig==}
     engines: {node: '>=22.0.0'}
+    peerDependencies:
+      valibot: ^1.0.0
+    peerDependenciesMeta:
+      valibot:
+        optional: true
 
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
@@ -3681,7 +3686,7 @@ snapshots:
     dependencies:
       semver: 7.8.5
 
-  socket-call-server@0.9.0:
+  socket-call-server@0.12.0:
     dependencies:
       socket.io: 4.8.3
     transitivePeerDependencies:
