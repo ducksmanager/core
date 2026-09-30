@@ -44,8 +44,8 @@
       I can't tell
     </button>
     <p class="hint">
-      Answer by looking at the pages in front of you. Skipping costs nothing — a
-      question you can't answer is simply never asked again.
+      Answer by looking at the pages in front of you. Skipping won't mislead the
+      search, but it still counts as one of your questions.
     </p>
   </section>
 </template>

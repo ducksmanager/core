@@ -29,7 +29,13 @@
           v-for="searchResult in storyResults"
           :key="searchResult.storycode"
           class="search-result"
+          role="button"
+          tabindex="0"
           @click="emit('story-selected', searchResult.storycode)"
+          @keydown.enter.self="emit('story-selected', searchResult.storycode)"
+          @keydown.space.self.prevent="
+            emit('story-selected', searchResult.storycode)
+          "
         >
           <StoryWithImage :storycode="searchResult.storycode">
             <template #prefix>
@@ -143,7 +149,8 @@ watch(search, async (newValue) => {
     border-bottom: none;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background: #ddd;
   }
 }

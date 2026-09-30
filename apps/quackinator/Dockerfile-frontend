@@ -5,6 +5,7 @@ COPY apps/quackinator/frontend/package.json /app/
 RUN npm install
 
 COPY apps/quackinator/frontend /app/
+ENV VITE_API_BASE=https://api.quackinator.ducksmanager.net
 RUN npm run build
 
 FROM nginx:alpine

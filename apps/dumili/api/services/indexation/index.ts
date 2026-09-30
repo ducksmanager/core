@@ -1120,9 +1120,21 @@ const listenEvents = (services: IndexationServices) => ({
       code: string;
       option: number | null;
     },
-  ) => recordQuackinatorAnswer(entryId, answer),
+  ) => {
+    if (
+      !services._socket.data.indexation.entries.some(({ id }) => id === entryId)
+    ) {
+      return { error: "This indexation has no such entry" };
+    }
+    return recordQuackinatorAnswer(entryId, answer);
+  },
 
   resetQuackinatorSession: async (entryId: number) => {
+    if (
+      !services._socket.data.indexation.entries.some(({ id }) => id === entryId)
+    ) {
+      return { error: "This indexation has no such entry" };
+    }
     const result = await resetQuackinatorSession(entryId);
     await refreshIndexation(services, false);
     return result;

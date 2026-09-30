@@ -49,6 +49,7 @@ ISSUES = "SELECT issuecode, publicationcode, oldestdate FROM inducks_issue"
 ENTRIES = """
     SELECT storyversioncode, issuecode, languagecode
     FROM inducks_entry WHERE is_cover = 0 AND storyversioncode <> ''
+    ORDER BY entrycode
 """
 
 

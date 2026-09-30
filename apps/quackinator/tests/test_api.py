@@ -62,3 +62,39 @@ def test_an_empty_mirror_switches_every_picture_off(monkeypatch):
     monkeypatch.setattr(app.settings, "thumbnail_base", "")
 
     assert thumbnail_url("webusers/2021/03/br_tp_0137b_001.jpg") is None
+
+
+def _fill_sessions(monkeypatch, **last_used: float):
+    from quackinator.api import app
+
+    monkeypatch.setattr(
+        app, "SESSIONS", app.OrderedDict((sid, (t, object())) for sid, t in last_used.items())
+    )
+    return app
+
+
+def test_an_idle_session_is_dropped(monkeypatch):
+    app = _fill_sessions(monkeypatch, old=0.0, recent=7000.0)
+    monkeypatch.setattr(app.settings, "session_idle_seconds", 3600)
+
+    app._evict(7200.0, limit=10)
+
+    assert list(app.SESSIONS) == ["recent"]
+
+
+def test_past_the_cap_the_least_recently_used_session_goes(monkeypatch):
+    app = _fill_sessions(monkeypatch, a=0.0, b=1.0, c=2.0)
+
+    app._evict(3.0, limit=2)
+
+    assert list(app.SESSIONS) == ["b", "c"]
+
+
+def test_using_a_session_keeps_it_alive(monkeypatch):
+    app = _fill_sessions(monkeypatch, a=0.0, b=1.0)
+    monkeypatch.setattr(app.time, "monotonic", lambda: 2.0)
+
+    app._session("a")
+    app._evict(2.0, limit=1)
+
+    assert list(app.SESSIONS) == ["a"]

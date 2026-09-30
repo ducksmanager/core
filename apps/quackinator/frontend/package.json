@@ -8,7 +8,9 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "prod:deploy": "DIR=apps/quackinator SERVICES=quackinator-app pnpm -F '~ci' prod:docker-compose-up",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/quackinator-app pnpm -F '~ci' prod:build-docker -f apps/quackinator/Dockerfile-frontend"
   },
   "dependencies": {
     "vue": "^3.5.41"

@@ -8,7 +8,9 @@ running more than one replica.
 from __future__ import annotations
 
 import logging
+import time
 import uuid
+from collections import OrderedDict
 from contextlib import asynccontextmanager
 from urllib.parse import quote
 
@@ -22,7 +24,8 @@ from quackinator.engine.session import Engine, Session
 log = logging.getLogger(__name__)
 
 ENGINE: Engine | None = None
-SESSIONS: dict[str, Session] = {}
+# Least recently used first, each with when it was last used.
+SESSIONS: OrderedDict[str, tuple[float, Session]] = OrderedDict()
 
 
 @asynccontextmanager
@@ -223,10 +226,23 @@ def _engine() -> Engine:
     return ENGINE
 
 
+def _evict(now: float, limit: int) -> None:
+    while SESSIONS:
+        oldest, (last_used, _) = next(iter(SESSIONS.items()))
+        if len(SESSIONS) <= limit and now - last_used < settings.session_idle_seconds:
+            return
+        del SESSIONS[oldest]
+
+
 def _session(session_id: str) -> Session:
-    session = SESSIONS.get(session_id)
-    if session is None:
+    now = time.monotonic()
+    _evict(now, settings.max_sessions)
+    entry = SESSIONS.get(session_id)
+    if entry is None:
         raise HTTPException(404, "unknown session")
+    session = entry[1]
+    SESSIONS[session_id] = (now, session)
+    SESSIONS.move_to_end(session_id)
     return session
 
 
@@ -313,7 +329,10 @@ def start_session(seed: SeedIn | None = None) -> TurnOut:
     """
     session_id = uuid.uuid4().hex
     session = Session(engine=_engine())
-    SESSIONS[session_id] = session
+    now = time.monotonic()
+    # Room for the one about to be added.
+    _evict(now, settings.max_sessions - 1)
+    SESSIONS[session_id] = (now, session)
     report = _apply_seed(session, seed) if seed is not None else None
     turn = _turn(session_id, session)
     turn.seed = report

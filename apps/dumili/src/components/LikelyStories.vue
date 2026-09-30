@@ -6,7 +6,11 @@
         v-for="story in stories"
         :key="story.storycode"
         class="entry"
+        role="button"
+        tabindex="0"
         @click="emit('pick', story.storycode)"
+        @keydown.enter.self="emit('pick', story.storycode)"
+        @keydown.space.self.prevent="emit('pick', story.storycode)"
       >
         <div
           class="bar"
@@ -63,7 +67,8 @@ const emit = defineEmits<{
   border-radius: 0.25rem;
   cursor: pointer;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background: #ddd;
   }
 }

@@ -135,6 +135,12 @@ class Settings(BaseSettings):
     # not name the first three plot words is not barred from the fourth.
     family_patience: float = 2.0
 
+    # Sessions live in API memory (~2.4 MB each) and clients only end them on
+    # "Start over", so the API drops idle ones and the least recently used past
+    # the cap.
+    session_idle_seconds: int = 2 * 3600
+    max_sessions: int = 200
+
     # Engine bounds.
     max_questions: int = 25
     confidence_threshold: float = 0.85
