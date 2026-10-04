@@ -37,6 +37,14 @@ run = "python -m quackinator.engine.simulate --all"
 description = "Run the API for the Vue frontend"
 run = "uvicorn quackinator.api.app:app --reload --port 8000"
 
+[tasks.dev]
+description = "Run the API, installing it and building the index first if missing"
+run = [
+    "test -x .venv/bin/uvicorn || mise run install",
+    "test -n \"$(ls -A data/index 2>/dev/null)\" || { echo 'No index yet, building it from the coa database (pnpm -F ~prisma-schemas dev:setup starts it)'; mise run etl; }",
+    "mise run api",
+]
+
 [tasks.ui-install]
 description = "Install frontend dependencies"
 dir = "frontend"

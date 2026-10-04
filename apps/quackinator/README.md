@@ -30,6 +30,10 @@ mise run ui-install
 mise run ui            # http://localhost:5173, proxies /api to :8000
 ```
 
+Or, from the repository root, `pnpm dev:quackinator` runs both: it installs the
+API and builds the index first if either is missing, so only the database needs
+to be up (`pnpm -F '~prisma-schemas' dev:setup`) on a first run.
+
 `mise run test`, `mise run lint`, `mise run ui-build` (typecheck + build), and
 `mise run sim` to benchmark the engine against the built index.
 
