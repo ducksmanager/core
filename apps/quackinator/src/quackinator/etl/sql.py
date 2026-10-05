@@ -34,9 +34,10 @@ WHERE oldestdate IS NOT NULL AND oldestdate <> ''
 """
 
 # Non-cover entries: one row per physical printing of a story in an issue.
-# Drives both the popularity prior and the language of the magazine.
+# Drives the popularity prior, the language of the magazine, and the titles OCR
+# is matched against — each printing's own, in its own language.
 ENTRIES = """
-SELECT storyversioncode, languagecode, issuecode
+SELECT storyversioncode, languagecode, issuecode, title
 FROM inducks_entry
 WHERE is_cover = 0 AND storyversioncode IS NOT NULL AND storyversioncode <> ''
 """

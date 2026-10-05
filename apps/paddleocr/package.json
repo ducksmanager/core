@@ -1,0 +1,7 @@
+{
+  "name": "~paddleocr",
+  "private": true,
+  "scripts": {
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/paddleocr pnpm -F '~ci' prod:build-docker -f apps/paddleocr/Dockerfile"
+  }
+}

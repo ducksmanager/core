@@ -78,11 +78,11 @@ updates:
 
   # Python
   - package-ecosystem: "pip"
-    directory: "/apps/dumili/api/kumiko"
+    directory: "/apps/kumiko"
     schedule:
       interval: "weekly"
   - package-ecosystem: "pip"
-    directory: "/apps/dumili/api/paddleocr"
+    directory: "/apps/paddleocr"
     schedule:
       interval: "weekly"
 
@@ -108,11 +108,11 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "docker"
-    directory: "/apps/dumili/api/kumiko"
+    directory: "/apps/kumiko"
     schedule:
       interval: "weekly"
   - package-ecosystem: "docker"
-    directory: "/apps/dumili/api/paddleocr"
+    directory: "/apps/paddleocr"
     schedule:
       interval: "weekly"
   - package-ecosystem: "docker"

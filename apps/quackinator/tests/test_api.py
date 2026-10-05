@@ -98,3 +98,74 @@ def test_using_a_session_keeps_it_alive(monkeypatch):
     app._evict(2.0, limit=1)
 
     assert list(app.SESSIONS) == ["a"]
+
+
+def _services(monkeypatch, kumiko, ocr=None):
+    """Stand in for Kumiko and PaddleOCR, recording what each was sent."""
+    from quackinator.api import app
+
+    monkeypatch.setattr(app.settings, "kumiko_host", "http://kumiko")
+    monkeypatch.setattr(app.settings, "ocr_host", "http://ocr" if ocr is not None else "")
+    sent: dict[str, object] = {}
+
+    def post(url, body, content_type):
+        sent[url] = body
+        result = kumiko if url == "http://kumiko" else ocr
+        if isinstance(result, Exception):
+            raise result
+        return result
+
+    monkeypatch.setattr(app, "_post", post)
+    return app, sent
+
+
+def test_an_upload_is_segmented_and_its_first_panel_read(monkeypatch):
+    import json
+
+    panels = [[10, 20, 300, 200], [320, 22, 300, 200], [10, 240, 600, 200]]
+    app, sent = _services(
+        monkeypatch,
+        kumiko=[{"panels": panels}],
+        ocr=[{"text": "Paperino", "confidence": 0.9, "box": [0, 0, 1, 1]}],
+    )
+
+    analysis = app._analyze(b"jpeg", "it")
+
+    assert analysis.kumiko.pages[0].rows == 2
+    assert analysis.kumiko.pages[0].panels == 3
+    assert analysis.kumiko.whole_story is False
+    assert [t.text for t in analysis.ocr] == ["Paperino"]
+    assert json.loads(sent["http://ocr"])["crop"] == panels[0]
+    assert analysis.errors == []
+
+
+def test_without_a_language_the_title_is_not_read(monkeypatch):
+    app, sent = _services(monkeypatch, kumiko=[{"panels": [[0, 0, 5, 5]]}], ocr=[])
+
+    analysis = app._analyze(b"jpeg", None)
+
+    assert analysis.ocr == []
+    assert "http://ocr" not in sent
+
+
+def test_a_page_with_no_panels_is_reported_unsegmented(monkeypatch):
+    app, _ = _services(monkeypatch, kumiko=[{"panels": []}], ocr=[])
+
+    analysis = app._analyze(b"jpeg", "it")
+
+    assert analysis.kumiko.pages == [None]
+
+
+def test_an_unreachable_service_is_reported_not_raised(monkeypatch):
+    """The reader can always be asked questions instead."""
+    app, _ = _services(
+        monkeypatch, kumiko=[{"panels": [[0, 0, 5, 5]]}], ocr=OSError("connection refused")
+    )
+
+    analysis = app._analyze(b"jpeg", "it")
+
+    assert analysis.kumiko is not None
+    assert analysis.errors == ["ocr: connection refused"]
+
+    app, _ = _services(monkeypatch, kumiko=OSError("down"))
+    assert app._analyze(b"jpeg", "it").errors == ["kumiko: down"]

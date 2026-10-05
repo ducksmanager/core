@@ -13,7 +13,12 @@ from quackinator.config import Settings, settings
 from quackinator.engine import information as info
 from quackinator.engine.belief import Support
 from quackinator.engine.creators import CreatorMatch, CreatorSearch
-from quackinator.engine.questions import Question, QuestionBank, build_bank
+from quackinator.engine.questions import (
+    CategoricalQuestion,
+    Question,
+    QuestionBank,
+    build_bank,
+)
 from quackinator.engine.selector import Selection, posterior, select
 from quackinator.index.model import StoryIndex
 
@@ -259,7 +264,18 @@ class Session:
             self._story_probs = None
         return missed
 
-    def apply_fact(self, key: str, value: int) -> bool:
+    def lift_stories(self, lift: np.ndarray) -> None:
+        """Multiply each story's belief by its own likelihood ratio.
+
+        `lift` is per story, ones where there is nothing to say — see
+        `engine.evidence`, which builds these from image search and OCR. Like
+        `boost`, only ever >= 1, so a source that misses costs nothing.
+        """
+        self.w = self.w * lift[self.engine.index.story_id]
+        self.w /= self.w.sum()
+        self._story_probs = None
+
+    def apply_fact(self, key: str, value: int, noise: float | None = None) -> bool:
         """Answer a question from a measurement the caller already holds.
 
         Dumili is indexing the issue in front of the reader, so it knows the
@@ -276,6 +292,11 @@ class Session:
         or the value falls off its scale. Never raises: a caller assembling a
         seed from its own database should not have to know which questions this
         index happens to carry.
+
+        `noise` replaces the question's own for a measurement that is not a
+        reader's — Kumiko counting rows is wrong far more often than someone
+        counting them by hand. Ordered scales only, the one shape where a source
+        error rate means the same thing as a reader's.
         """
         question = self.engine.bank.by_key(key)
         if question is None or key in self.asked:
@@ -283,7 +304,14 @@ class Session:
         option = question.value_option(value)
         if option is None:
             return False
-        self._record(question, option, costs_turn=False)
+        likelihood = None
+        if noise is not None:
+            if not isinstance(question, CategoricalQuestion):
+                return False
+            likelihood = info.banded_confusion(
+                question.n_categories, noise, mismatch=question.mismatch
+            )[option][question.assign]
+        self._record(question, option, costs_turn=False, likelihood=likelihood)
         return True
 
     def replay(self, family: str, code: str, option: int | None) -> bool:
@@ -315,17 +343,25 @@ class Session:
             return False
         return True
 
-    def _record(self, question: Question, option: int, costs_turn: bool | None = None) -> None:
+    def _record(
+        self,
+        question: Question,
+        option: int,
+        costs_turn: bool | None = None,
+        likelihood: np.ndarray | None = None,
+    ) -> None:
         """Apply one answer to the belief and add it to the trail.
 
-        `costs_turn` overrides the question's own answer, for the one caller
-        that has an answer to a question the reader was never asked: see
+        `costs_turn` and `likelihood` override the question's own, for the one
+        caller that has an answer to a question the reader was never asked: see
         `apply_fact`.
         """
         charge = question.costs_turn if costs_turn is None else costs_turn
         if charge:
             self._group_asked[question.group] += 1
-        self.w = posterior(self.w, question.likelihood(option))
+        if likelihood is None:
+            likelihood = question.likelihood(option)
+        self.w = posterior(self.w, likelihood)
         self._story_probs = None
         self.asked.add(question.key)
         self.history.append(

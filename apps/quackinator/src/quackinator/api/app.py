@@ -7,18 +7,23 @@ running more than one replica.
 
 from __future__ import annotations
 
+import base64
+import json
 import logging
 import time
+import urllib.request
 import uuid
 from collections import OrderedDict
 from contextlib import asynccontextmanager
 from urllib.parse import quote
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from starlette.concurrency import run_in_threadpool
 
 from quackinator.config import settings
+from quackinator.engine import evidence
 from quackinator.engine.session import Engine, Session
 
 log = logging.getLogger(__name__)
@@ -137,11 +142,38 @@ class ReplayIn(BaseModel):
     option: int | None = Field(default=None, description="0 yes, 1 no; null replays a 'don't know'")
 
 
+class ImageMatchIn(BaseModel):
+    storycode: str
+    score: float = Field(description="1 - cosine distance, as DM's findSimilarImages reports it")
+
+
+class OcrTextIn(BaseModel):
+    text: str
+    confidence: float
+
+
+class KumikoPageIn(BaseModel):
+    rows: int = Field(description="Rows of panels on the page; see `evidence.panel_rows`")
+    panels: int
+
+
+class KumikoIn(BaseModel):
+    pages: list[KumikoPageIn | None] = Field(
+        description="One per page of the story, in order, null where unsegmented"
+    )
+    whole_story: bool = Field(
+        default=False,
+        description="`pages` covers every page of the story, so the panels can be "
+        "totalled. False for a single uploaded page",
+    )
+
+
 class SeedIn(BaseModel):
     """What a host system knows before the reader is asked anything.
 
-    All three are applied to the same belief and the updates are multiplications,
-    so the order they arrive in does not change where the session starts.
+    Every part is applied to the same belief and the updates are
+    multiplications, so the order they arrive in does not change where the
+    session starts.
     """
 
     prior: dict[str, float] = Field(
@@ -157,6 +189,15 @@ class SeedIn(BaseModel):
         default_factory=list,
         description="Answers this reader gave in an earlier session, to resume it",
     )
+    image_matches: list[ImageMatchIn] = Field(
+        default_factory=list,
+        description="Reverse image search over the story's first page, unfiltered",
+    )
+    ocr: list[OcrTextIn] = Field(
+        default_factory=list,
+        description="OCR of the first panel of the story, where the title is printed",
+    )
+    kumiko: KumikoIn | None = None
 
 
 class SeedOut(BaseModel):
@@ -174,6 +215,17 @@ class SeedOut(BaseModel):
     answers_dropped: list[str] = Field(
         description="`family:code` for answers this index can no longer place — a "
         "recoded character, or a plot term a rebuild dropped from the vocabulary"
+    )
+    image_unknown: list[str] = Field(
+        default_factory=list, description="Image-search storycodes this index does not have"
+    )
+    ocr_words: list[str] | None = Field(
+        default=None,
+        description="Title words the OCR text matched. Null where this index carries "
+        "no titles to match against",
+    )
+    kumiko_applied: list[str] = Field(
+        default_factory=list, description="Layout questions Kumiko answered"
     )
     index_fingerprint: str
 
@@ -307,6 +359,30 @@ def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
             dropped.append(f"{answer.family}:{answer.code}")
 
     unknown = session.boost(seed.prior)
+
+    cfg = session.engine.cfg
+    index = session.engine.index
+    lift, image_unknown = evidence.image_lifts(
+        index, ((m.storycode, m.score) for m in seed.image_matches), cfg
+    )
+    session.lift_stories(lift)
+
+    ocr_words: list[str] | None = None
+    ocr = evidence.ocr_lifts(index, ((t.text, t.confidence) for t in seed.ocr), cfg)
+    if ocr is not None:
+        lift, ocr_words = ocr
+        session.lift_stories(lift)
+
+    kumiko_applied = []
+    if seed.kumiko is not None:
+        pages = [
+            evidence.KumikoPage(rows=p.rows, panels=p.panels) if p is not None else None
+            for p in seed.kumiko.pages
+        ]
+        for fact in evidence.kumiko_facts(pages, seed.kumiko.whole_story, cfg):
+            if session.apply_fact(fact.key, fact.value, noise=fact.noise):
+                kumiko_applied.append(fact.key)
+
     return SeedOut(
         prior_applied=len(seed.prior) - len(unknown),
         prior_unknown=unknown,
@@ -314,6 +390,9 @@ def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
         facts_rejected=facts_rejected,
         answers_replayed=replayed,
         answers_dropped=dropped,
+        image_unknown=image_unknown,
+        ocr_words=ocr_words,
+        kumiko_applied=kumiko_applied,
         index_fingerprint=session.engine.index.fingerprint,
     )
 
@@ -378,6 +457,87 @@ def name_creator(session_id: str, body: CreatorIn) -> TurnOut:
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
     return _turn(session_id, session)
+
+
+class AnalysisOut(BaseModel):
+    """Kumiko and OCR over one uploaded page, shaped to go straight into a seed."""
+
+    kumiko: KumikoIn | None
+    ocr: list[OcrTextIn]
+    errors: list[str] = Field(
+        description="Services that were unreachable or not configured. Never fatal: "
+        "the reader can always be asked questions instead"
+    )
+
+
+def _post(url: str, body: bytes, content_type: str) -> object:
+    request = urllib.request.Request(
+        url, data=body, method="POST", headers={"Content-Type": content_type}
+    )
+    with urllib.request.urlopen(request, timeout=60) as response:
+        return json.load(response)
+
+
+def _analyze(image: bytes, language: str | None) -> AnalysisOut:
+    errors: list[str] = []
+    if not settings.kumiko_host:
+        return AnalysisOut(kumiko=None, ocr=[], errors=["kumiko: not configured"])
+    try:
+        pages = _post(settings.kumiko_host, image, "application/octet-stream")
+        panels = pages[0]["panels"] if pages else []  # type: ignore[index]
+    except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
+        log.warning("kumiko failed: %s", exc)
+        return AnalysisOut(kumiko=None, ocr=[], errors=[f"kumiko: {exc}"])
+
+    kumiko = KumikoIn(
+        pages=[
+            KumikoPageIn(
+                rows=evidence.panel_rows(panels, settings.kumiko_row_tolerance),
+                panels=len(panels),
+            )
+        ]
+        if panels
+        else [None],
+    )
+
+    # The title is in the first panel, and the rest of the page is speech
+    # balloons that would match every title sharing a word with them.
+    ocr: list[OcrTextIn] = []
+    if not settings.ocr_host:
+        errors.append("ocr: not configured")
+    elif language and panels:
+        payload = {
+            "image": base64.b64encode(image).decode("ascii"),
+            "language": language,
+            "crop": panels[0],
+        }
+        try:
+            matches = _post(settings.ocr_host, json.dumps(payload).encode(), "application/json")
+            ocr = [
+                OcrTextIn(text=m["text"], confidence=m["confidence"])
+                for m in matches  # type: ignore[union-attr]
+            ]
+        except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
+            log.warning("ocr failed: %s", exc)
+            errors.append(f"ocr: {exc}")
+    return AnalysisOut(kumiko=kumiko, ocr=ocr, errors=errors)
+
+
+@app.post("/api/analyze", response_model=AnalysisOut)
+async def analyze(request: Request, language: str | None = None) -> AnalysisOut:
+    """Run Kumiko and OCR over the first page of the reader's story.
+
+    For the standalone reader, who has a photo rather than a host's database. The
+    image is the raw request body, held in memory and never stored. `language`
+    is the magazine's Inducks language code; OCR is skipped without one. Image
+    search is not here: it is DM's, and the browser calls it directly.
+    """
+    image = await request.body()
+    if not image:
+        raise HTTPException(400, "empty image")
+    if len(image) > settings.max_upload_bytes:
+        raise HTTPException(413, "image too large")
+    return await run_in_threadpool(_analyze, image, language)
 
 
 @app.delete("/api/sessions/{session_id}")

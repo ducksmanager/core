@@ -13,6 +13,7 @@
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/quackinator-app pnpm -F '~ci' prod:build-docker -f apps/quackinator/Dockerfile-frontend"
   },
   "dependencies": {
+    "socket.io-client": "^4.8.3",
     "vue": "^3.5.41"
   },
   "devDependencies": {

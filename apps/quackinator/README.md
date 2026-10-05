@@ -47,6 +47,7 @@ to be up (`pnpm -F '~prisma-schemas' dev:setup`) on a first run.
 | [`engine/questions.py`](src/quackinator/engine/questions.py) | The question bank: an ordered scale, two set-valued single-selects and one yes/no family, behind one `Question` protocol |
 | [`engine/selector.py`](src/quackinator/engine/selector.py) | Picks the next question by gain; applies an answer to the belief |
 | [`engine/creators.py`](src/quackinator/engine/creators.py) | Autocomplete over creator names and their alternative spellings |
+| [`engine/evidence.py`](src/quackinator/engine/evidence.py) | Reverse image search, OCR and Kumiko results, weighed into the belief before the first question |
 | [`engine/session.py`](src/quackinator/engine/session.py) | One reader, one magazine |
 | [`engine/simulate.py`](src/quackinator/engine/simulate.py) | Benchmark harness |
 | [`api/app.py`](src/quackinator/api/app.py) | FastAPI surface |

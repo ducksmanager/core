@@ -1,4 +1,4 @@
-import type { CreatorMatch, Seed, Turn } from "./types";
+import type { Analysis, CreatorMatch, Seed, Turn } from "./types";
 
 class ApiError extends Error {
   constructor(
@@ -83,6 +83,21 @@ export const createApi = (base: string) => ({
       method: "POST",
       body: JSON.stringify({ creator }),
     }),
+
+  /**
+   * Kumiko and OCR over a photo of the story's first page. `language` is the
+   * magazine's Inducks language code; OCR is skipped without one.
+   */
+  analyze: (image: Blob, language: string | null) =>
+    request<Analysis>(
+      base,
+      `/api/analyze${language ? `?language=${encodeURIComponent(language)}` : ""}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": image.type || "application/octet-stream" },
+        body: image,
+      },
+    ),
 
   end: (sessionId: string) =>
     request<{ ok: boolean }>(base, `/api/sessions/${sessionId}`, {

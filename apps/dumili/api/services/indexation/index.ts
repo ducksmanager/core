@@ -169,11 +169,7 @@ const entryStoryInclude = {
     include: {
       aiStorySuggestion: {
         include: {
-          // Both scores, because the wizard ranks these suggestions before it
-          // asks anything and the two tools score on different scales — see
-          // ~dumili-utils/aiSuggestionConfidence.
           aiStorySearchPossibleStory: true,
-          aiOcrPossibleStory: true,
         },
       },
     },

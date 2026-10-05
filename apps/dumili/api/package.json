@@ -16,8 +16,6 @@
     "dev:bun": "bun --inspect run ./index.ts",
     "prod:deploy": "DIR=apps/dumili/api pnpm -F '~ci' prod:docker-compose-up",
     "prod-build-docker-api": "REPO_NAME=ghcr.io/bperel/dumili-api pnpm -F '~ci' prod:build-docker -f apps/dumili/api/Dockerfile",
-    "prod-build-docker-kumiko": "REPO_NAME=ghcr.io/bperel/kumiko pnpm -F '~ci' prod:build-docker -f apps/dumili/api/kumiko/Dockerfile",
-    "prod-build-docker-paddleocr": "REPO_NAME=ghcr.io/bperel/paddleocr pnpm -F '~ci' prod:build-docker -f apps/dumili/api/paddleocr/Dockerfile",
     "prod:build-docker": "pnpm run '/^prod-build-docker-/'",
     "prod:transfer-files-pre": "pnpm -F '~ci' prod:transfer-files @apps/dumili/api/.env:apps/dumili/api/.env",
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/dumili/api/docker-compose.yml:@apps/dumili/api/docker-compose.yml apps/dumili/api/Caddyfile:@apps/dumili/api/Caddyfile",
@@ -64,6 +62,8 @@
     "eslint-plugin-prettier": "^5.5.6",
     "prisma": "^7.10.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1"
+    "typescript-eslint": "^8.70.1",
+    "~kumiko": "workspace:*",
+    "~paddleocr": "workspace:*"
   }
 }

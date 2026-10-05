@@ -164,6 +164,42 @@ class Settings(BaseSettings):
     # changes; foreign tokens land under 0.04 and genuine plot words above 0.47.
     plot_min_native_lift: float = 0.2
 
+    # Title words carried by more stories than this are not indexed for OCR (see
+    # `etl.build.title_matrix`).
+    title_max_df_ratio: float = 0.01
+
+    # Evidence a host's own tools, or the reader's upload, found on the page. See
+    # `engine.evidence`. Each lifts a story by `boost ** strength`, strength in
+    # 0..1: a likelihood ratio, so a near-duplicate scan can carry the session to
+    # a guess on its own, where `seed_boost`'s linear lift tops out at 50x on a
+    # catalogue of 300k. A confidently wrong lift costs the reader one rejection,
+    # after which the questions resume.
+    #
+    # Unmeasured: no simulated reader arrives holding a scan. The image-search
+    # gate is Dumili's, carried over; price all of these with `mise run sim`.
+    image_min_score: float = 0.9
+    image_boost: float = 1e5
+    # OCR of the first panel, matched against every printed title. A word scores
+    # its IDF, and `ocr_full_match_idf` of matched IDF is full strength — about
+    # two words that each title only a handful of stories.
+    ocr_min_confidence: float = 0.75
+    ocr_boost: float = 100.0
+    ocr_full_match_idf: float = 16.0
+    # P(Kumiko's row count is wrong), as `noise` on the rows question. Median over
+    # several segmented pages, or one page alone — the first page, with its title
+    # panel, is the least typical page there is. Total panels needs every page.
+    # Unmeasured: run packages/api/scripts/measure-kumiko-accuracy.ts.
+    kumiko_rows_noise: float = 0.4
+    kumiko_single_page_rows_noise: float = 0.6
+    kumiko_panels_noise: float = 0.4
+    # Panel tops this close, in pixels, are one row. Same as Dumili's getPanelRows.
+    kumiko_row_tolerance: int = 5
+
+    # Services the standalone upload is analysed with. Empty disables each one.
+    kumiko_host: str = ""
+    ocr_host: str = ""
+    max_upload_bytes: int = 15 * 1024 * 1024
+
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 

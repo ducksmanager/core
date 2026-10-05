@@ -59,6 +59,11 @@ export const useGame = (options: GameOptions = {}) => {
   const storyEntropyBits = ref(0);
   const startingBits = ref(0);
   const questionsAsked = ref(0);
+  /**
+   * The session started from evidence rather than the bare popularity prior, so
+   * its guesses mean something before the first answer.
+   */
+  const seeded = ref(false);
   const done = ref(false);
   const busy = ref(false);
   const error = ref<string | null>(null);
@@ -129,6 +134,7 @@ export const useGame = (options: GameOptions = {}) => {
   const adopt = (turn: Turn) => {
     trail.value = [];
     creatorOffered.value = true;
+    seeded.value = turn.seed !== null;
     absorb(turn);
     startingBits.value = turn.story_entropy_bits;
   };
@@ -216,6 +222,7 @@ export const useGame = (options: GameOptions = {}) => {
     storyEntropyBits,
     startingBits,
     questionsAsked,
+    seeded,
     done,
     busy,
     error,

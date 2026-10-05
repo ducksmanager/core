@@ -371,3 +371,37 @@ def test_a_path_with_no_readable_country_is_a_last_resort():
 )
 def test_the_country_comes_off_the_filename(url, country):
     assert scan_country(url) == country
+
+
+# --- titles ------------------------------------------------------------------
+
+
+def test_every_printed_title_is_indexed_for_ocr():
+    """A story is matched on what any of its printings called it."""
+    raw = make_raw()
+    raw.title_words = {"A": {"paperino", "tesoro"}, "B": {"tresor"}}
+    index = assemble(raw, settings.model_copy(update={"title_max_df_ratio": 1.0}))
+
+    a = index.story_number("A")
+    assert a is not None
+    words = {index.title_terms[j] for j in index.title[a].indices}
+    assert words == {"paperino", "tesoro"}
+
+
+def test_a_title_word_most_stories_share_is_not_indexed():
+    raw = make_raw()
+    raw.title_words = {"A": {"zio", "tesoro"}, "B": {"zio"}, "C": {"zio"}}
+    index = assemble(raw, settings.model_copy(update={"title_max_df_ratio": 0.5}))
+    assert "zio" not in index.title_terms
+    assert "tesoro" in index.title_terms
+
+
+def test_titles_survive_a_save(tmp_path):
+    raw = make_raw()
+    raw.title_words = {"A": {"tesoro"}}
+    index = assemble(raw, settings.model_copy(update={"title_max_df_ratio": 1.0}))
+    index.save(tmp_path)
+    loaded = StoryIndex.load(tmp_path)
+    assert loaded.title_terms == index.title_terms
+    assert loaded.title is not None
+    assert (loaded.title != index.title).nnz == 0

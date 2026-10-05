@@ -7,7 +7,7 @@ services:
       - "8005:8080"
     build:
       context: ../../..
-      dockerfile: apps/dumili/api/kumiko/Dockerfile
+      dockerfile: apps/kumiko/Dockerfile
   paddleocr:
     restart: always
     ports:
@@ -17,11 +17,11 @@ services:
       PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
       PYTHONUNBUFFERED: "1"
     volumes:
-      - ./paddleocr/server.py:/server.py
-      - ./paddleocr/recognition_model_rules.json:/recognition_model_rules.json
+      - ../../paddleocr/server.py:/server.py
+      - ../../paddleocr/recognition_model_rules.json:/recognition_model_rules.json
     build:
       context: ../../..
-      dockerfile: apps/dumili/api/paddleocr/Dockerfile.aarch64
+      dockerfile: apps/paddleocr/Dockerfile.aarch64
   db:
     container_name: dumili-db
     restart: always

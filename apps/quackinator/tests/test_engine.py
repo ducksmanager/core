@@ -45,6 +45,13 @@ def make_index(n=64, n_chars=8, n_creators=5, seed=0) -> StoryIndex:
     creator = (rng.random((n, n_creators)) < 0.4).astype(np.int8)
     creator[creator.sum(axis=1) == 0, 0] = 1
     creator = sp.csr_matrix(creator)
+    # Each story's title has a word of its own and one it shares with a quarter
+    # of the others, as printings under many titles do.
+    title_terms = [f"own{i}" for i in range(n)] + [f"shared{k}" for k in range(4)]
+    title = sp.lil_matrix((n, len(title_terms)), dtype=np.int8)
+    for i in range(n):
+        title[i, i] = 1
+        title[i, n + i % 4] = 1
     return StoryIndex(
         svc=[f"sv{i}" for i in range(n)],
         story_id=np.arange(n, dtype=np.int32),
@@ -71,6 +78,8 @@ def make_index(n=64, n_chars=8, n_creators=5, seed=0) -> StoryIndex:
             :n_creators
         ],
         creator_aliases=[["CB"], ["RS"], ["DR"], ["VIC"], ["DJ"]][:n_creators],
+        title=sp.csr_matrix(title),
+        title_terms=title_terms,
     )
 
 

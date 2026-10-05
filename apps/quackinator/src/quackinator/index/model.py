@@ -32,6 +32,7 @@ PLOT_FILE = "plot.npz"
 LANG_FILE = "lang.npz"
 DECADE_FILE = "decade.npz"
 CREATOR_FILE = "creator.npz"
+TITLE_FILE = "title.npz"
 META_FILE = "meta.json.gz"
 
 UNKNOWN = -1
@@ -111,6 +112,13 @@ class StoryIndex:
     # "no" from the reader on one of these is uninformative, not a contradiction.
     char_weak: sp.csr_matrix | None = None
 
+    # Every word of every title the story was printed under, in any language
+    # (n_stories x len(title_terms)), so OCR of a first panel can be matched
+    # against the title the reader's magazine actually prints. None for an index
+    # built before titles were extracted, where OCR evidence is reported unused.
+    title: sp.csr_matrix | None = None
+    title_terms: list[str] = field(default_factory=list)
+
     # Reverse of `story_codes`. Derived, so never serialised.
     _story_number: dict[str, int] = field(
         default_factory=dict, init=False, repr=False, compare=False
@@ -183,6 +191,18 @@ class StoryIndex:
     def has_creator(self) -> np.ndarray:
         return self.creator.getnnz(axis=1) > 0
 
+    @cached_property
+    def title_pos(self) -> dict[str, int]:
+        return {word: j for j, word in enumerate(self.title_terms)}
+
+    @cached_property
+    def title_idf(self) -> np.ndarray:
+        """log(stories / stories carrying the word), per column of `title`."""
+        if self.title is None:
+            return np.zeros(0)
+        df = np.maximum(self.title.getnnz(axis=0), 1)
+        return np.log(max(self.n_stories, 1) / df)
+
     @property
     def n_items(self) -> int:
         return len(self.svc)
@@ -209,6 +229,8 @@ class StoryIndex:
         sp.save_npz(directory / LANG_FILE, self.lang.tocsr())
         sp.save_npz(directory / DECADE_FILE, self.decade.tocsr())
         sp.save_npz(directory / CREATOR_FILE, self.creator.tocsr())
+        if self.title is not None:
+            sp.save_npz(directory / TITLE_FILE, self.title.tocsr())
         meta = {
             "svc": self.svc,
             "story_codes": self.story_codes,
@@ -224,6 +246,7 @@ class StoryIndex:
             "creator_codes": self.creator_codes,
             "creator_names": self.creator_names,
             "creator_aliases": self.creator_aliases,
+            "title_terms": self.title_terms,
         }
         with gzip.open(directory / META_FILE, "wt", encoding="utf-8") as fh:
             json.dump(meta, fh)
@@ -260,6 +283,8 @@ class StoryIndex:
             creator_codes=meta.get("creator_codes", []),
             creator_names=meta.get("creator_names", []),
             creator_aliases=meta.get("creator_aliases", []),
+            title=_load_csr(directory / TITLE_FILE) if (directory / TITLE_FILE).exists() else None,
+            title_terms=meta.get("title_terms", []),
         )
 
     def first_decade(self) -> np.ndarray:

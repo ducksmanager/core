@@ -63,6 +63,31 @@ export interface Seed {
   facts?: { key: string; value: number }[];
   /** What this reader answered in an earlier session, to resume it. */
   answers?: { family: string; code: string; option: number | null }[];
+  /** Reverse image search over the story's first page, unfiltered. */
+  image_matches?: { storycode: string; score: number }[];
+  /** OCR of the first panel, where the title is printed. */
+  ocr?: OcrText[];
+  kumiko?: KumikoEvidence | null;
+}
+
+export interface OcrText {
+  text: string;
+  confidence: number;
+}
+
+export interface KumikoEvidence {
+  /** One per page of the story, in order, null where unsegmented. */
+  pages: ({ rows: number; panels: number } | null)[];
+  /** `pages` covers every page, so the panels can be totalled. */
+  whole_story?: boolean;
+}
+
+/** Kumiko and OCR over one uploaded page, shaped to go straight into a seed. */
+export interface Analysis {
+  kumiko: KumikoEvidence | null;
+  ocr: OcrText[];
+  /** Services that were unreachable or not configured. Never fatal. */
+  errors: string[];
 }
 
 /**
@@ -77,6 +102,10 @@ export interface SeedReport {
   facts_rejected: string[];
   answers_replayed: number;
   answers_dropped: string[];
+  image_unknown: string[];
+  /** Null where the index carries no titles to match OCR against. */
+  ocr_words: string[] | null;
+  kumiko_applied: string[];
   index_fingerprint: string;
 }
 

@@ -8,7 +8,13 @@
       </p>
     </header>
 
-    <quackinator-game />
+    <first-page-upload v-if="!started" @seed="begin" />
+    <template v-else>
+      <quackinator-game :key="round" :seed="seed" :restartable="false" />
+      <button type="button" class="another" @click="started = false">
+        Identify another story
+      </button>
+    </template>
 
     <footer class="footer">
       Data from
@@ -27,7 +33,22 @@
  * embedding it — Dumili mounts it in a modal on the entry it is indexing —
  * gets the same component this page does rather than a second copy of it.
  */
+import { ref, shallowRef } from "vue";
+
+import FirstPageUpload from "~quackinator/components/FirstPageUpload.vue";
 import QuackinatorGame from "~quackinator/components/QuackinatorGame.vue";
+import type { Seed } from "~quackinator/types";
+
+const started = ref(false);
+const seed = shallowRef<Seed>();
+// A fresh game per story, so a new seed starts a new session.
+const round = ref(0);
+
+const begin = (found: Seed | undefined) => {
+  seed.value = found;
+  round.value += 1;
+  started.value = true;
+};
 </script>
 
 <style scoped>
@@ -49,6 +70,10 @@ import QuackinatorGame from "~quackinator/components/QuackinatorGame.vue";
   margin: 0.35rem 0 0;
   color: var(--muted);
   max-width: 42rem;
+}
+
+.another {
+  justify-self: start;
 }
 
 .footer {

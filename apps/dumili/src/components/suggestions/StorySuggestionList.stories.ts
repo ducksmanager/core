@@ -40,7 +40,6 @@ const createMockEntryWithStories = (
           ocrPossibleStoryId: null,
           storySearchPossibleStoryId: 1,
           aiStorySearchPossibleStory: null,
-          aiOcrPossibleStory: null,
         },
       },
     ],

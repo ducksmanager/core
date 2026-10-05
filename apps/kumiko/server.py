@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import subprocess
+import tempfile
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 
@@ -8,7 +9,18 @@ class KumikoRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         params = parse_qs(self.path[2:])
 
-        result = subprocess.run(['python', './kumiko/kumiko', '-i'] + params['i'][0].split(","), capture_output=True, text=True)
+        self._run(params['i'][0].split(","))
+
+    # The image itself, for callers holding an upload rather than a URL
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as image:
+            image.write(self.rfile.read(content_length))
+            image.flush()
+            self._run([image.name])
+
+    def _run(self, inputs):
+        result = subprocess.run(['python', './kumiko/kumiko', '-i'] + inputs, capture_output=True, text=True)
 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')

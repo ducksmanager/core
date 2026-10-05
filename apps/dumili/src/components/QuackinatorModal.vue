@@ -95,14 +95,8 @@ import type { AnswerEvent } from "~quackinator/composables/useGame";
 import type { Turn } from "~quackinator/types";
 
 import { dumiliSocketInjectionKey } from "~/composables/useDumiliSocket";
-import { suggestions } from "~/stores/suggestions";
 import { STORY } from "~dumili-types/storyKinds";
-import type { FullEntry, FullIndexation } from "~dumili-services/indexation";
-import {
-  imageSearchConfidence,
-  ocrConfidence,
-} from "~dumili-utils/aiSuggestionConfidence";
-import { getEntryPages } from "~dumili-utils/entryPages";
+import type { FullEntry } from "~dumili-services/indexation";
 
 const { t: $t } = useI18n();
 
@@ -117,47 +111,44 @@ const step = ref<"search" | "accepted" | "questions">("search");
 const turn = ref<Turn>();
 const error = ref<string>();
 
-const indexation = storeToRefs(suggestions()).indexation as Ref<FullIndexation>;
-
-const likelyStories = computed(() => {
-  const image = getEntryPages(indexation.value, entry.value.id)[0]?.image;
-  if (!image) {
-    return [];
-  }
-  const ocrScores = image.aiOcrResult?.stories ?? [];
-  const bestOcr = Math.max(...ocrScores.map(({ score }) => score), 0);
-
-  return entry.value.storySuggestions
-    .flatMap((suggestion) => {
-      const ai = suggestion.aiStorySuggestion;
-      if (!ai) {
-        return [];
-      }
-      const confidence = Math.max(
-        ai.aiStorySearchPossibleStory
-          ? (imageSearchConfidence(ai.aiStorySearchPossibleStory.score) ?? 0)
-          : 0,
-        ai.aiOcrPossibleStory
-          ? (ocrConfidence(ai.aiOcrPossibleStory.score, bestOcr) ?? 0)
-          : 0,
-      );
-      return confidence > 0
-        ? [{ storycode: suggestion.storycode, confidence }]
-        : [];
-    })
-    .sort((a, b) => b.confidence - a.confidence);
-});
-
 const hasQuestions = computed(
   () =>
     entry.value.acceptedStoryKind?.storyKindRows?.kind === STORY &&
     !entry.value.includedInEntry,
 );
 
+/**
+ * Quackinator's own first guesses, from everything Dumili found on the page,
+ * so this list and the belief the questions start from cannot disagree. Below
+ * this probability a guess is the popularity prior talking, not the page.
+ */
+const MIN_LIKELY = 0.01;
+const likelyStories = computed(() =>
+  (turn.value?.guesses ?? [])
+    .filter(({ probability }) => probability >= MIN_LIKELY)
+    .map(({ storycode, probability }) => ({
+      storycode,
+      confidence: probability,
+    })),
+);
+
 const reset = () => {
   step.value = "search";
   turn.value = undefined;
   error.value = undefined;
+};
+
+/** Open the session up front: its first turn is what ranks `likelyStories`. */
+const openSession = async () => {
+  turn.value = undefined;
+  const result = await indexationSocket.value!.startQuackinatorSession(
+    entry.value.id,
+  );
+  if ("error" in result) {
+    error.value = result.error;
+    return;
+  }
+  turn.value = result.turn;
 };
 
 const acceptStory = async (storycode: string) => {
@@ -186,16 +177,10 @@ const onSearchPicked = async (storycode: string) => {
 
 const startQuestions = async () => {
   step.value = "questions";
-  error.value = undefined;
-  turn.value = undefined;
-  const result = await indexationSocket.value!.startQuackinatorSession(
-    entry.value.id,
-  );
-  if ("error" in result) {
-    error.value = result.error;
-    return;
+  if (!turn.value) {
+    error.value = undefined;
+    await openSession();
   }
-  turn.value = result.turn;
 };
 
 const onAnswered = (answer: AnswerEvent) => {
@@ -215,12 +200,15 @@ const onPicked = async (storycode: string) => {
 
 const restart = async () => {
   await indexationSocket.value!.resetQuackinatorSession(entry.value.id);
-  await startQuestions();
+  await openSession();
 };
 
 watch(show, (isOpen) => {
   if (isOpen) {
     reset();
+    if (hasQuestions.value) {
+      void openSession();
+    }
   }
 });
 </script>

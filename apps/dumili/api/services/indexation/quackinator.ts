@@ -1,10 +1,6 @@
 import axios from "axios";
 
 import { STORY } from "~dumili-types/storyKinds";
-import {
-  imageSearchConfidence,
-  ocrConfidence,
-} from "~dumili-utils/aiSuggestionConfidence";
 import { getEntryPages } from "~dumili-utils/entryPages";
 import prisma from "~prisma/client";
 import type { quackinatorFamily } from "~prisma/client_dumili/client";
@@ -50,47 +46,6 @@ export const canRunOn = (entry: FullEntry) =>
   entry.acceptedStoryKind?.storyKindRows?.kind === STORY &&
   !entry.includedInEntryId;
 
-/**
- * Rows of panels on a typical page, from Kumiko, or null where nothing was
- * segmented.
- *
- * The median across the entry's scanned pages rather than the first page's
- * count: a splash page or a final page carrying half a story is normal, and one
- * of those as the answer would be a wrong answer rather than a missing one —
- * which costs far more. Pages with no image at all are simply absent, because
- * an indexer may be working from a PDF, a handful of scans, or nothing.
- */
-const inferredRows = (indexation: FullIndexation, entry: FullEntry) => {
-  const counts = getEntryPages(indexation, entry.id)
-    .map(
-      (page) => page.image?.aiKumikoResult?.inferredStoryKindRows?.numberOfRows,
-    )
-    .filter((rows): rows is number => !!rows)
-    .sort((a, b) => a - b);
-  return counts.length ? counts[Math.floor(counts.length / 2)] : null;
-};
-
-/**
- * Total panels in the story, from Kumiko.
- *
- * Only where *every* page of the entry was segmented: a total is a sum, so a
- * missing page does not make it approximate, it makes it wrong — and a story
- * counted short is an answer that pushes the true story down rather than one
- * that merely fails to lift it.
- */
-const inferredPanels = (indexation: FullIndexation, entry: FullEntry) => {
-  const pages = getEntryPages(indexation, entry.id);
-  const segmented = pages.filter((page) => page.image?.aiKumikoResult);
-  if (!pages.length || segmented.length !== pages.length) {
-    return null;
-  }
-  return segmented.reduce(
-    (total, page) =>
-      total + (page.image!.aiKumikoResult!.detectedPanels.length ?? 0),
-    0,
-  );
-};
-
 /** The year printed on the magazine, which the indexer is holding. */
 const releaseYear = (indexation: FullIndexation) => {
   const year = Number((indexation.releaseDate ?? "").slice(0, 4));
@@ -100,85 +55,59 @@ const releaseYear = (indexation: FullIndexation) => {
 };
 
 /**
- * What reverse image search and OCR already believe, as `{storycode: 0..1}`.
- *
- * Both tools have already written their candidates against this entry's first
- * page, so this reads them back rather than re-running anything. A story found
- * by both keeps the higher confidence: the two fail independently, so one
- * missing it is not evidence against the other.
- *
- * Everything here only ever lifts a story. A shortlist that misses the reader's
- * costs them a few percent of their belief mass and nothing more, which is why
- * it can be taken seriously at all — but a *confidently wrong* one lands them
- * on a guess they have to reject, so both scales are gated above.
- */
-const priorFromOtherTools = (indexation: FullIndexation, entry: FullEntry) => {
-  const image = getEntryPages(indexation, entry.id)[0]?.image;
-  if (!image) {
-    return {};
-  }
-
-  const storycodeOf = (aiStorySuggestionId: number | null | undefined) =>
-    entry.storySuggestions.find(
-      (suggestion) => suggestion.aiStorySuggestionId === aiStorySuggestionId,
-    )?.storycode;
-
-  const confidences: Record<string, number> = {};
-  const offer = (storycode: string | undefined, confidence: number) => {
-    if (!storycode) {
-      return;
-    }
-    confidences[storycode] = Math.max(confidences[storycode] ?? 0, confidence);
-  };
-
-  for (const story of image.aiStorySearchResult?.stories ?? []) {
-    const confidence = imageSearchConfidence(story.score);
-    if (confidence !== null) {
-      offer(storycodeOf(story.aiStorySuggestion?.id), confidence);
-    }
-  }
-
-  const ocrStories = image.aiOcrResult?.stories ?? [];
-  const best = Math.max(...ocrStories.map(({ score }) => score), 0);
-  for (const story of ocrStories) {
-    const confidence = ocrConfidence(story.score, best);
-    if (confidence !== null) {
-      offer(storycodeOf(story.aiStorySuggestion?.id), confidence);
-    }
-  }
-
-  return confidences;
-};
-
-/**
- * Measurements Dumili can answer without spending one of the reader's turns.
- *
- * `pages` and `decade` come from what the indexer typed, so they are as good as
- * the entry itself. `rows` and `panels` come from Kumiko, which is computer
- * vision over whatever pages happen to be scanned — a wrong answer there is far
- * more expensive than a missing one, so both are gated on
- * `QUACKINATOR_TRUST_KUMIKO` until that error rate has been measured.
+ * What the indexer typed, which is as good as the entry itself. Everything the
+ * tools found on the page goes in `evidenceFor` instead, for Quackinator to
+ * weigh.
  */
 const factsFor = (indexation: FullIndexation, entry: FullEntry): Fact[] => {
   const facts: Fact[] = [{ key: "pages", value: pageTenths(entry) }];
-
   const year = releaseYear(indexation);
   if (year) {
     facts.push({ key: "decade", value: year });
   }
-
-  if (process.env.QUACKINATOR_TRUST_KUMIKO === "true") {
-    const rows = inferredRows(indexation, entry);
-    if (rows) {
-      facts.push({ key: "rows", value: rows });
-    }
-    const panels = inferredPanels(indexation, entry);
-    if (panels) {
-      facts.push({ key: "panels", value: panels });
-    }
-  }
-
   return facts;
+};
+
+/**
+ * Raw results of image search, OCR and Kumiko over this entry, read back from
+ * what the pipeline already stored rather than re-run. Not filtered or scaled
+ * here: how far each one is worth trusting is Quackinator's call, and it is the
+ * one that can measure it.
+ */
+const evidenceFor = (indexation: FullIndexation, entry: FullEntry) => {
+  const pages = getEntryPages(indexation, entry.id);
+  const firstImage = pages[0]?.image;
+
+  const storycodeOf = (aiStorySuggestionId: number | undefined) =>
+    entry.storySuggestions.find(
+      (suggestion) => suggestion.aiStorySuggestionId === aiStorySuggestionId,
+    )?.storycode;
+
+  const image_matches = (
+    firstImage?.aiStorySearchResult?.stories ?? []
+  ).flatMap(({ score, aiStorySuggestion }) => {
+    const storycode = storycodeOf(aiStorySuggestion?.id);
+    return storycode ? [{ storycode, score }] : [];
+  });
+
+  const ocr = (firstImage?.aiOcrResult?.matches ?? []).map(
+    ({ text, confidence }) => ({ text, confidence }),
+  );
+
+  const kumiko = {
+    pages: pages.map(({ image }) => {
+      const result = image?.aiKumikoResult;
+      return result
+        ? {
+            rows: result.inferredStoryKindRows?.numberOfRows ?? 0,
+            panels: result.detectedPanels.length,
+          }
+        : null;
+    }),
+    whole_story: true,
+  };
+
+  return { image_matches, ocr, kumiko } satisfies Seed;
 };
 
 const host = () => process.env.QUACKINATOR_HOST;
@@ -210,7 +139,7 @@ export const startQuackinatorSession = async (
   });
 
   const seed = {
-    prior: priorFromOtherTools(indexation, entry),
+    ...evidenceFor(indexation, entry),
     facts: factsFor(indexation, entry),
     answers: (stored?.answers ?? []).map(({ family, code, option }) => ({
       family,

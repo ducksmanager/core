@@ -44,7 +44,11 @@
               }}
             </h2>
             <p>
-              After {{ game.questionsAsked.value }} questions, my best match is
+              {{
+                game.questionsAsked.value
+                  ? `After ${game.questionsAsked.value} questions`
+                  : "From the page alone"
+              }}, my best match is
               <strong>{{ game.guesses.value[0]?.title ?? "unknown" }}</strong>
               at {{ formatPercent(game.confidence.value) }} confidence.
             </p>
@@ -67,9 +71,10 @@
 
         <aside class="side">
           <!-- Before any answer these are just the popularity prior, all at
-               <0.1%, which reads as noise rather than progress. -->
+               <0.1%, which reads as noise rather than progress — unless the
+               session started from what was found on the page. -->
           <guess-list
-            v-if="game.questionsAsked.value > 0"
+            v-if="game.questionsAsked.value > 0 || game.seeded.value"
             :guesses="game.guesses.value"
             :busy="game.busy.value"
             :final="game.done.value"
@@ -119,11 +124,12 @@ import ProgressMeter from "~quackinator/components/ProgressMeter.vue";
 import QuestionCard from "~quackinator/components/QuestionCard.vue";
 import { type AnswerEvent, useGame } from "~quackinator/composables/useGame";
 import { formatPercent } from "~quackinator/format";
-import type { Turn } from "~quackinator/types";
+import type { Seed, Turn } from "~quackinator/types";
 
 const {
   api = undefined,
   initialTurn = undefined,
+  seed = undefined,
   pickable = false,
   restartable = true,
 } = defineProps<{
@@ -131,6 +137,8 @@ const {
   api?: Api;
   /** A session created elsewhere, already seeded. */
   initialTurn?: Turn;
+  /** What the browser already found on the page, to start the session from. */
+  seed?: Seed;
   /** Offer "That's the one" on each guess. */
   pickable?: boolean;
   /** Let the reader throw the session away and start clean. */
@@ -150,7 +158,7 @@ const game = useGame({
   onAnswered: (answer) => emit("answered", answer),
 });
 
-onMounted(() => game.start());
+onMounted(() => game.start(seed));
 
 // A host that swaps in a different session — reopening on another entry —
 // should get that session, not the one already on screen.

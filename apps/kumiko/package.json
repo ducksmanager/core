@@ -1,0 +1,7 @@
+{
+  "name": "~kumiko",
+  "private": true,
+  "scripts": {
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/kumiko pnpm -F '~ci' prod:build-docker -f apps/kumiko/Dockerfile"
+  }
+}

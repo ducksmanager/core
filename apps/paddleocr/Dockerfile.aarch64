@@ -43,16 +43,16 @@ ENV FLAGS_enable_pir_in_executor=0 \
     OMP_NUM_THREADS=4 \
     OPENBLAS_NUM_THREADS=4
 
-COPY apps/dumili/api/paddleocr/requirements.txt ./
+COPY apps/paddleocr/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --from=ultra-infer-builder /build/PaddleX/deploy/ultra-infer/python/dist/*.whl /tmp/
 RUN pip install --no-cache-dir /tmp/ultra_infer*.whl onnxruntime paddle2onnx \
     && rm -f /tmp/*.whl
 
-COPY apps/dumili/api/paddleocr/patch_paddlex_hpi.py /tmp/patch_paddlex_hpi.py
+COPY apps/paddleocr/patch_paddlex_hpi.py /tmp/patch_paddlex_hpi.py
 RUN python /tmp/patch_paddlex_hpi.py && rm /tmp/patch_paddlex_hpi.py
 
-COPY apps/dumili/api/paddleocr/recognition_model_rules.json ./
+COPY apps/paddleocr/recognition_model_rules.json ./
 
 ENTRYPOINT ["python3", "-u", "./server.py"]

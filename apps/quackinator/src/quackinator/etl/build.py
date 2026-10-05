@@ -24,6 +24,7 @@ from quackinator.etl import plot as plotlib
 from quackinator.etl import sql
 from quackinator.etl.extract import connect, stream, to_int
 from quackinator.index.model import PAGE_SCALE, UNKNOWN, StoryIndex
+from quackinator.index.titles import title_tokens
 
 log = logging.getLogger(__name__)
 
@@ -321,6 +322,8 @@ class Raw:
     preferred_char_names: dict[str, str] = field(default_factory=dict)
     onetime_chars: set[str] = field(default_factory=set)
     story_title: dict[str, str] = field(default_factory=dict)
+    # Words of every title each story was printed under, in any language.
+    title_words: dict[str, set[str]] = field(default_factory=dict)
     story_year: dict[str, int | None] = field(default_factory=dict)
     # Path of one scan of the story's first page, per story. Path only: the site
     # it hangs off is `Settings.thumbnail_base`, and it is not the ETL's business
@@ -374,11 +377,14 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     raw.popularity = np.zeros(len(raw.sv_codes), dtype=np.int32)
     languages_of: dict[int, set[str]] = defaultdict(set)
     decades_of: dict[int, set[int]] = defaultdict(set)
-    for svc, lang, issuecode in stream(conn, sql.ENTRIES):
+    title_words: dict[str, set[str]] = defaultdict(set)
+    for svc, lang, issuecode, title in stream(conn, sql.ENTRIES):
         i = sv_pos.get(svc)
         if i is None:
             continue
         raw.popularity[i] += 1
+        if title:
+            title_words[raw.sv_story[i]] |= title_tokens(title)
         if lang:
             languages_of[i].add(lang)
         decade = issue_decade.get(issuecode)
@@ -386,6 +392,7 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
             decades_of[i].add(decade)
     raw.languages_of = dict(languages_of)
     raw.decades_of = dict(decades_of)
+    raw.title_words = dict(title_words)
     log.info(
         "  %d of %d storyversions actually printed",
         int((raw.popularity > 0).sum()),
@@ -463,6 +470,8 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
         if not sc:
             continue
         raw.story_title[sc] = title or ""
+        if title:
+            raw.title_words.setdefault(sc, set()).update(title_tokens(title))
         raw.story_year[sc] = to_int((fpd or "")[:4])
         if orig:
             raw.original_sv[sc] = orig
@@ -565,6 +574,32 @@ def plot_matrix(raw: Raw, cfg: Settings) -> tuple[sp.csr_matrix, list[str]]:
     return boolean_matrix(rows, cols, shape), vocab
 
 
+def title_matrix(
+    raw: Raw, story_codes: list[str], cfg: Settings
+) -> tuple[sp.csr_matrix, list[str]]:
+    """Title words per story, and the vocabulary behind them.
+
+    Words carried by more than `title_max_df_ratio` of stories are dropped: a
+    character's name in a third of all titles says nothing about which one it
+    is, and they are most of the matrix.
+    """
+    df: Counter[str] = Counter()
+    for sc in story_codes:
+        df.update(raw.title_words.get(sc, ()))
+    ceiling = cfg.title_max_df_ratio * max(len(story_codes), 1)
+    terms = sorted(word for word, n in df.items() if n <= ceiling)
+    term_pos = {word: j for j, word in enumerate(terms)}
+
+    rows: list[int] = []
+    cols: list[int] = []
+    for k, sc in enumerate(story_codes):
+        hit = [term_pos[w] for w in raw.title_words.get(sc, ()) if w in term_pos]
+        rows.extend([k] * len(hit))
+        cols.extend(hit)
+    shape = (len(story_codes), max(len(terms), 1))
+    return boolean_matrix(rows, cols, shape), terms
+
+
 def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
     """Turn extracted tables into the index the engine runs against.
 
@@ -584,6 +619,7 @@ def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
     story_codes = sorted({raw.sv_story[i] for i in keep_ids})
     story_number = {sc: k for k, sc in enumerate(story_codes)}
 
+    title_kept, title_terms = title_matrix(raw, story_codes, cfg)
     lang_kept, languages = set_matrix(raw.languages_of, keep_ids)
     decade_kept, decade_starts = set_matrix(raw.decades_of, keep_ids, order="natural")
     creator_kept, creator_codes = set_matrix(raw.creators_of, keep_ids)
@@ -645,6 +681,8 @@ def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
         creator_codes=creator_codes,
         creator_names=[raw.person_name.get(c) or c for c in creator_codes],
         creator_aliases=[sorted(raw.person_aliases.get(c, ())) for c in creator_codes],
+        title=title_kept,
+        title_terms=title_terms,
     )
     log.info(
         "index: %d storyversions / %d stories / %d characters / %d plot terms / %d decades",
@@ -663,6 +701,11 @@ def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
     log.info(
         "  %.1f%% of stories have a first-page scan to show",
         100 * sum(1 for path in index.story_thumbs if path) / max(index.n_stories, 1),
+    )
+    log.info(
+        "  %d title words over %.1f%% of stories",
+        len(title_terms),
+        100 * float((title_kept.getnnz(axis=1) > 0).mean()),
     )
     log.info(
         "  %d creators over %.1f%% of storyversions",
