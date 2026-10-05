@@ -104,13 +104,15 @@ const evidenceFor = (indexation: FullIndexation, entry: FullEntry) => {
           }
         : null;
     }),
-    whole_story: true,
+    whole_story: !(entry.brokenpagenumerator && entry.brokenpagedenominator),
   };
 
   return { image_matches, ocr, kumiko } satisfies Seed;
 };
 
 const host = () => process.env.QUACKINATOR_HOST;
+
+const QUACKINATOR_TIMEOUT_MS = 15_000;
 
 /**
  * Open a session on an entry, seeded with everything Dumili holds about it.
@@ -150,7 +152,11 @@ export const startQuackinatorSession = async (
 
   let turn: Turn;
   try {
-    turn = (await axios.post<Turn>(`${host()}/api/sessions`, seed)).data;
+    turn = (
+      await axios.post<Turn>(`${host()}/api/sessions`, seed, {
+        timeout: QUACKINATOR_TIMEOUT_MS,
+      })
+    ).data;
   } catch (e) {
     return { error: `Could not start a Quackinator session: ${e}` };
   }

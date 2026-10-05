@@ -102,6 +102,8 @@ export interface SeedReport {
   facts_rejected: string[];
   answers_replayed: number;
   answers_dropped: string[];
+  /** Stories image search lifted, past its score gate. */
+  image_applied: number;
   image_unknown: string[];
   /** Null where the index carries no titles to match OCR against. */
   ocr_words: string[] | null;

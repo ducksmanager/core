@@ -157,6 +157,7 @@ def test_the_seed_reports_what_evidence_landed(engine):
         ),
     )
 
+    assert report.image_applied == 1
     assert report.image_unknown == ["gone"]
     assert report.ocr_words == ["own3"]
     assert report.kumiko_applied == ["rows"]

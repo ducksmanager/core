@@ -7,6 +7,7 @@ import type {
   Guess,
   Question,
   Seed,
+  SeedReport,
   Turn,
 } from "~quackinator/types";
 
@@ -37,12 +38,25 @@ export interface GameOptions {
    */
   initialTurn?: Turn;
   /**
-   * Called for every answer as it is given, so a host can persist it. Fires
-   * before the turn comes back: what it reports is what the reader said, not
-   * what the engine made of it.
+   * Called for every answer the engine accepts, so a host can persist it. What
+   * it reports is what the reader said, not what the engine made of it.
    */
   onAnswered?: (answer: AnswerEvent) => void;
 }
+
+/**
+ * Whether a seed moved the belief at all. A seed can arrive with nothing usable
+ * in it — an upload no tool could read, a host whose data no longer fits the
+ * index — and its guesses are then the bare popularity prior.
+ */
+const seedApplied = (report: SeedReport | null) =>
+  !!report &&
+  (report.prior_applied > 0 ||
+    report.facts_applied.length > 0 ||
+    report.answers_replayed > 0 ||
+    report.image_applied > 0 ||
+    (report.ocr_words?.length ?? 0) > 0 ||
+    report.kumiko_applied.length > 0);
 
 /**
  * All game state lives here. The backend holds the belief vector; the frontend
@@ -134,7 +148,7 @@ export const useGame = (options: GameOptions = {}) => {
   const adopt = (turn: Turn) => {
     trail.value = [];
     creatorOffered.value = true;
-    seeded.value = turn.seed !== null;
+    seeded.value = seedApplied(turn.seed);
     absorb(turn);
     startingBits.value = turn.story_entropy_bits;
   };
@@ -155,7 +169,7 @@ export const useGame = (options: GameOptions = {}) => {
     if (!current || !id) return;
     const [family] = current.key.split(":");
     const isFamily = family === "char" || family === "plot";
-    options.onAnswered?.({
+    const event: AnswerEvent = {
       key: current.key,
       family: isFamily ? family : null,
       // A character travels as its code; a plot term is its own identity and
@@ -164,9 +178,13 @@ export const useGame = (options: GameOptions = {}) => {
         ? (current.subject ?? current.key.slice(family.length + 1))
         : null,
       option,
-    });
+    };
     await guard(async () => {
       const turn = await api.answer(id, current.key, option);
+      // Only once the engine has taken it: a host stores what it is told and
+      // replays it on resume, so a double click or a refused answer must not
+      // reach it.
+      options.onAnswered?.(event);
       trail.value.push({
         key: current.key,
         prompt: current.prompt,

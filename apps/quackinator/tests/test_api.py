@@ -169,3 +169,47 @@ def test_an_unreachable_service_is_reported_not_raised(monkeypatch):
 
     app, _ = _services(monkeypatch, kumiko=OSError("down"))
     assert app._analyze(b"jpeg", "it").errors == ["kumiko: down"]
+
+
+class _Upload:
+    """A request body arriving in chunks, counting how many were read."""
+
+    def __init__(self, chunks: list[bytes]):
+        self.chunks = chunks
+        self.read = 0
+
+    async def stream(self):
+        for chunk in self.chunks:
+            self.read += 1
+            yield chunk
+
+
+def test_an_oversized_upload_is_refused_before_it_is_all_read(monkeypatch):
+    import asyncio
+
+    import pytest
+    from fastapi import HTTPException
+
+    from quackinator.api import app
+
+    monkeypatch.setattr(app.settings, "max_upload_bytes", 10)
+    upload = _Upload([b"x" * 8, b"x" * 8, b"x" * 8, b"x" * 8])
+
+    with pytest.raises(HTTPException) as refused:
+        asyncio.run(app.analyze(upload, "it"))  # type: ignore[arg-type]
+
+    assert refused.value.status_code == 413
+    assert upload.read == 2
+
+
+def test_an_upload_within_the_limit_is_analysed_whole(monkeypatch):
+    import asyncio
+
+    from quackinator.api import app
+
+    seen: list[bytes] = []
+    monkeypatch.setattr(app.settings, "max_upload_bytes", 100)
+    monkeypatch.setattr(app, "_analyze", lambda image, language: seen.append(image) or "analysed")
+
+    assert asyncio.run(app.analyze(_Upload([b"ab", b"cd"]), None)) == "analysed"  # type: ignore[arg-type]
+    assert seen == [b"abcd"]

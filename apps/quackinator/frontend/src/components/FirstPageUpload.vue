@@ -133,14 +133,19 @@ const analyze = async () => {
     ]);
 
     const seed: Seed = {};
-    if (matches.status === "fulfilled" && matches.value) {
+    if (matches.status === "fulfilled" && matches.value?.length) {
       seed.image_matches = matches.value;
     } else if (matches.status === "rejected") {
       console.warn("Image search failed", matches.reason);
     }
     if (analysis.status === "fulfilled") {
-      seed.kumiko = analysis.value.kumiko;
-      seed.ocr = analysis.value.ocr;
+      const { kumiko, ocr } = analysis.value;
+      if (kumiko?.pages.some((page) => page !== null)) {
+        seed.kumiko = kumiko;
+      }
+      if (ocr.length) {
+        seed.ocr = ocr;
+      }
       if (analysis.value.errors.length) {
         console.warn("Page analysis incomplete", analysis.value.errors);
       }

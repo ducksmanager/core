@@ -216,6 +216,9 @@ class SeedOut(BaseModel):
         description="`family:code` for answers this index can no longer place — a "
         "recoded character, or a plot term a rebuild dropped from the vocabulary"
     )
+    image_applied: int = Field(
+        default=0, description="Stories image search lifted, past its score gate"
+    )
     image_unknown: list[str] = Field(
         default_factory=list, description="Image-search storycodes this index does not have"
     )
@@ -366,6 +369,7 @@ def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
         index, ((m.storycode, m.score) for m in seed.image_matches), cfg
     )
     session.lift_stories(lift)
+    image_applied = int((lift > 1).sum())
 
     ocr_words: list[str] | None = None
     ocr = evidence.ocr_lifts(index, ((t.text, t.confidence) for t in seed.ocr), cfg)
@@ -390,6 +394,7 @@ def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
         facts_rejected=facts_rejected,
         answers_replayed=replayed,
         answers_dropped=dropped,
+        image_applied=image_applied,
         image_unknown=image_unknown,
         ocr_words=ocr_words,
         kumiko_applied=kumiko_applied,
@@ -532,12 +537,17 @@ async def analyze(request: Request, language: str | None = None) -> AnalysisOut:
     is the magazine's Inducks language code; OCR is skipped without one. Image
     search is not here: it is DM's, and the browser calls it directly.
     """
-    image = await request.body()
-    if not image:
+    # Counted as it arrives, so an oversized upload is refused before it is held
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in request.stream():
+        size += len(chunk)
+        if size > settings.max_upload_bytes:
+            raise HTTPException(413, "image too large")
+        chunks.append(chunk)
+    if not size:
         raise HTTPException(400, "empty image")
-    if len(image) > settings.max_upload_bytes:
-        raise HTTPException(413, "image too large")
-    return await run_in_threadpool(_analyze, image, language)
+    return await run_in_threadpool(_analyze, b"".join(chunks), language)
 
 
 @app.delete("/api/sessions/{session_id}")

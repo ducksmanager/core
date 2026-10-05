@@ -20,7 +20,7 @@
         <LikelyStories
           v-if="likelyStories.length"
           :stories="likelyStories"
-          @pick="onSearchPicked"
+          @pick="onLikelyPicked"
         />
       </div>
     </template>
@@ -40,7 +40,7 @@
       <LikelyStories
         v-if="likelyStories.length"
         :stories="likelyStories"
-        @pick="onSearchPicked"
+        @pick="onLikelyPicked"
       />
     </template>
 
@@ -151,7 +151,7 @@ const openSession = async () => {
   turn.value = result.turn;
 };
 
-const acceptStory = async (storycode: string) => {
+const acceptStory = async (storycode: string, fromQuackinator: boolean) => {
   const existing = entry.value.storySuggestions.find(
     (suggestion) => suggestion.storycode === storycode,
   );
@@ -161,7 +161,9 @@ const acceptStory = async (storycode: string) => {
       await indexationSocket.value!.createStorySuggestion({
         entryId: entry.value.id,
         storycode,
-        quackinatorSessionId: entry.value.quackinatorSession?.id,
+        quackinatorSessionId: fromQuackinator
+          ? entry.value.quackinatorSession?.id
+          : undefined,
       })
     ).createdStorySuggestion.id;
   await indexationSocket.value!.acceptStorySuggestion(
@@ -171,7 +173,12 @@ const acceptStory = async (storycode: string) => {
 };
 
 const onSearchPicked = async (storycode: string) => {
-  await acceptStory(storycode);
+  await acceptStory(storycode, false);
+  step.value = "accepted";
+};
+
+const onLikelyPicked = async (storycode: string) => {
+  await acceptStory(storycode, true);
   step.value = "accepted";
 };
 
@@ -194,7 +201,7 @@ const onAnswered = (answer: AnswerEvent) => {
 };
 
 const onPicked = async (storycode: string) => {
-  await acceptStory(storycode);
+  await acceptStory(storycode, true);
   show.value = false;
 };
 
