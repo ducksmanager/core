@@ -69,3 +69,9 @@ url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/187623798"
 checksum = "blake3:0981ad12b1d048e178e8c72947c7653845a131c5771dc82c2bb563d1119002a7"
 url = "https://github.com/pnpm/pnpm/releases/download/v9.8.0/pnpm-macos-arm64"
 url_api = "https://api.github.com/repos/pnpm/pnpm/releases/assets/187623795"
+
+[[tools.turbo]]
+version = "2.11.3"
+aube = { path = ".mise/locks/turbo/2.11.3", digest = "sha256:e1ec8655272836931406c0b1a0046338f9f2680bd887ce07321b6668700855cf" }
+backend = "npm:turbo"
+specifiers = ["2.11.3"]
