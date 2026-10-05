@@ -8,9 +8,6 @@
   "dependencies": {
     "husky": "^9.1.7"
   },
-  "devDependencies": {
-    "turbo": "^2.11.3"
-  },
   "scripts": {
     "prepare": "husky",
     "lint": "turbo lint --log-order=stream -F '!~duckguessr*'  -- --cache",

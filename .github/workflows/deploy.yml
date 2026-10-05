@@ -61,8 +61,6 @@ jobs:
           lastSuccessfulCommit=${{ env.NX_BASE }}
           echo "lastSuccessfulCommit=$lastSuccessfulCommit" >> "$GITHUB_ENV"
 
-          pnpm i -g "turbo@$(node -p "require('./package.json').devDependencies.turbo")"
-
           allPackages=$(turbo ls --output=json)
 
           # Files outside every workspace package are invisible to turbo's change
@@ -108,7 +106,7 @@ jobs:
       - name: Retrieve pre-build files
         if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo prod:transfer-files-pre
+          turbo prod:transfer-files-pre
 
       - uses: docker/setup-buildx-action@v4
         if: env.has_affected == 'true'
@@ -116,14 +114,14 @@ jobs:
       - name: Build apps
         if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo $TURBO_FILTERS build prod:build-docker
+          turbo $TURBO_FILTERS build prod:build-docker
 
       - name: Send post-build files
         if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo $TURBO_FILTERS prod:transfer-files-post
+          turbo $TURBO_FILTERS prod:transfer-files-post
 
       - name: Deploy
         if: env.has_affected == 'true'
         run: |
-          ./node_modules/.bin/turbo --concurrency=1 $TURBO_FILTERS prod:deploy
+          turbo --concurrency=1 $TURBO_FILTERS prod:deploy
