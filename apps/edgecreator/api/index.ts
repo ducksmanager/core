@@ -69,6 +69,7 @@ app.get(
 );
 const httpServer = createServer(app);
 const io = new ServerWithUser(httpServer, {
+  maxHttpBufferSize: 10 * 1024 * 1024,
   cors: {
     origin: "*",
   },
