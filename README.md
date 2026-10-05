@@ -84,7 +84,11 @@ flowchart LR
 
 ### Prerequisites
 
-- [PNPM](https://pnpm.io/)
-- [Bun](https://bun.sh/)
-- [Node.js](https://nodejs.org/en/) 26
+- [mise](https://mise.jdx.dev/), which installs the pinned Node.js, PNPM and Bun versions from [mise.toml](mise.toml). Apps needing more tools add them in their own `mise.toml`
 - [Docker](https://www.docker.com/)
+
+```bash
+mise install
+pnpm install
+pnpm dev:web   # or any other dev:* script from package.json
+```
