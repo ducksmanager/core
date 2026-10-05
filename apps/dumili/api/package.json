@@ -46,7 +46,8 @@
     "socket.io": "^4.8.3",
     "unpdf": "^1.8.1",
     "~api": "workspace:*",
-    "~prisma-schemas": "workspace:*"
+    "~prisma-schemas": "workspace:*",
+    "~quackinator-api": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",

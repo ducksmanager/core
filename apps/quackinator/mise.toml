@@ -66,4 +66,13 @@ run = "pytest -q"
 
 [tasks.lint]
 description = "Lint and format check"
-run = "ruff check src tests"
+# Accepts the flags `pnpm lint` passes to every package's eslint
+usage = '''
+flag "--cache"
+flag "--no-cache"
+flag "--fix"
+'''
+run = [
+    "test -x .venv/bin/ruff || mise run install",
+    'ruff check src tests ${usage_fix:+--fix} ${usage_no_cache:+--no-cache}',
+]

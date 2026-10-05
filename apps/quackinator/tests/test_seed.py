@@ -9,9 +9,9 @@ costs no turn, and that a stored answer replays into the same belief.
 
 import numpy as np
 import pytest
+from test_engine import make_index
 
 from quackinator.engine.session import Engine, Session
-from test_engine import make_index
 
 
 @pytest.fixture

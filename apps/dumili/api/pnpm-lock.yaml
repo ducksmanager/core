@@ -77,6 +77,9 @@ importers:
       ~prisma-schemas:
         specifier: workspace:*
         version: link:../../../packages/prisma-schemas
+      ~quackinator-api:
+        specifier: workspace:*
+        version: link:../../quackinator
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.7
