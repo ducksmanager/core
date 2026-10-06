@@ -1,11 +1,14 @@
 <template>
   <aside class="likely">
-    <h6 class="heading">{{ $t("Actuellement les plus probables") }}</h6>
+    <h6 class="heading">
+      {{ title ?? $t("Actuellement les plus probables") }}
+    </h6>
     <ul class="list">
       <li
         v-for="story in stories"
         :key="story.storycode"
         class="entry"
+        :class="{ selected: story.storycode === selected }"
         role="button"
         tabindex="0"
         @click="emit('pick', story.storycode)"
@@ -13,10 +16,22 @@
         @keydown.space.self.prevent="emit('pick', story.storycode)"
       >
         <div
+          v-if="story.confidence !== undefined"
           class="bar"
           :style="{ width: `${Math.max(4, story.confidence * 100)}%` }"
         />
-        <StoryWithImage :storycode="story.storycode" />
+        <StoryWithImage :storycode="story.storycode">
+          <template v-if="story.sources?.length" #prefix>
+            <div class="d-flex flex-wrap gap-1">
+              <b-badge
+                v-for="source in story.sources"
+                :key="source"
+                variant="secondary"
+                >{{ source }}</b-badge
+              >
+            </div>
+          </template>
+        </StoryWithImage>
       </li>
     </ul>
   </aside>
@@ -26,7 +41,16 @@
 const { t: $t } = useI18n();
 
 defineProps<{
-  stories: { storycode: string; confidence: number }[];
+  title?: string;
+  /** The accepted story, emphasised. */
+  selected?: string;
+  stories: {
+    storycode: string;
+    /** 0..1, drawn as a bar behind the row. */
+    confidence?: number;
+    /** Where the suggestion came from, shown as badges. */
+    sources?: string[];
+  }[];
 }>();
 
 const emit = defineEmits<{
@@ -52,13 +76,17 @@ const emit = defineEmits<{
   margin: 0;
   padding: 0;
   list-style: none;
-  max-height: 16rem;
-  overflow-y: auto;
+  height: 10rem;
+  overflow-x: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.25rem;
 }
 
 .entry {
   position: relative;
-  height: 4rem;
+  flex: 0 0 15rem;
+  height: 100%;
   overflow: hidden;
   padding: 0.25rem;
   margin-bottom: 0.25rem;
@@ -71,6 +99,12 @@ const emit = defineEmits<{
   &:focus-visible {
     background: #ddd;
   }
+}
+
+.selected {
+  outline: 3px solid #62a8f5;
+  outline-offset: -3px;
+  font-weight: 700;
 }
 
 .bar {

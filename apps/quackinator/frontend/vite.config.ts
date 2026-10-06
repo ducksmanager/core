@@ -10,10 +10,5 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    // Proxying keeps the browser on one origin in dev, so CORS never enters
-    // the picture even though the API also allows it explicitly.
-    proxy: {
-      "/api": { target: "http://127.0.0.1:8000", changeOrigin: true },
-    },
   },
 });

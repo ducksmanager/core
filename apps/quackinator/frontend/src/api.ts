@@ -28,7 +28,14 @@ async function request<T>(
     );
   }
   if (!response.ok) {
-    const detail = await response.text().catch(() => "");
+    const body = await response.text().catch(() => "");
+    let detail = body;
+    try {
+      // FastAPI's HTTPException body
+      detail = (JSON.parse(body) as { detail?: string }).detail ?? body;
+    } catch {
+      // Not JSON: a proxy's error page, say
+    }
     throw new ApiError(detail || response.statusText, response.status);
   }
   return (await response.json()) as T;
@@ -38,9 +45,7 @@ async function request<T>(
  * A client bound to one API origin.
  *
  * The origin is a parameter rather than a build-time constant because the
- * standalone app and an embedding host do not agree on it: the app is served
- * from the same origin as the API (or proxied to it in dev), while Dumili
- * mounts these components inside its own page and has to reach across.
+ * standalone app and an embedding host such as Dumili each configure their own.
  */
 export const createApi = (base: string) => ({
   /**
@@ -107,7 +112,6 @@ export const createApi = (base: string) => ({
 
 export type Api = ReturnType<typeof createApi>;
 
-/** The standalone app's client, on whatever origin serves it. */
 export const api = createApi(import.meta.env.VITE_API_BASE ?? "");
 
 export { ApiError };

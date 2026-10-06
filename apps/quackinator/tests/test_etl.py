@@ -42,6 +42,7 @@ def make_raw(n=6) -> Raw:
         sv_rows=sv_rows[:n],
         sv_cols=sv_cols[:n],
         sv_panels=sv_panels[:n],
+        sv_cover=[False] * n,
         popularity=np.array([5, 1, 12, 3, 7, 0][:n], dtype=np.int32),
         languages_of={0: {"en"}, 1: {"en", "fr"}, 2: {"it"}, 3: {"fr"}, 4: {"en"}},
         decades_of={0: {1950, 1990}, 1: {1950}, 2: {1970}, 3: {1970, 1980}, 4: {2000}},
@@ -128,6 +129,13 @@ def test_unprinted_storyversions_are_dropped():
     index = assemble(make_raw(), settings)
     assert index.svc == ["sv0", "sv1", "sv2", "sv3", "sv4"]
     assert index.n_stories == 3
+
+
+def test_the_cover_flag_follows_its_row():
+    raw = make_raw()
+    raw.sv_cover[4] = True
+    index = assemble(raw, settings)
+    assert index.cover.tolist() == [False, False, False, False, True]
 
 
 def test_story_ids_index_the_story_catalog():

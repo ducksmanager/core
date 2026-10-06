@@ -1,9 +1,22 @@
 /** Mirrors the Pydantic models in src/quackinator/api/app.py. */
 
+/**
+ * Text to show, as an English template and what fills it, so that it can be
+ * translated: see `useQuackinatorI18n`. Names and terms are always parameters.
+ */
+export interface Message {
+  id: string;
+  params: Record<string, string>;
+}
+
 export interface Question {
   key: string;
   prompt: string;
   options: string[];
+  /** `prompt`, to translate. */
+  prompt_message: Message;
+  /** `options`, in the same order, to translate. */
+  option_messages: Message[];
   /** Information this question is expected to yield. */
   gain_bits: number;
   /**
@@ -51,6 +64,8 @@ export interface Turn {
   story_entropy_bits: number;
   questions_asked: number;
   done: boolean;
+  /** Identifying a cover rather than a comic story. */
+  cover: boolean;
   /** Only on the turn that created the session, and only if it was seeded. */
   seed: SeedReport | null;
 }
@@ -68,6 +83,10 @@ export interface Seed {
   /** OCR of the first panel, where the title is printed. */
   ocr?: OcrText[];
   kumiko?: KumikoEvidence | null;
+  /** Questions never to ask, after `facts` has answered what it can. */
+  exclude?: string[];
+  /** Identify a cover rather than a comic story: no layout questions or facts. */
+  cover?: boolean;
 }
 
 export interface OcrText {
@@ -84,10 +103,8 @@ export interface KumikoEvidence {
 
 /** Kumiko and OCR over one uploaded page, shaped to go straight into a seed. */
 export interface Analysis {
-  kumiko: KumikoEvidence | null;
+  kumiko: KumikoEvidence;
   ocr: OcrText[];
-  /** Services that were unreachable or not configured. Never fatal. */
-  errors: string[];
 }
 
 /**
@@ -122,6 +139,6 @@ export interface CreatorMatch {
 
 export interface AnsweredQuestion {
   key: string;
-  prompt: string;
-  answer: string;
+  prompt: Message;
+  answer: Message;
 }

@@ -24,6 +24,7 @@ from starlette.concurrency import run_in_threadpool
 
 from quackinator.config import settings
 from quackinator.engine import evidence
+from quackinator.engine.questions import Text
 from quackinator.engine.session import Engine, Session
 
 log = logging.getLogger(__name__)
@@ -36,11 +37,23 @@ SESSIONS: OrderedDict[str, tuple[float, Session]] = OrderedDict()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global ENGINE
+    require_services()
     log.info("loading index from %s", settings.index_dir)
     ENGINE = Engine.load(settings)
     log.info("engine ready: %d storyversions", ENGINE.index.n_items)
     yield
     SESSIONS.clear()
+
+
+def require_services() -> None:
+    """Refuse to serve without the services an upload is analysed with."""
+    missing = [
+        f"QUACKINATOR_{name.upper()}"
+        for name in ("kumiko_host", "ocr_host")
+        if not getattr(settings, name)
+    ]
+    if missing:
+        raise RuntimeError(f"not configured: {', '.join(missing)}")
 
 
 def inducks_character_url(code: str | None) -> str | None:
@@ -91,10 +104,32 @@ app.add_middleware(
 )
 
 
+class MessageOut(BaseModel):
+    """Text to show, as a client translates it: an English template and what fills it."""
+
+    id: str = Field(description="The English template, with {placeholders}")
+    params: dict[str, str] = Field(
+        default_factory=dict,
+        description="Fills the placeholders. Names and terms from the index, never translated",
+    )
+
+
+def message(text: str) -> MessageOut:
+    """The message behind `text`. Text made from data alone — a name — is passed
+    through as a parameter, so a client never looks it up as a template."""
+    if isinstance(text, Text):
+        return MessageOut(id=text.id, params=text.params)
+    return MessageOut(id="{text}", params={"text": text})
+
+
 class QuestionOut(BaseModel):
     key: str
     prompt: str
     options: list[str]
+    prompt_message: MessageOut = Field(description="`prompt`, for a client to translate")
+    option_messages: list[MessageOut] = Field(
+        description="`options`, in the same order, for a client to translate"
+    )
     gain_bits: float = Field(description="Information this question is expected to yield")
     inducks_url: str | None = Field(
         default=None,
@@ -185,6 +220,11 @@ class SeedIn(BaseModel):
         default_factory=list,
         description="Answers the caller can read out of its own records. Cost no turn",
     )
+    exclude: list[str] = Field(
+        default_factory=list,
+        description="Questions never to ask, applied after `facts`: the caller either "
+        "answered them there or has decided its reader cannot",
+    )
     answers: list[ReplayIn] = Field(
         default_factory=list,
         description="Answers this reader gave in an earlier session, to resume it",
@@ -198,6 +238,11 @@ class SeedIn(BaseModel):
         description="OCR of the first panel of the story, where the title is printed",
     )
     kumiko: KumikoIn | None = None
+    cover: bool = Field(
+        default=False,
+        description="Identify a cover rather than a comic story. Layout questions do "
+        "not apply to one, and are neither asked nor accepted as facts",
+    )
 
 
 class SeedOut(BaseModel):
@@ -248,6 +293,7 @@ class TurnOut(BaseModel):
     )
     questions_asked: int
     done: bool
+    cover: bool = Field(description="Identifying a cover rather than a comic story")
     seed: SeedOut | None = Field(
         default=None, description="Only on the turn that created the session"
     )
@@ -310,6 +356,8 @@ def _turn(session_id: str, session: Session) -> TurnOut:
                 key=pending.key,
                 prompt=pending.prompt,
                 options=pending.options,
+                prompt_message=message(pending.prompt),
+                option_messages=[message(option) for option in pending.options],
                 gain_bits=pending.gain_bits,
                 # Characters are the only subjects the bank has, so a subject
                 # is a character. See `Question.subject`.
@@ -334,6 +382,7 @@ def _turn(session_id: str, session: Session) -> TurnOut:
         story_entropy_bits=session.story_entropy_bits,
         questions_asked=session.questions_asked,
         done=pending is None,
+        cover=session.cover,
     )
 
 
@@ -353,6 +402,8 @@ def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
         (facts_applied if session.apply_fact(fact.key, fact.value) else facts_rejected).append(
             fact.key
         )
+    for key in seed.exclude:
+        session.exclude(key)
 
     replayed, dropped = 0, []
     for answer in seed.answers:
@@ -412,7 +463,10 @@ def start_session(seed: SeedIn | None = None) -> TurnOut:
     in its own database — or the same reader resuming.
     """
     session_id = uuid.uuid4().hex
-    session = Session(engine=_engine())
+    try:
+        session = Session(engine=_engine(), cover=seed is not None and seed.cover)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
     now = time.monotonic()
     # Room for the one about to be added.
     _evict(now, settings.max_sessions - 1)
@@ -467,12 +521,8 @@ def name_creator(session_id: str, body: CreatorIn) -> TurnOut:
 class AnalysisOut(BaseModel):
     """Kumiko and OCR over one uploaded page, shaped to go straight into a seed."""
 
-    kumiko: KumikoIn | None
+    kumiko: KumikoIn
     ocr: list[OcrTextIn]
-    errors: list[str] = Field(
-        description="Services that were unreachable or not configured. Never fatal: "
-        "the reader can always be asked questions instead"
-    )
 
 
 def _post(url: str, body: bytes, content_type: str) -> object:
@@ -484,15 +534,12 @@ def _post(url: str, body: bytes, content_type: str) -> object:
 
 
 def _analyze(image: bytes, language: str | None) -> AnalysisOut:
-    errors: list[str] = []
-    if not settings.kumiko_host:
-        return AnalysisOut(kumiko=None, ocr=[], errors=["kumiko: not configured"])
     try:
         pages = _post(settings.kumiko_host, image, "application/octet-stream")
         panels = pages[0]["panels"] if pages else []  # type: ignore[index]
     except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
         log.warning("kumiko failed: %s", exc)
-        return AnalysisOut(kumiko=None, ocr=[], errors=[f"kumiko: {exc}"])
+        raise HTTPException(502, f"Could not segment the page: {exc}") from exc
 
     kumiko = KumikoIn(
         pages=[
@@ -508,9 +555,7 @@ def _analyze(image: bytes, language: str | None) -> AnalysisOut:
     # The title is in the first panel, and the rest of the page is speech
     # balloons that would match every title sharing a word with them.
     ocr: list[OcrTextIn] = []
-    if not settings.ocr_host:
-        errors.append("ocr: not configured")
-    elif language and panels:
+    if language and panels:
         payload = {
             "image": base64.b64encode(image).decode("ascii"),
             "language": language,
@@ -524,8 +569,8 @@ def _analyze(image: bytes, language: str | None) -> AnalysisOut:
             ]
         except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
             log.warning("ocr failed: %s", exc)
-            errors.append(f"ocr: {exc}")
-    return AnalysisOut(kumiko=kumiko, ocr=ocr, errors=errors)
+            raise HTTPException(502, f"Could not read the title: {exc}") from exc
+    return AnalysisOut(kumiko=kumiko, ocr=ocr)
 
 
 @app.post("/api/analyze", response_model=AnalysisOut)

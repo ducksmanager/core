@@ -1,20 +1,33 @@
 <template>
   <section class="card" :aria-busy="busy">
-    <p class="index">Before we start</p>
-    <h2 class="prompt">Does the first page name who wrote or drew it?</h2>
+    <p class="index">{{ t("Before we start") }}</p>
+    <h2 class="prompt">
+      {{
+        cover
+          ? t("Does the cover name who drew it?")
+          : t("Does the first page name who wrote or drew it?")
+      }}
+    </h2>
     <p class="hint">
-      Many printings don't credit anyone — if yours doesn't, skip this. When it
-      is there, it narrows things down more than any question can.
+      {{
+        t(
+          "Many printings don't credit anyone — if yours doesn't, skip this. When it is there, it narrows things down more than any question can.",
+        )
+      }}
     </p>
 
     <label class="field">
-      <span class="sr-only">Author or artist name</span>
+      <span class="sr-only">{{ t("Author or artist name") }}</span>
       <input
         v-model="query"
         type="text"
         autocomplete="off"
         spellcheck="false"
-        placeholder="Type a name from the page…"
+        :placeholder="
+          cover
+            ? t('Type a name from the cover…')
+            : t('Type a name from the page…')
+        "
         :disabled="busy"
       />
     </label>
@@ -23,19 +36,22 @@
       <li v-for="match in matches" :key="match.creator">
         <button type="button" :disabled="busy" @click="emit('pick', match)">
           <span class="name">{{ match.name }}</span>
-          <!-- Inducks stores one canonical spelling; the page may print another. -->
           <span v-if="match.matched !== match.name" class="alias">
-            printed as {{ match.matched }}
+            {{ t("printed as {name}", { name: match.matched }) }}
           </span>
-          <span class="count"
-            >{{ match.stories.toLocaleString() }} stories</span
-          >
+          <span class="count">{{
+            t(
+              "{count} story | {count} stories",
+              { count: match.stories.toLocaleString(locale) },
+              match.stories,
+            )
+          }}</span>
         </button>
       </li>
     </ul>
 
     <p v-else-if="query.trim().length >= 2 && !searching" class="empty">
-      No one by that name in Inducks. Check the spelling, or skip.
+      {{ t("No one by that name in Inducks. Check the spelling, or skip.") }}
     </p>
 
     <button
@@ -44,7 +60,7 @@
       :disabled="busy"
       @click="emit('dismiss')"
     >
-      No names printed — start the questions
+      {{ t("No names printed — start the questions") }}
     </button>
   </section>
 </template>
@@ -52,9 +68,14 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
+import { useQuackinatorI18n } from "~quackinator/i18n";
 import type { CreatorMatch } from "~quackinator/types";
 
-const { busy } = defineProps<{ busy: boolean }>();
+const { busy, cover = false } = defineProps<{
+  busy: boolean;
+  /** Identifying a cover, whose credit is its artist's signature. */
+  cover?: boolean;
+}>();
 const emit = defineEmits<{
   (
     e: "search",
@@ -64,6 +85,8 @@ const emit = defineEmits<{
   (e: "pick", match: CreatorMatch): void;
   (e: "dismiss"): void;
 }>();
+
+const { t, locale } = useQuackinatorI18n();
 
 const query = ref("");
 const matches = ref<CreatorMatch[]>([]);

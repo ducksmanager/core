@@ -2,6 +2,7 @@
   "name": "~kumiko",
   "private": true,
   "scripts": {
+    "dev": "docker compose -f docker-compose-dev.yml up --force-recreate -d && docker compose -f docker-compose-dev.yml logs -f",
     "prod:build-docker": "REPO_NAME=ghcr.io/bperel/kumiko pnpm -F '~ci' prod:build-docker -f apps/kumiko/Dockerfile"
   }
 }

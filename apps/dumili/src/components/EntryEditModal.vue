@@ -1,7 +1,20 @@
 <template>
-  <b-modal v-model="show" :title="$t('Détails de l\'entrée')" lazy no-footer>
+  <b-modal
+    v-model="show"
+    :title="$t('Détails de l\'entrée')"
+    lazy
+    no-footer
+    :no-backdrop="quackinatorShown"
+    :no-trap="quackinatorShown"
+    :body-scrolling="quackinatorShown"
+    :modal-class="{ 'd-none': quackinatorShown }"
+  >
     <b-form @submit.prevent>
-      <entry-edit-form-group v-model="draft" allow-included-entries />
+      <entry-edit-form-group
+        v-model="draft"
+        v-model:quackinator-shown="quackinatorShown"
+        allow-included-entries
+      />
     </b-form>
   </b-modal>
 </template>
@@ -24,6 +37,7 @@ const { coa: coaEvents } = inject(dmSocketInjectionKey)!;
 const cloneEntry = () => JSON.parse(JSON.stringify(entry.value)) as FullEntry;
 
 const draft = ref<FullEntry>(cloneEntry());
+const quackinatorShown = ref(false);
 
 const draftUpdates = computed(() =>
   [draft.value, ...(draft.value.includedEntries ?? [])].map(
@@ -70,11 +84,9 @@ watch(
 
 watchDebounced(
   draftUpdates,
-  async (entryUpdates, oldEntryUpdates) => {
-    if (JSON.stringify(entryUpdates) === JSON.stringify(oldEntryUpdates)) {
-      return;
-    }
+  async (entryUpdates) => {
     const socket = indexationSocket.value!;
+    const live = [entry.value, ...(entry.value.includedEntries ?? [])];
     for (const {
       acceptedStory,
       acceptedStoryKind,
@@ -84,30 +96,45 @@ watchDebounced(
       storySuggestions,
       title,
     } of entryUpdates) {
-      await socket.acceptStoryKindSuggestion(id, acceptedStoryKind?.id ?? null);
+      const current = live.find((liveEntry) => liveEntry.id === id);
 
-      let storySuggestionId: number | null = null;
-      if (acceptedStory) {
-        storySuggestionId =
-          storySuggestions.find((s) => s.storycode === acceptedStory.storycode)
-            ?.id ?? null;
-        if (storySuggestionId === null) {
-          const { createdStorySuggestion } = await socket.createStorySuggestion(
-            {
-              entryId: id,
-              storycode: acceptedStory.storycode,
-            },
-          );
-          storySuggestionId = createdStorySuggestion.id;
-        }
+      if (acceptedStoryKind?.id !== current?.acceptedStoryKind?.id) {
+        await socket.acceptStoryKindSuggestion(
+          id,
+          acceptedStoryKind?.id ?? null,
+        );
       }
-      await socket.acceptStorySuggestion(id, storySuggestionId);
 
-      await socket.updateEntry(id, {
-        entirepages,
-        position,
-        title,
-      });
+      if (acceptedStory?.storycode !== current?.acceptedStory?.storycode) {
+        let storySuggestionId: number | null = null;
+        if (acceptedStory) {
+          storySuggestionId =
+            storySuggestions.find(
+              (s) => s.storycode === acceptedStory.storycode,
+            )?.id ?? null;
+          if (storySuggestionId === null) {
+            const { createdStorySuggestion } =
+              await socket.createStorySuggestion({
+                entryId: id,
+                storycode: acceptedStory.storycode,
+              });
+            storySuggestionId = createdStorySuggestion.id;
+          }
+        }
+        await socket.acceptStorySuggestion(id, storySuggestionId);
+      }
+
+      if (
+        entirepages !== current?.entirepages ||
+        position !== current?.position ||
+        title !== current?.title
+      ) {
+        await socket.updateEntry(id, {
+          entirepages,
+          position,
+          title,
+        });
+      }
     }
   },
   { deep: true, maxWait: 1000 },

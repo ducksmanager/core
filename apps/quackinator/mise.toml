@@ -51,7 +51,7 @@ dir = "frontend"
 run = "pnpm install --ignore-workspace"
 
 [tasks.ui]
-description = "Run the Vue frontend (proxies /api to :8000)"
+description = "Run the Vue frontend"
 dir = "frontend"
 run = "pnpm run dev"
 

@@ -127,7 +127,9 @@ const { deleteEntry } = suggestions();
 
 const deleteEntryModalId = ref();
 
-const showQuackinator = ref(false);
+const showQuackinator = defineModel<boolean>("quackinatorShown", {
+  default: false,
+});
 
 const answersSoFar = computed(
   () => entry.value.quackinatorSession?._count.answers ?? 0,

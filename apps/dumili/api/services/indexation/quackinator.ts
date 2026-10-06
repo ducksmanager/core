@@ -1,7 +1,8 @@
 import axios from "axios";
 
-import { STORY } from "~dumili-types/storyKinds";
+import { COVER, STORY } from "~dumili-types/storyKinds";
 import { getEntryPages } from "~dumili-utils/entryPages";
+import { releaseYear } from "~dumili-utils/releaseYear";
 import prisma from "~prisma/client";
 import type { quackinatorFamily } from "~prisma/client_dumili/client";
 // Type-only, so nothing of Quackinator's frontend reaches the runtime. A
@@ -18,8 +19,8 @@ import type { FullEntry, FullIndexation } from ".";
  * on one entry, and this module is what tells it everything Dumili already
  * knows before the first question.
  *
- * Its index only covers `inducks_storyversion.kind = 'n'`, which is exactly
- * Dumili's STORY — see `canRunOn`.
+ * Its index covers `inducks_storyversion.kind` 'n' and 'c', which are exactly
+ * Dumili's STORY and COVER — see `canRunOn`.
  */
 
 type Fact = NonNullable<Seed["facts"]>[number];
@@ -41,18 +42,13 @@ const pageTenths = ({
     ? Math.round((10 * brokenpagenumerator) / brokenpagedenominator)
     : 0);
 
-/** Quackinator's index is comic stories only, so nothing else can be asked about. */
+/** Quackinator's index is comic stories and covers, so nothing else can be asked about. */
 export const canRunOn = (entry: FullEntry) =>
-  entry.acceptedStoryKind?.storyKindRows?.kind === STORY &&
+  [STORY, COVER].includes(entry.acceptedStoryKind?.storyKindRows?.kind ?? "") &&
   !entry.includedInEntryId;
 
-/** The year printed on the magazine, which the indexer is holding. */
-const releaseYear = (indexation: FullIndexation) => {
-  const year = Number((indexation.releaseDate ?? "").slice(0, 4));
-  // Inducks' own decade scale starts in the 1930s; anything below is a typo
-  // rather than a date, and Quackinator would decline it anyway.
-  return year >= 1930 && year <= 2100 ? year : null;
-};
+const isCover = (entry: FullEntry) =>
+  entry.acceptedStoryKind?.storyKindRows?.kind === COVER;
 
 /**
  * What the indexer typed, which is as good as the entry itself. Everything the
@@ -60,7 +56,10 @@ const releaseYear = (indexation: FullIndexation) => {
  * weigh.
  */
 const factsFor = (indexation: FullIndexation, entry: FullEntry): Fact[] => {
-  const facts: Fact[] = [{ key: "pages", value: pageTenths(entry) }];
+  // A cover has no length to measure: Quackinator would refuse the fact.
+  const facts: Fact[] = isCover(entry)
+    ? []
+    : [{ key: "pages", value: pageTenths(entry) }];
   const year = releaseYear(indexation);
   if (year) {
     facts.push({ key: "decade", value: year });
@@ -107,7 +106,10 @@ const evidenceFor = (indexation: FullIndexation, entry: FullEntry) => {
     whole_story: !(entry.brokenpagenumerator && entry.brokenpagedenominator),
   };
 
-  return { image_matches, ocr, kumiko } satisfies Seed;
+  // Kumiko segments comic panels, which a cover does not have.
+  return isCover(entry)
+    ? ({ image_matches, ocr, cover: true } satisfies Seed)
+    : ({ image_matches, ocr, kumiko } satisfies Seed);
 };
 
 const host = () => process.env.QUACKINATOR_HOST;
@@ -132,9 +134,8 @@ export const startQuackinatorSession = async (
     return { error: "Quackinator is not configured" };
   }
   if (!canRunOn(entry)) {
-    return { error: "Quackinator only identifies comic stories" };
+    return { error: "Quackinator only identifies comic stories and covers" };
   }
-
   const stored = await prisma.quackinatorSession.findUnique({
     where: { entryId: entry.id },
     include: { answers: { orderBy: { position: "asc" } } },
@@ -143,6 +144,9 @@ export const startQuackinatorSession = async (
   const seed = {
     ...evidenceFor(indexation, entry),
     facts: factsFor(indexation, entry),
+    // The decade is the issue's release date, answered in `facts` when the
+    // indexer has typed it. When they have not, the reader is not asked either.
+    exclude: ["decade"],
     answers: (stored?.answers ?? []).map(({ family, code, option }) => ({
       family,
       code,

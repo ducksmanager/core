@@ -60,7 +60,7 @@ class StoryIndex:
     rows: np.ndarray  # int16
     cols: np.ndarray  # int16
     panels: np.ndarray  # int16
-    popularity: np.ndarray  # int32, number of non-cover printings
+    popularity: np.ndarray  # int32, number of printings, as a cover for a cover
 
     # --- sparse boolean feature matrices (N x F), CSR for row slicing ---
     char: sp.csr_matrix
@@ -106,6 +106,12 @@ class StoryIndex:
     # a printed page may say "Romano Scarpa" where Inducks has a different form.
     creator_aliases: list[list[str]] = field(default_factory=list)
 
+    # bool, a cover rather than a comic story. A session identifies one kind or
+    # the other — a reader knows whether they are holding a cover — so the two
+    # share an index but never a belief. Empty (an index built before covers
+    # were extracted) is all stories.
+    cover: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=bool))
+
     # Subset of `char` whose cells are listed but are not evidence the reader can
     # check: a cameo in one background panel, a character present only as a photo
     # or a statue, or a one-time character indexers are not required to list. A
@@ -127,6 +133,8 @@ class StoryIndex:
     _fingerprint: str = field(default="", init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
+        if len(self.cover) != len(self.svc):
+            self.cover = np.zeros(len(self.svc), dtype=bool)
         if not self.language_names:
             self.language_names = list(self.languages)
         # An index built before scans were extracted has none of these, and one
@@ -221,6 +229,7 @@ class StoryIndex:
             cols=self.cols,
             panels=self.panels,
             popularity=self.popularity,
+            cover=self.cover,
         )
         sp.save_npz(directory / CHAR_FILE, self.char.tocsr())
         weak = self.char_weak if self.char_weak is not None else sp.csr_matrix(self.char.shape)
@@ -264,6 +273,7 @@ class StoryIndex:
             cols=arrays["cols"],
             panels=arrays["panels"],
             popularity=arrays["popularity"],
+            cover=arrays["cover"] if "cover" in arrays.files else np.zeros(0, dtype=bool),
             char=_load_csr(directory / CHAR_FILE),
             char_weak=_load_csr(directory / CHAR_WEAK_FILE),
             plot=_load_csr(directory / PLOT_FILE),

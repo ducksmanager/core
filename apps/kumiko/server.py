@@ -21,6 +21,13 @@ class KumikoRequestHandler(BaseHTTPRequestHandler):
 
     def _run(self, inputs):
         result = subprocess.run(['python', './kumiko/kumiko', '-i'] + inputs, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(result.stderr)
+            self.send_response(500)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write((result.stderr.strip().splitlines() or ['kumiko failed'])[-1].encode())
+            return
 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')

@@ -3,8 +3,8 @@ export function candidatesLeft(entropyBits: number): number {
   return Math.max(1, Math.round(2 ** entropyBits));
 }
 
-export function formatCount(n: number): string {
-  return n.toLocaleString("en-US");
+export function formatCount(n: number, locale = "en"): string {
+  return n.toLocaleString(locale);
 }
 
 /**
@@ -13,16 +13,22 @@ export function formatCount(n: number): string {
  * figures and a tilde, exact only where the number is small enough to mean
  * something literal.
  */
-export function roughCount(n: number): string {
-  if (n < 100) return formatCount(n);
+export function roughCount(n: number, locale = "en"): string {
+  if (n < 100) return formatCount(n, locale);
   const step = 10 ** (Math.floor(Math.log10(n)) - 1);
-  return `~${formatCount(Math.round(n / step) * step)}`;
+  return `~${formatCount(Math.round(n / step) * step, locale)}`;
 }
 
-export function formatPercent(p: number): string {
-  if (p >= 0.995) return ">99%";
-  if (p < 0.001) return "<0.1%";
-  return `${(p * 100).toFixed(p < 0.1 ? 1 : 0)}%`;
+export function formatPercent(p: number, locale = "en"): string {
+  const percent = (value: number, digits: number) =>
+    value.toLocaleString(locale, {
+      style: "percent",
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+  if (p >= 0.995) return `>${percent(0.99, 0)}`;
+  if (p < 0.001) return `<${percent(0.001, 1)}`;
+  return percent(p, p < 0.1 ? 1 : 0);
 }
 
 /**

@@ -6,4 +6,17 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      ~api:
+        specifier: workspace:*
+        version: link:../../packages/api
+      ~kumiko:
+        specifier: workspace:*
+        version: link:../kumiko
+      ~paddleocr:
+        specifier: workspace:*
+        version: link:../paddleocr
+      ~prisma-schemas:
+        specifier: workspace:*
+        version: link:../../packages/prisma-schemas

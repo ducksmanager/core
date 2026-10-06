@@ -79,6 +79,8 @@ export const useGame = (options: GameOptions = {}) => {
    */
   const seeded = ref(false);
   const done = ref(false);
+  /** Identifying a cover rather than a comic story, which changes the wording. */
+  const cover = ref(false);
   const busy = ref(false);
   const error = ref<string | null>(null);
   /**
@@ -129,6 +131,7 @@ export const useGame = (options: GameOptions = {}) => {
     storyEntropyBits.value = turn.story_entropy_bits;
     questionsAsked.value = turn.questions_asked;
     done.value = turn.done;
+    cover.value = turn.cover;
   };
 
   const guard = async <T>(fn: () => Promise<T>): Promise<T | undefined> => {
@@ -187,9 +190,11 @@ export const useGame = (options: GameOptions = {}) => {
       options.onAnswered?.(event);
       trail.value.push({
         key: current.key,
-        prompt: current.prompt,
+        prompt: current.prompt_message,
         answer:
-          option === null ? "Don't know" : (current.options[option] ?? "?"),
+          option === null
+            ? { id: "Don't know", params: {} }
+            : (current.option_messages[option] ?? { id: "?", params: {} }),
       });
       absorb(turn);
     });
@@ -206,8 +211,13 @@ export const useGame = (options: GameOptions = {}) => {
       const turn = await api.nameCreator(id, match.creator);
       trail.value.push({
         key: "creator",
-        prompt: "Whose name is printed on the story's first page?",
-        answer: match.name,
+        prompt: {
+          id: cover.value
+            ? "Whose name is printed on the cover?"
+            : "Whose name is printed on the story's first page?",
+          params: {},
+        },
+        answer: { id: "{text}", params: { text: match.name } },
       });
       creatorOffered.value = false;
       absorb(turn);
@@ -242,6 +252,7 @@ export const useGame = (options: GameOptions = {}) => {
     questionsAsked,
     seeded,
     done,
+    cover,
     busy,
     error,
     started,

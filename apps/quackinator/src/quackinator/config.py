@@ -195,7 +195,8 @@ class Settings(BaseSettings):
     # Panel tops this close, in pixels, are one row. Same as Dumili's getPanelRows.
     kumiko_row_tolerance: int = 5
 
-    # Services the standalone upload is analysed with. Empty disables each one.
+    # Services the standalone upload is analysed with. The API refuses to start
+    # without them.
     kumiko_host: str = ""
     ocr_host: str = ""
     max_upload_bytes: int = 15 * 1024 * 1024

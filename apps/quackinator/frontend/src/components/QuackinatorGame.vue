@@ -2,7 +2,9 @@
   <div class="game">
     <p v-if="game.error.value" class="error" role="alert">
       {{ game.error.value }}
-      <button type="button" @click="game.restart()">Try again</button>
+      <button type="button" @click="game.restart()">
+        {{ t("Try again") }}
+      </button>
     </p>
 
     <template v-if="game.started.value">
@@ -12,16 +14,15 @@
         :progress="game.progress.value"
         :confidence="game.confidence.value"
         :questions-asked="game.questionsAsked.value"
+        :cover="game.cover.value"
       />
 
       <main class="layout">
         <div class="main-column">
-          <!-- Offered once, ahead of the questions, and it costs no turn:
-               the credit is the strongest thing a reader can tell us, but most
-               printings do not carry one, so it must be free to wave away. -->
           <author-box
             v-if="game.creatorOffered.value && !game.done.value"
             :busy="game.busy.value"
+            :cover="game.cover.value"
             @search="(q, resolve) => game.searchCreators(q).then(resolve)"
             @pick="game.nameCreator"
             @dismiss="game.dismissCreator"
@@ -39,22 +40,42 @@
             <h2>
               {{
                 game.confidence.value >= game.confidenceThreshold.value
-                  ? "I think that's it."
-                  : "That's as far as I can narrow it."
+                  ? t("I think that's it.")
+                  : t("That's as far as I can narrow it.")
               }}
             </h2>
-            <p>
-              {{
+            <i18n-t
+              :keypath="
                 game.questionsAsked.value
-                  ? `After ${game.questionsAsked.value} questions`
-                  : "From the page alone"
-              }}, my best match is
-              <strong>{{ game.guesses.value[0]?.title ?? "unknown" }}</strong>
-              at {{ formatPercent(game.confidence.value) }} confidence.
-            </p>
+                  ? 'After {count} question, my best match is {title} at {percent} confidence. | After {count} questions, my best match is {title} at {percent} confidence.'
+                  : game.cover.value
+                    ? 'From the cover alone, my best match is {title} at {percent} confidence.'
+                    : 'From the page alone, my best match is {title} at {percent} confidence.'
+              "
+              :plural="game.questionsAsked.value"
+              tag="p"
+              scope="parent"
+            >
+              <template #count>{{ game.questionsAsked.value }}</template>
+              <template #title>
+                <strong>{{
+                  game.guesses.value[0]?.title ?? t("unknown")
+                }}</strong>
+              </template>
+              <template #percent>{{
+                formatPercent(game.confidence.value, locale)
+              }}</template>
+            </i18n-t>
             <p class="muted">
-              If none of these is right, reject them and I'll keep going — the
-              one-page gags are genuinely hard to tell apart.
+              {{
+                game.cover.value
+                  ? t(
+                      "If none of these is right, reject them and I'll keep going.",
+                    )
+                  : t(
+                      "If none of these is right, reject them and I'll keep going — the one-page gags are genuinely hard to tell apart.",
+                    )
+              }}
             </p>
             <button
               v-if="restartable"
@@ -62,7 +83,7 @@
               class="primary"
               @click="game.restart()"
             >
-              Identify another story
+              {{ t("Identify another story") }}
             </button>
           </section>
 
@@ -70,15 +91,13 @@
         </div>
 
         <aside class="side">
-          <!-- Before any answer these are just the popularity prior, all at
-               <0.1%, which reads as noise rather than progress — unless the
-               session started from what was found on the page. -->
           <guess-list
             v-if="game.questionsAsked.value > 0 || game.seeded.value"
             :guesses="game.guesses.value"
             :busy="game.busy.value"
             :final="game.done.value"
             :pickable="pickable"
+            :cover="game.cover.value"
             @reject="game.reject"
             @pick="emit('picked', $event)"
           />
@@ -88,14 +107,14 @@
             class="restart"
             @click="game.restart()"
           >
-            Start over
+            {{ t("Start over") }}
           </button>
         </aside>
       </main>
     </template>
 
     <p v-else-if="!game.error.value" class="loading">
-      Loading the story index…
+      {{ t("Loading the story index…") }}
     </p>
   </div>
 </template>
@@ -115,6 +134,7 @@
  * and so the reader has to be able to commit to a row.
  */
 import { onMounted, watch } from "vue";
+import { I18nT } from "vue-i18n";
 
 import type { Api } from "~quackinator/api";
 import AnswerTrail from "~quackinator/components/AnswerTrail.vue";
@@ -124,6 +144,7 @@ import ProgressMeter from "~quackinator/components/ProgressMeter.vue";
 import QuestionCard from "~quackinator/components/QuestionCard.vue";
 import { type AnswerEvent, useGame } from "~quackinator/composables/useGame";
 import { formatPercent } from "~quackinator/format";
+import { useQuackinatorI18n } from "~quackinator/i18n";
 import type { Seed, Turn } from "~quackinator/types";
 
 const {
@@ -151,6 +172,8 @@ const emit = defineEmits<{
   /** The reader committed to a guess. */
   (e: "picked", storycode: string): void;
 }>();
+
+const { t, locale } = useQuackinatorI18n();
 
 const game = useGame({
   api,

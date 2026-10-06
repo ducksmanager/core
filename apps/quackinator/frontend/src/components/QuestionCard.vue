@@ -1,23 +1,17 @@
 <template>
   <section class="card" :aria-busy="busy">
-    <p class="index">Question {{ index }}</p>
+    <p class="index">{{ t("Question {index}", { index }) }}</p>
 
     <div class="ask">
-      <h2 class="prompt">{{ question.prompt }}</h2>
-      <!-- A character question is a question about a face, and the name is the
-           part of it the reader may not have: theirs is a translation that
-           renamed him, or they know the inventor with the light bulb and not
-           the words "Gyro Gearloose". Inducks has the page that settles it.
-           Opened in a new tab, always — losing the session to a lookup would
-           cost the reader every answer they have given. -->
+      <h2 class="prompt">{{ tm(question.prompt_message) }}</h2>
       <p v-if="question.inducks_url" class="lookup">
-        Not sure who that is?
+        {{ t("Not sure who that is?") }}
         <a
           :href="question.inducks_url"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Look them up on Inducks ↗
+          {{ t("Look them up on Inducks ↗") }}
         </a>
       </p>
     </div>
@@ -31,7 +25,7 @@
         :disabled="busy"
         @click="emit('answer', i)"
       >
-        {{ label }}
+        {{ tm(question.option_messages[i]!) }}
       </button>
     </div>
 
@@ -41,11 +35,14 @@
       :disabled="busy"
       @click="emit('answer', null)"
     >
-      I can't tell
+      {{ t("I can't tell") }}
     </button>
     <p class="hint">
-      Answer by looking at the pages in front of you. Skipping won't mislead the
-      search, but it still counts as one of your questions.
+      {{
+        t(
+          "Answer by looking at the pages in front of you. Skipping won't mislead the search, but it still counts as one of your questions.",
+        )
+      }}
     </p>
   </section>
 </template>
@@ -53,6 +50,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+import { useQuackinatorI18n } from "~quackinator/i18n";
 import type { Question } from "~quackinator/types";
 
 const { question, busy, index } = defineProps<{
@@ -62,6 +60,8 @@ const { question, busy, index } = defineProps<{
 }>();
 
 const emit = defineEmits<{ (e: "answer", option: number | null): void }>();
+
+const { t, tm } = useQuackinatorI18n();
 
 /**
  * Yes/No questions get two wide buttons; a condensed page-count or language

@@ -1,19 +1,24 @@
 <template>
   <details v-if="trail.length" class="trail">
-    <summary>Your answers ({{ trail.length }})</summary>
+    <summary>
+      {{ t("Your answers ({count})", { count: trail.length }) }}
+    </summary>
     <ol>
       <li v-for="(entry, i) in trail" :key="`${entry.key}-${i}`">
-        <span class="q">{{ entry.prompt }}</span>
-        <span class="a">{{ entry.answer }}</span>
+        <span class="q">{{ tm(entry.prompt) }}</span>
+        <span class="a">{{ tm(entry.answer) }}</span>
       </li>
     </ol>
   </details>
 </template>
 
 <script setup lang="ts">
+import { useQuackinatorI18n } from "~quackinator/i18n";
 import type { AnsweredQuestion } from "~quackinator/types";
 
 defineProps<{ trail: AnsweredQuestion[] }>();
+
+const { t, tm } = useQuackinatorI18n();
 </script>
 
 <style scoped>

@@ -1,10 +1,12 @@
 <template>
   <section class="panel">
     <h3 class="heading">
-      {{ final ? "Best matches" : "Currently most likely" }}
+      {{ final ? t("Best matches") : t("Currently most likely") }}
     </h3>
 
-    <p v-if="!guesses.length" class="empty">Nothing narrowed down yet.</p>
+    <p v-if="!guesses.length" class="empty">
+      {{ t("Nothing narrowed down yet.") }}
+    </p>
 
     <ol v-else class="list">
       <li v-for="guess in guesses" :key="guess.storycode" class="guess">
@@ -13,11 +15,6 @@
           :style="{ width: `${Math.max(2, guess.probability * 100)}%` }"
         />
         <div class="row">
-          <!-- The reader is holding the drawing, not the title — and a third of
-               these stories have no title of their own. The picture is the
-               fastest thing in the row to recognise, so it leads it. Left
-               unlabelled on purpose: the title beside it already names the
-               story, and no alt text conveys a page of comic art. -->
           <div v-if="showPictures" class="thumb">
             <img
               v-if="pictureFor(guess)"
@@ -32,8 +29,6 @@
           <div class="details">
             <div class="body">
               <div class="text">
-                <!-- Inducks has no title for some stories and stores the storycode
-                     instead; showing it as both title and subtitle reads as a bug. -->
                 <a
                   class="title"
                   :class="{ bare: isBareCode(guess.title, guess.storycode) }"
@@ -42,7 +37,9 @@
                   rel="noopener noreferrer"
                   >{{
                     isBareCode(guess.title, guess.storycode)
-                      ? "Untitled story"
+                      ? cover
+                        ? t("Untitled cover")
+                        : t("Untitled story")
                       : guess.title
                   }}</a
                 >
@@ -52,7 +49,7 @@
                 </span>
               </div>
               <span class="probability">{{
-                formatPercent(guess.probability)
+                formatPercent(guess.probability, locale)
               }}</span>
             </div>
             <div class="actions">
@@ -64,16 +61,16 @@
                 :title="`This is ${guess.title}`"
                 @click="emit('pick', guess.storycode)"
               >
-                That's the one
+                {{ t("That's the one") }}
               </button>
               <button
                 type="button"
                 class="reject"
                 :disabled="busy"
-                :title="`Not ${guess.title}`"
+                :title="t('Not {title}', { title: guess.title })"
                 @click="emit('reject', guess.storycode)"
               >
-                Not this one
+                {{ t("Not this one") }}
               </button>
             </div>
           </div>
@@ -87,9 +84,14 @@
 import { computed, ref } from "vue";
 
 import { formatPercent, isBareCode } from "~quackinator/format";
+import { useQuackinatorI18n } from "~quackinator/i18n";
 import type { Guess } from "~quackinator/types";
 
-const { guesses, pickable = false } = defineProps<{
+const {
+  guesses,
+  pickable = false,
+  cover = false,
+} = defineProps<{
   guesses: Guess[];
   busy: boolean;
   final: boolean;
@@ -102,12 +104,16 @@ const { guesses, pickable = false } = defineProps<{
    * has to be able to commit to a row rather than just read it.
    */
   pickable?: boolean;
+  /** Identifying a cover, so an untitled guess is an untitled cover. */
+  cover?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "reject", storycode: string): void;
   (e: "pick", storycode: string): void;
 }>();
+
+const { t, locale } = useQuackinatorI18n();
 
 const INDUCKS_STORY = "https://inducks.org/story.php?c=";
 

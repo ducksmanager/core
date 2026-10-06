@@ -6,8 +6,9 @@ inducks_storyversion x inducks_entry x inducks_appearance are unindexed in the
 stock Inducks dump and can take minutes; streaming the tables takes seconds.
 """
 
-# Comic stories only. kind='n' is the normal multi-panel comic; the other kinds
-# are illustrations, text stories, covers, games and puzzles.
+# Comic stories and covers. kind='n' is the normal multi-panel comic and kind='c'
+# a cover; the other kinds are illustrations, text stories, games and puzzles.
+# A session identifies one or the other, never both: see `StoryIndex.cover`.
 #
 # `entirepages` is only part of the length: 111,350 of these rows have
 # entirepages = 0 and carry their whole length in brokenpage*, because the story
@@ -16,9 +17,9 @@ stock Inducks dump and can take minutes; streaming the tables takes seconds.
 STORYVERSIONS = """
 SELECT storyversioncode, storycode, entirepages, rowsperpage, columnsperpage,
        estimatedpanels, keywordsummary,
-       brokenpagenumerator, brokenpagedenominator, brokenpageunspecified
+       brokenpagenumerator, brokenpagedenominator, brokenpageunspecified, kind
 FROM inducks_storyversion
-WHERE kind = 'n'
+WHERE kind IN ('n', 'c')
 """
 
 # Publication date of each issue, for the decade question.
@@ -33,13 +34,14 @@ FROM inducks_issue
 WHERE oldestdate IS NOT NULL AND oldestdate <> ''
 """
 
-# Non-cover entries: one row per physical printing of a story in an issue.
-# Drives the popularity prior, the language of the magazine, and the titles OCR
-# is matched against — each printing's own, in its own language.
+# One row per physical printing of a story or a cover in an issue. Drives the
+# popularity prior, the language of the magazine, and the titles OCR is matched
+# against — each printing's own, in its own language. `is_cover` is read so a
+# printing only counts for the kind of storyversion it is: see `extract`.
 ENTRIES = """
-SELECT storyversioncode, languagecode, issuecode, title
+SELECT storyversioncode, languagecode, issuecode, title, is_cover
 FROM inducks_entry
-WHERE is_cover = 0 AND storyversioncode IS NOT NULL AND storyversioncode <> ''
+WHERE storyversioncode IS NOT NULL AND storyversioncode <> ''
 """
 
 # `appearancecomment` carries the signal `number` does not: `number` only ever

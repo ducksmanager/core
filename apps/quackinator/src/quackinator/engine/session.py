@@ -14,13 +14,23 @@ from quackinator.engine import information as info
 from quackinator.engine.belief import Support
 from quackinator.engine.creators import CreatorMatch, CreatorSearch
 from quackinator.engine.questions import (
+    LAYOUT_KEYS,
     CategoricalQuestion,
     Question,
     QuestionBank,
+    Text,
     build_bank,
 )
 from quackinator.engine.selector import Selection, posterior, select
 from quackinator.index.model import StoryIndex
+
+# The bank is worded for comic stories, and shared. A cover session rewords what
+# it shows rather than keeping a second bank whose likelihoods would be the same.
+COVER_WORDING = (
+    ("appear in the story", "appear on the cover"),
+    ("Does the story involve", "Does the cover show"),
+    ("the story's first page", "the cover"),
+)
 
 
 @dataclass
@@ -52,9 +62,12 @@ class Engine:
 
     index: StoryIndex
     bank: QuestionBank
+    # Over comic stories, covers at zero.
     prior: np.ndarray
     cfg: Settings
     creator_search: CreatorSearch | None = None
+    # Over covers, stories at zero. None for an index with no covers in it.
+    cover_prior: np.ndarray | None = None
 
     @classmethod
     def load(cls, cfg: Settings | None = None) -> Engine:
@@ -69,14 +82,20 @@ class Engine:
         # reader's hands than a story printed once. Damped, so the long tail
         # stays reachable.
         pop = np.maximum(index.popularity.astype(np.float64), 1.0)
-        prior = pop**cfg.popularity_prior_weight
+        weighted = pop**cfg.popularity_prior_weight
+        prior = np.where(index.cover, 0.0, weighted)
         prior /= prior.sum()
+        cover_prior = None
+        if index.cover.any():
+            cover_prior = np.where(index.cover, weighted, 0.0)
+            cover_prior /= cover_prior.sum()
         return cls(
             index=index,
             bank=build_bank(index, cfg),
             prior=prior,
             cfg=cfg,
             creator_search=CreatorSearch.build(index, cfg.creator_matches),
+            cover_prior=cover_prior,
         )
 
     def search_creators(self, query: str) -> list[CreatorMatch]:
@@ -89,6 +108,9 @@ class Engine:
 @dataclass
 class Session:
     engine: Engine
+    # Identifying a cover rather than a comic story. The reader knows which one
+    # they are holding, so the other kind is out of the belief from the start.
+    cover: bool = False
     w: np.ndarray = field(init=False)
     asked: set[str] = field(default_factory=set)
     history: list[dict] = field(default_factory=list)
@@ -102,7 +124,15 @@ class Session:
     _support: Support = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
-        self.w = self.engine.prior.copy()
+        if self.cover:
+            if self.engine.cover_prior is None:
+                raise ValueError("this index carries no covers")
+            self.w = self.engine.cover_prior.copy()
+            # Retired rather than left to score nothing, so a seed cannot answer
+            # them either: a cover has no length or panels to measure.
+            self.asked |= LAYOUT_KEYS
+        else:
+            self.w = self.engine.prior.copy()
         # Per session: the bank is shared and immutable, the rows worth scoring
         # against are not.
         self._support = Support(drop=self.engine.cfg.selection_drop)
@@ -147,11 +177,21 @@ class Session:
         self._pending = selection
         return PendingQuestion(
             key=selection.key,
-            prompt=selection.prompt,
+            prompt=self._worded(selection.prompt),
             options=selection.options,
             gain_bits=selection.gain / np.log(2),
             subject=selection.subject,
         )
+
+    def _worded(self, prompt: str) -> str:
+        if not self.cover:
+            return prompt
+        # The template is reworded, not the text, so it can still be translated.
+        template = prompt.id if isinstance(prompt, Text) else prompt
+        params = prompt.params if isinstance(prompt, Text) else {}
+        for story, cover in COVER_WORDING:
+            template = template.replace(story, cover)
+        return Text(template, **params)
 
     def answer(self, key: str, option: int) -> None:
         """Answer the question the engine just asked."""
@@ -313,6 +353,15 @@ class Session:
             )[option][question.assign]
         self._record(question, option, costs_turn=False, likelihood=likelihood)
         return True
+
+    def exclude(self, key: str) -> None:
+        """Never ask this question, and learn nothing from it.
+
+        For a host that holds the answer itself when it has one — Dumili knows
+        the magazine's year once its indexer has typed it — and so would rather
+        its reader were not asked when it does not.
+        """
+        self.asked.add(key)
 
     def replay(self, family: str, code: str, option: int | None) -> bool:
         """Re-apply an answer this reader gave in an earlier session.

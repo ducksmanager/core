@@ -269,3 +269,54 @@ def test_the_seed_order_does_not_change_where_the_session_starts(engine):
     second.apply_fact("pages", 12)
 
     np.testing.assert_allclose(first.w, second.w)
+
+
+# --- covers ---------------------------------------------------------------
+
+
+def test_a_cover_seed_starts_a_cover_session():
+    """Layout facts are refused, the rest of the seed still applies."""
+    from quackinator.api import app as api
+
+    index = make_index()
+    index.cover = np.arange(index.n_items) % 4 == 0
+    api.ENGINE = Engine.from_index(index)
+    try:
+        turn = api.start_session(
+            api.SeedIn(
+                cover=True,
+                facts=[api.FactIn(key="pages", value=10), api.FactIn(key="decade", value=1975)],
+                image_matches=[api.ImageMatchIn(storycode="S4", score=0.95)],
+            )
+        )
+    finally:
+        api.ENGINE = None
+    assert turn.seed is not None
+    assert turn.seed.facts_applied == ["decade"]
+    assert turn.seed.facts_rejected == ["pages"]
+    assert all(index.cover[index.story_number(g.storycode)] for g in turn.guesses)
+
+
+def test_an_excluded_question_is_never_asked(engine):
+    session = Session(engine=engine)
+    session.exclude("decade")
+    asked = []
+    while (q := session.next_question()) is not None:
+        asked.append(q.key)
+        session.skip(q.key)
+    assert "decade" not in asked
+    assert not session.apply_fact("decade", 1975)
+
+
+def test_a_fact_still_applies_before_its_question_is_excluded(engine):
+    from quackinator.api import app as api
+
+    api.ENGINE = engine
+    try:
+        turn = api.start_session(
+            api.SeedIn(facts=[api.FactIn(key="decade", value=1975)], exclude=["decade"])
+        )
+    finally:
+        api.ENGINE = None
+    assert turn.seed is not None
+    assert turn.seed.facts_applied == ["decade"]

@@ -10,6 +10,8 @@ type OcrResult = {
   confidence: number;
 };
 
+const MIN_CONFIDENCE = 0.75;
+
 export const runOcrOnImage = async (
   services: IndexationServices,
   pageNumber: number,
@@ -23,7 +25,10 @@ export const runOcrOnImage = async (
   }
   if (image.aiOcrResult) {
     console.log(`Page ${pageNumber}: This page already has OCR results`);
-    // return image.aiOcrResult.matches;
+    // Results stored before the confidence filter still carry low ones.
+    return image.aiOcrResult.matches.filter(
+      ({ confidence }) => confidence > MIN_CONFIDENCE,
+    );
   }
   services.reportRunOcrOnImage(image.id);
   const firstPanelUrl = image.url.replace(
@@ -43,7 +48,7 @@ export const runOcrOnImage = async (
       x2,
       y2,
     }))
-    .filter(({ confidence }) => confidence > 0.75);
+    .filter(({ confidence }) => confidence > MIN_CONFIDENCE);
 
   await prisma.image.update({
     where: {

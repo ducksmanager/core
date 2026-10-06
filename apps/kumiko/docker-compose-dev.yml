@@ -1,0 +1,10 @@
+name: kumiko
+
+services:
+  kumiko:
+    restart: always
+    ports:
+      - "8005:8080"
+    build:
+      context: ../..
+      dockerfile: apps/kumiko/Dockerfile

@@ -794,3 +794,118 @@ def test_no_question_ever_offers_a_creator_to_pick_from():
     # offered or however concentrated the belief has become.
     for room in (2, settings.max_options, 500):
         assert creators.condense(session.w, room) is creators
+
+
+# --- covers ---------------------------------------------------------------
+
+
+@pytest.fixture
+def mixed_engine() -> Engine:
+    """A quarter of the rows are covers."""
+    index = make_index()
+    index.cover = np.arange(index.n_items) % 4 == 0
+    return Engine.from_index(index, settings)
+
+
+def test_a_session_only_believes_in_its_own_kind(mixed_engine):
+    cover = mixed_engine.index.cover
+    story_session = Session(engine=mixed_engine)
+    cover_session = Session(engine=mixed_engine, cover=True)
+    assert story_session.w[cover].sum() == 0
+    assert cover_session.w[~cover].sum() == 0
+    assert cover_session.w.sum() == pytest.approx(1.0)
+
+
+def test_a_cover_session_never_asks_about_layout(mixed_engine):
+    session = Session(engine=mixed_engine, cover=True)
+    asked = []
+    while (q := session.next_question()) is not None:
+        asked.append(q.key)
+        session.skip(q.key)
+    assert asked
+    assert not {"pages", "rows", "cols", "panels"} & set(asked)
+    assert not session.apply_fact("pages", 10)
+
+
+def test_a_cover_session_asks_about_the_cover(mixed_engine):
+    session = Session(engine=mixed_engine, cover=True)
+    while (q := session.next_question()) is not None:
+        assert "the story" not in q.prompt
+        session.skip(q.key)
+
+
+def test_an_index_without_covers_refuses_a_cover_session(engine):
+    with pytest.raises(ValueError):
+        Session(engine=engine, cover=True)
+
+
+# --- messages ---------------------------------------------------------------
+
+
+def test_a_merged_range_is_a_translatable_template():
+    from quackinator.engine.questions import PAGE_BUCKETS, range_label
+
+    label = range_label(PAGE_BUCKETS, 6, 8, "pages")
+    assert label == "3-5 pages"
+    assert (label.id, label.params) == ("{low}-{high} pages", {"low": "3", "high": "5"})
+    assert range_label(PAGE_BUCKETS, 0, 1, "pages").id == "less than {count} page"
+
+
+def test_a_name_is_a_parameter_never_part_of_the_template(engine):
+    session = Session(engine=engine)
+    while (q := session.next_question()) is not None and not q.key.startswith("char:"):
+        session.skip(q.key)
+    assert q is not None
+    assert q.prompt.id == "Does {name} appear in the story?"
+    assert q.prompt.params["name"] in q.prompt
+
+
+def test_a_cover_prompt_keeps_its_template(mixed_engine):
+    session = Session(engine=mixed_engine, cover=True)
+    while (q := session.next_question()) is not None and not q.key.startswith("char:"):
+        session.skip(q.key)
+    assert q is not None
+    assert q.prompt.id == "Does {name} appear on the cover?"
+
+
+def test_text_from_data_alone_is_passed_through():
+    from quackinator.api.app import message
+    from quackinator.engine.questions import Text
+
+    assert message("Donald Duck").model_dump() == {
+        "id": "{text}",
+        "params": {"text": "Donald Duck"},
+    }
+    assert message(Text("{decade}s", decade="1950")).params == {"decade": "1950"}
+
+
+def test_every_message_the_engine_sends_is_in_the_french_catalogue(engine, mixed_engine):
+    """A message missing from a catalogue is shown in English, silently."""
+    import json
+    from pathlib import Path
+
+    from quackinator.engine.questions import (
+        PAGE_BUCKETS,
+        PANEL_BUCKETS,
+        SMALL_INT_BUCKETS,
+        Text,
+        range_label,
+    )
+
+    catalogue = json.loads((Path(__file__).parents[1] / "frontend/src/locales/fr.json").read_text())
+    ids = {"Yes", "No", "Something else", "{decade}s"}
+    for buckets, unit in ((PAGE_BUCKETS, "pages"), (PANEL_BUCKETS, ""), (SMALL_INT_BUCKETS, "")):
+        for first in range(len(buckets)):
+            for last in range(first, len(buckets)):
+                # A whole scale is never one option: condensing keeps two.
+                if (first, last) != (0, len(buckets) - 1):
+                    ids.add(range_label(buckets, first, last, unit).id)
+    for e, cover in ((engine, False), (mixed_engine, True)):
+        session = Session(engine=e, cover=cover)
+        for question in e.bank.singles:
+            ids.add(session._worded(question.prompt).id)
+        for family in e.bank.families:
+            ids.add(session._worded(Text(family.prompt_template, name="x")).id)
+    # Bare numbers read the same in French.
+    missing = {i for i in ids if i not in catalogue and not i.isdigit()}
+    assert not missing

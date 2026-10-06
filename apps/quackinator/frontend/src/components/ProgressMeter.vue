@@ -1,19 +1,57 @@
 <template>
   <div class="meter">
     <div class="labels">
-      <span v-if="questionsAsked === 0">
-        Narrowing down <strong>{{ formatCount(total) }}</strong> stories
-      </span>
-      <span v-else>
-        <strong>{{ formatPercent(confidence) }}</strong> sure of the leading
-        story
-      </span>
+      <i18n-t
+        v-if="questionsAsked === 0"
+        :keypath="
+          cover
+            ? 'Narrowing down {count} covers'
+            : 'Narrowing down {count} stories'
+        "
+        tag="span"
+        scope="parent"
+      >
+        <template #count>
+          <strong>{{ formatCount(total, locale) }}</strong>
+        </template>
+      </i18n-t>
+      <i18n-t
+        v-else
+        :keypath="
+          cover
+            ? '{percent} sure of the leading cover'
+            : '{percent} sure of the leading story'
+        "
+        tag="span"
+        scope="parent"
+      >
+        <template #percent>
+          <strong>{{ formatPercent(confidence, locale) }}</strong>
+        </template>
+      </i18n-t>
       <span class="muted">
-        {{ questionsAsked }}
-        {{ questionsAsked === 1 ? "question" : "questions" }}
+        {{
+          t(
+            "{count} question | {count} questions",
+            { count: questionsAsked },
+            questionsAsked,
+          )
+        }}
         <template v-if="questionsAsked > 0">
-          · spread across {{ roughCount(spread) }}
-          {{ spread === 1 ? "story" : "stories" }}
+          ·
+          {{
+            cover
+              ? t(
+                  "spread across {count} cover | spread across {count} covers",
+                  { count: roughCount(spread, locale) },
+                  spread,
+                )
+              : t(
+                  "spread across {count} story | spread across {count} stories",
+                  { count: roughCount(spread, locale) },
+                  spread,
+                )
+          }}
         </template>
       </span>
     </div>
@@ -23,7 +61,11 @@
       :aria-valuenow="Math.round(progress * 100)"
       aria-valuemin="0"
       aria-valuemax="100"
-      aria-label="Confidence in the leading story"
+      :aria-label="
+        cover
+          ? t('Confidence in the leading cover')
+          : t('Confidence in the leading story')
+      "
     >
       <div class="fill" :style="{ width: `${progress * 100}%` }" />
     </div>
@@ -32,6 +74,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { I18nT } from "vue-i18n";
 
 import {
   candidatesLeft,
@@ -39,6 +82,7 @@ import {
   formatPercent,
   roughCount,
 } from "~quackinator/format";
+import { useQuackinatorI18n } from "~quackinator/i18n";
 
 /**
  * The bar tracks confidence in the leading story, not how far the search has
@@ -48,13 +92,21 @@ import {
  * raises it even as the leading guess improves. Presenting that as progress made
  * the app look like it was going backwards on perfectly good answers.
  */
-const { storyEntropyBits, startingBits } = defineProps<{
+const {
+  storyEntropyBits,
+  startingBits,
+  cover = false,
+} = defineProps<{
   storyEntropyBits: number;
   startingBits: number;
   progress: number;
   confidence: number;
   questionsAsked: number;
+  /** Identifying a cover, so the count is of covers. */
+  cover?: boolean;
 }>();
+
+const { t, locale } = useQuackinatorI18n();
 
 const spread = computed(() => candidatesLeft(storyEntropyBits));
 const total = computed(() => candidatesLeft(startingBits));

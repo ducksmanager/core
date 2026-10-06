@@ -3,8 +3,11 @@
     <header class="header">
       <h1>quackinator</h1>
       <p class="tagline">
-        Which Disney comic story are you reading? Flip through it and answer —
-        no need to know the title.
+        {{
+          t(
+            "Which Disney comic story are you reading? Flip through it and answer — no need to know the title.",
+          )
+        }}
       </p>
     </header>
 
@@ -12,16 +15,22 @@
     <template v-else>
       <quackinator-game :key="round" :seed="seed" :restartable="false" />
       <button type="button" class="another" @click="started = false">
-        Identify another story
+        {{ t("Identify another story") }}
       </button>
     </template>
 
-    <footer class="footer">
-      Data from
-      <a href="https://inducks.org" target="_blank" rel="noopener noreferrer"
-        >Inducks</a
-      >.
-    </footer>
+    <i18n-t
+      keypath="Data from {source}."
+      tag="footer"
+      class="footer"
+      scope="parent"
+    >
+      <template #source>
+        <a href="https://inducks.org" target="_blank" rel="noopener noreferrer"
+          >Inducks</a
+        >
+      </template>
+    </i18n-t>
   </div>
 </template>
 
@@ -34,10 +43,14 @@
  * gets the same component this page does rather than a second copy of it.
  */
 import { ref, shallowRef } from "vue";
+import { I18nT } from "vue-i18n";
 
 import FirstPageUpload from "~quackinator/components/FirstPageUpload.vue";
 import QuackinatorGame from "~quackinator/components/QuackinatorGame.vue";
+import { useQuackinatorI18n } from "~quackinator/i18n";
 import type { Seed } from "~quackinator/types";
+
+const { t } = useQuackinatorI18n();
 
 const started = ref(false);
 const seed = shallowRef<Seed>();

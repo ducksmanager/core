@@ -302,6 +302,7 @@ class Raw:
     sv_rows: list[int | None] = field(default_factory=list)
     sv_cols: list[int | None] = field(default_factory=list)
     sv_panels: list[int | None] = field(default_factory=list)
+    sv_cover: list[bool] = field(default_factory=list)
     popularity: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.int32))
 
     # --- set-valued per storyversion row ---
@@ -347,19 +348,34 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     """
     raw = Raw()
 
-    log.info("streaming comic storyversions")
-    for svc, sc, pages, rr, cc, pn, kw, bnum, bden, bunspec in stream(conn, sql.STORYVERSIONS):
+    log.info("streaming comic and cover storyversions")
+    for svc, sc, pages, rr, cc, pn, kw, bnum, bden, bunspec, kind in stream(
+        conn, sql.STORYVERSIONS
+    ):
         if not svc or not sc:
             continue
+        cover = kind == "c"
         raw.sv_codes.append(svc)
         raw.sv_story.append(sc)
-        raw.sv_length.append(page_length_tenths(to_int(pages), to_int(bnum), to_int(bden), bunspec))
-        raw.sv_rows.append(to_int(rr))
-        raw.sv_cols.append(to_int(cc))
-        raw.sv_panels.append(to_int(pn))
+        raw.sv_cover.append(cover)
+        # A cover is one page with no panels, and Inducks records it as such, so
+        # its layout columns describe nothing a reader could count: blank them
+        # rather than let the layout questions treat them as measurements.
+        if cover:
+            raw.sv_length.append(UNKNOWN)
+            raw.sv_rows.append(None)
+            raw.sv_cols.append(None)
+            raw.sv_panels.append(None)
+        else:
+            raw.sv_length.append(
+                page_length_tenths(to_int(pages), to_int(bnum), to_int(bden), bunspec)
+            )
+            raw.sv_rows.append(to_int(rr))
+            raw.sv_cols.append(to_int(cc))
+            raw.sv_panels.append(to_int(pn))
         if kw:
             raw.keywords[svc] = kw
-    log.info("  %d comic storyversions", len(raw.sv_codes))
+    log.info("  %d storyversions, %d of them covers", len(raw.sv_codes), sum(raw.sv_cover))
 
     sv_pos = {code: i for i, code in enumerate(raw.sv_codes)}
 
@@ -378,9 +394,11 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     languages_of: dict[int, set[str]] = defaultdict(set)
     decades_of: dict[int, set[int]] = defaultdict(set)
     title_words: dict[str, set[str]] = defaultdict(set)
-    for svc, lang, issuecode, title in stream(conn, sql.ENTRIES):
+    for svc, lang, issuecode, title, is_cover in stream(conn, sql.ENTRIES):
         i = sv_pos.get(svc)
-        if i is None:
+        # A comic printed as an issue's cover is still a comic, and is not what
+        # a reader holding the story pages would be looking at; and vice versa.
+        if i is None or bool(to_int(is_cover)) != raw.sv_cover[i]:
             continue
         raw.popularity[i] += 1
         if title:
@@ -660,6 +678,7 @@ def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
         cols=cols_col,
         panels=panels_col,
         popularity=raw.popularity[keep],
+        cover=np.array([raw.sv_cover[i] for i in keep_ids], dtype=bool),
         char=char_kept,
         char_weak=char_weak_kept,
         plot=plot_kept,
@@ -685,8 +704,10 @@ def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
         title_terms=title_terms,
     )
     log.info(
-        "index: %d storyversions / %d stories / %d characters / %d plot terms / %d decades",
+        "index: %d storyversions (%d covers) / %d stories / %d characters / %d plot terms"
+        " / %d decades",
         index.n_items,
+        int(index.cover.sum()),
         index.n_stories,
         len(index.char_codes),
         len(index.plot_terms),

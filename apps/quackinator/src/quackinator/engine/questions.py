@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, ClassVar, NamedTuple, Protocol
+from typing import TYPE_CHECKING, ClassVar, NamedTuple, Protocol, Self
 
 import numpy as np
 import scipy.sparse as sp
@@ -21,6 +21,25 @@ from quackinator.index.model import UNKNOWN, StoryIndex
 
 if TYPE_CHECKING:
     from quackinator.config import Settings
+
+
+class Text(str):
+    """Text shown to the reader, and the message it was made from.
+
+    As a `str` it is the English. `id` is the English template and `params`
+    what fills it, so a client can look the template up in its own language:
+    see `api.app.message`. Names and plot terms are always parameters, never
+    part of an id — they are data, and no translation catalogue can list them.
+    """
+
+    id: str
+    params: dict[str, str]
+
+    def __new__(cls, id: str, **params: str) -> Self:
+        text = super().__new__(cls, id.format(**params))
+        text.id = id
+        text.params = params
+        return text
 
 
 class Bucket(NamedTuple):
@@ -56,65 +75,69 @@ class Bucket(NamedTuple):
 # `CategoricalQuestion.condense`, which merges neighbours rather than dropping
 # them, so that every length the reader can be holding stays answerable.
 PAGE_BUCKETS: list[Bucket] = [
-    Bucket(1, 4, "less than half a page", high="½"),
-    Bucket(5, 7, "about half a page", low="½", high="¾"),
-    Bucket(8, 12, "1 page", "1", "1"),
-    Bucket(13, 17, "1½ pages", "1½", "1½"),
-    Bucket(18, 22, "2 pages", "2", "2"),
-    Bucket(23, 27, "2½ pages", "2½", "2½"),
-    Bucket(28, 34, "3 pages", "3", "3"),
-    Bucket(35, 44, "4 pages", "4", "4"),
-    Bucket(45, 54, "5 pages", "5", "5"),
-    Bucket(55, 64, "6 pages", "6", "6"),
-    Bucket(65, 84, "7-8 pages", "7", "8"),
-    Bucket(85, 104, "9-10 pages", "9", "10"),
-    Bucket(105, 144, "11-14 pages", "11", "14"),
-    Bucket(145, 204, "15-20 pages", "15", "20"),
-    Bucket(205, 304, "21-30 pages", "21", "30"),
-    Bucket(305, 99999, "more than 30 pages", low="31"),
+    Bucket(1, 4, Text("less than half a page"), high="½"),
+    Bucket(5, 7, Text("about half a page"), low="½", high="¾"),
+    Bucket(8, 12, Text("1 page"), "1", "1"),
+    Bucket(13, 17, Text("1½ pages"), "1½", "1½"),
+    Bucket(18, 22, Text("2 pages"), "2", "2"),
+    Bucket(23, 27, Text("2½ pages"), "2½", "2½"),
+    Bucket(28, 34, Text("3 pages"), "3", "3"),
+    Bucket(35, 44, Text("4 pages"), "4", "4"),
+    Bucket(45, 54, Text("5 pages"), "5", "5"),
+    Bucket(55, 64, Text("6 pages"), "6", "6"),
+    Bucket(65, 84, Text("7-8 pages"), "7", "8"),
+    Bucket(85, 104, Text("9-10 pages"), "9", "10"),
+    Bucket(105, 144, Text("11-14 pages"), "11", "14"),
+    Bucket(145, 204, Text("15-20 pages"), "15", "20"),
+    Bucket(205, 304, Text("21-30 pages"), "21", "30"),
+    Bucket(305, 99999, Text("more than 30 pages"), low="31"),
 ]
 
 PANEL_BUCKETS: list[Bucket] = [
-    Bucket(1, 4, "up to 4", high="4"),
-    Bucket(5, 8, "5-8", "5", "8"),
-    Bucket(9, 12, "9-12", "9", "12"),
-    Bucket(13, 20, "13-20", "13", "20"),
-    Bucket(21, 40, "21-40", "21", "40"),
-    Bucket(41, 80, "41-80", "41", "80"),
-    Bucket(81, 999999, "more than 80", low="81"),
+    Bucket(1, 4, Text("up to 4"), high="4"),
+    Bucket(5, 8, Text("5-8"), "5", "8"),
+    Bucket(9, 12, Text("9-12"), "9", "12"),
+    Bucket(13, 20, Text("13-20"), "13", "20"),
+    Bucket(21, 40, Text("21-40"), "21", "40"),
+    Bucket(41, 80, Text("41-80"), "41", "80"),
+    Bucket(81, 999999, Text("more than 80"), low="81"),
 ]
 
 # Rows per page and panels per row: small enough to count exactly, so each value
 # is its own bucket. The tail is open because a reader who says "6 or more" has
 # stopped counting, not measured six.
 SMALL_INT_BUCKETS: list[Bucket] = [
-    Bucket(1, 1, "1", "1", "1"),
-    Bucket(2, 2, "2", "2", "2"),
-    Bucket(3, 3, "3", "3", "3"),
-    Bucket(4, 4, "4", "4", "4"),
-    Bucket(5, 5, "5", "5", "5"),
-    Bucket(6, 999999, "6 or more", low="6"),
+    Bucket(1, 1, Text("1"), "1", "1"),
+    Bucket(2, 2, Text("2"), "2", "2"),
+    Bucket(3, 3, Text("3"), "3", "3"),
+    Bucket(4, 4, Text("4"), "4", "4"),
+    Bucket(5, 5, Text("5"), "5", "5"),
+    Bucket(6, 999999, Text("6 or more"), low="6"),
 ]
 
 
-def _count(n: str, unit: str) -> str:
-    """Render a bare count in the scale's unit: "4" -> "4 pages", "1" -> "1 page"."""
+def _counted(template: str, n: str, unit: str) -> str:
+    """`template` with the scale's unit after it: "4" -> "4 pages", "1" -> "1 page"."""
     if not unit:
-        return n
-    return f"{n} {unit[:-1] if n == '1' else unit}"
+        return template
+    return f"{template} {unit[:-1] if n == '1' else unit}"
 
 
-def range_label(buckets: list[Bucket], first: int, last: int, unit: str) -> str:
+def range_label(buckets: list[Bucket], first: int, last: int, unit: str) -> Text:
     """What to call the span `first..last` of an ordered scale, shown as one option."""
     if first == last:
-        return buckets[first].label
+        label = buckets[first].label
+        return label if isinstance(label, Text) else Text(label)
     # An open end has no number of its own, so it is named by the step it stops
     # at rather than by its own edge.
     if first == 0:
-        return f"less than {_count(buckets[last + 1].low, unit)}"
+        n = buckets[last + 1].low
+        return Text(_counted("less than {count}", n, unit), count=n)
     if last == len(buckets) - 1:
-        return f"more than {_count(buckets[first - 1].high, unit)}"
-    return _count(f"{buckets[first].low}-{buckets[last].high}", unit)
+        n = buckets[first - 1].high
+        return Text(_counted("more than {count}", n, unit), count=n)
+    low, high = buckets[first].low, buckets[last].high
+    return Text(_counted("{low}-{high}", high, unit), low=low, high=high)
 
 
 def bucketize(values: np.ndarray, buckets: list[Bucket]) -> np.ndarray:
@@ -590,7 +613,7 @@ class MultiLabelQuestion:
             key=self.key,
             prompt=self.prompt,
             matrix=sp.hstack([columns, sp.csr_matrix(rest)], format="csr"),
-            labels=[self.labels[i] for i in keep] + ["Something else"],
+            labels=[self.labels[i] for i in keep] + [Text("Something else")],
             has_data=self.has_data,
             noise=self.noise,
             ruled_out=ruled,
@@ -770,7 +793,7 @@ class BinaryFamily:
     # keyed outside the index — the character portraits the API serves — is
     # keyed on this. Absent for a family whose columns are not entities.
     codes: list[str] | None = None
-    options: list[str] = field(default_factory=lambda: ["Yes", "No"])
+    options: list[str] = field(default_factory=lambda: [Text("Yes"), Text("No")])
     # Derived in __post_init__, never passed in.
     _carries: ColumnView = field(init=False, repr=False, compare=False)
     _weak_view: ColumnView | None = field(init=False, default=None, repr=False, compare=False)
@@ -873,7 +896,7 @@ class BinaryQuestion:
 
     @property
     def prompt(self) -> str:
-        return self.family.prompt_template.format(name=self.family.labels[self.feature])
+        return Text(self.family.prompt_template, name=self.family.labels[self.feature])
 
     @property
     def options(self) -> list[str]:
@@ -1018,9 +1041,9 @@ def decade_question(
     impossible_mask = known[:, None] & (first[:, None] > starts[None, :])
     return MultiLabelQuestion(
         key="decade",
-        prompt="What decade was the magazine published in?",
+        prompt=Text("What decade was the magazine published in?"),
         matrix=index.decade,
-        labels=[f"{s}s" for s in index.decade_starts],
+        labels=[Text("{decade}s", decade=str(s)) for s in index.decade_starts],
         has_data=index.has_decade,
         noise=noise,
         ruled_out=sp.csr_matrix(impossible_mask.astype(np.int8)),
@@ -1050,7 +1073,7 @@ def creator_question(index: StoryIndex, cfg: Settings) -> AttestedMultiLabelQues
         return None
     return AttestedMultiLabelQuestion(
         key="creator",
-        prompt="Whose name is printed on the story's first page?",
+        prompt=Text("Whose name is printed on the story's first page?"),
         matrix=index.creator,
         labels=list(index.creator_names),
         has_data=index.has_creator,
@@ -1059,6 +1082,11 @@ def creator_question(index: StoryIndex, cfg: Settings) -> AttestedMultiLabelQues
         # attested by being reprinted more often.
         coverage=np.full(index.n_items, cfg.creator_coverage),
     )
+
+
+# Questions about the printed layout of a comic story. A cover has none to count:
+# the ETL records its layout as unknown, and a cover session never asks them.
+LAYOUT_KEYS = frozenset({"pages", "rows", "cols", "panels"})
 
 
 def build_bank(index: StoryIndex, cfg: Settings) -> QuestionBank:
@@ -1092,7 +1120,7 @@ def build_bank(index: StoryIndex, cfg: Settings) -> QuestionBank:
     categorical: list[CategoricalQuestion] = [
         layout_question(
             "pages",
-            "How long is the story?",
+            Text("How long is the story?"),
             index.page_tenths,
             PAGE_BUCKETS,
             noise * 0.5,
@@ -1100,21 +1128,21 @@ def build_bank(index: StoryIndex, cfg: Settings) -> QuestionBank:
         ),
         layout_question(
             "rows",
-            "How many rows (tiers) of panels are on a typical page?",
+            Text("How many rows (tiers) of panels are on a typical page?"),
             index.rows,
             SMALL_INT_BUCKETS,
             noise,
         ),
         layout_question(
             "cols",
-            "How many panels are in a typical row?",
+            Text("How many panels are in a typical row?"),
             index.cols,
             SMALL_INT_BUCKETS,
             noise,
         ),
         layout_question(
             "panels",
-            "Roughly how many panels does the story have in total?",
+            Text("Roughly how many panels does the story have in total?"),
             # estimatedpanels is itself derived in Inducks, so trust it less.
             index.panels,
             PANEL_BUCKETS,

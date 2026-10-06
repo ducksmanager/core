@@ -105,7 +105,7 @@ def _services(monkeypatch, kumiko, ocr=None):
     from quackinator.api import app
 
     monkeypatch.setattr(app.settings, "kumiko_host", "http://kumiko")
-    monkeypatch.setattr(app.settings, "ocr_host", "http://ocr" if ocr is not None else "")
+    monkeypatch.setattr(app.settings, "ocr_host", "http://ocr")
     sent: dict[str, object] = {}
 
     def post(url, body, content_type):
@@ -136,7 +136,6 @@ def test_an_upload_is_segmented_and_its_first_panel_read(monkeypatch):
     assert analysis.kumiko.whole_story is False
     assert [t.text for t in analysis.ocr] == ["Paperino"]
     assert json.loads(sent["http://ocr"])["crop"] == panels[0]
-    assert analysis.errors == []
 
 
 def test_without_a_language_the_title_is_not_read(monkeypatch):
@@ -156,19 +155,32 @@ def test_a_page_with_no_panels_is_reported_unsegmented(monkeypatch):
     assert analysis.kumiko.pages == [None]
 
 
-def test_an_unreachable_service_is_reported_not_raised(monkeypatch):
-    """The reader can always be asked questions instead."""
+def test_an_unreachable_service_fails_the_analysis(monkeypatch):
+    import pytest
+    from fastapi import HTTPException
+
     app, _ = _services(
         monkeypatch, kumiko=[{"panels": [[0, 0, 5, 5]]}], ocr=OSError("connection refused")
     )
-
-    analysis = app._analyze(b"jpeg", "it")
-
-    assert analysis.kumiko is not None
-    assert analysis.errors == ["ocr: connection refused"]
+    with pytest.raises(HTTPException) as raised:
+        app._analyze(b"jpeg", "it")
+    assert raised.value.status_code == 502
 
     app, _ = _services(monkeypatch, kumiko=OSError("down"))
-    assert app._analyze(b"jpeg", "it").errors == ["kumiko: down"]
+    with pytest.raises(HTTPException) as raised:
+        app._analyze(b"jpeg", "it")
+    assert raised.value.status_code == 502
+
+
+def test_the_api_refuses_to_start_without_its_services(monkeypatch):
+    import pytest
+
+    from quackinator.api import app
+
+    monkeypatch.setattr(app.settings, "kumiko_host", "http://kumiko")
+    monkeypatch.setattr(app.settings, "ocr_host", "")
+    with pytest.raises(RuntimeError, match="QUACKINATOR_OCR_HOST"):
+        app.require_services()
 
 
 class _Upload:

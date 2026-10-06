@@ -254,7 +254,8 @@ export const findSimilarImages = async (
       INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
       INNER JOIN inducks_entryurl eu ON (eu.entrycode = e.entrycode AND eu.sitecode = 'webusers')
       INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-      WHERE similarity < 0.15
+      -- A storyversion Inducks never attached to a story has nothing to suggest
+      WHERE similarity < 0.15 AND sv.storycode <> ''
       ORDER BY similarity
       LIMIT 5
     `;

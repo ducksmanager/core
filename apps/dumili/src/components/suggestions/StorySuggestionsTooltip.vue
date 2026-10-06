@@ -167,21 +167,22 @@ const suggestedStories = computed(() =>
   (["aiOcrResult", "aiStorySearchResult"] as const)
     .map((source) => ({ source }))
     .groupBy("source", null, ({ source }) =>
-      (firstPageImage.value?.[source]?.stories ?? []).map((possibleStory) =>
-        (liveEntry.value?.storySuggestions ?? []).find(
-          ({ aiStorySuggestionId }) =>
-            aiStorySuggestionId === possibleStory.aiStorySuggestion?.id,
-        )!,
+      (firstPageImage.value?.[source]?.stories ?? []).flatMap(
+        (possibleStory) =>
+          (liveEntry.value?.storySuggestions ?? []).find(
+            ({ aiStorySuggestionId }) =>
+              aiStorySuggestionId === possibleStory.aiStorySuggestion?.id,
+          ) ?? [],
       ),
     ),
 );
 
 watch(
   suggestedStories,
-  (value) => {
+  ({ aiOcrResult, aiStorySearchResult }) => {
     const storycodes = new Set([
-      ...value.aiOcrResult.map((story) => story.storycode),
-      ...value.aiStorySearchResult.map((story) => story.storycode),
+      ...aiOcrResult.map((story) => story.storycode),
+      ...aiStorySearchResult.map((story) => story.storycode),
     ]);
     if (storycodes.size) {
       fetchStoryDetails(Array.from(storycodes));

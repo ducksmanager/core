@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex align-items-top w-100">
-    <b-dropdown variant="dark" class="col col-2">
+  <div class="d-flex align-items-top gap-2 w-100">
+    <b-dropdown variant="dark" class="flex-shrink-0">
       <b-dropdown-item @click="searchType = 'byStoryTitle'">{{
         $t("Par titre d'histoire")
       }}</b-dropdown-item>
@@ -15,7 +15,7 @@
         }}
       </template>
     </b-dropdown>
-    <div class="position-relative col col-10">
+    <div class="position-relative flex-grow-1">
       <b-form-input
         v-model="search"
         autofocus

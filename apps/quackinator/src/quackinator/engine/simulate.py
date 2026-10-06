@@ -513,7 +513,8 @@ def measure(scenario: benchmark.Scenario, trials: int, seed: int) -> dict:
     if scenario.sample == "prior":
         targets = rng.choice(engine.index.n_items, size=trials, p=engine.prior)
     else:
-        targets = rng.integers(0, engine.index.n_items, size=trials)
+        # Comic stories only, like the prior: a cover is a separate session.
+        targets = rng.choice(np.flatnonzero(~engine.index.cover), size=trials)
 
     # Rows whose panels-per-tier the ETL folded away as Inducks' default, and the
     # values indexers recorded on the rows where they did look.

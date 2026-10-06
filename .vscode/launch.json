@@ -108,7 +108,7 @@
             "type": "node-terminal",
             "request": "launch",
             "name": "Start Quackinator Web server",
-            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~quackinator'",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~quackinator' -F '~quackinator-api^...'",
             "presentation": {
                 "reveal": "always",
                 "panel": "shared"
@@ -189,6 +189,7 @@
             "name": "Debug Quackinator API + Web Server",
             "configurations": [
                 "Debug Quackinator API",
+                "Debug DM Story Search API",
                 "Start Quackinator Web server"
             ],
             "stopAll": true
