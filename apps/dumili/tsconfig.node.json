@@ -7,6 +7,7 @@
     "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
     "outDir": "./node_modules/.tmp/tsconfig.node",
+    "rootDir": "../..",
     "allowSyntheticDefaultImports": true
   },
   "include": [

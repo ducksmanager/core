@@ -67,5 +67,6 @@ def build_vocabulary(
         for t, c in df.items()
         if min_df <= c <= max_df and (not floor or native_df[t] / c >= floor)
     ]
-    candidates.sort(key=lambda tc: abs(0.5 - tc[1] / n_docs))
+    # The token breaks ties: `df` was filled from sets, whose order changes between runs.
+    candidates.sort(key=lambda tc: (abs(0.5 - tc[1] / n_docs), tc[0]))
     return [t for t, _ in candidates[:size]]
