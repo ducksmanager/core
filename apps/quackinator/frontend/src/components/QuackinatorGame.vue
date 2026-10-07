@@ -2,7 +2,7 @@
   <div class="game">
     <p v-if="game.error.value" class="error" role="alert">
       {{ game.error.value }}
-      <button type="button" @click="game.restart()">
+      <button type="button" @click="retry">
         {{ t("Try again") }}
       </button>
     </p>
@@ -77,14 +77,6 @@
                     )
               }}
             </p>
-            <button
-              v-if="restartable"
-              type="button"
-              class="primary"
-              @click="game.restart()"
-            >
-              {{ t("Identify another story") }}
-            </button>
           </section>
 
           <answer-trail :trail="game.trail.value" />
@@ -101,14 +93,6 @@
             @reject="game.reject"
             @pick="emit('picked', $event)"
           />
-          <button
-            v-if="restartable"
-            type="button"
-            class="restart"
-            @click="game.restart()"
-          >
-            {{ t("Start over") }}
-          </button>
         </aside>
       </main>
     </template>
@@ -120,20 +104,7 @@
 </template>
 
 <script setup lang="ts">
-/**
- * The game, with nothing around it.
- *
- * `App.vue` is this component plus a page: a heading, a tagline and a footer,
- * which are the standalone site rather than the game. Everything a host embeds
- * is here, and everything here works without one — the standalone app passes no
- * props at all and gets the session it has always had.
- *
- * The two things a host needs that a reader does not are both optional: an
- * `initialTurn`, because a host seeds its session server-side where its own
- * database is, and `pickable`, because a host is going to *record* the answer
- * and so the reader has to be able to commit to a row.
- */
-import { onMounted, watch } from "vue";
+import { onMounted } from "vue";
 import { I18nT } from "vue-i18n";
 
 import type { Api } from "~quackinator/api";
@@ -152,24 +123,15 @@ const {
   initialTurn = undefined,
   seed = undefined,
   pickable = false,
-  restartable = true,
 } = defineProps<{
-  /** Defaults to the standalone app's own origin. */
   api?: Api;
-  /** A session created elsewhere, already seeded. */
   initialTurn?: Turn;
-  /** What the browser already found on the page, to start the session from. */
   seed?: Seed;
-  /** Offer "That's the one" on each guess. */
   pickable?: boolean;
-  /** Let the reader throw the session away and start clean. */
-  restartable?: boolean;
 }>();
 
 const emit = defineEmits<{
-  /** Every answer as the reader gives it, for a host that stores them. */
   (e: "answered", answer: AnswerEvent): void;
-  /** The reader committed to a guess. */
   (e: "picked", storycode: string): void;
 }>();
 
@@ -183,14 +145,13 @@ const game = useGame({
 
 onMounted(() => game.start(seed));
 
-// A host that swaps in a different session — reopening on another entry —
-// should get that session, not the one already on screen.
-watch(
-  () => initialTurn,
-  (turn) => turn && game.adopt(turn),
-);
-
-defineExpose({ game });
+const retry = () => {
+  if (game.started.value) {
+    game.error.value = null;
+  } else {
+    void game.start(seed);
+  }
+};
 </script>
 
 <style scoped>
@@ -239,29 +200,6 @@ defineExpose({ game });
 .muted {
   color: var(--muted);
   font-size: 0.9rem;
-}
-
-.primary {
-  margin-top: 0.5rem;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border: none;
-  border-radius: 10px;
-  padding: 0.7rem 1.1rem;
-  font-weight: 650;
-}
-
-.restart {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.55rem 0.9rem;
-  color: var(--muted);
-}
-
-.restart:hover {
-  color: var(--text);
-  border-color: var(--muted);
 }
 
 .error {

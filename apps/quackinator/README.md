@@ -495,7 +495,6 @@ Recorded so they are not re-proposed.
 | `GET /api/creators?q=`            | Autocomplete for the author box; session-independent                                                                                                      |
 | `POST /api/sessions/{id}/creator` | `{creator}` — a name read off the first page. Costs no turn                                                                                               |
 | `POST /api/sessions/{id}/reject`  | `{storycode}` — the reader says that guess is wrong                                                                                                       |
-| `DELETE /api/sessions/{id}`       | End a session                                                                                                                                             |
 | `GET /api/health`                 | Index stats, including the fingerprint a stored answer is keyed on                                                                                        |
 
 Each guess carries a `thumbnail_url` for the scan of its first page, `null`
@@ -533,7 +532,6 @@ All settings are `QUACKINATOR_`-prefixed and read from `.env`; see
 | `CREATOR_MATCHES`                       | Longest list the author search box offers for one query                                 |
 | `DECADE_NOISE`                          | Same for printing decades — and see above on why it stays low                           |
 | `DECADE_IMPOSSIBLE`                     | Probability a magazine predates its own story's first publication                       |
-| `DECADE_OPTIONS`                        | Longest decade list; above the decade count, so it never condenses                      |
 | `POPULARITY_PRIOR_WEIGHT`               | How much reprint count favours a story                                                  |
 | `REJECTION_LIKELIHOOD`                  | How hard a rejected guess is damped                                                     |
 | `SEED_BOOST`                            | Ceiling on the lift a host system's own candidate list may apply. Assumed, not measured |

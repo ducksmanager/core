@@ -1,9 +1,6 @@
 /** Mirrors the Pydantic models in src/quackinator/api/app.py. */
 
-/**
- * Text to show, as an English template and what fills it, so that it can be
- * translated: see `useQuackinatorI18n`. Names and terms are always parameters.
- */
+/** English template + params, translated by `useQuackinatorI18n`. */
 export interface Message {
   id: string;
   params: Record<string, string>;
@@ -13,25 +10,11 @@ export interface Question {
   key: string;
   prompt: string;
   options: string[];
-  /** `prompt`, to translate. */
   prompt_message: Message;
-  /** `options`, in the same order, to translate. */
   option_messages: Message[];
-  /** Information this question is expected to yield. */
   gain_bits: number;
-  /**
-   * The Inducks page for the character this question names, for a reader who
-   * does not recognise the name. Null for every question that is not about one
-   * character, so the card must read fine without it.
-   */
   inducks_url: string | null;
-  /**
-   * Inducks code of what the question is about. The stable identity — `key`
-   * embeds a display name that moves with the index's DESC_LANGUAGE — so a host
-   * storing an answer to replay into a later session keys it on this. Null for
-   * a question about nothing nameable, and for the plot family, whose terms are
-   * their own identity and travel as the label.
-   */
+  /** Stable Inducks code to store answers under (`key` embeds a localised name). Null for plot questions. */
   subject: string | null;
 }
 
@@ -40,12 +23,6 @@ export interface Guess {
   title: string;
   year: number | null;
   probability: number;
-  /**
-   * Scan of the story's first page. Null where the story has no scan — 5% of
-   * them — or where the mirror is switched off server-side, so every row must
-   * read fine without a picture. The URL can also 404 or be blocked at load
-   * time; see `GuessList`, which handles that the same way.
-   */
   thumbnail_url: string | null;
 }
 
@@ -54,38 +31,28 @@ export interface Turn {
   question: Question | null;
   guesses: Guess[];
   confidence: number;
-  /** Confidence at which the engine stops asking; the full mark on the bar. */
+  /** Confidence at which the engine stops asking. */
   confidence_threshold: number;
-  /**
-   * Over stories. How *spread* the belief is — not how close the engine is.
-   * A single answer can raise it while the leading guess improves, so this
-   * drives a secondary readout, never the progress bar.
-   */
+  /** Not monotone, so never used for the progress bar. */
   story_entropy_bits: number;
   questions_asked: number;
   done: boolean;
-  /** Identifying a cover rather than a comic story. */
   cover: boolean;
-  /** Only on the turn that created the session, and only if it was seeded. */
+  /** Only on the first turn of a seeded session. */
   seed: SeedReport | null;
 }
 
-/** What a host system knows before the reader is asked anything. */
 export interface Seed {
   /** storycode -> 0..1 confidence from the host's own tools. Lifts, never damps. */
   prior?: Record<string, number>;
-  /** Measurements answering `pages`, `rows`, `cols`, `panels` or `decade`. */
+  /** Answers to `pages`, `rows`, `cols`, `panels` or `decade`. */
   facts?: { key: string; value: number }[];
-  /** What this reader answered in an earlier session, to resume it. */
   answers?: { family: string; code: string; option: number | null }[];
-  /** Reverse image search over the story's first page, unfiltered. */
   image_matches?: { storycode: string; score: number }[];
-  /** OCR of the first panel, where the title is printed. */
   ocr?: OcrText[];
   kumiko?: KumikoEvidence | null;
   /** Questions never to ask, after `facts` has answered what it can. */
   exclude?: string[];
-  /** Identify a cover rather than a comic story: no layout questions or facts. */
   cover?: boolean;
 }
 
@@ -95,23 +62,18 @@ export interface OcrText {
 }
 
 export interface KumikoEvidence {
-  /** One per page of the story, in order, null where unsegmented. */
+  /** One per page, null where unsegmented. */
   pages: ({ rows: number; panels: number } | null)[];
-  /** `pages` covers every page, so the panels can be totalled. */
+  /** `pages` covers the whole story, so panels can be totalled. */
   whole_story?: boolean;
 }
 
-/** Kumiko and OCR over one uploaded page, shaped to go straight into a seed. */
 export interface Analysis {
   kumiko: KumikoEvidence;
   ocr: OcrText[];
 }
 
-/**
- * What the seed actually did. Nothing in a seed is fatal — it is assembled
- * against an index the host does not control — so a host that wants to know
- * whether its stored data still fits has to read this.
- */
+/** What the seed actually applied; unusable parts are dropped, not errors. */
 export interface SeedReport {
   prior_applied: number;
   prior_unknown: string[];
@@ -119,7 +81,6 @@ export interface SeedReport {
   facts_rejected: string[];
   answers_replayed: number;
   answers_dropped: string[];
-  /** Stories image search lifted, past its score gate. */
   image_applied: number;
   image_unknown: string[];
   /** Null where the index carries no titles to match OCR against. */
@@ -128,11 +89,10 @@ export interface SeedReport {
   index_fingerprint: string;
 }
 
-/** One name from the author box's autocomplete. */
 export interface CreatorMatch {
   creator: number;
   name: string;
-  /** The spelling that matched — an alias, where one did. */
+  /** The spelling that matched, possibly an alias. */
   matched: string;
   stories: number;
 }

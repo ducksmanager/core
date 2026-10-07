@@ -1,7 +1,7 @@
 <template>
   <aside class="likely">
     <h6 class="heading">
-      {{ title ?? $t("Actuellement les plus probables") }}
+      {{ title }}
     </h6>
     <ul class="list">
       <li
@@ -15,11 +15,6 @@
         @keydown.enter.self="emit('pick', story.storycode)"
         @keydown.space.self.prevent="emit('pick', story.storycode)"
       >
-        <div
-          v-if="story.confidence !== undefined"
-          class="bar"
-          :style="{ width: `${Math.max(4, story.confidence * 100)}%` }"
-        />
         <StoryWithImage :storycode="story.storycode">
           <template v-if="story.sources?.length" #prefix>
             <div class="d-flex flex-wrap gap-1">
@@ -38,17 +33,11 @@
 </template>
 
 <script setup lang="ts">
-const { t: $t } = useI18n();
-
 defineProps<{
-  title?: string;
-  /** The accepted story, emphasised. */
+  title: string;
   selected?: string;
   stories: {
     storycode: string;
-    /** 0..1, drawn as a bar behind the row. */
-    confidence?: number;
-    /** Where the suggestion came from, shown as badges. */
     sources?: string[];
   }[];
 }>();
@@ -105,12 +94,5 @@ const emit = defineEmits<{
   outline: 3px solid #62a8f5;
   outline-offset: -3px;
   font-weight: 700;
-}
-
-.bar {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: rgb(98 168 245 / 25%);
-  pointer-events: none;
 }
 </style>

@@ -58,7 +58,6 @@
                 type="button"
                 class="pick"
                 :disabled="busy"
-                :title="`This is ${guess.title}`"
                 @click="emit('pick', guess.storycode)"
               >
                 {{ t("That's the one") }}
@@ -95,16 +94,8 @@ const {
   guesses: Guess[];
   busy: boolean;
   final: boolean;
-  /**
-   * Offer "That's the one" beside each rejection.
-   *
-   * Off for the standalone reader, who has nowhere to put the answer and is
-   * told it by the list itself. On for a host that is going to *record* the
-   * pick — Dumili writes it to the entry it is indexing — where the reader
-   * has to be able to commit to a row rather than just read it.
-   */
+  /** Hosts that record the pick; the standalone reader has nowhere to put it. */
   pickable?: boolean;
-  /** Identifying a cover, so an untitled guess is an untitled cover. */
   cover?: boolean;
 }>();
 
@@ -117,12 +108,7 @@ const { t, locale } = useQuackinatorI18n();
 
 const INDUCKS_STORY = "https://inducks.org/story.php?c=";
 
-/**
- * Scans that did not load. Keyed by URL rather than by storycode: a story keeps
- * its URL as the list reorders, and a mirror that is down fails every row the
- * same way, so one failure per URL is remembered rather than retried on each
- * re-render.
- */
+// Keyed by URL: a down mirror fails every row the same way, so don't retry per render.
 const failed = ref(new Set<string>());
 
 const pictureFor = (guess: Guess): string | null => {
@@ -130,17 +116,7 @@ const pictureFor = (guess: Guess): string | null => {
   return url && !failed.value.has(url) ? url : null;
 };
 
-/**
- * Whether to give every row a picture frame, empty ones included.
- *
- * The 5% of stories nobody has scanned would otherwise shift their title left
- * and break the column, so an empty frame is the lesser evil — but only while
- * some row in the list actually has a picture. Where none does, five empty
- * frames are pure furniture and the list goes back to looking exactly as it did
- * before scans existed: the mirror switched off server-side, or every scan in
- * the shortlist failing to load, which is what a mirror that is down looks like
- * from here.
- */
+// Empty frames keep titles aligned, but only while at least one row has a picture.
 const showPictures = computed(() => guesses.some((guess) => pictureFor(guess)));
 </script>
 

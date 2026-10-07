@@ -32,7 +32,6 @@ import namespaces from "../namespaces";
 import { runKumikoOnPages } from "./kumiko";
 import { runOcrOnImage } from "./ocr";
 import {
-  canRunOn as canRunQuackinatorOn,
   recordQuackinatorAnswer,
   resetQuackinatorSession,
   startQuackinatorSession,
@@ -175,9 +174,7 @@ const entryStoryInclude = {
     },
   },
   includedInEntry: true,
-  // Only the answer count is of interest to the client — enough to say whether
-  // reopening resumes something. The answers themselves are replayed
-  // server-side and never leave this process.
+  // Answers are replayed server-side; the client only needs the count.
   quackinatorSession: { include: { _count: { select: { answers: true } } } },
 } as const;
 
@@ -298,7 +295,6 @@ export type IndexationServerSentStartEvents = {
   reportCreateAiStorySuggestions: (entryId: number) => void;
   reportRunOcrOnImage: (imageId: number) => void;
   reportRunStorySearchOnImage: (imageId: number) => void;
-  reportStartQuackinatorSession: (entryId: number) => void;
   reportDocumentAnalyzed: (pageNumbers: number[]) => void;
   reportDocumentPageUploaded: (pageNumber: number) => void;
 };
@@ -308,16 +304,12 @@ export type IndexationServerSentStartEndEvents =
     indexationUpdated: (indexation: FullIndexation) => void;
   };
 
-/**
- * The AI pipeline running on each indexation, with one promise per entry that
- * settles once that entry's story suggestions are stored (or skipped), so a
- * caller can wait for one entry without waiting for the whole issue.
- */
+// Running AI pipelines, with a per-entry promise that settles once its story suggestions are done.
 const aiRuns: Record<
   string,
   {
     storySuggestionsDone: Map<number, Promise<void>>;
-    // Something this run already went past was invalidated: run again after it.
+    // Run again after finishing: something already processed was invalidated.
     rerun?: boolean;
   }
 > = {};
@@ -1223,13 +1215,6 @@ const listenEvents = (services: IndexationServices) => ({
       });
   },
 
-  /**
-   * Open Quackinator on one entry, seeded with what Dumili already knows.
-   *
-   * Deliberately not part of the pipeline in `getFullIndexation`: the other
-   * three tools infer and move on, while this one costs the reader twenty
-   * questions, so it only ever runs because they asked for it.
-   */
   startQuackinatorSession: async (entryId: number) => {
     const storySuggestionsDone =
       aiRuns[services._socket.data.indexation.id]?.storySuggestionsDone.get(
@@ -1244,23 +1229,13 @@ const listenEvents = (services: IndexationServices) => ({
     if (!entry) {
       return { error: "This indexation has no such entry" };
     }
-    if (!canRunQuackinatorOn(entry)) {
-      return { error: "Quackinator only identifies comic stories and covers" };
-    }
-    services.reportStartQuackinatorSession(entryId);
-    try {
-      const result = await startQuackinatorSession(indexation, entry);
-      if ("error" in result) {
-        return result;
-      }
+    const result = await startQuackinatorSession(indexation, entry);
+    if (!("error" in result)) {
       await refreshIndexation(services, false);
-      return result;
-    } finally {
-      services.reportStartQuackinatorSessionEnd(entryId);
     }
+    return result;
   },
 
-  /** One answer, as the reader gives it, so reopening the entry resumes. */
   recordQuackinatorAnswer: async (
     entryId: number,
     answer: {

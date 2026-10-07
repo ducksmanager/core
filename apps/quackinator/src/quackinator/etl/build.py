@@ -1,8 +1,4 @@
-"""Build the story index from MariaDB.
-
-All joining happens here, in Python, against streamed flat tables. Runtime is
-dominated by streaming inducks_entry (~2M rows) and inducks_appearance (~1.7M).
-"""
+"""Build the story index from MariaDB: stream flat tables, join in Python."""
 
 from __future__ import annotations
 
@@ -28,39 +24,23 @@ from quackinator.index.titles import title_tokens
 
 log = logging.getLogger(__name__)
 
-# Decades outside this range are data errors, not history. Inducks' oldest
-# indexed Disney comics are 1930s; anything dated in the future is a typo.
+# Decades outside this range are data errors.
 MIN_DECADE, MAX_DECADE = 1930, 2030
 
-# Inducks uses these codes as markers, not as characters. '--' is "no
-# identifiable characters" and carries 31k appearances under the English
-# preferred name "No one" — which the engine will cheerfully turn into
-# "Does No one appear in the story?" if it is left in.
+# Inducks marker codes, not characters ('--' = "No one"); left in, they'd become
+# questions like "Does No one appear in the story?".
 PLACEHOLDER_CHARACTERS = frozenset({"--", "-", "?", "!", "$", ""})
 
-# No *full-page* comic story is two panels long. Inducks derives
-# `estimatedpanels`, so a storyversion with no recorded length yields a tiny
-# number rather than a null, and that number then reads as a confident
-# measurement. Below a page the same small numbers are honest — a quarter-page
-# strip really is two or three panels — so this is a floor on whole-page rows
-# only; see where it is applied in `build`.
+# `estimatedpanels` is derived, so a missing length shows up as a tiny panel count.
+# Applied to whole-page rows only: a quarter-page strip really can be two panels.
 MIN_CREDIBLE_PANELS = 3
 
-# Inducks writes the documented default of two panels per tier into
-# `columnsperpage` whenever the indexer did not record one — the `pagel` letter
-# that carries it is explicitly "not mandatory" — and an indexer who *was* exact
-# about two writes the same value, so a recorded 2 cannot be told from a blank.
-# It sits on 88% of comic storyversions. `rowsperpage` needs no such treatment:
-# the tier count is written whenever the layout is recorded at all, and its
-# distribution is what real comics look like.
+# Inducks fills `columnsperpage` with 2 when the indexer recorded nothing, so a 2
+# can't be told from a blank and is treated as unknown.
 DEFAULTED_COLUMNS_PER_PAGE = 2
 
-# Appearance comments meaning "the reader will not see this character". Inducks
-# records a cameo, a photo on a wall, a statue or a dream as a full appearance —
-# correctly, since it answers "is this character in the story". Ours is the
-# narrower question of whether the reader would notice, so these cells are
-# listed but are not evidence the reader can be asked to confirm. Matched as
-# whole words: `BB(12;cameo)` arrives as "12;cameo".
+# Appearance comments for a character the reader won't notice (cameo, photo,
+# dream...). Kept as appearances but marked weak. `BB(12;cameo)` arrives as "12;cameo".
 UNSEEN_APPEARANCE = re.compile(
     r"\b(cameo|photo|picture|statue|portrait|painting|silhouette|logo|thought"
     r"|dream|flashback|head)\b",
@@ -69,14 +49,9 @@ UNSEEN_APPEARANCE = re.compile(
 
 
 def layout_column(values: list[int | None], keep: np.ndarray, floor: int = 1) -> np.ndarray:
-    """Project a layout column onto the kept rows, sentinels folded into UNKNOWN.
+    """Project a layout column onto the kept rows; values below `floor` become UNKNOWN.
 
-    Inducks stores "not recorded" as 0 in the layout columns rather than NULL,
-    and `estimatedpanels` is derived from the others, so a storyversion with no
-    page count arrives with a panel count of 1: `fr/MMFG 5p267b` is 0 pages,
-    4 rows, 2 columns, 1 panel. Taken at face value that is a confident answer
-    of "up to 4 panels" — asserted by 22% of the index, and enough on its own to
-    bury the correct story when the reader answers "more than 80".
+    Inducks stores "not recorded" as 0, not NULL, in the layout columns.
     """
     out = np.full(len(keep), UNKNOWN, dtype=np.int16)
     for out_i, i in enumerate(keep):
@@ -94,18 +69,8 @@ def page_length_tenths(
 ) -> int:
     """Total story length in tenths of a page, or UNKNOWN.
 
-    Whole pages and the fractional remainder are two halves of one measurement
-    and Inducks stores them apart. Most of the time the fraction *is* the whole
-    measurement: 111,350 comic storyversions have `entirepages = 0` and a
-    recorded fraction, because a quarter-page strip is a real and very common
-    kind of Disney comic. Reading only `entirepages` recorded all of them as
-    "length not known", which is 38% of the catalogue answering "don't know" to
-    the second-most-informative question in the bank.
-
-    `brokenpageunspecified = 'Y'` says there is a fraction of unrecorded size.
-    Where that is the entire length (9,081 rows) the length is genuinely unknown
-    and saying so is better than inventing a bucket for it; where it sits on top
-    of whole pages the remainder is below the resolution of the scale anyway.
+    Many strips have `entirepages = 0` and their whole length in the fraction.
+    `brokenpageunspecified = 'Y'` means a fraction of unknown size.
     """
     whole = entire if entire is not None and 0 <= entire < 32767 else 0
     fraction = 0
@@ -119,19 +84,10 @@ def page_length_tenths(
     return min(total, 32767)
 
 
-# Country prefix of a scan filename. Inducks' scan-naming rules put the country
-# first, underscore-separated, in a name that is otherwise lowercase ASCII:
-# `us_wdc_608g_001.jpg`, `nl_dd1974_51g_001.jpg`. The directories above it vary
-# by site (`webusers/webusers/2021/03/`, `renamed/us/wdc/0608/`, `us/wdc/0608/`)
-# and are not the country, so only the filename is read.
+# Country prefix of a scan filename, e.g. `us_wdc_608g_001.jpg`.
 SCAN_COUNTRY = re.compile(r"([a-z]{2})_")
 
-# Sites holding shrunken copies of other sites' files rather than scans of their
-# own: `thumbnails`, `thumbnails2` and `thumbnails3` are Outducks' own
-# pre-resized derivatives of the same 832k images. Skipped, because one file
-# wants one path — and because the picture on a guess is resized from the
-# original by whatever serves `THUMBNAIL_BASE`, which is a job a CDN does better
-# than a fixed set of three sizes.
+# Prefix of sites holding resized copies of other sites' scans; skipped.
 DERIVATIVE_SCAN_SITES = "thumbnails"
 
 
@@ -142,24 +98,14 @@ def scan_country(url: str) -> str:
 
 
 def site_prefixes(sites: Iterable[tuple[str, str]]) -> dict[str, str]:
-    """Site code -> where that site's tree sits under the root they all share.
+    """Site code -> path of that site's tree under the root all sites share.
 
-    `inducks_entryurl.url` is relative to its *site*, and the sites overlap in
-    confusing ways: the upload tree's files are `2021/03/x.jpg` under a base
-    ending `/webusers/webusers/`, while Outducks' thumbnail sites address the
-    same file as `webusers/2021/03/x.jpg`. A mirror copies the tree, not
-    Inducks' table, so what a path has to be relative to is the root — one base
-    for every scan, and no per-site knowledge left anywhere downstream.
-
-    Derived from `urlbase` rather than hardcoded: every image site is a
-    directory on one host, so the path after the host is the tree, whoever the
-    host is. Sites in `DERIVATIVE_SCAN_SITES` are dropped.
+    Taken from the path part of `urlbase`. Sites in `DERIVATIVE_SCAN_SITES` are dropped.
     """
     prefixes = {}
     for sitecode, urlbase in sites:
         if not sitecode or not urlbase or sitecode.startswith(DERIVATIVE_SCAN_SITES):
             continue
-        # Everything after the host, no leading slash: "https://x.org/us/" -> "us/".
         prefixes[sitecode] = urlparse(urlbase).path.lstrip("/")
     return prefixes
 
@@ -168,28 +114,11 @@ def pick_thumbnails(
     prefixes: Mapping[str, str],
     rows: Callable[[], Iterable[tuple[str, str, str]]],
 ) -> dict[str, str]:
-    """One first-page scan per story, out of every scan of every printing of it.
+    """One first-page scan per story, as a path relative to the shared site root.
 
-    A story has one scan per scanned printing, all of them photographs of the
-    same drawn page, and Inducks records nothing about a scan except where it
-    is. So the pick is made on the collection the scan came from, ranked by how
-    much of the catalogue that collection has scanned.
-
-    Size is a weak proxy for quality, but both alternatives are worse. Taking
-    the first path alphabetically hands most of the shortlist to `ar` and `au` —
-    the smallest collections, and in the Arabic editions' case right-to-left
-    reprints whose pages are *mirrored*, which misrepresents the drawing the
-    reader is holding. Taking one at random reshuffles every picture on every
-    rebuild, which reads as a bug.
-
-    Returns paths relative to the root the sites share, so one base URL
-    addresses every one of them; `prefixes` is what makes them relative to it,
-    and a row on a site it does not name is skipped.
-
-    `rows` is called twice — once to rank the collections, once to pick — rather
-    than taken as a sequence, because in the build it is 830k rows off a cursor
-    and there is no reason to hold them. Ties inside one collection keep the
-    first row, so the pick is stable for as long as the query's order is.
+    Prefers the country collection with the most scans overall; alphabetical
+    order would favour tiny collections, including mirrored right-to-left
+    reprints. `rows` is a factory because it is iterated twice.
     """
     per_country: Counter[str] = Counter()
     unreadable = 0
@@ -200,12 +129,8 @@ def pick_thumbnails(
         if country:
             per_country[country] += 1
         else:
-            # Deliberately not counted as a collection of its own: ranked by
-            # size it would beat a real one on a tie, and "somewhere" is not a
-            # collection. It falls to `len(rank)` below instead, behind all of
-            # them.
+            # Ranked behind every real collection below.
             unreadable += 1
-    # Most-scanned collection first.
     rank = {country: r for r, (country, _) in enumerate(per_country.most_common())}
     log.info(
         "  %d scans across %d collections, %d with no readable country",
@@ -237,25 +162,12 @@ def set_matrix(
 ) -> tuple[sp.csr_matrix, list[Code]]:
     """Set-valued rows -> a boolean (kept rows x codes) matrix and its columns.
 
-    Languages, printing decades and creators are all the same shape: a row
-    belongs to *every* code its printings carry, not to the most frequent one. A
-    quarter of all storyversions carry more than one language and 13% have no
-    majority at all, so collapsing to `most_common(1)` would lose three quarters
-    of a million printings' languages and break ties by dict insertion order.
-    Popular stories are reprinted for fifty years, so decades are worse still.
-
-    `prevalence` orders columns by how many kept rows carry them, most first, so
-    a shortlist shown to a reader is stable across a session and reliably
-    contains their answer — and so the creator search box ranks a prolific
-    creator above a namesake with one credit. Ordering by current belief mass
-    instead pushed French, the 7th biggest language in Inducks, off the list
-    entirely. `natural` sorts the codes themselves, for decades: a reader scans
-    a list of dates in date order.
+    A row gets every code it carries (a story printed in several languages is in
+    all of them). `prevalence` orders columns by how many rows carry them, so
+    shortlists are stable; `natural` sorts the codes (for decades).
     """
     prevalence: Counter[Code] = Counter()
     for i in keep_ids:
-        # One per row, matching the boolean matrix — Counter.update() would add
-        # the per-code *printing* counts instead.
         for code in values_by_row.get(i, ()):
             prevalence[code] += 1
     if order == "prevalence":
@@ -287,12 +199,10 @@ def boolean_matrix(rows: list[int], cols: list[int], shape: tuple[int, int]) -> 
 
 @dataclass
 class Raw:
-    """Everything the ETL reads out of MariaDB, before any index is assembled.
+    """Everything read from MariaDB, before assembly.
 
-    The split is the point: `extract` needs a database and nothing else, and
-    `assemble` needs this and nothing else — which is what makes the cleaning
-    rules testable without a MariaDB to hand. Rows are identified by their
-    position in `sv_codes` throughout.
+    Kept separate so `assemble` is testable without a database. Rows are
+    identified by their position in `sv_codes`.
     """
 
     # --- per storyversion, parallel to sv_codes ---
@@ -323,12 +233,10 @@ class Raw:
     preferred_char_names: dict[str, str] = field(default_factory=dict)
     onetime_chars: set[str] = field(default_factory=set)
     story_title: dict[str, str] = field(default_factory=dict)
-    # Words of every title each story was printed under, in any language.
+    # Words of every title the story was printed under, in any language.
     title_words: dict[str, set[str]] = field(default_factory=dict)
     story_year: dict[str, int | None] = field(default_factory=dict)
-    # Path of one scan of the story's first page, per story. Path only: the site
-    # it hangs off is `Settings.thumbnail_base`, and it is not the ETL's business
-    # which mirror serves it. Absent for a story nobody has scanned.
+    # First-page scan path, relative to `Settings.thumbnail_base`.
     story_thumb: dict[str, str] = field(default_factory=dict)
     original_sv: dict[str, str] = field(default_factory=dict)
     language_name: dict[str, str] = field(default_factory=dict)
@@ -341,11 +249,7 @@ class Raw:
 
 
 def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
-    """Stream every table the index needs. No cleaning beyond dropping junk rows.
-
-    Runtime is dominated by inducks_entry (~2M rows) and inducks_appearance
-    (~1.7M), both streamed rather than fetched.
-    """
+    """Stream every table the index needs. No cleaning beyond dropping junk rows."""
     raw = Raw()
 
     log.info("streaming comic and cover storyversions")
@@ -358,9 +262,7 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
         raw.sv_codes.append(svc)
         raw.sv_story.append(sc)
         raw.sv_cover.append(cover)
-        # A cover is one page with no panels, and Inducks records it as such, so
-        # its layout columns describe nothing a reader could count: blank them
-        # rather than let the layout questions treat them as measurements.
+        # A cover has no panels, so its layout columns mean nothing.
         if cover:
             raw.sv_length.append(UNKNOWN)
             raw.sv_rows.append(None)
@@ -396,8 +298,7 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     title_words: dict[str, set[str]] = defaultdict(set)
     for svc, lang, issuecode, title, is_cover in stream(conn, sql.ENTRIES):
         i = sv_pos.get(svc)
-        # A comic printed as an issue's cover is still a comic, and is not what
-        # a reader holding the story pages would be looking at; and vice versa.
+        # Count a printing only for its own kind (comic vs cover).
         if i is None or bool(to_int(is_cover)) != raw.sv_cover[i]:
             continue
         raw.popularity[i] += 1
@@ -431,10 +332,7 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     log.info("  %d appearances over %d characters", len(raw.app_rows), len(raw.char_pos))
 
     log.info("streaming story credits")
-    # `isfake` is Inducks' own marker for a placeholder standing in for a
-    # creator nobody has identified — '?', 'various', 'unknown / mickey 7'.
-    # Exactly the trap PLACEHOLDER_CHARACTERS exists for, one table over:
-    # left in, the search box offers the reader "various" as an author.
+    # `isfake` marks placeholder creators ('?', 'various'); keep them out of search.
     fake_persons: set[str] = set()
     for code, fullname, isfake in stream(conn, sql.PERSONS):
         if not code:
@@ -462,8 +360,7 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     log.info("  %d storyversions with a named writer or artist", len(raw.creators_of))
 
     log.info("streaming hero characters")
-    # Hero is recorded per story, not per storyversion. Folded into the same
-    # character matrix in `assemble`: for the reader it is the same observation.
+    # Per story, not per storyversion; folded into the character matrix later.
     hero_by_story: dict[str, set[str]] = defaultdict(set)
     for sc, ccode in stream(conn, sql.HEROES):
         if sc and ccode not in PLACEHOLDER_CHARACTERS:
@@ -471,13 +368,11 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
     raw.hero_by_story = dict(hero_by_story)
 
     log.info("loading catalogs")
-    for code, name, _official, onetime, _heroonly in stream(conn, sql.CHARACTERS):
+    for code, name, onetime in stream(conn, sql.CHARACTERS):
         if not code:
             continue
         raw.char_names_raw[code] = name
-        # One-time characters are explicitly optional for indexers — "not
-        # mandatory (not even in the xapp field)" — so a cast list that omits
-        # one is not asserting the character is absent from the story.
+        # Indexers may omit one-time characters, so their absence proves nothing.
         if onetime == "Y":
             raw.onetime_chars.add(code)
     for code, lang, name, pref in stream(conn, sql.CHARACTER_NAMES):
@@ -510,11 +405,7 @@ def extract(conn: pymysql.Connection, cfg: Settings) -> Raw:
 
 
 def character_matrices(raw: Raw) -> tuple[sp.csr_matrix, sp.csr_matrix]:
-    """The full appearance matrix, and the subset of it the reader cannot check.
-
-    Heroes fold in here rather than in `extract` because a hero is recorded per
-    story and has to be expanded across that story's versions.
-    """
+    """The full appearance matrix (heroes included), and its weak subset."""
     for i, sc in enumerate(raw.sv_story):
         for ccode in raw.hero_by_story.get(sc, ()):
             j = raw.char_pos.setdefault(ccode, len(raw.char_pos))
@@ -530,8 +421,7 @@ def character_matrices(raw: Raw) -> tuple[sp.csr_matrix, sp.csr_matrix]:
         onetime_mask = np.zeros(len(raw.char_pos), dtype=np.int8)
         onetime_mask[onetime_cols] = 1
         weak = weak + char.multiply(onetime_mask)
-    # Never mark a cell weak that the matrix does not carry: a hero fold is a
-    # title logo, which is exactly the appearance a reader cannot miss.
+    # Weak only where the cell exists in `char`.
     weak = sp.csr_matrix(sp.csr_matrix(weak).multiply(char))
     weak.data[:] = 1
     return char, weak
@@ -540,22 +430,17 @@ def character_matrices(raw: Raw) -> tuple[sp.csr_matrix, sp.csr_matrix]:
 def plot_matrix(raw: Raw, cfg: Settings) -> tuple[sp.csr_matrix, list[str]]:
     """Plot term occurrences per storyversion, and the vocabulary behind them.
 
-    Plot text is resolved at story level then propagated to reprints: a reprint
-    carries no description of its own, and the plot is a property of the story.
+    Text is taken from the original storyversion and shared by its reprints.
     """
     log.info("building plot vocabulary")
     text_by_story: dict[str, str] = {}
-    # Which stories got real prose in the description language, as opposed to the
-    # keywordsummary fallback. Only these get a say in *which words become
-    # questions*; both get to match against them.
+    # Stories with a real description, as opposed to the keywordsummary fallback.
     native_stories: set[str] = set()
     for sc, orig in raw.original_sv.items():
         text = raw.desc_by_sv.get(orig)
         if text:
             text_by_story[sc] = text
             native_stories.add(sc)
-    # Fallback for the stories with no description in that language:
-    # keywordsummary has far better coverage but is a multilingual concatenation.
     for i, sc in enumerate(raw.sv_story):
         if sc in text_by_story:
             continue
@@ -595,12 +480,7 @@ def plot_matrix(raw: Raw, cfg: Settings) -> tuple[sp.csr_matrix, list[str]]:
 def title_matrix(
     raw: Raw, story_codes: list[str], cfg: Settings
 ) -> tuple[sp.csr_matrix, list[str]]:
-    """Title words per story, and the vocabulary behind them.
-
-    Words carried by more than `title_max_df_ratio` of stories are dropped: a
-    character's name in a third of all titles says nothing about which one it
-    is, and they are most of the matrix.
-    """
+    """Title words per story, minus words in over `title_max_df_ratio` of stories."""
     df: Counter[str] = Counter()
     for sc in story_codes:
         df.update(raw.title_words.get(sc, ()))
@@ -619,18 +499,12 @@ def title_matrix(
 
 
 def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
-    """Turn extracted tables into the index the engine runs against.
-
-    Restricted to storyversions with at least one recorded printing: an unprinted
-    one cannot be the thing in the reader's hands.
-    """
+    """Turn extracted tables into the index, keeping only printed storyversions."""
     char_all, weak_all = character_matrices(raw)
     plot_all, vocab = plot_matrix(raw, cfg)
 
     keep = np.flatnonzero(raw.popularity > 0)
-    # `keep` fancy-indexes the numpy and sparse arrays; `keep_ids` is the same
-    # rows as Python ints, for the loops that read the per-storyversion dicts and
-    # lists. A numpy scalar keys those fine at runtime, but it is not an `int`.
+    # Same rows as plain ints, for the dict/list lookups.
     keep_ids: list[int] = keep.tolist()
     log.info("keeping %d printed storyversions", len(keep))
 
@@ -649,12 +523,8 @@ def assemble(raw: Raw, cfg: Settings) -> StoryIndex:
     cols_col = col(raw.sv_cols)
     cols_col[cols_col == DEFAULTED_COLUMNS_PER_PAGE] = UNKNOWN
     panels_col = col(raw.sv_panels)
-    # A panel count derived from a length that isn't there is not a panel count.
+    # A panel count derived from a missing length is meaningless.
     panels_col[length_col == UNKNOWN] = UNKNOWN
-    # `MIN_CREDIBLE_PANELS` applies only where it can actually be judged: a full
-    # page with one or two panels is not credible, but a quarter-page strip with
-    # two panels is exactly right, so a floor written for whole-page stories must
-    # not reach the 111k fraction-only rows and discard their honest counts.
     panels_col[(length_col >= PAGE_SCALE) & (panels_col < MIN_CREDIBLE_PANELS)] = UNKNOWN
 
     # Drop characters and terms that no longer occur in the kept rows.

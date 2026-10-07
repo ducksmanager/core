@@ -5,8 +5,7 @@
  * worth 0.73 bits — but only if the answer is right. Its own benchmark puts a
  * reader who answers wrongly 10% of the time 34 points of top-1 below an honest
  * one, with the true story buried 14x deeper, so a row count that is often
- * wrong is worse than no row count at all. That is what this measures, and it
- * is why `QUACKINATOR_TRUST_KUMIKO` defaults to false in Dumili.
+ * wrong is worse than no row count at all. That is what this measures.
  *
  * Ground truth is `inducks_storyversion.rowsperpage`, scored against Kumiko run
  * over the first-page scans already mirrored under
@@ -329,7 +328,7 @@ const main = async () => {
   console.log(
     `Wrong-answer rate ${percent(wrong * 100, 100)}. Quackinator's benchmark costs a\n` +
       `10%-wrong reader 34 points of top-1 and buries the true story 14x\n` +
-      `deeper, so set QUACKINATOR_TRUST_KUMIKO=true only well below that.`,
+      `deeper; Kumiko's row count is only worth sending well below that.`,
   );
   console.log("=".repeat(62));
 

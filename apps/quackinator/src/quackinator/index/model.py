@@ -1,16 +1,9 @@
 """The precomputed index the engine runs against.
 
-The identification unit is the *storyversion*, not the story. A Dutch reprint
-is re-laid-out and sometimes cut, so its page and panel counts differ from the
-original — and the page count is something the reader counts directly. Guesses
-are aggregated back to storycode at the end.
-
-Two caveats on how far that unit goes. Inducks does not mint a storyversion for
-every re-layout: `fr/IRS 1` prints `I TL 116-AP` re-laid-out under the original
-code, and `inducks_entry` has no layout columns, so the recorded layout is only
-ever *a* layout the story was printed in. And a storyversion is not
-single-language — 37% of the printed ones carry more than one — so language is a
-sparse set per row, not a scalar.
+One row per storyversion, not per story: reprints can be re-laid-out, changing
+page and panel counts. Guesses are summed back per story. Inducks does not always
+mint a new storyversion for a re-layout, so the recorded layout is only one of them.
+See README § The unit of identification is the storyversion.
 """
 
 from __future__ import annotations
@@ -37,17 +30,12 @@ META_FILE = "meta.json.gz"
 
 UNKNOWN = -1
 
-# Story length is held in tenths of a page, not whole pages. 111,350 comic
-# storyversions — 38% of the index — are *fraction-only*: `entirepages` is 0 and
-# the whole length lives in `brokenpagenumerator/denominator`, because the story
-# is a half-page or quarter-page strip. Read as whole pages those all collapse to
-# "not recorded", which threw away the length of more than a third of the
-# catalogue and blanked its panel counts along with it.
+# Lengths are in tenths of a page: many short strips have `entirepages` = 0 and
+# their whole length in `brokenpagenumerator/denominator`.
 PAGE_SCALE = 10
 
 
 def _load_csr(path: Path) -> sp.csr_matrix:
-    """Read a saved sparse matrix back as CSR, whatever format it was stored in."""
     return sp.csr_matrix(sp.load_npz(path))
 
 
@@ -60,24 +48,15 @@ class StoryIndex:
     rows: np.ndarray  # int16
     cols: np.ndarray  # int16
     panels: np.ndarray  # int16
-    popularity: np.ndarray  # int32, number of printings, as a cover for a cover
+    popularity: np.ndarray  # int32, number of printings (as a cover, for covers)
 
     # --- sparse boolean feature matrices (N x F), CSR for row slicing ---
     char: sp.csr_matrix
     plot: sp.csr_matrix
-    # Every language this storyversion has been printed in, not just the most
-    # frequent one: a reader holding the sole French printing of an otherwise
-    # Finnish-heavy storyversion must still match it.
+    # Every language / decade it was printed in (sets, not single values).
     lang: sp.csr_matrix
-    # Every decade this storyversion is *recorded* as having been printed in.
-    # Set-valued for the same reason language is, and then some: a popular story
-    # is reprinted for fifty years.
     decade: sp.csr_matrix
-    # Who wrote and drew it. Not a question — a reader holding a foreign reprint
-    # usually cannot see it — but when the first page does print the credit it is
-    # the strongest single thing they can tell us, and unlike language or decade
-    # it is a fact about the *story*, so the reader's unindexed magazine cannot
-    # invalidate it.
+    # Writers and artists; only used by the author box, never asked as a question.
     creator: sp.csr_matrix
 
     # --- catalogs ---
@@ -89,47 +68,34 @@ class StoryIndex:
     plot_terms: list[str]
     # Ordered most-printed first, so the shortlist shown to a reader is stable.
     languages: list[str]
-    # Path of a scan of each story's first page, "" where there is none — which
-    # is 5% of stories, so nothing may depend on having one. A path, not a URL:
-    # the mirror serving it is `Settings.thumbnail_base`, and it moves without a
-    # rebuild. Only ever shown to the reader; the engine never reads it.
+    # First-page scan path per story, "" if none. Relative to `Settings.thumbnail_base`.
     story_thumbs: list[str] = field(default_factory=list)
-    # Chronological, and the column order of `decade`. Not prevalence-ordered
-    # like `languages`: a reader scans a list of dates in date order.
+    # Column order of `decade`, chronological.
     decade_starts: list[int] = field(default_factory=list)
-    # Display names in `desc_language`; a reader cannot pick "sr-cyrl" off a cover.
+    # Human-readable names for `languages`.
     language_names: list[str] = field(default_factory=list)
     # Column order of `creator`, ordered by how many storyversions each worked on.
     creator_codes: list[str] = field(default_factory=list)
     creator_names: list[str] = field(default_factory=list)
-    # Alternative spellings and pseudonyms per creator, for the search box only:
-    # a printed page may say "Romano Scarpa" where Inducks has a different form.
+    # Alternative spellings and pseudonyms, for creator search only.
     creator_aliases: list[list[str]] = field(default_factory=list)
 
-    # bool, a cover rather than a comic story. A session identifies one kind or
-    # the other — a reader knows whether they are holding a cover — so the two
-    # share an index but never a belief. Empty (an index built before covers
-    # were extracted) is all stories.
+    # bool per storyversion: a cover rather than a story. Empty means all stories.
     cover: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=bool))
 
-    # Subset of `char` whose cells are listed but are not evidence the reader can
-    # check: a cameo in one background panel, a character present only as a photo
-    # or a statue, or a one-time character indexers are not required to list. A
-    # "no" from the reader on one of these is uninformative, not a contradiction.
+    # Cells of `char` a reader can't be expected to confirm (background cameo, statue...).
+    # A "no" on these is neutral, not a contradiction.
     char_weak: sp.csr_matrix | None = None
 
-    # Every word of every title the story was printed under, in any language
-    # (n_stories x len(title_terms)), so OCR of a first panel can be matched
-    # against the title the reader's magazine actually prints. None for an index
-    # built before titles were extracted, where OCR evidence is reported unused.
+    # Words of every title the story was printed under, in any language
+    # (n_stories x len(title_terms)), for OCR matching.
     title: sp.csr_matrix | None = None
     title_terms: list[str] = field(default_factory=list)
 
-    # Reverse of `story_codes`. Derived, so never serialised.
+    # Reverse of `story_codes`.
     _story_number: dict[str, int] = field(
         default_factory=dict, init=False, repr=False, compare=False
     )
-    # Cache for `fingerprint`, which hashes three lists of six figures.
     _fingerprint: str = field(default="", init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -137,31 +103,16 @@ class StoryIndex:
             self.cover = np.zeros(len(self.svc), dtype=bool)
         if not self.language_names:
             self.language_names = list(self.languages)
-        # An index built before scans were extracted has none of these, and one
-        # story without a scan is not different from all of them: pad rather
-        # than making every reader of the list check its length.
-        if len(self.story_thumbs) < len(self.story_codes):
-            self.story_thumbs = list(self.story_thumbs) + [""] * (
-                len(self.story_codes) - len(self.story_thumbs)
-            )
         self._story_number = {code: i for i, code in enumerate(self.story_codes)}
 
     def story_number(self, storycode: str) -> int | None:
-        """Row in the story catalog for a story code, or None if it is not in it."""
         return self._story_number.get(storycode)
 
     @property
     def fingerprint(self) -> str:
-        """Short stable id for everything an answer stored outside a session
-        depends on.
+        """Hash of what stored answers are keyed on (story, character and plot codes).
 
-        Deliberately not a build timestamp. A caller holding a reader's answers
-        from last week wants one question answered — can these still be replayed
-        into a session? — and most rebuilds do not touch it. What does is the set
-        of things answers are keyed on: the stories they can name and the family
-        columns they address. A rebuild that only moves a page count leaves this
-        alone, and a caller keyed on it does not throw away answers that are
-        still good.
+        Changes only when saved answers may no longer replay, not on every rebuild.
         """
         if not self._fingerprint:
             digest = hashlib.sha256()
@@ -173,11 +124,7 @@ class StoryIndex:
             self._fingerprint = digest.hexdigest()[:16]
         return self._fingerprint
 
-    # Items with no data at all for a family answer "unknown" to every question
-    # in it, and must not be penalised for it. Derived rather than stored: a row
-    # has data for a family exactly when it carries a cell in it, and column
-    # pruning drops only all-zero columns, so no row's count can change — which
-    # is five arrays `arrays.npz` does not have to carry.
+    # Rows with no data in a family count as "unknown" for its questions.
 
     @cached_property
     def has_char(self) -> np.ndarray:
@@ -205,7 +152,7 @@ class StoryIndex:
 
     @cached_property
     def title_idf(self) -> np.ndarray:
-        """log(stories / stories carrying the word), per column of `title`."""
+        """log(n_stories / stories containing the word), per column of `title`."""
         if self.title is None:
             return np.zeros(0)
         df = np.maximum(self.title.getnnz(axis=0), 1)
@@ -273,7 +220,7 @@ class StoryIndex:
             cols=arrays["cols"],
             panels=arrays["panels"],
             popularity=arrays["popularity"],
-            cover=arrays["cover"] if "cover" in arrays.files else np.zeros(0, dtype=bool),
+            cover=arrays["cover"],
             char=_load_csr(directory / CHAR_FILE),
             char_weak=_load_csr(directory / CHAR_WEAK_FILE),
             plot=_load_csr(directory / PLOT_FILE),
@@ -283,29 +230,24 @@ class StoryIndex:
             story_codes=meta["story_codes"],
             story_titles=meta["story_titles"],
             story_years=meta["story_years"],
-            story_thumbs=meta.get("story_thumbs", []),
+            story_thumbs=meta["story_thumbs"],
             char_codes=meta["char_codes"],
             char_names=meta["char_names"],
             plot_terms=meta["plot_terms"],
             languages=meta["languages"],
-            language_names=meta.get("language_names", []),
-            decade_starts=meta.get("decade_starts", []),
-            creator_codes=meta.get("creator_codes", []),
-            creator_names=meta.get("creator_names", []),
-            creator_aliases=meta.get("creator_aliases", []),
-            title=_load_csr(directory / TITLE_FILE) if (directory / TITLE_FILE).exists() else None,
-            title_terms=meta.get("title_terms", []),
+            language_names=meta["language_names"],
+            decade_starts=meta["decade_starts"],
+            creator_codes=meta["creator_codes"],
+            creator_names=meta["creator_names"],
+            creator_aliases=meta["creator_aliases"],
+            title=_load_csr(directory / TITLE_FILE),
+            title_terms=meta["title_terms"],
         )
 
     def first_decade(self) -> np.ndarray:
-        """Per storyversion, the decade its *story* was first published in.
+        """Per storyversion, the decade its story was first published, or UNKNOWN.
 
-        The one thing about a story's own date that a reader can legitimately be
-        scored against. They cannot see it — which is why it is not a question —
-        but it bounds the answer to a question they *can* see, the date on the
-        cover: no magazine prints a story before the story exists. Unlike the
-        recorded printing decades this holds whether or not Inducks has indexed
-        the issue in the reader's hands, which is the whole point of it.
+        A lower bound on the reader's magazine date, even for unindexed printings.
         """
         years = np.array([y if y else UNKNOWN for y in self.story_years], dtype=np.int32)
         per_story = np.where(years == UNKNOWN, UNKNOWN, years // 10 * 10)

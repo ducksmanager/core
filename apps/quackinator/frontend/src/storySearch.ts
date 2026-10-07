@@ -1,11 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 
-/**
- * DM's reverse image search, called straight from the browser as What The Duck
- * does. Over plain socket.io rather than socket-call-client, whose optional
- * axios cache this standalone package has no use for; the protocol is one
- * acknowledged emit per call.
- */
+// DM's reverse image search, over plain socket.io: one acknowledged emit per call.
 type Result =
   { results: { storycode: string; score: number }[] } | { error: string };
 
@@ -15,11 +10,7 @@ if (!url) throw new Error("VITE_DM_STORY_SEARCH_SOCKET_URL is not configured");
 
 let socket: Socket | undefined;
 
-/**
- * Settles on the next connection attempt. An emit on a disconnected socket is
- * buffered, so without this an unreachable server would only surface once the
- * emit's 30s timeout ran out.
- */
+// Emits are buffered while disconnected; fail fast instead of waiting for the emit timeout.
 const connected = (socket: Socket) =>
   new Promise<void>((resolve, reject) => {
     if (socket.connected) return resolve();

@@ -24,7 +24,6 @@ def connect(cfg: Settings) -> Iterator[pymysql.Connection]:
         password=cfg.db_password,
         database=cfg.db_name,
         charset="utf8mb4",
-        # utf8mb3 tables with mixed encodings: never blow up on a bad byte.
         use_unicode=True,
     )
     try:
@@ -36,10 +35,7 @@ def connect(cfg: Settings) -> Iterator[pymysql.Connection]:
 def stream(
     conn: pymysql.Connection, query: str, params: tuple[Any, ...] | None = None
 ) -> Iterator[tuple]:
-    """Iterate rows without buffering the whole result set in memory.
-
-    SSCursor keeps the result on the server; inducks_entry alone is 2M rows.
-    """
+    """Iterate rows with a server-side cursor, without buffering the result set."""
     with conn.cursor(pymysql.cursors.SSCursor) as cur:
         cur.execute(query, params)
         while True:

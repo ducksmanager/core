@@ -1,10 +1,6 @@
-"""Title words, as both the ETL and OCR evidence see them.
+"""Title tokenizer shared by the ETL and OCR matching; both sides must tokenize identically.
 
-One tokenizer for both sides on purpose: a title indexed one way and read back
-another matches nothing. Titles come from every printing in every language and
-OCR reads whatever the magazine in the reader's hands prints, so this folds case
-and diacritics and nothing else — no stemming, no stopwords, both of which are
-per-language.
+Folds case and accents only: titles are in every language, so no stemming or stopwords.
 """
 
 from __future__ import annotations
@@ -14,7 +10,7 @@ import unicodedata
 
 _WORD = re.compile(r"\w+")
 
-# Shorter words are articles and OCR debris in every language the dump carries.
+# Shorter words are mostly articles and OCR noise.
 MIN_LENGTH = 3
 
 

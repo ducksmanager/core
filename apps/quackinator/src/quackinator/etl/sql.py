@@ -1,19 +1,9 @@
 """Raw extraction queries.
 
-Deliberately flat: every query hits one table with at most a trivial predicate,
-and all joining happens in Python. Server-side joins across
-inducks_storyversion x inducks_entry x inducks_appearance are unindexed in the
-stock Inducks dump and can take minutes; streaming the tables takes seconds.
+Each query reads one table in full; build.py joins them in Python.
 """
 
-# Comic stories and covers. kind='n' is the normal multi-panel comic and kind='c'
-# a cover; the other kinds are illustrations, text stories, games and puzzles.
-# A session identifies one or the other, never both: see `StoryIndex.cover`.
-#
-# `entirepages` is only part of the length: 111,350 of these rows have
-# entirepages = 0 and carry their whole length in brokenpage*, because the story
-# is a half-page or quarter-page strip. `brokenpageunspecified = 'Y'` means "there
-# is a fraction but we do not know what it is".
+# kind 'n' = comic story, 'c' = cover. Length is entirepages + the brokenpage* fraction.
 STORYVERSIONS = """
 SELECT storyversioncode, storycode, entirepages, rowsperpage, columnsperpage,
        estimatedpanels, keywordsummary,
@@ -22,33 +12,21 @@ FROM inducks_storyversion
 WHERE kind IN ('n', 'c')
 """
 
-# Publication date of each issue, for the decade question.
-#
-# `oldestdate`, not `filledoldestdate`: the latter fills its gaps with the
-# sentinel 9999-12-31 on 12,107 issues, which reaches 15.5% of storyversions and
-# turns into a phantom "9990s" decade carrying 45k rows. `oldestdate` has no
-# sentinels and is still populated on 99.4% of issues.
+# `oldestdate`, not `filledoldestdate`, which fills gaps with the sentinel 9999-12-31.
 ISSUE_DATES = """
 SELECT issuecode, oldestdate
 FROM inducks_issue
 WHERE oldestdate IS NOT NULL AND oldestdate <> ''
 """
 
-# One row per physical printing of a story or a cover in an issue. Drives the
-# popularity prior, the language of the magazine, and the titles OCR is matched
-# against — each printing's own, in its own language. `is_cover` is read so a
-# printing only counts for the kind of storyversion it is: see `extract`.
+# One row per printing: popularity, language, decade and printed titles.
 ENTRIES = """
 SELECT storyversioncode, languagecode, issuecode, title, is_cover
 FROM inducks_entry
 WHERE storyversioncode IS NOT NULL AND storyversioncode <> ''
 """
 
-# `appearancecomment` carries the signal `number` does not: `number` only ever
-# holds group sizes (BB(12)), which is why it is 97% zeros, but the comment is
-# where Inducks records "cameo", "photo", "picture", "statue", "dream". Those
-# are appearances a reader turning pages will not register, so they must not be
-# scored as a sighting the reader failed to report.
+# `appearancecomment` flags cameos, photos, dreams etc.: see UNSEEN_APPEARANCE.
 APPEARANCES = """
 SELECT storyversioncode, charactercode, appearancecomment
 FROM inducks_appearance
@@ -60,11 +38,7 @@ SELECT storycode, charactercode
 FROM inducks_herocharacter
 """
 
-# Who wrote and drew the story. Excluded as a *question* — see questions.py —
-# but a printed credit on the first page is the strongest single thing a reader
-# can tell us, so it feeds the author search box. `w` and `a` only: plot and ink
-# credits are rarely what a page prints, and `r` is a creator merely mentioned
-# in the story rather than one who worked on it.
+# Writers ('w') and artists ('a') only, for the creator search box.
 STORY_JOBS = """
 SELECT storyversioncode, personcode
 FROM inducks_storyjob
@@ -76,15 +50,14 @@ SELECT personcode, fullname, isfake
 FROM inducks_person
 """
 
-# Pseudonyms and alternative spellings, for the search box only: a printed page
-# may say "Romano Scarpa" where Inducks holds a different form of the name.
+# Pseudonyms and alternative spellings, for the creator search box.
 PERSON_ALIASES = """
 SELECT personcode, surname, givenname
 FROM inducks_personalias
 """
 
 CHARACTERS = """
-SELECT charactercode, charactername, official, onetime, heroonly
+SELECT charactercode, charactername, onetime
 FROM inducks_character
 """
 
@@ -110,22 +83,7 @@ FROM inducks_storydescription
 WHERE languagecode = %s AND desctext IS NOT NULL AND desctext <> ''
 """
 
-# First-page scans, for the picture on a guess. `inducks_entryurl` holds one row
-# per (scan, site): a `pagenumber = 1` row is a scan of the first page of a
-# printing, which is what a guess shows.
-#
-# `storycode` is Inducks' own resolution of which story the scanned entry
-# prints — populated where it is known and correct, which covers 95% of the
-# stories in the index. `public = 'N'` scans exist and must not be linked.
-#
-# Every site, because a scan sits in exactly one of them (0 files are in two)
-# and they are what the mirror is organised by. `inducks_site` says which sites
-# are images at all and where each one's tree hangs; see `IMAGE_SITES`.
-#
-# One story has as many rows as it has scanned printings; the caller keeps one —
-# see `pick_thumbnails`, which reads this twice, once to rank the collections and
-# once to pick. Ordered so the pick within a collection is the same on every
-# rebuild.
+# Public first-page scans, one row per scanned printing; ordered so pick_thumbnails is stable.
 STORY_SCANS = """
 SELECT storycode, sitecode, url
 FROM inducks_entryurl
@@ -134,11 +92,7 @@ WHERE public = 'Y' AND pagenumber = 1
 ORDER BY url
 """
 
-# Where each site's files hang, so a scan can be addressed by a path relative to
-# the root all of them share rather than by a site and a base URL. 57 rows.
-#
-# `images = 'N'` sites are links to other websites — a Wikipedia article, a
-# publisher's shop — and carry no scan of anything.
+# Base URL of each site that hosts scans (images = 'N' sites are external links).
 IMAGE_SITES = """
 SELECT sitecode, urlbase
 FROM inducks_site

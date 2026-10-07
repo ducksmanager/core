@@ -73,7 +73,6 @@ import type { CreatorMatch } from "~quackinator/types";
 
 const { busy, cover = false } = defineProps<{
   busy: boolean;
-  /** Identifying a cover, whose credit is its artist's signature. */
   cover?: boolean;
 }>();
 const emit = defineEmits<{
@@ -93,12 +92,7 @@ const matches = ref<CreatorMatch[]>([]);
 const searching = ref(false);
 let seq = 0;
 
-/**
- * Debounced, and every response carries the sequence number of the keystroke
- * that asked for it. A reader types a surname faster than the round trip, so
- * without this an earlier, broader result can land after a later, narrower one
- * and replace it.
- */
+// Debounced; the sequence number drops responses that arrive out of order.
 watch(query, (value) => {
   const text = value.trim();
   const mine = ++seq;

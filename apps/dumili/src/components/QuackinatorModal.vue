@@ -98,7 +98,6 @@
               :api="api"
               :initial-turn="turn"
               pickable
-              :restartable="false"
               @answered="onAnswered"
               @picked="onPicked"
             />
@@ -110,7 +109,7 @@
         <b-button
           v-if="step !== 'choose'"
           variant="outline-secondary"
-          @click="step = 'choose'"
+          @click="reset"
           >{{ $t("Retour") }}</b-button
         >
         <b-button
@@ -166,7 +165,6 @@ const identifiable = computed(
     ) && !entry.value.includedInEntry,
 );
 
-/** Without it Quackinator has to ask for the decade the issue would give. */
 const missingReleaseDate = computed(
   () => identifiable.value && !releaseYear(indexation.value!),
 );
@@ -175,10 +173,7 @@ const firstPageImage = computed(
   () => getEntryPages(indexation.value!, entry.value.id)[0]?.image,
 );
 
-/**
- * What image search and OCR found on the first page, merged per story: found
- * by both first, then image search by score, then OCR by score.
- */
+// Found by both first, then image score, then OCR score.
 const aiSuggestions = computed(() => {
   const image = firstPageImage.value;
   const scores = new Map<string, { image?: number; ocr?: number }>();
@@ -230,10 +225,7 @@ const reset = () => {
 
 let sessionStart: Promise<void> | undefined;
 
-/**
- * The server holds the call until the entry's image search is stored, so
- * asking for the questions twice while it is pending shares the one call.
- */
+// De-duplicate concurrent opens; the server may wait for the AI pipeline.
 const openSession = () =>
   (sessionStart ??= (async () => {
     turn.value = undefined;
@@ -273,9 +265,7 @@ const acceptStory = async (storycode: string, fromQuackinator: boolean) => {
     entry.value.id,
     suggestionId,
   );
-  // `entry` is the entry modal's draft, which is saved back as a whole: it
-  // must carry the new story, or the next save would undo it. The indexation
-  // is refreshed before the call above returns.
+  // `entry` is a draft saved back whole; without this the next save would undo the pick.
   const live = indexation.value?.entries.find(
     ({ id }) => id === entry.value.id,
   );

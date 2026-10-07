@@ -48,16 +48,6 @@
 </template>
 
 <script setup lang="ts">
-/**
- * The standalone reader's way in: a photo of the first page, run through
- * reverse image search (DM, from the browser), Kumiko and OCR (this API) before
- * the first question. A clear match needs nothing else — the engine stops
- * asking once the seeded belief is confident. A failure is shown to the reader,
- * who can retry or skip.
- *
- * Not part of `QuackinatorGame`: a host like Dumili already holds the page and
- * seeds the session itself.
- */
 import { ref } from "vue";
 
 import { api } from "~quackinator/api";
@@ -66,11 +56,11 @@ import { findSimilarImages } from "~quackinator/storySearch";
 import type { Seed } from "~quackinator/types";
 
 const emit = defineEmits<{
-  /** Undefined when the reader skipped, or nothing could be found. */
+  /** undefined when skipped or nothing was found */
   (e: "seed", seed: Seed | undefined): void;
 }>();
 
-// Inducks language codes, the ones Disney comics are mostly printed in.
+// Inducks language codes.
 const LANGUAGES = [
   "it",
   "fr",
@@ -95,7 +85,6 @@ const LANGUAGES = [
 
 const { t, locale } = useQuackinatorI18n();
 
-/** In the reader's own language, which the browser knows how to name. */
 const languageName = (code: string) =>
   new Intl.DisplayNames([locale.value], { type: "language" }).of(code) ?? code;
 
@@ -111,7 +100,6 @@ const pick = (event: Event) => {
   file.value = (event.target as HTMLInputElement).files?.[0] ?? null;
 };
 
-/** The photo, no larger than `maxSide` on its longest side, as a JPEG. */
 const shrink = async (image: File, maxSide: number) => {
   const bitmap = await createImageBitmap(image);
   const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
@@ -137,8 +125,7 @@ const analyze = async () => {
   busy.value = true;
   error.value = null;
   try {
-    // Image search embeds at 224px and its socket takes 1MB at most; Kumiko
-    // and OCR want enough resolution to read a title.
+    // Image search's socket takes 1MB at most; OCR needs enough resolution to read a title.
     const [small, large] = await Promise.all([
       shrink(file.value, 800),
       shrink(file.value, 2000),

@@ -84,14 +84,7 @@ import {
 } from "~quackinator/format";
 import { useQuackinatorI18n } from "~quackinator/i18n";
 
-/**
- * The bar tracks confidence in the leading story, not how far the search has
- * narrowed. Spread (`storyEntropyBits`) is shown alongside it as context — over
- * stories, never over storyversions — because it is not monotone: ruling out a
- * concentrated group and leaving a diffuse one
- * raises it even as the leading guess improves. Presenting that as progress made
- * the app look like it was going backwards on perfectly good answers.
- */
+// The bar tracks confidence; entropy is shown only as context because it isn't monotone.
 const {
   storyEntropyBits,
   startingBits,
@@ -102,7 +95,6 @@ const {
   progress: number;
   confidence: number;
   questionsAsked: number;
-  /** Identifying a cover, so the count is of covers. */
   cover?: boolean;
 }>();
 

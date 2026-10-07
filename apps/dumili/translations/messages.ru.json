@@ -2,7 +2,6 @@
     "(Aucune)": "(Нет)",
     "(hors-ligne)": "(вне сети)",
     "({rowsPerPage} lignes / page)": "({rowsPerPage} строк / страница)",
-    "Actuellement les plus probables": "Наиболее вероятные на данный момент",
     "{numberOfPanels} cases trouvées": "{numberOfPanels} найденных ячеек",
     "{numberOfStories} histoires trouvées avec ces mots-clés": "{numberOfStories} историй найдено по этим ключевым словам",
     "{textNumber} textes trouvés": "{textNumber} текстов найдено",

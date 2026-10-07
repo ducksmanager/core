@@ -5,8 +5,6 @@ Everything here runs against a hand-built `Raw` — which is the whole point of
 the ETL's real decisions live, so they have to be reachable from a test.
 """
 
-import gzip
-import json
 from collections.abc import Callable
 
 import numpy as np
@@ -24,7 +22,7 @@ from quackinator.etl.build import (
     set_matrix,
     site_prefixes,
 )
-from quackinator.index.model import META_FILE, PAGE_SCALE, UNKNOWN, StoryIndex
+from quackinator.index.model import PAGE_SCALE, UNKNOWN, StoryIndex
 
 
 def make_raw(n=6) -> Raw:
@@ -254,23 +252,6 @@ def test_a_story_nobody_has_scanned_gets_an_empty_path():
     a reader of it never has to check whether the story has a row."""
     index = assemble(make_raw(), settings)
     assert index.story_thumbs == ["", "", ""]
-
-
-def test_an_index_built_before_scans_existed_still_loads(tmp_path):
-    """An index on disk predates the column, and rebuilding one takes a MariaDB
-    and several minutes. A missing list is padded, so it reads as "no story has
-    a scan" rather than as an index-length mismatch downstream."""
-    assemble(make_raw(), settings).save(tmp_path)
-    meta_file = tmp_path / META_FILE
-    with gzip.open(meta_file, "rt", encoding="utf-8") as fh:
-        meta = json.load(fh)
-    del meta["story_thumbs"]
-    with gzip.open(meta_file, "wt", encoding="utf-8") as fh:
-        json.dump(meta, fh)
-
-    reloaded = StoryIndex.load(tmp_path)
-
-    assert reloaded.story_thumbs == ["", "", ""]
 
 
 # --- picking which scan of a story to show -------------------------------

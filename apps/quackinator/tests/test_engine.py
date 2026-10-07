@@ -67,6 +67,7 @@ def make_index(n=64, n_chars=8, n_creators=5, seed=0) -> StoryIndex:
         creator=creator,
         story_codes=[f"S{i}" for i in range(n)],
         story_titles=[f"Story {i}" for i in range(n)],
+        story_thumbs=[""] * n,
         story_years=story_years,
         char_codes=[f"C{i}" for i in range(n_chars)],
         char_names=[f"Character {i}" for i in range(n_chars)],
@@ -229,10 +230,9 @@ def test_option_lists_stay_short(engine):
         q = session.next_question()
         if q is None:
             break
-        # Decades are shown whole — ten of them, in date order — so they get a
-        # cap of their own; everything else is buckets.
-        cap = settings.decade_options if q.key == "decade" else settings.max_options
-        assert len(q.options) <= cap + 1
+        # Decades are shown whole; everything else is condensed.
+        if q.key != "decade":
+            assert len(q.options) <= settings.max_options + 1
         session.answer(q.key, 0)
 
 
@@ -415,7 +415,7 @@ def test_a_short_strip_keeps_its_small_panel_count():
 
 
 def _decade_question(engine, w) -> MultiLabelQuestion:
-    return multilabel(engine, "decade").condense(w, settings.decade_options)
+    return multilabel(engine, "decade")
 
 
 def test_a_magazine_cannot_predate_the_story():
@@ -620,36 +620,6 @@ def test_decades_are_shown_whole_and_in_order():
     q = multilabel(engine, "decade").condense(engine.prior, settings.max_options)
     assert q.labels == [f"{d}s" for d in DECADE_STARTS]
     assert "Something else" not in q.labels
-
-
-def test_condensed_something_else_is_only_impossible_if_every_option_is():
-    """Picking "Something else" means one of the options it stands for was true."""
-    from quackinator.engine.questions import decade_question
-
-    index = make_index(n=200)
-    engine = Engine.from_index(index, settings)
-    keep = 3
-    # Built with a cap that actually bites: the bank's own `decade_options` sits
-    # above the label count on purpose, so the real question never condenses.
-    full = decade_question(index, settings.decade_noise, settings.decade_impossible, keep + 1)
-    assert full is not None and full.ruled_out is not None
-    condensed = full.condense(engine.prior, keep + 1)
-    assert condensed.ruled_out is not None
-    assert condensed.labels[-1] == "Something else"
-
-    dropped = np.arange(keep, len(full.labels))
-    barred_count = np.asarray(full.ruled_out[:, dropped].sum(axis=1)).ravel()
-    all_barred = barred_count == dropped.size
-    got = np.asarray(condensed.ruled_out[:, -1].todense()).ravel() > 0
-    assert np.array_equal(all_barred, got)
-
-    # The distinction that matters: a row barred from *some* of the decades
-    # "Something else" stands for is not barred from the option itself, because
-    # the reader picking it means one of the others was true. An OR here would
-    # rule out a story that is perfectly possible.
-    partly = np.flatnonzero((barred_count > 0) & (barred_count < dropped.size))
-    assert partly.size, "fixture must bar some rows from only part of the tail"
-    assert not got[partly].any()
 
 
 # --- the author box -------------------------------------------------------
@@ -893,7 +863,7 @@ def test_every_message_the_engine_sends_is_in_the_french_catalogue(engine, mixed
     )
 
     catalogue = json.loads((Path(__file__).parents[1] / "frontend/src/locales/fr.json").read_text())
-    ids = {"Yes", "No", "Something else", "{decade}s"}
+    ids = {"Yes", "No", "{decade}s"}
     for buckets, unit in ((PAGE_BUCKETS, "pages"), (PANEL_BUCKETS, ""), (SMALL_INT_BUCKETS, "")):
         for first in range(len(buckets)):
             for last in range(first, len(buckets)):

@@ -7,12 +7,7 @@ export function formatCount(n: number, locale = "en"): string {
   return n.toLocaleString(locale);
 }
 
-/**
- * An *effective* count — 2**entropy, not a tally of rows — so rendering it to
- * the unit ("6,912 stories") claims precision it does not have. Two significant
- * figures and a tilde, exact only where the number is small enough to mean
- * something literal.
- */
+// An effective count, so two significant figures unless small.
 export function roughCount(n: number, locale = "en"): string {
   if (n < 100) return formatCount(n, locale);
   const step = 10 ** (Math.floor(Math.log10(n)) - 1);

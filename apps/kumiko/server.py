@@ -8,8 +8,14 @@ from urllib.parse import parse_qs
 class KumikoRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         params = parse_qs(self.path[2:])
+        urls = params.get('i', [''])[0].split(",")
+        # Anything else would reach kumiko's command line as a flag or a local path
+        if not all(url.startswith(('http://', 'https://')) for url in urls):
+            self.send_response(400)
+            self.end_headers()
+            return
 
-        self._run(params['i'][0].split(","))
+        self._run(urls)
 
     # The image itself, for callers holding an upload rather than a URL
     def do_POST(self):

@@ -1,9 +1,4 @@
-"""Finding the name a reader typed in the list of names Inducks records.
-
-String matching, not inference: the belief update that follows lives in the
-question bank like every other answer's. What is here is only the autocomplete
-that turns letters copied off a page into a column of `index.creator`.
-"""
+"""Autocomplete from a typed creator name to a column of `index.creator`."""
 
 from __future__ import annotations
 
@@ -17,41 +12,29 @@ from quackinator.index.model import StoryIndex
 
 
 def fold(text: str) -> str:
-    """Casefold and strip accents, so "Barks" reaches "Bårks" and vice versa.
-
-    A reader is copying letters off a page in a language they may not read, and
-    often cannot type the diacritics they see. Matching has to be forgiving in
-    both directions.
-    """
+    """Casefold and strip accents: readers often cannot type the diacritics they see."""
     stripped = unicodedata.normalize("NFKD", text)
     return "".join(c for c in stripped if not unicodedata.combining(c)).casefold()
 
 
 @dataclass(frozen=True)
 class CreatorMatch:
-    """One name the reader might have read off the page."""
-
     creator: int
     name: str
-    matched: str  # the spelling that matched — an alias, where one did
+    matched: str  # the spelling that matched, possibly an alias
     stories: int
 
 
 @dataclass
 class CreatorSearch:
-    """Prebuilt search over creator names and their alternative spellings.
-
-    Everything expensive is done once, at engine load: folding 30k names, and
-    counting each creator's storyversions. Doing either per request would cost a
-    full CSR-to-CSC conversion of the creator matrix on every keystroke.
-    """
+    """Search over creator names and aliases; build once at engine load, it is expensive."""
 
     names: list[str]
     aliases: list[list[str]]
     # (F,) storyversions each creator worked on.
     counts: np.ndarray
     limit: int
-    # Folded name or alias -> creator column. Derived, never passed in.
+    # (folded name or alias, creator column)
     _folded: list[tuple[str, int]] = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -63,7 +46,6 @@ class CreatorSearch:
 
     @classmethod
     def build(cls, index: StoryIndex, limit: int) -> CreatorSearch | None:
-        """None when the index carries no creators at all."""
         if index.creator.shape[1] == 0 or not index.creator_names:
             return None
         names = list(index.creator_names)
@@ -77,14 +59,7 @@ class CreatorSearch:
         )
 
     def matches(self, query: str) -> list[CreatorMatch]:
-        """Names matching what the reader typed, best first.
-
-        Ranked by how many storyversions the creator worked on, because that is
-        how likely the reader is to be holding one of them — "Barks" must reach
-        Carl Barks rather than a namesake with two credits. Prefix matches beat
-        mid-string ones so that typing a surname does not surface everyone who
-        merely contains it.
-        """
+        """Matching creators: prefix matches first, then by number of storyversions."""
         needle = fold(query).strip()
         if len(needle) < 2:
             return []

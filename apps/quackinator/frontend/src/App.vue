@@ -13,7 +13,7 @@
 
     <first-page-upload v-if="!started" @seed="begin" />
     <template v-else>
-      <quackinator-game :key="round" :seed="seed" :restartable="false" />
+      <quackinator-game :key="round" :seed="seed" />
       <button type="button" class="another" @click="started = false">
         {{ t("Identify another story") }}
       </button>
@@ -35,13 +35,6 @@
 </template>
 
 <script setup lang="ts">
-/**
- * The standalone site: the game, plus the page around it.
- *
- * Everything that is the *game* lives in `QuackinatorGame`, so that a host
- * embedding it — Dumili mounts it in a modal on the entry it is indexing —
- * gets the same component this page does rather than a second copy of it.
- */
 import { ref, shallowRef } from "vue";
 import { I18nT } from "vue-i18n";
 

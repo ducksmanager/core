@@ -14,41 +14,20 @@ import type {
 /** One answer, as a host needs it to store and replay later. */
 export interface AnswerEvent {
   key: string;
-  /** `char` or `plot`, or null for anything outside the two families. */
   family: string | null;
-  /**
-   * The stable identity to store this under: an Inducks character code, or the
-   * plot term itself. Null for a question that is not a family question —
-   * those are never stored, because their options are re-condensed against the
-   * live belief each turn, so an index means nothing afterwards.
-   */
+  /** Character code or plot term. Null for non-family questions: their options change each turn, so they can't be replayed. */
   code: string | null;
-  /** Index into the question's options; null is "don't know". */
+  /** null = don't know */
   option: number | null;
 }
 
 export interface GameOptions {
-  /** Which API to talk to. Defaults to the standalone app's own origin. */
   api?: Api;
-  /**
-   * Adopt a session someone else created — a host that seeded it server-side,
-   * where it has the database to seed from. The whole turn is handed over
-   * rather than an id, because nothing re-reads a session, and a host
-   * reopening one builds a fresh seeded session anyway.
-   */
+  /** First turn of a session the host already created. */
   initialTurn?: Turn;
-  /**
-   * Called for every answer the engine accepts, so a host can persist it. What
-   * it reports is what the reader said, not what the engine made of it.
-   */
   onAnswered?: (answer: AnswerEvent) => void;
 }
 
-/**
- * Whether a seed moved the belief at all. A seed can arrive with nothing usable
- * in it — an upload no tool could read, a host whose data no longer fits the
- * index — and its guesses are then the bare popularity prior.
- */
 const seedApplied = (report: SeedReport | null) =>
   !!report &&
   (report.prior_applied > 0 ||
@@ -58,10 +37,6 @@ const seedApplied = (report: SeedReport | null) =>
     (report.ocr_words?.length ?? 0) > 0 ||
     report.kumiko_applied.length > 0);
 
-/**
- * All game state lives here. The backend holds the belief vector; the frontend
- * holds only the session id and what the reader has been shown so far.
- */
 export const useGame = (options: GameOptions = {}) => {
   const api = options.api ?? defaultApi;
   const sessionId = ref<string | null>(null);
@@ -73,47 +48,18 @@ export const useGame = (options: GameOptions = {}) => {
   const storyEntropyBits = ref(0);
   const startingBits = ref(0);
   const questionsAsked = ref(0);
-  /**
-   * The session started from evidence rather than the bare popularity prior, so
-   * its guesses mean something before the first answer.
-   */
   const seeded = ref(false);
   const done = ref(false);
-  /** Identifying a cover rather than a comic story, which changes the wording. */
   const cover = ref(false);
   const busy = ref(false);
   const error = ref<string | null>(null);
-  /**
-   * The author box is offered once, before the questions, and then retired —
-   * whether the reader used it or waved it away. It is not a question and never
-   * costs a turn, which is the whole reason it can be offered at all: most
-   * printings carry no credit, and for those readers dismissing it is free.
-   */
+  // Offered once before the questions, then retired whether used or dismissed.
   const creatorOffered = ref(true);
 
   const started = computed(() => sessionId.value !== null);
 
-  /**
-   * How close the engine is to committing, as a fraction of the confidence it
-   * needs to stop asking.
-   *
-   * Deliberately *not* derived from `storyEntropyBits`. That is perplexity — how
-   * spread the belief is — and Bayesian updating does not make it monotone: an
-   * answer that rules out a concentrated group and leaves a diffuse one raises
-   * it even as the leading guess improves.
-   *
-   * Measured over 1,255 answered questions in 60 honest sessions:
-   *
-   *   perplexity moved backwards on 17% of answers, and in 100% of those the
-   *   true story's rank held or improved — every one a false alarm
-   *   confidence moves backwards on 8%, and 98% of those are a change of
-   *   leading story
-   *
-   * So this still falls sometimes, and that is the point: it falls when the
-   * engine abandons its best guess, which is a real event the reader should see.
-   * Do not clamp it to a running maximum — that would hide exactly the thing it
-   * is here to report.
-   */
+  // confidence / threshold, not entropy: entropy can rise after a good answer.
+  // Don't clamp to a running max.
   const progress = computed(() => {
     if (!confidenceThreshold.value) return 0;
     return Math.min(
@@ -158,14 +104,12 @@ export const useGame = (options: GameOptions = {}) => {
 
   const start = async (seed?: Seed) => {
     if (options.initialTurn && !sessionId.value) {
-      // Already paid for by whoever created the session.
       adopt(options.initialTurn);
       return;
     }
     await guard(async () => adopt(await api.start(seed)));
   };
 
-  /** `option` is an index into the current question's options; null = don't know. */
   const answer = async (option: number | null) => {
     const current = question.value;
     const id = sessionId.value;
@@ -175,8 +119,7 @@ export const useGame = (options: GameOptions = {}) => {
     const event: AnswerEvent = {
       key: current.key,
       family: isFamily ? family : null,
-      // A character travels as its code; a plot term is its own identity and
-      // the API sends no subject for it.
+      // Plot questions have no subject; the term itself is the identity.
       code: isFamily
         ? (current.subject ?? current.key.slice(family.length + 1))
         : null,
@@ -184,9 +127,7 @@ export const useGame = (options: GameOptions = {}) => {
     };
     await guard(async () => {
       const turn = await api.answer(id, current.key, option);
-      // Only once the engine has taken it: a host stores what it is told and
-      // replays it on resume, so a double click or a refused answer must not
-      // reach it.
+      // Only after the engine accepted it, so refused answers aren't persisted.
       options.onAnswered?.(event);
       trail.value.push({
         key: current.key,
@@ -200,7 +141,7 @@ export const useGame = (options: GameOptions = {}) => {
     });
   };
 
-  /** Autocomplete. Deliberately outside `guard` so typing never blocks a turn. */
+  // Outside `guard` so typing never blocks a turn.
   const searchCreators = (query: string): Promise<CreatorMatch[]> =>
     api.creators(query).catch(() => []);
 
@@ -234,13 +175,6 @@ export const useGame = (options: GameOptions = {}) => {
     await guard(async () => absorb(await api.reject(id, storycode)));
   };
 
-  const restart = async () => {
-    const id = sessionId.value;
-    if (id) void api.end(id).catch(() => undefined);
-    sessionId.value = null;
-    await guard(async () => adopt(await api.start()));
-  };
-
   return {
     question,
     guesses,
@@ -258,13 +192,11 @@ export const useGame = (options: GameOptions = {}) => {
     started,
     progress,
     creatorOffered,
-    adopt,
     start,
     answer,
     searchCreators,
     nameCreator,
     dismissCreator,
     reject,
-    restart,
   };
 };

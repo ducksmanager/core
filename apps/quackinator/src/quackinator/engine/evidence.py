@@ -1,16 +1,7 @@
-"""What tools looking at the page can tell the engine before the first question.
+"""Turns scan analysis (image search, first-panel OCR, Kumiko panels) into evidence.
 
-Three of them, all run by whoever holds the scan — Dumili over an indexation, or
-the standalone app over the reader's upload — and judged here, where the belief
-they feed is:
-
-- reverse image search, a cosine score per storycode;
-- OCR of the first panel, which is where a title is printed;
-- Kumiko's panel segmentation, which gives a row count and a panel count.
-
-Image search and OCR name stories, so they become per-story likelihood ratios.
-Kumiko measures the same things the layout questions ask, so it answers those
-questions — at its own error rate, not a reader's.
+Image search and OCR become per-story multipliers; Kumiko answers the layout
+questions, with its own error rate instead of a reader's.
 """
 
 from __future__ import annotations
@@ -41,9 +32,7 @@ class KumikoFact:
 def panel_rows(panels: Iterable[Sequence[int]], tolerance: int) -> int:
     """Rows of panels on one page, from Kumiko's `[x, y, width, height]` boxes.
 
-    The same clustering as Dumili's `getPanelRows` (packages/types/panelRows.ts),
-    which `measure-kumiko-accuracy.ts` scores: a panel whose top is within
-    `tolerance` pixels of a row already seen belongs to it.
+    Must match Dumili's `getPanelRows` (packages/types/panelRows.ts).
     """
     rows: list[int] = []
     for y in sorted(box[1] for box in panels):
@@ -57,8 +46,7 @@ def image_lifts(
 ) -> tuple[np.ndarray, list[str]]:
     """Per-story multiplier from reverse image search, and the codes not in the index.
 
-    Several scans of one story are not independent evidence — they are the same
-    drawing — so a story keeps its best score rather than a product.
+    Several matches for one story are the same drawing, so it keeps the best, not the product.
     """
     lift = np.ones(index.n_stories)
     unknown: list[str] = []
@@ -76,11 +64,9 @@ def image_lifts(
 def ocr_lifts(
     index: StoryIndex, texts: Iterable[tuple[str, float]], cfg: Settings
 ) -> tuple[np.ndarray, list[str]] | None:
-    """Per-story multiplier from OCR text, and the title words it matched.
+    """Per-story multiplier from OCR text, and the title words it matched; None without titles.
 
-    None where the index carries no titles. A word scores its IDF over stories,
-    so a title's rare words carry it and a word in a hundred titles barely
-    moves anything.
+    Matched words are weighted by IDF, so rare title words count most.
     """
     if index.title is None or not index.title_terms:
         return None
@@ -106,11 +92,8 @@ def kumiko_facts(
 ) -> list[KumikoFact]:
     """Layout answers Kumiko's segmentation supports.
 
-    Rows is the median over segmented pages, never one page's count: a splash
-    page or a half-page ending is normal, and either taken as the answer is a
-    wrong answer rather than a missing one. Total panels is a sum, so it needs
-    every page of the story segmented, which only a host holding the whole
-    story can say.
+    Rows is the median over pages (splash pages are common). Panels is a total, so
+    it is only given when every page of the whole story was segmented.
     """
     segmented = [page for page in pages if page is not None and page.panels > 0]
     facts: list[KumikoFact] = []

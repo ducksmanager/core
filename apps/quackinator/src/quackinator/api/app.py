@@ -1,8 +1,6 @@
-"""HTTP surface for the Vue frontend.
+"""HTTP API for the Vue frontend.
 
-Session state is a 300k-float belief vector held in process memory. That is
-fine for one node; put it in Redis (as a compressed sparse top-k) before
-running more than one replica.
+Sessions live in process memory, so this runs as a single replica.
 """
 
 from __future__ import annotations
@@ -57,39 +55,14 @@ def require_services() -> None:
 
 
 def inducks_character_url(code: str | None) -> str | None:
-    """Where the reader can go to see the character a question names.
-
-    "Does Gyro Gearloose appear in the story?" is a question about a face, and
-    the name is the part of it a reader may not have: theirs is a translation
-    that renamed him, or they know the inventor with the light bulb and not the
-    words. Inducks has the page that settles it, so the card links to it.
-
-    `code` is a question's subject, None for every question not about one
-    nameable thing, so a caller can pass it through without asking what kind of
-    question it is holding. Codes reach `c=` verbatim once encoded — exact for
-    the few hundred official characters (`DD`, `HDL`), best-effort for the
-    16,000 coded by their own name.
-    """
+    """inducks.org page for a character code, so a reader can check who a name refers to."""
     if not code or not settings.inducks_character_link:
         return None
     return f"https://inducks.org/character.php?c={quote(code, safe='')}"
 
 
 def thumbnail_url(path: str | None) -> str | None:
-    """Where the scan of a guessed story's first page is served from.
-
-    A picture of the page settles a guess faster than its title does: titles are
-    translated, retitled per printing, or missing outright — 35% of the stories
-    in the index have no title of their own, and a row for one of those reads
-    "Untitled story" — while the drawing is the thing the reader is holding. Inducks records the path of one scan per printing and nothing
-    about where it is hosted, so the base is ours to choose; see
-    `Settings.thumbnail_base`, which is also how the picture gets switched off.
-
-    Takes a `Guess.thumbnail_path` straight through, "" included, because 5% of
-    stories have no scan and the caller should not have to ask which. Paths are
-    lowercase ASCII by Inducks' scan-filename rules, so nothing here needs
-    escaping the way a character code does.
-    """
+    """Full URL of a story's first-page scan, or None if it has none or thumbnails are off."""
     if not path or not settings.thumbnail_base:
         return None
     return f"{settings.thumbnail_base.rstrip('/')}/{path.lstrip('/')}"
@@ -115,8 +88,7 @@ class MessageOut(BaseModel):
 
 
 def message(text: str) -> MessageOut:
-    """The message behind `text`. Text made from data alone — a name — is passed
-    through as a parameter, so a client never looks it up as a template."""
+    """Wrap plain text (e.g. a name) as a parameter so clients don't treat it as a template."""
     if isinstance(text, Text):
         return MessageOut(id=text.id, params=text.params)
     return MessageOut(id="{text}", params={"text": text})
@@ -133,15 +105,12 @@ class QuestionOut(BaseModel):
     gain_bits: float = Field(description="Information this question is expected to yield")
     inducks_url: str | None = Field(
         default=None,
-        description="Page on inducks.org for the character the question names, to link the "
-        "reader to. Null for every question that is not about one character",
+        description="inducks.org page of the character the question is about, if any",
     )
     subject: str | None = Field(
         default=None,
-        description="Inducks code of the thing the question is about. The stable identity, "
-        "where `key` embeds a display name that moves with DESC_LANGUAGE — so this is what "
-        "a host storing an answer to replay later must key it on. Null for a question about "
-        "nothing nameable, and for the plot family, whose terms are their own identity",
+        description="Inducks code the question is about; use this, not `key`, to store "
+        "answers for replay",
     )
 
 
@@ -152,28 +121,20 @@ class GuessOut(BaseModel):
     probability: float
     thumbnail_url: str | None = Field(
         default=None,
-        description="Scan of the story's first page, to show beside the title. Null where the "
-        "story has no scan (5% of them) or the mirror is switched off, so a row must read "
-        "fine without it",
+        description="First-page scan, or null if there is none",
     )
 
 
 class FactIn(BaseModel):
     key: str = Field(description="Question to answer: pages, rows, cols, panels or decade")
     value: int = Field(
-        description="The raw quantity the question counts — tenths of a page, a row "
-        "count, a four-digit year. Never an option index: those are re-derived from "
-        "the live belief every turn and mean nothing outside the turn they were shown"
+        description="Raw value (tenths of a page, row count, year), not an option index"
     )
 
 
 class ReplayIn(BaseModel):
     family: str = Field(description="char or plot")
-    code: str = Field(
-        description="Inducks code of the character, or the plot term itself. The stable "
-        "identity, not the question key, which embeds a display name that moves with "
-        "DESC_LANGUAGE"
-    )
+    code: str = Field(description="Character code or plot term (the question's `subject`)")
     option: int | None = Field(default=None, description="0 yes, 1 no; null replays a 'don't know'")
 
 
@@ -204,73 +165,59 @@ class KumikoIn(BaseModel):
 
 
 class SeedIn(BaseModel):
-    """What a host system knows before the reader is asked anything.
-
-    Every part is applied to the same belief and the updates are
-    multiplications, so the order they arrive in does not change where the
-    session starts.
-    """
+    """What a host system already knows before the first question."""
 
     prior: dict[str, float] = Field(
         default_factory=dict,
-        description="storycode -> 0..1 confidence from the caller's own tools. Lifts "
-        "those stories and damps nothing, so a list that misses costs nothing",
+        description="storycode -> 0..1 confidence; boosts those stories",
     )
     facts: list[FactIn] = Field(
         default_factory=list,
-        description="Answers the caller can read out of its own records. Cost no turn",
+        description="Answers known from the caller's own records",
     )
     exclude: list[str] = Field(
         default_factory=list,
-        description="Questions never to ask, applied after `facts`: the caller either "
-        "answered them there or has decided its reader cannot",
+        description="Question keys never to ask",
     )
     answers: list[ReplayIn] = Field(
         default_factory=list,
-        description="Answers this reader gave in an earlier session, to resume it",
+        description="Answers from an earlier session, to resume it",
     )
     image_matches: list[ImageMatchIn] = Field(
         default_factory=list,
-        description="Reverse image search over the story's first page, unfiltered",
+        description="Reverse image search results for the first page",
     )
     ocr: list[OcrTextIn] = Field(
         default_factory=list,
-        description="OCR of the first panel of the story, where the title is printed",
+        description="OCR of the first panel, where the title is",
     )
     kumiko: KumikoIn | None = None
     cover: bool = Field(
         default=False,
-        description="Identify a cover rather than a comic story. Layout questions do "
-        "not apply to one, and are neither asked nor accepted as facts",
+        description="Identify a cover instead of a story (no layout questions)",
     )
 
 
 class SeedOut(BaseModel):
-    """What the seed actually did. Nothing in a seed is fatal, so a caller that
-    wants to know whether its data still fits this index has to be told."""
+    """What was applied from the seed and what was skipped."""
 
     prior_applied: int
     prior_unknown: list[str] = Field(description="Storycodes this index does not have")
     facts_applied: list[str]
     facts_rejected: list[str] = Field(
-        description="Questions not in this bank, already answered, or handed a value "
-        "off their scale"
+        description="Unknown, already answered, or out-of-range value"
     )
     answers_replayed: int
     answers_dropped: list[str] = Field(
-        description="`family:code` for answers this index can no longer place — a "
-        "recoded character, or a plot term a rebuild dropped from the vocabulary"
+        description="`family:code` of answers this index no longer recognises"
     )
-    image_applied: int = Field(
-        default=0, description="Stories image search lifted, past its score gate"
-    )
+    image_applied: int = Field(default=0, description="Stories boosted by image search")
     image_unknown: list[str] = Field(
         default_factory=list, description="Image-search storycodes this index does not have"
     )
     ocr_words: list[str] | None = Field(
         default=None,
-        description="Title words the OCR text matched. Null where this index carries "
-        "no titles to match against",
+        description="Title words the OCR text matched; null if the index has no titles",
     )
     kumiko_applied: list[str] = Field(
         default_factory=list, description="Layout questions Kumiko answered"
@@ -283,17 +230,13 @@ class TurnOut(BaseModel):
     question: QuestionOut | None
     guesses: list[GuessOut]
     confidence: float
-    confidence_threshold: float = Field(
-        description="Confidence at which the engine stops asking; the full mark on a progress bar"
-    )
+    confidence_threshold: float = Field(description="Confidence at which the engine stops asking")
     story_entropy_bits: float = Field(
-        description="Over stories. How *spread* the belief is, not how close the engine is: "
-        "a single answer can raise it while the leading guess improves, so it must not be "
-        "presented as a progress score"
+        description="Spread of the belief over stories; not a progress measure"
     )
     questions_asked: int
     done: bool
-    cover: bool = Field(description="Identifying a cover rather than a comic story")
+    cover: bool = Field(description="Identifying a cover instead of a story")
     seed: SeedOut | None = Field(
         default=None, description="Only on the turn that created the session"
     )
@@ -313,7 +256,7 @@ class RejectIn(BaseModel):
 class CreatorOut(BaseModel):
     creator: int
     name: str
-    matched: str = Field(description="The spelling that matched — an alias, where one did")
+    matched: str = Field(description="The name or alias that matched")
     stories: int
 
 
@@ -359,8 +302,7 @@ def _turn(session_id: str, session: Session) -> TurnOut:
                 prompt_message=message(pending.prompt),
                 option_messages=[message(option) for option in pending.options],
                 gain_bits=pending.gain_bits,
-                # Characters are the only subjects the bank has, so a subject
-                # is a character. See `Question.subject`.
+                # All question subjects are characters.
                 inducks_url=inducks_character_url(pending.subject),
                 subject=pending.subject,
             )
@@ -387,16 +329,8 @@ def _turn(session_id: str, session: Session) -> TurnOut:
 
 
 def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
-    """Fold a caller's own knowledge into a fresh session.
-
-    Nothing here can fail the request. A seed is assembled by a host system out
-    of its own database against an index it does not control, so every part of
-    it is allowed to miss — a storycode this index does not carry, a question it
-    does not ask, a character recoded since the answer was stored. A miss is
-    reported and skipped, never raised: a reader resuming a session should get
-    their session back, not an error about a plot term that fell out of the
-    vocabulary on the last rebuild.
-    """
+    """Apply a seed to a new session. Parts that don't match the index are
+    reported and skipped, never raised, so an outdated seed still works."""
     facts_applied, facts_rejected = [], []
     for fact in seed.facts:
         (facts_applied if session.apply_fact(fact.key, fact.value) else facts_rejected).append(
@@ -455,13 +389,7 @@ def _apply_seed(session: Session, seed: SeedIn) -> SeedOut:
 
 @app.post("/api/sessions", response_model=TurnOut)
 def start_session(seed: SeedIn | None = None) -> TurnOut:
-    """Start a game, optionally on top of what the caller already knows.
-
-    An unseeded session is the standalone reader, who arrives with nothing. A
-    seeded one is a host system — Dumili has already run reverse image search
-    and OCR over the page, and holds the story's length and the magazine's year
-    in its own database — or the same reader resuming.
-    """
+    """Start a game, optionally seeded with what the caller already knows."""
     session_id = uuid.uuid4().hex
     try:
         session = Session(engine=_engine(), cover=seed is not None and seed.cover)
@@ -505,11 +433,7 @@ def creators(q: str) -> list[CreatorOut]:
 
 @app.post("/api/sessions/{session_id}/creator", response_model=TurnOut)
 def name_creator(session_id: str, body: CreatorIn) -> TurnOut:
-    """The reader read a name off the first page.
-
-    Not an answer to a question — it costs no turn, and a reader whose copy
-    prints no credit simply never calls this. See `Session.volunteer`.
-    """
+    """Record a creator name the reader saw on the page. Costs no turn."""
     session = _session(session_id)
     try:
         session.volunteer("creator", body.creator)
@@ -575,14 +499,11 @@ def _analyze(image: bytes, language: str | None) -> AnalysisOut:
 
 @app.post("/api/analyze", response_model=AnalysisOut)
 async def analyze(request: Request, language: str | None = None) -> AnalysisOut:
-    """Run Kumiko and OCR over the first page of the reader's story.
+    """Run Kumiko and OCR on an uploaded first page (raw request body, not stored).
 
-    For the standalone reader, who has a photo rather than a host's database. The
-    image is the raw request body, held in memory and never stored. `language`
-    is the magazine's Inducks language code; OCR is skipped without one. Image
-    search is not here: it is DM's, and the browser calls it directly.
+    `language` is the Inducks language code; OCR is skipped without it.
     """
-    # Counted as it arrives, so an oversized upload is refused before it is held
+    # Size checked while streaming, so oversized uploads are refused early.
     chunks: list[bytes] = []
     size = 0
     async for chunk in request.stream():
@@ -595,12 +516,6 @@ async def analyze(request: Request, language: str | None = None) -> AnalysisOut:
     return await run_in_threadpool(_analyze, b"".join(chunks), language)
 
 
-@app.delete("/api/sessions/{session_id}")
-def end_session(session_id: str) -> dict:
-    SESSIONS.pop(session_id, None)
-    return {"ok": True}
-
-
 @app.get("/api/health")
 def health() -> dict:
     engine = _engine()
@@ -609,8 +524,6 @@ def health() -> dict:
         "storyversions": engine.index.n_items,
         "stories": engine.index.n_stories,
         "sessions": len(SESSIONS),
-        # Changes when a rebuild moves something a stored answer is keyed on, so
-        # a caller holding answers can tell whether they will still replay. See
-        # `StoryIndex.fingerprint`.
+        # Changes when a rebuild may invalidate stored answers.
         "index_fingerprint": engine.index.fingerprint,
     }

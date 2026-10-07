@@ -63,11 +63,6 @@ const emit = defineEmits<{ (e: "answer", option: number | null): void }>();
 
 const { t, tm } = useQuackinatorI18n();
 
-/**
- * Yes/No questions get two wide buttons; a condensed page-count or language
- * question gets a grid. The reader is likely holding the magazine in one hand,
- * so targets stay large either way.
- */
 const layout = computed(() =>
   question.options.length <= 2 ? "binary" : "grid",
 );
