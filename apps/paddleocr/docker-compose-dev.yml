@@ -1,0 +1,17 @@
+name: paddleocr
+
+services:
+  paddleocr:
+    restart: always
+    ports:
+      - "8006:8081"
+    shm_size: "2gb"
+    environment:
+      PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./server.py:/server.py
+      - ./recognition_model_rules.json:/recognition_model_rules.json
+    build:
+      context: ../..
+      dockerfile: apps/paddleocr/Dockerfile.aarch64

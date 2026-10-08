@@ -97,6 +97,10 @@ export default defineConfig({
       "~prisma": path.resolve(import.meta.dirname, "api/prisma"),
       "~translations": path.resolve(import.meta.dirname, "translations"),
       "~web": path.resolve(import.meta.dirname, "../web"),
+      "~quackinator": path.resolve(
+        import.meta.dirname,
+        "../quackinator/frontend/src",
+      ),
     }),
   },
   server: {

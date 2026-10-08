@@ -1,0 +1,44 @@
+[project]
+name = "quackinator"
+version = "0.1.0"
+description = "Identify the Disney comic story you are reading, by asking as few questions as possible"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "PyMySQL>=1.1",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5", "scipy-stubs>=1.17"]
+
+[project.scripts]
+quackinator-etl = "quackinator.etl.__main__:main"
+quackinator-sim = "quackinator.engine.simulate:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/quackinator"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+# A package `__init__` may list submodule names in `__all__` for `from pkg import *`
+# to import — documented behaviour that pyright reads as names missing from the
+# module. `quackinator.etl` and friends do exactly that.
+reportUnsupportedDunderAll = "none"

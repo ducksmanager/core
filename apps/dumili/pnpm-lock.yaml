@@ -86,6 +86,9 @@ importers:
       ~group-by:
         specifier: workspace:*
         version: link:../../util/group-by
+      ~quackinator:
+        specifier: workspace:*
+        version: link:../quackinator/frontend
       ~web:
         specifier: workspace:*
         version: link:../web

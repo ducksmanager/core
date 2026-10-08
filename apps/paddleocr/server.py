@@ -22,6 +22,7 @@ import json
 import tempfile
 from urllib.parse import parse_qs, urlparse
 
+import cv2
 import numpy as np
 
 _DATA_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -118,8 +119,26 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         post_data = json.loads(self.rfile.read(content_length))
-        print(f"Received POST data: {post_data}")  # Debugging line
-        url = post_data['url'].replace('upload/', 'upload/c_limit,h_4000,w_4000/')
+        # Callers holding an upload rather than a URL send the image itself
+        if 'image' in post_data:
+            image_input = cv2.imdecode(
+                np.frombuffer(base64.b64decode(post_data['image']), np.uint8),
+                cv2.IMREAD_COLOR,
+            )
+            if image_input is None:
+                body = json.dumps({"error": "image is not a decodable picture"}).encode("utf-8")
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if 'crop' in post_data:
+                x, y, width, height = (int(v) for v in post_data['crop'])
+                image_input = image_input[y:y + height, x:x + width]
+        else:
+            print(f"Received POST data: {post_data}")  # Debugging line
+            image_input = post_data['url'].replace('upload/', 'upload/c_limit,h_4000,w_4000/')
         language = post_data['language']
         want_annotated = bool(post_data.get('annotated'))
 
@@ -135,7 +154,7 @@ class PaddleOCRRequestHandler(BaseHTTPRequestHandler):
             return
 
         os.remove("tmp.jpg") if os.path.exists("tmp.jpg") else None
-        predict_out = ocr.predict(url)
+        predict_out = ocr.predict(image_input)
         result = predict_out[0] if predict_out else None
 
         converted_data = []
