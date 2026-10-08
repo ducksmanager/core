@@ -18,5 +18,5 @@
     "paths": { "~quackinator/*": ["./src/*"] },
     "types": ["vite/client", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts", "vite.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts", "components.d.ts", "vite.config.ts"]
 }

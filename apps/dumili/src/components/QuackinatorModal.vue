@@ -93,15 +93,14 @@
           <div v-else-if="!turn" class="text-center p-4">
             {{ $t("Préparation des questions…") }}
           </div>
-          <div v-else class="quackinator-surface">
-            <QuackinatorGame
-              :api="api"
-              :initial-turn="turn"
-              pickable
-              @answered="onAnswered"
-              @picked="onPicked"
-            />
-          </div>
+          <QuackinatorGame
+            v-else
+            :api="api"
+            :initial-turn="turn"
+            pickable
+            @answered="onAnswered"
+            @picked="onPicked"
+          />
         </template>
       </div>
 
@@ -327,26 +326,5 @@ watch(show, (isOpen) => {
 
 .search-step {
   min-height: 19rem;
-}
-
-.quackinator-surface {
-  --bg: #16181c;
-  --surface: #1e2126;
-  --surface-alt: #272b32;
-  --border: #343941;
-  --text: #eceef1;
-  --muted: #9aa1ac;
-  --accent: #62a8f5;
-  --accent-contrast: #10131a;
-  --accent-soft: #223145;
-  --positive: #63c58c;
-  --danger: #f0876f;
-  --radius: 12px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 6px 20px rgb(0 0 0 / 25%);
-
-  background: var(--bg);
-  color: var(--text);
-  padding: 1rem;
-  border-radius: var(--radius);
 }
 </style>

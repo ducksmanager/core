@@ -1,6 +1,6 @@
 <template>
-  <div class="meter">
-    <div class="labels">
+  <div>
+    <div class="d-flex flex-wrap justify-content-between gap-2 small mb-1">
       <i18n-t
         v-if="questionsAsked === 0"
         :keypath="
@@ -29,7 +29,7 @@
           <strong>{{ formatPercent(confidence, locale) }}</strong>
         </template>
       </i18n-t>
-      <span class="muted">
+      <span class="text-body-secondary">
         {{
           t(
             "{count} question | {count} questions",
@@ -55,20 +55,16 @@
         </template>
       </span>
     </div>
-    <div
-      class="track"
-      role="progressbar"
-      :aria-valuenow="Math.round(progress * 100)"
-      aria-valuemin="0"
-      aria-valuemax="100"
+    <b-progress
+      :value="progress * 100"
+      :max="100"
+      height="6px"
       :aria-label="
         cover
           ? t('Confidence in the leading cover')
           : t('Confidence in the leading story')
       "
-    >
-      <div class="fill" :style="{ width: `${progress * 100}%` }" />
-    </div>
+    />
   </div>
 </template>
 
@@ -103,36 +99,3 @@ const { t, locale } = useQuackinatorI18n();
 const spread = computed(() => candidatesLeft(storyEntropyBits));
 const total = computed(() => candidatesLeft(startingBits));
 </script>
-
-<style scoped>
-.meter {
-  display: grid;
-  gap: 0.4rem;
-}
-
-.labels {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.88rem;
-}
-
-.muted {
-  color: var(--muted);
-}
-
-.track {
-  height: 6px;
-  background: var(--surface-alt);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
-</style>

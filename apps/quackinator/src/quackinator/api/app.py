@@ -5,6 +5,7 @@ Sessions live in process memory, so this runs as a single replica.
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import json
 import logging
@@ -497,23 +498,32 @@ def _analyze(image: bytes, language: str | None) -> AnalysisOut:
     return AnalysisOut(kumiko=kumiko, ocr=ocr)
 
 
+# Kumiko and PaddleOCR handle one image at a time and are shared with Dumili, so
+# uploads beyond this are refused rather than queued behind them.
+MAX_CONCURRENT_ANALYSES = 2
+_analyses = asyncio.Semaphore(MAX_CONCURRENT_ANALYSES)
+
+
 @app.post("/api/analyze", response_model=AnalysisOut)
 async def analyze(request: Request, language: str | None = None) -> AnalysisOut:
     """Run Kumiko and OCR on an uploaded first page (raw request body, not stored).
 
     `language` is the Inducks language code; OCR is skipped without it.
     """
-    # Size checked while streaming, so oversized uploads are refused early.
-    chunks: list[bytes] = []
-    size = 0
-    async for chunk in request.stream():
-        size += len(chunk)
-        if size > settings.max_upload_bytes:
-            raise HTTPException(413, "image too large")
-        chunks.append(chunk)
-    if not size:
-        raise HTTPException(400, "empty image")
-    return await run_in_threadpool(_analyze, b"".join(chunks), language)
+    if _analyses.locked():
+        raise HTTPException(429, "Too many pages being analysed, try again in a moment")
+    async with _analyses:
+        # Size checked while streaming, so oversized uploads are refused early.
+        chunks: list[bytes] = []
+        size = 0
+        async for chunk in request.stream():
+            size += len(chunk)
+            if size > settings.max_upload_bytes:
+                raise HTTPException(413, "image too large")
+            chunks.append(chunk)
+        if not size:
+            raise HTTPException(400, "empty image")
+        return await run_in_threadpool(_analyze, b"".join(chunks), language)
 
 
 @app.get("/api/health")

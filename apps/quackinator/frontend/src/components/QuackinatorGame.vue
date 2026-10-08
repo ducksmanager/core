@@ -1,11 +1,16 @@
 <template>
-  <div class="game">
-    <p v-if="game.error.value" class="error" role="alert">
+  <div class="d-grid gap-4">
+    <b-alert
+      v-if="game.error.value"
+      variant="danger"
+      :model-value="true"
+      class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-0"
+    >
       {{ game.error.value }}
-      <button type="button" @click="retry">
+      <b-button variant="outline-danger" size="sm" @click="retry">
         {{ t("Try again") }}
-      </button>
-    </p>
+      </b-button>
+    </b-alert>
 
     <template v-if="game.started.value">
       <progress-meter
@@ -17,8 +22,8 @@
         :cover="game.cover.value"
       />
 
-      <main class="layout">
-        <div class="main-column">
+      <b-row tag="main" class="g-4 align-items-start">
+        <b-col md="7" class="d-grid gap-3">
           <author-box
             v-if="game.creatorOffered.value && !game.done.value"
             :busy="game.busy.value"
@@ -36,8 +41,8 @@
             @answer="game.answer"
           />
 
-          <section v-else-if="game.done.value" class="card finished">
-            <h2>
+          <b-card v-else-if="game.done.value">
+            <h2 class="h4">
               {{
                 game.confidence.value >= game.confidenceThreshold.value
                   ? t("I think that's it.")
@@ -66,7 +71,7 @@
                 formatPercent(game.confidence.value, locale)
               }}</template>
             </i18n-t>
-            <p class="muted">
+            <p class="small text-body-secondary mb-0">
               {{
                 game.cover.value
                   ? t(
@@ -77,12 +82,12 @@
                     )
               }}
             </p>
-          </section>
+          </b-card>
 
           <answer-trail :trail="game.trail.value" />
-        </div>
+        </b-col>
 
-        <aside class="side">
+        <b-col tag="aside" md="5">
           <guess-list
             v-if="game.questionsAsked.value > 0 || game.seeded.value"
             :guesses="game.guesses.value"
@@ -93,11 +98,11 @@
             @reject="game.reject"
             @pick="emit('picked', $event)"
           />
-        </aside>
-      </main>
+        </b-col>
+      </b-row>
     </template>
 
-    <p v-else-if="!game.error.value" class="loading">
+    <p v-else-if="!game.error.value" class="text-body-secondary">
       {{ t("Loading the story index…") }}
     </p>
   </div>
@@ -153,77 +158,3 @@ const retry = () => {
   }
 };
 </script>
-
-<style scoped>
-.game {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(17rem, 1fr);
-  gap: 1.5rem;
-  align-items: start;
-}
-
-@media (max-width: 48rem) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-.main-column,
-.side {
-  display: grid;
-  gap: 1rem;
-  min-width: 0;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
-}
-
-.finished h2 {
-  margin: 0 0 0.6rem;
-  font-size: 1.35rem;
-}
-
-.finished p {
-  margin: 0 0 0.6rem;
-}
-
-.muted {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.error {
-  background: var(--surface);
-  border: 1px solid var(--danger);
-  border-radius: var(--radius);
-  padding: 0.9rem 1.1rem;
-  color: var(--danger);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin: 0;
-}
-
-.error button {
-  background: none;
-  border: 1px solid currentcolor;
-  border-radius: 8px;
-  padding: 0.35rem 0.75rem;
-}
-
-.loading {
-  color: var(--muted);
-}
-</style>

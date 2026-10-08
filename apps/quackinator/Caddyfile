@@ -3,5 +3,25 @@ quackinator.ducksmanager.net {
 }
 
 api.quackinator.ducksmanager.net {
+    # Page analysis runs Kumiko and PaddleOCR, which are shared with Dumili.
+    # POST only: the browser's CORS preflight must not count as an upload.
+    @analyze {
+        method POST
+        path /api/analyze
+    }
+    route @analyze {
+        rate_limit {
+            zone quackinator_analyze {
+                key {remote_host}
+                events 10
+                window 1m
+            }
+        }
+    }
+    # Without the CORS header the browser hides this response from the page.
+    handle_errors 429 {
+        header Access-Control-Allow-Origin https://quackinator.ducksmanager.net
+        respond "Too many pages analysed, try again in a minute" 429
+    }
     reverse_proxy quackinator-api:8000
 }

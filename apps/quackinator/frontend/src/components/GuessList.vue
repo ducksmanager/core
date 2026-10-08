@@ -1,21 +1,25 @@
 <template>
-  <section class="panel">
-    <h3 class="heading">
+  <b-card>
+    <h3 class="small text-uppercase fw-bold text-body-secondary mb-3">
       {{ final ? t("Best matches") : t("Currently most likely") }}
     </h3>
 
-    <p v-if="!guesses.length" class="empty">
+    <p v-if="!guesses.length" class="small text-body-secondary mb-0">
       {{ t("Nothing narrowed down yet.") }}
     </p>
 
-    <ol v-else class="list">
-      <li v-for="guess in guesses" :key="guess.storycode" class="guess">
+    <ol v-else class="list-unstyled d-grid gap-2 mb-0">
+      <li
+        v-for="guess in guesses"
+        :key="guess.storycode"
+        class="position-relative overflow-hidden border rounded p-2"
+      >
         <div
           class="bar"
           :style="{ width: `${Math.max(2, guess.probability * 100)}%` }"
         />
-        <div class="row">
-          <div v-if="showPictures" class="thumb">
+        <div class="position-relative d-flex align-items-start gap-2">
+          <div v-if="showPictures" class="thumb border rounded">
             <img
               v-if="pictureFor(guess)"
               :src="pictureFor(guess)!"
@@ -26,12 +30,19 @@
             />
           </div>
 
-          <div class="details">
-            <div class="body">
-              <div class="text">
+          <div class="flex-grow-1 min-w-0">
+            <div
+              class="d-flex align-items-baseline justify-content-between gap-2"
+            >
+              <div class="d-flex flex-column min-w-0">
                 <a
-                  class="title"
-                  :class="{ bare: isBareCode(guess.title, guess.storycode) }"
+                  class="fw-semibold link-body-emphasis link-underline-opacity-0 link-underline-opacity-100-hover text-break"
+                  :class="{
+                    'fst-italic text-body-secondary': isBareCode(
+                      guess.title,
+                      guess.storycode,
+                    ),
+                  }"
                   :href="`${INDUCKS_STORY}${encodeURIComponent(guess.storycode)}`"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -43,40 +54,41 @@
                       : guess.title
                   }}</a
                 >
-                <span class="meta">
-                  <span class="mono">{{ guess.storycode }}</span>
+                <span class="small text-body-secondary">
+                  <span class="font-monospace">{{ guess.storycode }}</span>
                   <template v-if="guess.year"> · {{ guess.year }}</template>
                 </span>
               </div>
-              <span class="probability">{{
+              <span class="fw-bold text-nowrap">{{
                 formatPercent(guess.probability, locale)
               }}</span>
             </div>
-            <div class="actions">
-              <button
+            <div class="d-flex flex-wrap gap-2 mt-1">
+              <b-button
                 v-if="pickable"
-                type="button"
-                class="pick"
+                variant="outline-primary"
+                size="sm"
                 :disabled="busy"
                 @click="emit('pick', guess.storycode)"
               >
                 {{ t("That's the one") }}
-              </button>
-              <button
-                type="button"
-                class="reject"
+              </b-button>
+              <b-button
+                variant="link"
+                size="sm"
+                class="link-danger p-0"
                 :disabled="busy"
                 :title="t('Not {title}', { title: guess.title })"
                 @click="emit('reject', guess.storycode)"
               >
                 {{ t("Not this one") }}
-              </button>
+              </b-button>
             </div>
           </div>
         </div>
       </li>
     </ol>
-  </section>
+  </b-card>
 </template>
 
 <script setup lang="ts">
@@ -121,157 +133,33 @@ const showPictures = computed(() => guesses.some((guess) => pictureFor(guess)));
 </script>
 
 <style scoped>
-.actions {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-
-.pick {
-  font: inherit;
-  font-size: 0.75rem;
-  cursor: pointer;
-  border-radius: 999px;
-  border: 1px solid currentColor;
-  background: none;
-  color: var(--accent, #7cc);
-  padding: 0.15rem 0.6rem;
-}
-
-.pick:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.15rem 1.25rem;
-}
-
-.heading {
-  margin: 0 0 0.85rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.empty {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.6rem;
-}
-
-.guess {
-  position: relative;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.6rem 0.7rem;
-  overflow: hidden;
-}
-
-/* Probability as a fill behind the row: readable at a glance without a chart. */
+/* Probability as a fill behind the row */
 .bar {
   position: absolute;
   inset: 0 auto 0 0;
-  background: var(--accent-soft);
+  background: var(--bs-primary-bg-subtle);
   transition: width 0.25s ease;
 }
 
-/* Above the probability fill, which is absolutely positioned behind the row. */
-.row {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
-}
-
-.details {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Sized in the aspect ratio of a comic page rather than to the scan, so the
-   column holds still while the pictures load — and so a row whose story has no
-   scan keeps its place in it. */
+/* Comic-page ratio, so the column holds still while scans load */
 .thumb {
   flex: none;
   width: 46px;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface-alt);
+  background: var(--bs-tertiary-bg);
 }
 
+/* The top of a first page holds the title panel */
 .thumb img {
   width: 100%;
   height: 100%;
-  /* The top of a first page is the title panel and the establishing shot: the
-     half worth showing at this size. */
   object-fit: cover;
   object-position: top center;
   display: block;
 }
 
-.body {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.text {
-  display: flex;
-  flex-direction: column;
+.min-w-0 {
   min-width: 0;
-}
-
-.title {
-  color: inherit;
-  font-weight: 600;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-
-.title:hover {
-  text-decoration: underline;
-}
-
-.title.bare {
-  font-style: italic;
-  color: var(--muted);
-}
-
-.meta {
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.probability {
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.reject {
-  margin-top: 0.45rem;
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--danger);
-  font-size: 0.8rem;
-  text-decoration: underline;
 }
 </style>

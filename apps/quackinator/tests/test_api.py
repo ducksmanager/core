@@ -225,3 +225,37 @@ def test_an_upload_within_the_limit_is_analysed_whole(monkeypatch):
 
     assert asyncio.run(app.analyze(_Upload([b"ab", b"cd"]), None)) == "analysed"  # type: ignore[arg-type]
     assert seen == [b"abcd"]
+
+
+def test_uploads_beyond_the_concurrency_limit_are_refused(monkeypatch):
+    import asyncio
+
+    import pytest
+    from fastapi import HTTPException
+
+    from quackinator.api import app
+
+    async def scenario():
+        release = asyncio.Event()
+
+        async def slow(_fn, image, language):
+            await release.wait()
+            return "analysed"
+
+        monkeypatch.setattr(app, "run_in_threadpool", slow)
+        running = [
+            asyncio.create_task(app.analyze(_Upload([b"x"]), None))  # type: ignore[arg-type]
+            for _ in range(app.MAX_CONCURRENT_ANALYSES)
+        ]
+        await asyncio.sleep(0)
+        upload = _Upload([b"x"])
+        with pytest.raises(HTTPException) as refused:
+            await app.analyze(upload, None)  # type: ignore[arg-type]
+        assert refused.value.status_code == 429
+        assert upload.read == 0
+
+        release.set()
+        assert await asyncio.gather(*running) == ["analysed"] * app.MAX_CONCURRENT_ANALYSES
+        assert await app.analyze(_Upload([b"x"]), None) == "analysed"  # type: ignore[arg-type]
+
+    asyncio.run(scenario())

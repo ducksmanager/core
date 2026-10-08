@@ -1,50 +1,50 @@
 <template>
-  <section class="card" :aria-busy="busy">
-    <p class="index">{{ t("Question {index}", { index }) }}</p>
+  <b-card :aria-busy="busy">
+    <p class="small text-uppercase fw-semibold text-body-secondary mb-1">
+      {{ t("Question {index}", { index }) }}
+    </p>
+    <h2 class="h4 mb-0">{{ tm(question.prompt_message) }}</h2>
+    <p v-if="question.inducks_url" class="small text-body-secondary mt-2 mb-0">
+      {{ t("Not sure who that is?") }}
+      <a
+        :href="question.inducks_url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-secondary"
+      >
+        {{ t("Look them up on Inducks ↗") }}
+      </a>
+    </p>
 
-    <div class="ask">
-      <h2 class="prompt">{{ tm(question.prompt_message) }}</h2>
-      <p v-if="question.inducks_url" class="lookup">
-        {{ t("Not sure who that is?") }}
-        <a
-          :href="question.inducks_url"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {{ t("Look them up on Inducks ↗") }}
-        </a>
-      </p>
-    </div>
-
-    <div class="options" :class="layout">
-      <button
+    <div class="options mt-3" :class="layout">
+      <b-button
         v-for="(label, i) in question.options"
         :key="label"
-        type="button"
-        class="option"
+        variant="outline-primary"
         :disabled="busy"
         @click="emit('answer', i)"
       >
         {{ tm(question.option_messages[i]!) }}
-      </button>
+      </b-button>
     </div>
 
-    <button
-      type="button"
-      class="unsure"
+    <b-button
+      variant="outline-secondary"
+      size="sm"
+      class="mt-3"
       :disabled="busy"
       @click="emit('answer', null)"
     >
       {{ t("I can't tell") }}
-    </button>
-    <p class="hint">
+    </b-button>
+    <p class="small text-body-secondary mt-3 mb-0">
       {{
         t(
           "Answer by looking at the pages in front of you. Skipping won't mislead the search, but it still counts as one of your questions.",
         )
       }}
     </p>
-  </section>
+  </b-card>
 </template>
 
 <script setup lang="ts">
@@ -69,51 +69,9 @@ const layout = computed(() =>
 </script>
 
 <style scoped>
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
-}
-
-.index {
-  margin: 0 0 0.35rem;
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.ask {
-  margin-bottom: 1.25rem;
-}
-
-.prompt {
-  margin: 0;
-  font-size: 1.4rem;
-  line-height: 1.3;
-}
-
-.lookup {
-  margin: 0.45rem 0 0;
-  color: var(--muted);
-  font-size: 0.84rem;
-}
-
-.lookup a {
-  color: inherit;
-  text-decoration-color: var(--border);
-}
-
-.lookup a:hover {
-  color: var(--text);
-}
-
 .options {
   display: grid;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .options.binary {
@@ -122,48 +80,5 @@ const layout = computed(() =>
 
 .options.grid {
   grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-}
-
-.option {
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.85rem 1rem;
-  font-weight: 550;
-  text-align: center;
-  transition:
-    background 0.12s ease,
-    border-color 0.12s ease,
-    transform 0.06s ease;
-}
-
-.option:hover:not(:disabled) {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-}
-
-.option:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-.unsure {
-  margin-top: 1rem;
-  background: none;
-  border: 1px dashed var(--border);
-  border-radius: 10px;
-  padding: 0.55rem 0.9rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.unsure:hover:not(:disabled) {
-  color: var(--text);
-  border-color: var(--muted);
-}
-
-.hint {
-  margin: 0.9rem 0 0;
-  color: var(--muted);
-  font-size: 0.84rem;
 }
 </style>

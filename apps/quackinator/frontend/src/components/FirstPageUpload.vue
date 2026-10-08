@@ -1,7 +1,7 @@
 <template>
-  <section class="card upload">
-    <h2>{{ t("Got a photo of the story's first page?") }}</h2>
-    <p class="muted">
+  <b-card>
+    <h2 class="h4">{{ t("Got a photo of the story's first page?") }}</h2>
+    <p class="text-body-secondary">
       {{
         t(
           "If it's a story I've seen before I may recognise it straight away. If not, I'll still use the layout and the title to pick better questions.",
@@ -9,46 +9,61 @@
       }}
     </p>
 
-    <form @submit.prevent="analyze">
-      <label class="field">
-        <span>{{ t("First page") }}</span>
+    <b-form @submit.prevent="analyze">
+      <b-form-group :label="t('First page')" label-for="first-page">
         <input
+          id="first-page"
+          class="form-control"
           type="file"
           accept="image/*"
           capture="environment"
           :disabled="busy"
           @change="pick"
         />
-      </label>
+      </b-form-group>
 
-      <label class="field">
-        <span>{{ t("Language of the magazine") }}</span>
-        <select v-model="language" :disabled="busy">
-          <option :value="null">
-            {{ t("Don't know (skip reading the title)") }}
-          </option>
-          <option v-for="code in LANGUAGES" :key="code" :value="code">
-            {{ languageName(code) }}
-          </option>
-        </select>
-      </label>
+      <b-form-group
+        :label="t('Language of the magazine')"
+        label-for="magazine-language"
+        class="mt-3"
+      >
+        <b-form-select
+          id="magazine-language"
+          v-model="language"
+          :options="languageOptions"
+          :disabled="busy"
+        />
+        <template #description>
+          {{
+            t(
+              "Used to read the story's title off the page, if I don't recognise the image. A title is written in the magazine's language, so I need to know which one to read it in.",
+            )
+          }}
+        </template>
+      </b-form-group>
 
-      <p v-if="error" class="error" role="alert">{{ error }}</p>
+      <b-alert v-if="error" variant="danger" :model-value="true" class="mt-3">
+        {{ error }}
+      </b-alert>
 
-      <div class="actions">
-        <button type="submit" class="primary" :disabled="!file || busy">
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <b-button type="submit" variant="primary" :disabled="!file || busy">
           {{ busy ? t("Looking at the page…") : t("Look at the page") }}
-        </button>
-        <button type="button" :disabled="busy" @click="emit('seed', undefined)">
+        </b-button>
+        <b-button
+          variant="secondary"
+          :disabled="busy"
+          @click="emit('seed', undefined)"
+        >
           {{ t("Skip, just ask me questions") }}
-        </button>
+        </b-button>
       </div>
-    </form>
-  </section>
+    </b-form>
+  </b-card>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import { api } from "~quackinator/api";
 import { useQuackinatorI18n } from "~quackinator/i18n";
@@ -87,6 +102,11 @@ const { t, locale } = useQuackinatorI18n();
 
 const languageName = (code: string) =>
   new Intl.DisplayNames([locale.value], { type: "language" }).of(code) ?? code;
+
+const languageOptions = computed(() => [
+  { value: null, text: t("Don't know (skip reading the title)") },
+  ...LANGUAGES.map((code) => ({ value: code, text: languageName(code) })),
+]);
 
 const browserLanguage = navigator.language.split("-")[0];
 const file = ref<File | null>(null);
@@ -157,56 +177,3 @@ const analyze = async () => {
   }
 };
 </script>
-
-<style scoped>
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
-}
-
-.upload h2 {
-  margin: 0 0 0.4rem;
-}
-
-.muted {
-  color: var(--muted);
-  margin: 0 0 1.25rem;
-}
-
-form {
-  display: grid;
-  gap: 1rem;
-}
-
-.field {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.field span {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.field input,
-.field select {
-  max-width: 100%;
-}
-
-.error {
-  border: 1px solid var(--danger);
-  border-radius: var(--radius);
-  padding: 0.9rem 1.1rem;
-  color: var(--danger);
-  margin: 0;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-</style>
