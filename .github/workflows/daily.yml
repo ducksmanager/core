@@ -39,6 +39,15 @@ jobs:
         run: |
           pnpm -r -F '~coa-updater' prod:docker-compose-run
 
+      - name: Rebuild the Quackinator index
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          REMOTE_TIMEOUT: 15m
+        run: |
+          pnpm -r -F '~quackinator-api' prod:etl
+          pnpm -r -F '~quackinator-api' prod:deploy
+
       - name: Run stats-updater
         timeout-minutes: 90
         continue-on-error: true

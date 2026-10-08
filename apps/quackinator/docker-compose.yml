@@ -14,8 +14,6 @@ services:
     volumes:
       # Written by the ETL, read by the API. The API never touches the database.
       - /data/quackinator:/app/data:ro
-    # dumili-api reaches this at quackinator-api:8000 over public-network,
-    # which both are already on.
     networks:
       - public-network
       - dumili-network
@@ -41,7 +39,10 @@ services:
       - ../../packages/api/.env
     volumes:
       - /data/quackinator:/app/data
-    command: ["python", "-m", "quackinator.etl"]
+    command:
+      - sh
+      - -c
+      - QUACKINATOR_DB_PASSWORD="$$MYSQL_ROOT_PASSWORD" exec python -m quackinator.etl
     networks:
       - dm-db-network
 

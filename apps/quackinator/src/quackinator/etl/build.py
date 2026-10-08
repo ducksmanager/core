@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import shutil
 from collections import Counter, defaultdict
 from collections.abc import Callable, Hashable, Iterable, Mapping
 from dataclasses import dataclass, field
@@ -618,9 +619,23 @@ def build(cfg: Settings | None = None) -> StoryIndex:
     return assemble(raw, cfg)
 
 
+def save_replacing(index: StoryIndex, target: Path) -> None:
+    """Save beside `target`, then swap it in, so an API starting mid-build never
+    loads a mix of old and new files."""
+    staging = target.with_name(target.name + ".new")
+    previous = target.with_name(target.name + ".old")
+    shutil.rmtree(staging, ignore_errors=True)
+    shutil.rmtree(previous, ignore_errors=True)
+    index.save(staging)
+    if target.exists():
+        target.rename(previous)
+    staging.rename(target)
+    shutil.rmtree(previous, ignore_errors=True)
+
+
 def build_and_save(cfg: Settings | None = None) -> Path:
     cfg = cfg or settings
     index = build(cfg)
-    index.save(cfg.index_dir)
+    save_replacing(index, Path(cfg.index_dir))
     log.info("wrote index to %s", cfg.index_dir)
     return cfg.index_dir
