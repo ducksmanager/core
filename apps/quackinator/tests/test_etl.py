@@ -394,3 +394,12 @@ def test_titles_survive_a_save(tmp_path):
     assert loaded.title_terms == index.title_terms
     assert loaded.title is not None
     assert (loaded.title != index.title).nnz == 0
+
+
+def test_an_index_without_titles_round_trips(tmp_path):
+    """`save` skips the title matrix when there is none, so `load` must too."""
+    index = assemble(make_raw(), settings)
+    index.title = None
+    index.save(tmp_path)
+
+    assert StoryIndex.load(tmp_path).title is None

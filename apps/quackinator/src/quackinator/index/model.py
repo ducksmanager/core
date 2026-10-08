@@ -240,7 +240,7 @@ class StoryIndex:
             creator_codes=meta["creator_codes"],
             creator_names=meta["creator_names"],
             creator_aliases=meta["creator_aliases"],
-            title=_load_csr(directory / TITLE_FILE),
+            title=_load_csr(directory / TITLE_FILE) if (directory / TITLE_FILE).exists() else None,
             title_terms=meta["title_terms"],
         )
 
