@@ -77,6 +77,6 @@
     "typescript-eslint": "^8.70.1",
     "unplugin-icons": "^23.0.1",
     "vite-plugin-checker": "^0.14.5",
-    "vue-tsc": "^3.3.11"
+    "vue-tsc": "^3.3.12"
   }
 }
