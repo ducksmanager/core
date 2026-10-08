@@ -1,10 +1,15 @@
 {
-    debug
     email admin@ducksmanager.net
-	log default {
+	log access {
 		output stdout
 		format json
 		include http.log.access
+	}
+	log default {
+		output stderr
+		format json
+		level WARN
+		exclude http.log.access
 	}
 	# Collect per-server HTTP metrics (opt-in because of the overhead).
 	servers {
