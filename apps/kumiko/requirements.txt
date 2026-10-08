@@ -1,0 +1,3 @@
+requests
+opencv-python-headless<5  # Kumiko's line detection fails on 5.0
+urllib3

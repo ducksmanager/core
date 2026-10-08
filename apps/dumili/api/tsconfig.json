@@ -43,6 +43,9 @@
       ],
       "~prisma/*": [
         "./prisma/*"
+      ],
+      "~quackinator/*": [
+        "../../quackinator/frontend/src/*"
       ]
     },
     "types": [

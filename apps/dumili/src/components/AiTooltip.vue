@@ -51,16 +51,18 @@ watch(
   (socket) => {
     if (socket) {
       for (const loadingEvent of loadingEvents) {
-        indexationSocket.value![loadingEvent.eventName] = (id) => {
-          if (loadingEvent.checkMatch(id)) {
+        indexationSocket.value![loadingEvent.eventName] = (
+          id: number | number[],
+        ) => {
+          if (typeof id === "number" && loadingEvent.checkMatch(id)) {
             isLoading.value = true;
           }
         };
 
         const endEvent: `${LoadingEventStart}End` = `${loadingEvent.eventName}End`;
 
-        indexationSocket.value![endEvent] = (id) => {
-          if (loadingEvent.checkMatch(id)) {
+        indexationSocket.value![endEvent] = (id: number | number[]) => {
+          if (typeof id === "number" && loadingEvent.checkMatch(id)) {
             setTimeout(() => {
               isLoading.value = false;
             }, 1500);

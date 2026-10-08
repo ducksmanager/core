@@ -2,6 +2,7 @@ import axios from "axios";
 
 import { COVER, ILLUSTRATION, STORY } from "~dumili-types/storyKinds";
 import { getEntryFromPage } from "~dumili-utils/entryPages";
+import { getPanelRows } from "~dm-types/panelRows";
 import prisma from "~prisma/client";
 import type { aiKumikoResultPanel, Prisma } from "~prisma/client_dumili/client";
 
@@ -26,31 +27,6 @@ const inferStoryKindFromAiResults = (
   pageNumber: number,
 ) =>
   pageNumber === 1 ? COVER : panelsOfPage.length === 1 ? ILLUSTRATION : STORY;
-
-const getPanelRows = (
-  panels: Awaited<ReturnType<typeof runKumiko>>[number],
-): number => {
-  if (!panels.length) {
-    return 0;
-  }
-
-  const sortedPanels = [...panels].sort((a, b) => a.y - b.y);
-  const rows: number[] = [sortedPanels[0].y];
-  const tolerance = 5;
-  for (let i = 0; i < sortedPanels.length; i++) {
-    const panelY = sortedPanels[i].y;
-
-    const belongsToExistingRow = rows.some(
-      (rowY) => Math.abs(panelY - rowY) <= tolerance,
-    );
-
-    if (!belongsToExistingRow) {
-      rows.push(panelY);
-    }
-  }
-
-  return rows.length;
-};
 
 const runKumikoOnPage = async (
   indexationServices: IndexationServices,

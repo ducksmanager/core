@@ -1,0 +1,18 @@
+{
+  "name": "~quackinator-api",
+  "private": true,
+  "scripts": {
+    "dev": "mise run dev",
+    "lint": "mise run lint",
+    "test": "mise run test",
+    "prod:deploy": "DIR=apps/quackinator SERVICES=quackinator-api pnpm -F '~ci' prod:docker-compose-up",
+    "prod:build-docker": "REPO_NAME=ghcr.io/bperel/quackinator-api pnpm -F '~ci' prod:build-docker -f apps/quackinator/Dockerfile",
+    "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files apps/quackinator/docker-compose.yml:@apps/quackinator/docker-compose.yml apps/quackinator/Caddyfile:@apps/quackinator/Caddyfile"
+  },
+  "devDependencies": {
+    "~api": "workspace:*",
+    "~kumiko": "workspace:*",
+    "~paddleocr": "workspace:*",
+    "~prisma-schemas": "workspace:*"
+  }
+}

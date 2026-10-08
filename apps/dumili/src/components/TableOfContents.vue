@@ -123,42 +123,47 @@
       </b-dropdown>
     </template>
 
-    <b-row class="overflow-y-auto overflow-x-hidden w-100 m-1">
-      <b-col :cols="1" style="padding: 0">
-        <b-row
-          v-for="page in indexation.pages"
-          :key="page.id"
-          :style="{ height: `${pageHeight}px` }"
-          class="g-0 px-0 py-0 align-items-center page"
-        >
-          <TableOfContentsPage :page="page" />
-        </b-row>
-      </b-col>
-      <b-col :cols="11" class="position-relative p-0">
-        <template
-          v-for="(entry, idx) in nonIncludedEntries"
-          :key="nonIncludedEntries[idx].id"
-        >
-          <CreateEntryButton
-            v-if="showCreateEntry(idx, false)"
-            :source-entry-idx="idx"
-            :create-after="false"
-          />
+    <div class="position-relative d-flex flex-grow-1 overflow-hidden">
+      <div id="quackinator-anchor" />
+      <b-row class="overflow-y-auto overflow-x-hidden w-100 m-1">
+        <b-col :cols="1" style="padding: 0">
+          <b-row
+            v-for="page in indexation.pages"
+            :key="page.id"
+            :style="{ height: `${pageHeight}px` }"
+            class="g-0 px-0 py-0 align-items-center page"
+          >
+            <TableOfContentsPage :page="page" />
+          </b-row>
+        </b-col>
+        <b-col :cols="11" class="position-relative p-0">
+          <template
+            v-for="(entry, idx) in nonIncludedEntries"
+            :key="nonIncludedEntries[idx].id"
+          >
+            <CreateEntryButton
+              v-if="showCreateEntry(idx, false)"
+              :source-entry-idx="idx"
+              :create-after="false"
+            />
 
-          <TableOfContentsEntry
-            v-model="nonIncludedEntries[idx]"
-            @on-entry-resize-stop="($event) => onEntryResizeStop(entry, $event)"
-            @on-entry-drag-stop="($event) => onEntryDragStop(entry, $event)"
-          />
+            <TableOfContentsEntry
+              v-model="nonIncludedEntries[idx]"
+              @on-entry-resize-stop="
+                ($event) => onEntryResizeStop(entry, $event)
+              "
+              @on-entry-drag-stop="($event) => onEntryDragStop(entry, $event)"
+            />
 
-          <CreateEntryButton
-            v-if="showCreateEntry(idx, true)"
-            :source-entry-idx="idx"
-            :create-after="true"
-          />
-        </template>
-      </b-col>
-    </b-row>
+            <CreateEntryButton
+              v-if="showCreateEntry(idx, true)"
+              :source-entry-idx="idx"
+              :create-after="true"
+            />
+          </template>
+        </b-col>
+      </b-row>
+    </div>
   </b-card>
 </template>
 

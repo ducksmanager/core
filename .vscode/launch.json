@@ -3,25 +3,6 @@
     "configurations": [
         {
             "type": "bun",
-            "internalConsoleOptions": "openOnFirstSessionStart",
-            "request": "launch",
-            "name": "Debug EdgeCreator API",
-            "program": "index.ts",
-            "cwd": "${workspaceFolder}/apps/edgecreator/api",
-            "stopOnEntry": false,
-            "watchMode": true
-        },
-        {
-            "type": "bun",
-            "request": "launch",
-            "name": "Debug duck-estimator",
-            "program": "index.ts",
-            "cwd": "${workspaceFolder}/apps/duck-estimator",
-            "stopOnEntry": false,
-            "watchMode": true
-        },
-        {
-            "type": "bun",
             "request": "launch",
             "name": "Debug coa-updater",
             "program": "index.ts",
@@ -126,6 +107,29 @@
         {
             "type": "node-terminal",
             "request": "launch",
+            "name": "Start Quackinator Web server",
+            "command": "NODE_OPTIONS='--no-inspect' ./node_modules/.bin/turbo dev -F '~quackinator' -F '~quackinator-api^...'",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "Debug Quackinator API",
+            "module": "uvicorn",
+            "args": ["quackinator.api.app:app", "--reload", "--port", "8000"],
+            "python": "${workspaceFolder}/apps/quackinator/.venv/bin/python",
+            "cwd": "${workspaceFolder}/apps/quackinator",
+            "env": {
+                "PYTHONPATH": "src"
+            },
+            "justMyCode": true
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
             "name": "Start WTD on Android emulator",
             "command": "NODE_OPTIONS='--no-inspect' turbo dev:android",
             "presentation": {
@@ -178,6 +182,15 @@
             "configurations": [
                 "Debug Duckguessr API",
                 "Start Duckguessr Web server"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Debug Quackinator API + Web Server",
+            "configurations": [
+                "Debug Quackinator API",
+                "Debug DM Story Search API",
+                "Start Quackinator Web server"
             ],
             "stopAll": true
         },

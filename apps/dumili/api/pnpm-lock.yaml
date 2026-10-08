@@ -77,6 +77,9 @@ importers:
       ~prisma-schemas:
         specifier: workspace:*
         version: link:../../../packages/prisma-schemas
+      ~quackinator-api:
+        specifier: workspace:*
+        version: link:../../quackinator
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.7
@@ -123,6 +126,12 @@ importers:
       typescript-eslint:
         specifier: ^8.70.1
         version: 8.70.1(eslint@10.11.0(jiti@2.7.0))(typescript@6.0.3)
+      ~kumiko:
+        specifier: workspace:*
+        version: link:../../kumiko
+      ~paddleocr:
+        specifier: workspace:*
+        version: link:../../paddleocr
 
 packages:
 

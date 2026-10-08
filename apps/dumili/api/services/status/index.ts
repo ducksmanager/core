@@ -9,7 +9,7 @@ type StatusServices = NamespaceProxyTarget<
   Record<string, never>
 >;
 
-const listenEvents = ({ _socket }: StatusServices) => ({});
+const listenEvents = (_services: StatusServices) => ({});
 
 const { client, server } = useSocketEvents<
   typeof listenEvents,
