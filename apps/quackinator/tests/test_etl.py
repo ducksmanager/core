@@ -403,3 +403,17 @@ def test_an_index_without_titles_round_trips(tmp_path):
     index.save(tmp_path)
 
     assert StoryIndex.load(tmp_path).title is None
+
+
+def test_a_rebuild_replaces_the_whole_index(tmp_path):
+    from quackinator.etl.build import save_replacing
+
+    target = tmp_path / "index"
+    target.mkdir()
+    (target / "stale.npz").write_bytes(b"from an older build")
+
+    save_replacing(assemble(make_raw(), settings), target)
+
+    assert not (target / "stale.npz").exists()
+    assert StoryIndex.load(target).story_codes == assemble(make_raw(), settings).story_codes
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["index"]
