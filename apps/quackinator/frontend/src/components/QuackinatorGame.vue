@@ -128,15 +128,17 @@ const {
   initialTurn = undefined,
   seed = undefined,
   pickable = false,
+  onAnswered = undefined,
 } = defineProps<{
   api?: Api;
   initialTurn?: Turn;
   seed?: Seed;
   pickable?: boolean;
+  /** A prop rather than an emit so the game can await it (`@answered` still binds it). */
+  onAnswered?: (answer: AnswerEvent) => void | Promise<void>;
 }>();
 
 const emit = defineEmits<{
-  (e: "answered", answer: AnswerEvent): void;
   (e: "picked", storycode: string): void;
 }>();
 
@@ -145,7 +147,7 @@ const { t, locale } = useQuackinatorI18n();
 const game = useGame({
   api,
   initialTurn,
-  onAnswered: (answer) => emit("answered", answer),
+  onAnswered,
 });
 
 onMounted(() => game.start(seed));

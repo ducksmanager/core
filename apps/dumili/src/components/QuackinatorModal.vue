@@ -288,13 +288,18 @@ const startQuestions = async () => {
   }
 };
 
-const onAnswered = (answer: AnswerEvent) => {
-  if (answer.family && answer.code) {
-    void indexationSocket.value!.recordQuackinatorAnswer(entry.value.id, {
+const onAnswered = async (answer: AnswerEvent) => {
+  if (!answer.family || !answer.code) return;
+  const result = await indexationSocket.value!.recordQuackinatorAnswer(
+    entry.value.id,
+    {
       family: answer.family as "char" | "plot",
       code: answer.code,
       option: answer.option,
-    });
+    },
+  );
+  if ("error" in result) {
+    throw new Error(result.error);
   }
 };
 

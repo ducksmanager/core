@@ -151,10 +151,10 @@ const analyze = async () => {
       shrink(file.value, 2000),
     ]);
     const [matches, { kumiko, ocr }] = await Promise.all([
+      // Optional: without it, the layout and the title still seed the game.
       findSimilarImages(small.toDataURL("image/jpeg", 0.85)).catch((e) => {
-        throw new Error(
-          t("Image search failed: {reason}", { reason: (e as Error).message }),
-        );
+        console.warn("Image search failed", e);
+        return [];
       }),
       toBlob(large).then((blob) => api.analyze(blob, language.value)),
     ]);

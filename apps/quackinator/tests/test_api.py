@@ -68,7 +68,9 @@ def _fill_sessions(monkeypatch, **last_used: float):
     from quackinator.api import app
 
     monkeypatch.setattr(
-        app, "SESSIONS", app.OrderedDict((sid, (t, object())) for sid, t in last_used.items())
+        app,
+        "SESSIONS",
+        app.OrderedDict((sid, (t, object(), app.threading.Lock())) for sid, t in last_used.items()),
     )
     return app
 
@@ -94,7 +96,8 @@ def test_using_a_session_keeps_it_alive(monkeypatch):
     app = _fill_sessions(monkeypatch, a=0.0, b=1.0)
     monkeypatch.setattr(app.time, "monotonic", lambda: 2.0)
 
-    app._session("a")
+    with app._session("a"):
+        pass
     app._evict(2.0, limit=1)
 
     assert list(app.SESSIONS) == ["a"]
@@ -259,3 +262,35 @@ def test_uploads_beyond_the_concurrency_limit_are_refused(monkeypatch):
         assert await app.analyze(_Upload([b"x"]), None) == "analysed"  # type: ignore[arg-type]
 
     asyncio.run(scenario())
+
+
+def test_concurrent_requests_never_break_the_session_store(monkeypatch):
+    """Handlers run on a thread pool: lookups and starts race on the shared store."""
+    import sys
+    from concurrent.futures import ThreadPoolExecutor
+
+    app = _fill_sessions(monkeypatch)
+    monkeypatch.setattr(app.settings, "max_sessions", 5)
+
+    def churn(i: int) -> None:
+        sid = f"s{i}"
+        with app._store_lock:
+            app._evict(app.time.monotonic(), app.settings.max_sessions - 1)
+            app.SESSIONS[sid] = (app.time.monotonic(), object(), app.threading.Lock())
+        for _ in range(50):
+            try:
+                with app._session(sid):
+                    pass
+            except app.HTTPException:
+                pass  # evicted by another thread: a 404, never a 500
+
+    # Switch threads as often as possible, so a race shows up within one run.
+    interval = sys.getswitchinterval()
+    sys.setswitchinterval(1e-6)
+    try:
+        with ThreadPoolExecutor(max_workers=16) as pool:
+            list(pool.map(churn, range(200)))
+    finally:
+        sys.setswitchinterval(interval)
+
+    assert len(app.SESSIONS) <= 5

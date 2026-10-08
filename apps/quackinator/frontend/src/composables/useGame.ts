@@ -25,7 +25,8 @@ export interface GameOptions {
   api?: Api;
   /** First turn of a session the host already created. */
   initialTurn?: Turn;
-  onAnswered?: (answer: AnswerEvent) => void;
+  /** Awaited before the next answer is accepted; a throw is shown as the game's error. */
+  onAnswered?: (answer: AnswerEvent) => void | Promise<void>;
 }
 
 const seedApplied = (report: SeedReport | null) =>
@@ -127,8 +128,6 @@ export const useGame = (options: GameOptions = {}) => {
     };
     await guard(async () => {
       const turn = await api.answer(id, current.key, option);
-      // Only after the engine accepted it, so refused answers aren't persisted.
-      options.onAnswered?.(event);
       trail.value.push({
         key: current.key,
         prompt: current.prompt_message,
@@ -138,6 +137,8 @@ export const useGame = (options: GameOptions = {}) => {
             : (current.option_messages[option] ?? { id: "?", params: {} }),
       });
       absorb(turn);
+      // Only after the engine accepted it, so refused answers aren't persisted.
+      await options.onAnswered?.(event);
     });
   };
 
