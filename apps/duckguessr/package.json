@@ -55,7 +55,7 @@
     "@nuxt/eslint": "^1.17.0",
     "@nuxt/typescript-build": "^3.0.2",
     "@storybook-vue/nuxt": "^9.0.1",
-    "@storybook/vue3": "^10.6.0",
+    "@storybook/vue3": "^10.6.1",
     "@types/eslint": "^9.6.1",
     "@types/eslint-scope": "^8.4.0",
     "@types/js-cookie": "^3.0.6",
