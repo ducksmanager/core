@@ -26,7 +26,7 @@ jobs:
       PRODUCTION_SSH_USER: ${{ secrets.MONITORING_SSH_USER }}
       PRODUCTION_SSH_KEY: ${{ secrets.MONITORING_SSH_KEY }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install Node.js, pnpm and Bun from mise.toml
         uses: jdx/mise-action@v3
