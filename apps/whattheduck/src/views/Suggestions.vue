@@ -169,9 +169,12 @@ const formattedSuggestions = computed(
     sortedSuggestions.value &&
     Object.values(sortedSuggestions.value!.issues)
       .map(({ issuecode, ...rest }) => ({ ...rest, issuecode }))
-      .map(({ stories, issuecode, oldestdate, score }) => ({
+      .map(({ stories, issuecode, score }) => ({
         issuecode,
-        releaseDate: oldestdate === '0000-01-01' ? undefined : oldestdate,
+        releaseDate:
+          issuecodeDetails.value[issuecode]?.oldestdate === '0000-01-01'
+            ? undefined
+            : issuecodeDetails.value[issuecode]?.oldestdate,
         score,
         collectionIssues: [],
         storiesByStorycode: Object.entries(stories).reduce<Record<string, FormattedSuggestion>>(
