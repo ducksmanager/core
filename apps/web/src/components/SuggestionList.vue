@@ -23,7 +23,6 @@
     <div
       v-for="{
         issuecode,
-        oldestdate,
         score,
         stories,
       } in sortedSuggestions!.issues"
@@ -50,10 +49,11 @@
             <Issue :issuecode="issuecode" no-wrap>
               <template #title-suffix>
                 <div
-                  v-if="oldestdate.split('T')?.[0]"
+                  v-if="sortedSuggestions!.issueDetails![issuecode]?.oldestdate"
                   class="release-date mt-2 ms-1"
                 >
-                  {{ $t("Sortie :") }} {{ oldestdate.split("T")[0] }}
+                  {{ $t("Sortie :") }}
+                  {{ sortedSuggestions!.issueDetails![issuecode]?.oldestdate.split("T")[0] }}
                 </div>
               </template>
             </Issue>
