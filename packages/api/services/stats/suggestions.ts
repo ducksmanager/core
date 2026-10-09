@@ -33,8 +33,7 @@ export default ({ _socket }: UserServices) => ({
     return Promise.all(
       (["oldestdate", "score"] as const).map((sort) =>
         getSuggestions(since, countrycode, sort, user.id, limit, true).then(
-          (results) => {
-            const { suggestionsPerUser, authors, storyDetails } = results;
+          ({ suggestionsPerUser, authors, storyDetails, issueDetails }) => {
             const suggestionsForUser =
               suggestionsPerUser[user.id] || new IssueSuggestionList();
             return {
@@ -44,6 +43,7 @@ export default ({ _socket }: UserServices) => ({
               maxScore: suggestionsForUser.maxScore,
               authors,
               storyDetails,
+              issueDetails,
             };
           },
         ),
@@ -121,12 +121,13 @@ export const getSuggestions = async (
   singleUserId: number | null,
   limit: number | null,
   withStoryDetails: boolean,
-): Promise<SuggestionList> => {
-  const emptySuggestionList = {
+) => {
+  const emptySuggestionList: SuggestionList = {
     storyDetails: {},
     suggestionsPerUser: {},
     authors: {},
-  } as SuggestionList;
+    issueDetails: {},
+  };
   if (!["score", "oldestdate"].includes(sort)) {
     return emptySuggestionList;
   }
@@ -200,7 +201,6 @@ export const getSuggestions = async (
       if (!issue) {
         issue = {
           ...suggestedStory,
-          oldestdate: suggestedStory.oldestdate?.split("T")[0] || "",
           stories: {},
         };
       }
@@ -213,6 +213,20 @@ export const getSuggestions = async (
       referencedStories.push(suggestedStory);
     }
   }
+
+  const issueDetails = (
+    await prismaCoa.inducks_issue.findMany({
+      where: {
+        issuecode: {
+          in: [...new Set(referencedIssues.map(({ issuecode }) => issuecode))],
+        },
+      },
+      select: {
+        issuecode: true,
+        oldestdate: true,
+      },
+    })
+  ).groupBy("issuecode");
 
   for (const userId in suggestionsPerUser) {
     const scores = Object.values(suggestionsPerUser[userId].issues).map(
@@ -252,7 +266,7 @@ export const getSuggestions = async (
     }
   }
 
-  return { suggestionsPerUser, authors, storyDetails };
+  return { suggestionsPerUser, authors, storyDetails, issueDetails };
 };
 
 const isSuggestionInCountriesToNotify = (
