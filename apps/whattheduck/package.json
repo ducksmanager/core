@@ -101,7 +101,7 @@
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "eslint-plugin-vue": "^10.11.1",
-    "glob": "^10.5.0",
+    "glob": "^13.0.6",
     "histoire": "1.0.0-beta.1",
     "imagemin": "^9.0.1",
     "imagemin-pngquant": "^10.0.0",
