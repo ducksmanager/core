@@ -51,7 +51,7 @@
     "@sentry/node": "10.69.0",
     "@sentry/vue": "10.69.0",
     "@vueuse/components": "^14.4.0",
-    "@vueuse/core": "^14.4.0",
+    "@vueuse/core": "^15.0.0",
     "@vueuse/integrations": "^14.4.0",
     "axios-cache-interceptor": "^1.12.3",
     "chart.js": "^4.5.1",
