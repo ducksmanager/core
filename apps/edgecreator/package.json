@@ -33,7 +33,7 @@
     "axios-cache-interceptor": "^1.12.3",
     "bootstrap": "^5.3.8",
     "bootstrap-vue-next": "^1.2.2",
-    "cropperjs": "^1.7.0",
+    "cropperjs": "^2.3.0",
     "interactjs": "^1.10.28",
     "js-cookie": "^3.0.8",
     "pinia": "^4.0.3",
