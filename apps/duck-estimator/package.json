@@ -22,7 +22,7 @@
   "dependencies": {
     "csv-parse": "^7.0.3",
     "csv-writer": "^1.6.0",
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.6",
     "playwright-firefox": "~1.47.2",
     "yargs": "^17.7.3",
     "~prisma-schemas": "workspace:*"
