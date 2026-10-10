@@ -38,7 +38,7 @@
     "jsonwebtoken": "^9.0.3",
     "node-unrar-js": "^2.0.2",
     "pdfjs-dist": "^6.4.299",
-    "sharp": "^0.33.5",
+    "sharp": "^0.35.5",
     "socket-call-client": "^0.8.0",
     "socket-call-server": "^0.9.0",
     "socket.io": "^4.8.4",
