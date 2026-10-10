@@ -24,7 +24,7 @@
     "@popperjs/core": "^2.11.8",
     "@sentry/vue": "^10.76.2",
     "@studiometa/vue-mapbox-gl": "^2.7.2",
-    "@unhead/vue": "^1.11.20",
+    "@unhead/vue": "^3.4.2",
     "@vueuse/core": "^14.4.0",
     "axios-cache-interceptor": "^1.12.3",
     "bootstrap": "^5.3.8",
