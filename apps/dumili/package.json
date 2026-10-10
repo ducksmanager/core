@@ -29,7 +29,7 @@
     "@prisma/adapter-mariadb": "^7.10.0",
     "@sentry/browser": "^10.76.2",
     "@sentry/vue": "^10.76.2",
-    "@unhead/vue": "^1.11.20",
+    "@unhead/vue": "^3.4.2",
     "@uppy/core": "5.2.0",
     "@uppy/dashboard": "5.1.1",
     "@uppy/image-editor": "4.2.0",
