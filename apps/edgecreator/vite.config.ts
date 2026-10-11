@@ -23,7 +23,6 @@ export default defineConfig(({ mode }) => ({
       "vue",
       "vue-i18n",
       "vue-router",
-      "@vueuse/core",
       "bootstrap-vue-next",
     ],
     alias: getViteAliases(path.resolve(import.meta.dirname, "../.."), {
@@ -70,7 +69,6 @@ export default defineConfig(({ mode }) => ({
         "vue",
         "vue/macros",
         "vue-router",
-        "@vueuse/core",
         "pinia",
         "vue-i18n",
       ],
