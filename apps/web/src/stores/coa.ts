@@ -1,4 +1,4 @@
-import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
+import type { SuccessfulEventOutput } from "socket-call-client";
 
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
@@ -68,7 +68,7 @@ export const coa = defineStore("coa", () => {
     isLoadingCountryNames = ref(false),
     issuecodeDetails = ref<Record<string, IssuecodeDetail>>({}),
     issuePopularities = shallowRef<
-      EventOutput<CoaClientEvents, "getIssuePopularities">
+      SuccessfulEventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),
     issuecodesByPublicationcode = ref<
       SuccessfulEventOutput<CoaClientEvents, "getIssuecodesByPublicationcodes">
@@ -80,7 +80,7 @@ export const coa = defineStore("coa", () => {
       >
     >({}),
     issueCountsByCountrycode = ref<
-      EventOutput<CoaClientEvents, "getCoaCountByCountrycode">
+      SuccessfulEventOutput<CoaClientEvents, "getCoaCountByCountrycode">
     >({}),
     issueCountsByPublicationcode = ref<
       SuccessfulEventOutput<CoaClientEvents, "getCoaCountByPublicationcode">

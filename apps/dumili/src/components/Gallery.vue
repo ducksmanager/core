@@ -170,11 +170,10 @@ useSortable(imagesRef, pages, {
     const { oldIndex, newIndex } = e;
     if (oldIndex === undefined || newIndex === undefined) return;
     moveArrayElement(pages, oldIndex, newIndex, e);
-    nextTick(() =>
-      indexationSocket.value?.swapPageUrls(
-        pages[oldIndex].pageNumber,
-        pages[newIndex].pageNumber,
-      ),
+    await nextTick();
+    await indexationSocket.value?.swapPageUrls(
+      pages[oldIndex].pageNumber,
+      pages[newIndex].pageNumber,
     );
   },
 } satisfies UseSortableOptions);
