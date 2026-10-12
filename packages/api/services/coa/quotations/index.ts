@@ -41,10 +41,10 @@ export default {
     v.pipe(
       v.array(v.string()),
       v.transform((issuecodes) =>
-        issuecodes.filter((code) => ISSUE_CODE_REGEX.test(code)),
+        [...new Set(issuecodes)].filter((code) => ISSUE_CODE_REGEX.test(code)),
       ),
       v.nonEmpty("Bad request" as const),
-      v.maxLength(4, "Too many requests" as const),
+      v.maxLength(5, "Too many requests" as const),
     ),
   )(async (codes) => ({
     quotations: await getQuotationsByIssuecodes(codes),

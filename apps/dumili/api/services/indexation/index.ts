@@ -1273,6 +1273,7 @@ const listenEvents = (services: IndexationServices) => ({
     v.object({
       storycode: v.string(),
       entryId: v.number(),
+      quackinatorSessionId: v.nullish(v.number()),
     }),
   )(async (suggestion) =>
     prisma.storySuggestion

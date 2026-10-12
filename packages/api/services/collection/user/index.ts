@@ -12,6 +12,7 @@ import {
   EmailValidation,
   getUser,
   OldPasswordValidation,
+  PasswordConfirmationValidation,
   PasswordUpdateValidation,
   PasswordValidation,
   PresentationTextValidation,
@@ -45,22 +46,16 @@ export default ({ _socket }: UserServices) => ({
   },
 
   updateUser: ev(
-    v.pipe(
-      v.object({
-        discordId: v.optional(v.string()),
-        email: v.string(),
-        allowSharing: v.boolean(),
-        marketplaceAcceptsExchanges: v.boolean(),
-        presentationText: v.string(),
-        oldPassword: v.optional(v.string()),
-        password: v.optional(v.string()),
-        password2: v.optional(v.string()),
-      }),
-      v.check(
-        ({ password, password2 }) => password === password2,
-        "The two passwords should be identical" as const,
-      ),
-    ),
+    v.object({
+      discordId: v.optional(v.string()),
+      email: v.string(),
+      allowSharing: v.boolean(),
+      marketplaceAcceptsExchanges: v.boolean(),
+      presentationText: v.string(),
+      oldPassword: v.optional(v.string()),
+      password: v.optional(v.string()),
+      password2: v.optional(v.string()),
+    }),
   )(async (input) => {
     let hasRequestedPresentationSentenceUpdate = false;
     let validators: Validation[] = [
@@ -73,6 +68,7 @@ export default ({ _socket }: UserServices) => ({
       validators = [
         ...validators,
         new PasswordValidation(),
+        new PasswordConfirmationValidation(),
         new PasswordUpdateValidation(),
         new OldPasswordValidation(),
       ];

@@ -145,6 +145,22 @@ export class PasswordValidation extends Validation {
       : undefined;
 }
 
+export class PasswordConfirmationValidation extends Validation {
+  run = async ({
+    password,
+    password2,
+  }: {
+    password: string;
+    password2?: string;
+  }) =>
+    password !== password2
+      ? ({
+          message: "Les deux mots de passe ne correspondent pas !",
+          selector: "#password2",
+        } as const)
+      : undefined;
+}
+
 export class PasswordUpdateValidation extends Validation {
   run = async ({
     oldPassword,

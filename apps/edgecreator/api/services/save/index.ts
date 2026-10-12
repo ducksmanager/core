@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "fs";
 import path from "path";
 import type { Socket } from "socket.io";
-import { SocketClient } from "socket-call-client";
+import { SocketCallError, SocketClient } from "socket-call-client";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 import { ev } from "socket-call-server/valibot";
@@ -71,17 +71,18 @@ const listenEvents = (services: SaveServices) => ({
         .filter(({ contributionType }) => contributionType === "photographe")
         .map(({ user }) => user.username);
 
-      const publicationResult = await getEdgeCreatorServices(token).publishEdge(
-        {
+      let publicationResult;
+      try {
+        publicationResult = await getEdgeCreatorServices(token).publishEdge({
           issuecode,
           designers,
           photographers,
-        },
-      );
-      if ("error" in publicationResult) {
+        });
+      } catch (e) {
         return {
           error: "Generic error",
-          errorDetails: publicationResult.error,
+          errorDetails:
+            e instanceof SocketCallError ? e.payload.error : String(e),
         };
       }
       try {
