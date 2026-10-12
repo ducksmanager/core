@@ -16,9 +16,7 @@ import type {
   aiKumikoResult,
   page,
   Prisma,
-  storyKindSuggestion,
   quackinatorFamily,
-  storySuggestion,
 } from "~prisma/client_dumili/client";
 import type { ClientEvents as CoaEvents } from "~dm-services/coa";
 import dmNamespaces from "~dm-services/namespaces";
