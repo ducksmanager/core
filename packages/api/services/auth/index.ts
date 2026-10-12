@@ -49,12 +49,10 @@ const listenEvents = () => ({
       });
 
       await new resetPassword({ user, token }).send();
-      return { token };
     } else {
       console.log(
         `A visitor requested to reset a password for an invalid e-mail: ${email}`,
       );
-      return { error: "Invalid email" as const };
     }
   }),
 

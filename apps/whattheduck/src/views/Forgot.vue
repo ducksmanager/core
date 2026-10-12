@@ -51,8 +51,14 @@ const touchedInputs = ref<string[]>([]);
 const email = ref('');
 const showConfirmation = ref(false);
 
-const submitForgot = async () => {
-  await authEvents.requestTokenForForgotPassword(email.value);
-  showConfirmation.value = true;
-};
+const submitForgot = () =>
+  authEvents
+    .requestTokenForForgotPassword(email.value)
+    .then(() => {
+      invalidInputs.value = [];
+      showConfirmation.value = true;
+    })
+    .catch(() => {
+      invalidInputs.value = ['email'];
+    });
 </script>
