@@ -1,11 +1,18 @@
-import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
-import type { Socket } from "socket.io";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 const listenEvents = () => ({
-  getLegacyDimensions: async (publicationcode: string, issuenumber: string) =>
-    prismaEdgeCreator.$queryRaw<{ optionName: string; optionValue: string }[]>`
+  getLegacyDimensions: ev(
+    v.string(),
+    v.string(),
+  )(
+    async (publicationcode, issuenumber) =>
+      prismaEdgeCreator.$queryRaw<
+        { optionName: string; optionValue: string }[]
+      >`
     with inducks_issues as (select row_number() over () as row_num, issuenumber
         from coa.inducks_issue
         where publicationcode = ${publicationcode} order by issuecode)
@@ -19,17 +26,21 @@ const listenEvents = () => ({
     and (select inducks_issues.row_num from inducks_issues where issuenumber = ${issuenumber}) between
       (select inducks_issues.row_num from inducks_issues where issuenumber = Numero_debut)
       and (select inducks_issues.row_num from inducks_issues where issuenumber = Numero_fin)`,
-  getLegacySteps: async (
-    publicationcode: string,
-    issuenumber: string,
-  ) => prismaEdgeCreator.$queryRaw<
-    {
-      stepNumber: number;
-      functionName: string;
-      optionName: string;
-      optionValue: string;
-    }[]
-  >`
+  ),
+
+  getLegacySteps: ev(
+    v.string(),
+    v.string(),
+  )(
+    async (publicationcode, issuenumber) =>
+      prismaEdgeCreator.$queryRaw<
+        {
+          stepNumber: number;
+          functionName: string;
+          optionName: string;
+          optionValue: string;
+        }[]
+      >`
     with inducks_issues as (select row_number() over (order by issuecode) as row_num, issuenumber
         from coa.inducks_issue
         where publicationcode = ${publicationcode})
@@ -54,6 +65,7 @@ const listenEvents = () => ({
        where issuenumber = Numero_fin)
     
     group by Pays, Magazine, Ordre, Option_nom`,
+  ),
 });
 export const { client, server } = useSocketEvents<
   typeof listenEvents,
@@ -62,10 +74,5 @@ export const { client, server } = useSocketEvents<
   listenEvents,
   middlewares: [],
 });
-
-export type LegacyServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents, object, object, { token: string }>,
-  Record<string, never>
->;
 
 export type ClientEvents = (typeof client)["emitEvents"];

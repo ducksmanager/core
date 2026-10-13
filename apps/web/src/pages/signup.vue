@@ -91,7 +91,7 @@ const signup = async () => {
       email,
     })
     .catch((e) => {
-      if (isEventErrorOf(authEvents.signup, e)) {
+      if (isEventErrorOf(authEvents.signup, e) && "selector" in e) {
         error = {
           selector: e.selector,
           error: e.error,

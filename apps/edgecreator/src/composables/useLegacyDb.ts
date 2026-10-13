@@ -2,7 +2,7 @@ import type { EdgeDimensions } from "~/types/EdgeDimensions";
 import type { LegacyComponent } from "~/types/LegacyComponent";
 import type { StepOptions } from "~/types/StepOptions";
 import type { ClientEvents as EdgeCreatorClientEvents } from "~edgecreator-services/image-info";
-import type { EventOutput } from "socket-call-client";
+import type { SuccessfulEventOutput } from "socket-call-client";
 import useTextTemplate from "~/composables/useTextTemplate";
 
 const { resolveIssueNumberTemplate } = useTextTemplate();
@@ -44,7 +44,9 @@ export default () => {
     edgeDimensions: EdgeDimensions,
     getImageInfoFn: (
       elementPath: string,
-    ) => Promise<EventOutput<EdgeCreatorClientEvents, "getImageInfo">>,
+    ) => Promise<
+      SuccessfulEventOutput<EdgeCreatorClientEvents, "getImageInfo">
+    >,
     calculateBase64: boolean,
   ) => {
     switch (targetComponent) {
@@ -134,14 +136,18 @@ export default () => {
 
           let image;
           if (calculateBase64) {
-            image = await getImageInfoFn(elementPath);
-            if ("errorDetails" in image) {
+            try {
+              image = (await getImageInfoFn(elementPath)).results;
+            } catch (error) {
               console.error(
-                `Image could not be retrieved : ${image.errorDetails}`,
+                `Image could not be retrieved : ${
+                  typeof error === "object" && error && "errorDetails" in error
+                    ? String(error.errorDetails)
+                    : String(error)
+                }`,
               );
               return;
             }
-            image = image.results!;
           } else {
             image = {
               dimensions: await getImageSize(

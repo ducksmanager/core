@@ -2,6 +2,8 @@ import * as fs from "fs/promises";
 import { InferenceSession, Tensor } from "onnxruntime-node";
 import sharp from "sharp-0-34";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
@@ -254,7 +256,8 @@ export const findSimilarImages = async (
       INNER JOIN inducks_entry e ON e.entrycode = vector_similarity.entrycode
       INNER JOIN inducks_entryurl eu ON (eu.entrycode = e.entrycode AND eu.sitecode = 'webusers')
       INNER JOIN inducks_storyversion sv ON sv.storyversioncode = e.storyversioncode
-      WHERE similarity < 0.15
+      -- A storyversion Inducks never attached to a story has nothing to suggest
+      WHERE similarity < 0.15 AND sv.storycode <> ''
       ORDER BY similarity
       LIMIT 5
     `;
@@ -274,20 +277,22 @@ export const findSimilarImages = async (
 };
 
 const listenEvents = () => ({
-  getIndexSize: async (isCover: boolean) =>
+  getIndexSize: ev(v.boolean())(async (isCover) =>
     prismaCoa.inducks_entryurl_vector.count({
       where: {
         isCover,
       },
     }),
+  ),
 
-  findSimilarImages: async (
-    imageBufferOrBase64: string | Buffer,
-    isCover: boolean,
-  ) =>
+  findSimilarImages: ev(
+    v.union([v.string(), v.instance(Buffer)]),
+    v.boolean(),
+  )(async (imageBufferOrBase64, isCover) =>
     session
       ? findSimilarImages(imageBufferOrBase64, isCover)
       : ({ error: "Session not initialized" } as const),
+  ),
 });
 
 export const { client, server } = useSocketEvents<

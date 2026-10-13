@@ -1,16 +1,11 @@
-import type { Socket } from "socket.io";
-import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import prisma from "../prisma/client";
-import { type entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
+import { entryurlDetailsDecision } from "../prisma/client_duckguessr/browser";
 import namespaces from "./namespaces";
 import { RequiredPlayerMiddleware } from "../middlewares/required-player";
-
-export type MaintenanceServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents>,
-  Record<string, never>
->;
 
 const listenEvents = () => ({
   getMaintenanceData: async () => prisma.$queryRaw<
@@ -23,13 +18,13 @@ const listenEvents = () => ({
               group by dataset_id, decision
             `,
 
-  getMaintenanceDataForDataset: async (
-    datasetName: string,
-    decisions: (entryurlDetailsDecision | "null")[],
-    offset: number,
-  ) => {
-    if (!decisions) {
-      throw new Error("No decisions provided");
+  getMaintenanceDataForDataset: ev(
+    v.string(),
+    v.array(v.enum({ ...entryurlDetailsDecision, null: "null" })),
+    v.number(),
+  )(async (datasetName, decisions, offset) => {
+    if (!decisions.length) {
+      return [];
     }
     const dataset = await prisma.dataset.findUnique({
       where: {
@@ -60,10 +55,15 @@ const listenEvents = () => ({
         sitecodeUrl: "asc",
       },
     });
-  },
-  updateMaintenanceData: async (
-    data: { sitecodeUrl: string; decision: entryurlDetailsDecision }[],
-  ) =>
+  }),
+  updateMaintenanceData: ev(
+    v.array(
+      v.object({
+        sitecodeUrl: v.string(),
+        decision: v.enum(entryurlDetailsDecision),
+      }),
+    ),
+  )(async (data) =>
     prisma.$transaction(
       data.map(({ sitecodeUrl, decision }) =>
         prisma.entryurlDetails.update({
@@ -77,6 +77,7 @@ const listenEvents = () => ({
         }),
       ),
     ),
+  ),
 });
 
 const { client, server } = useSocketEvents<

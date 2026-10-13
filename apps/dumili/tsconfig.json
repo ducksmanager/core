@@ -50,6 +50,9 @@
       "~web/*": [
         "./../web/*"
       ],
+      "~quackinator/*": [
+        "./../quackinator/frontend/src/*"
+      ],
       "~translations/*": [
         "./translations/*"
       ],

@@ -69,7 +69,10 @@ export const getPlayer = async (cookies?: {
   return player!;
 };
 
-export const updatePlayer = (playerId: number, player: player) =>
+export const updatePlayer = (
+  playerId: number,
+  player: Pick<player, "avatar">,
+) =>
   prisma.player.update({
     where: { id: playerId },
     data: player,

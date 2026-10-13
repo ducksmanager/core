@@ -3,8 +3,11 @@ import { Prisma } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaEdgeCreator } from "~prisma-schemas/schemas/edgecreator/client";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export default () => ({
-  getModelsSteps: async (modelIds: number[]) =>
+  getModelsSteps: ev(v.array(v.number()))(async (modelIds) =>
     prismaEdgeCreator.$queryRaw<
       {
         issuecode: string;
@@ -42,7 +45,8 @@ export default () => ({
         {},
       ),
     ),
-  getModel: async (issuecode: string) => {
+  ),
+  getModel: ev(v.string())(async (issuecode) => {
     const model = await prismaEdgeCreator.edgeModel.findFirst({
       where: {
         issuecode,
@@ -55,9 +59,9 @@ export default () => ({
         },
       })) > 0;
     return model && modelIsPublished ? model : null;
-  },
+  }),
 
-  getModelMainPhoto: (modelId: number) =>
+  getModelMainPhoto: ev(v.number())((modelId) =>
     prismaEdgeCreator.elementImage.findFirstOrThrow({
       select: {
         id: true,
@@ -72,11 +76,13 @@ export default () => ({
         },
       },
     }),
+  ),
 
-  getModelContributors: (modelId: number) =>
+  getModelContributors: ev(v.number())((modelId) =>
     prismaEdgeCreator.edgeContributor.findMany({
       where: {
         modelId,
       },
     }),
+  ),
 });

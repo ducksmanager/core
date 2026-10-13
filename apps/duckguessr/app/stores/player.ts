@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { EventOutput } from "socket-call-client";
+import type { SuccessfulEventOutput } from "socket-call-client";
 
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 
@@ -18,7 +18,8 @@ export const MEDAL_LEVELS: MedalLevel[] = [
 export const playerStore = defineStore("player", () => {
   const playerUser = ref<player>();
   const stats = ref<userMedalPoints[]>();
-  const gameStats = ref<EventOutput<PlayerEmitEvents, "getGameStats">>();
+  const gameStats =
+    ref<SuccessfulEventOutput<PlayerEmitEvents, "getGameStats">>();
 
   const isAnonymous = computed(
     () => playerUser.value && /^user\d+$/.test(playerUser.value.username),

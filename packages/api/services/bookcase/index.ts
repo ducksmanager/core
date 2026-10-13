@@ -1,4 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import type { BookcaseEdge } from "~dm-types/BookcaseEdge";
 import type { SessionUser } from "~dm-types/SessionUser";
@@ -41,7 +43,7 @@ const getLastPublicationPosition = async (userId: number) =>
     .then((results) => results._max.order || -1);
 
 const listenEvents = ({ _socket }: UserServices<true>) => ({
-  getBookcaseOrder: async (username: string) => {
+  getBookcaseOrder: ev(v.string())(async (username) => {
     const user = await checkValidBookcaseUser(_socket.data.user, username);
     if ("error" in user) {
       return { error: user.error };
@@ -131,8 +133,8 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
         ).map(({ publicationcode }) => publicationcode),
       };
     }
-  },
-  getBookcase: async (username: string) => {
+  }),
+  getBookcase: ev(v.string())(async (username) => {
     const user = await checkValidBookcaseUser(null, username);
     if ("error" in user) {
       return { error: user.error };
@@ -178,9 +180,9 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
         })),
       )
       .then((edges) => ({ edges }));
-  },
+  }),
 
-  getBookcaseOptions: async (username: string) => {
+  getBookcaseOptions: ev(v.string())(async (username) => {
     const user = await checkValidBookcaseUser(null, username);
     return "error" in user
       ? { error: user.error }
@@ -191,7 +193,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
           },
           showAllCopies: user.showDuplicatesInBookcase,
         };
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

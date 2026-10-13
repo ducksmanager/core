@@ -55,6 +55,7 @@ declare global {
   const getCurrentLocaleShortKey: typeof import('../../web/src/composables/useLocales').getCurrentLocaleShortKey
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
+  const getPanelRows: typeof import('../../../packages/types/panelRows').getPanelRows
   const h: typeof import('vue').h
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const images: typeof import('../../web/src/stores/images').images
@@ -227,6 +228,7 @@ declare global {
   const useLastChanged: typeof import('@vueuse/core').useLastChanged
   const useLayout: typeof import('../../web/src/composables/useLayout').useLayout
   const useLink: typeof import('vue-router').useLink
+  const useLiveAnnouncer: typeof import('@vueuse/core').useLiveAnnouncer
   const useLocalStorage: typeof import('@vueuse/core').useLocalStorage
   const useMagicKeys: typeof import('@vueuse/core').useMagicKeys
   const useManualRefHistory: typeof import('@vueuse/core').useManualRefHistory
@@ -288,6 +290,7 @@ declare global {
   const useSwipe: typeof import('@vueuse/core').useSwipe
   const useTemplateRef: typeof import('vue').useTemplateRef
   const useTemplateRefsList: typeof import('@vueuse/core').useTemplateRefsList
+  const useTemporalNow: typeof import('@vueuse/core').useTemporalNow
   const useTextDirection: typeof import('@vueuse/core').useTextDirection
   const useTextSelection: typeof import('@vueuse/core').useTextSelection
   const useTextareaAutosize: typeof import('@vueuse/core').useTextareaAutosize
@@ -312,6 +315,7 @@ declare global {
   const useVibrate: typeof import('@vueuse/core').useVibrate
   const useVirtualList: typeof import('@vueuse/core').useVirtualList
   const useWakeLock: typeof import('@vueuse/core').useWakeLock
+  const useWebMCP: typeof import('@vueuse/core').useWebMCP
   const useWebNotification: typeof import('@vueuse/core').useWebNotification
   const useWebSocket: typeof import('@vueuse/core').useWebSocket
   const useWebWorker: typeof import('@vueuse/core').useWebWorker
@@ -378,9 +382,6 @@ declare global {
   // @ts-ignore
   export type { EdgeWithStringCreationDate } from '../../../packages/types/EdgeWithStringCreationDate'
   import('../../../packages/types/EdgeWithStringCreationDate')
-  // @ts-ignore
-  export type { EditSubscription } from '../../../packages/types/EditSubscription'
-  import('../../../packages/types/EditSubscription')
   // @ts-ignore
   export type { EntryPartInfo } from '../../../packages/types/EntryPartInfo'
   import('../../../packages/types/EntryPartInfo')
@@ -457,11 +458,11 @@ declare global {
   export type { UserContributionTypeEn } from '../../../packages/types/UserContributionTypeEn'
   import('../../../packages/types/UserContributionTypeEn')
   // @ts-ignore
-  export type { UserForAccountForm } from '../../../packages/types/UserForAccountForm'
-  import('../../../packages/types/UserForAccountForm')
-  // @ts-ignore
   export type { WantedEdge } from '../../../packages/types/WantedEdge'
   import('../../../packages/types/WantedEdge')
+  // @ts-ignore
+  export type { PanelBox } from '../../../packages/types/panelRows'
+  import('../../../packages/types/panelRows')
 }
 
 // for vue template auto import
@@ -516,6 +517,7 @@ declare module 'vue' {
     readonly getCurrentLocaleShortKey: UnwrapRef<typeof import('../../web/src/composables/useLocales')['getCurrentLocaleShortKey']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
+    readonly getPanelRows: UnwrapRef<typeof import('../../../packages/types/panelRows')['getPanelRows']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly images: UnwrapRef<typeof import('../../web/src/stores/images')['images']>
@@ -586,7 +588,6 @@ declare module 'vue' {
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
-    readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
     readonly throttledRef: UnwrapRef<typeof import('@vueuse/core')['throttledRef']>
     readonly throttledWatch: UnwrapRef<typeof import('@vueuse/core')['throttledWatch']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
@@ -688,6 +689,7 @@ declare module 'vue' {
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
     readonly useLayout: UnwrapRef<typeof import('../../web/src/composables/useLayout')['useLayout']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useLiveAnnouncer: UnwrapRef<typeof import('@vueuse/core')['useLiveAnnouncer']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
     readonly useManualRefHistory: UnwrapRef<typeof import('@vueuse/core')['useManualRefHistory']>
@@ -749,6 +751,7 @@ declare module 'vue' {
     readonly useSwipe: UnwrapRef<typeof import('@vueuse/core')['useSwipe']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTemplateRefsList: UnwrapRef<typeof import('@vueuse/core')['useTemplateRefsList']>
+    readonly useTemporalNow: UnwrapRef<typeof import('@vueuse/core')['useTemporalNow']>
     readonly useTextDirection: UnwrapRef<typeof import('@vueuse/core')['useTextDirection']>
     readonly useTextSelection: UnwrapRef<typeof import('@vueuse/core')['useTextSelection']>
     readonly useTextareaAutosize: UnwrapRef<typeof import('@vueuse/core')['useTextareaAutosize']>
@@ -773,6 +776,7 @@ declare module 'vue' {
     readonly useVibrate: UnwrapRef<typeof import('@vueuse/core')['useVibrate']>
     readonly useVirtualList: UnwrapRef<typeof import('@vueuse/core')['useVirtualList']>
     readonly useWakeLock: UnwrapRef<typeof import('@vueuse/core')['useWakeLock']>
+    readonly useWebMCP: UnwrapRef<typeof import('@vueuse/core')['useWebMCP']>
     readonly useWebNotification: UnwrapRef<typeof import('@vueuse/core')['useWebNotification']>
     readonly useWebSocket: UnwrapRef<typeof import('@vueuse/core')['useWebSocket']>
     readonly useWebWorker: UnwrapRef<typeof import('@vueuse/core')['useWebWorker']>

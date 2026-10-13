@@ -4,7 +4,7 @@ meta:
 </route>
 <template>
   <div>
-    <b-alert v-if="token" :model-value="true" variant="info">{{
+    <b-alert v-if="isSent" :model-value="true" variant="info">{{
       $t(
         `Si l'e-mail indiqué correspond à un compte DucksManager, un lien permettant de modifier votre mot de passe vient
       d'y être envoyé. Si l'e-mail ne vous parvient pas d'ici quelques minutes, pensez à vérifier le dossier Spam.`,
@@ -53,21 +53,20 @@ import {
 let error = $ref<string>();
 
 const email = $ref("");
-let token = $ref("");
+let isSent = $ref(false);
 const { t: $t } = useI18n();
 
 const { auth: authEvents } = inject(socketInjectionKey)!;
 
-const sendPasswordToken = async () => {
-  const response = await authEvents
+const sendPasswordToken = () =>
+  authEvents
     .requestTokenForForgotPassword(email)
+    .then(() => {
+      isSent = true;
+    })
     .catch((e: unknown) => {
       error = isEventErrorOf(authEvents.requestTokenForForgotPassword, e)
         ? e.error
         : "Unknown error";
     });
-  if (response) {
-    token = response.token;
-  }
-};
 </script>

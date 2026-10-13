@@ -3,13 +3,6 @@ import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/
 import type { UserServices } from "../../index";
 import { getAuthorFullNames } from "../coa/authors";
 
-export interface AuthorDetails {
-  personcode: string;
-  missingStoryCount: number;
-  storyCount: number;
-  fullname: string;
-}
-
 const getStoryCountPerAuthor = async (
   personcodes: string[],
 ): Promise<{ [personcode: string]: number }> =>

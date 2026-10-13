@@ -31,6 +31,7 @@ const createMockTooltipEntry = (
         id: 1,
         storycode: "I TL  116-AP",
         aiStorySuggestionId: null,
+        quackinatorSessionId: null,
         entryId: 1,
         aiStorySuggestion: null,
       },

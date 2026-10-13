@@ -5,7 +5,7 @@
  * scaled horizontally this needs to move to a shared store.
  */
 
-export type RateLimitResult =
+type RateLimitResult =
   | { allowed: true; remaining: number }
   | { allowed: false; retryAfterMs: number };
 

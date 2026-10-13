@@ -23,16 +23,8 @@ jobs:
           fetch-depth: 0
           lfs: false
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 9.8.0
-
-      - name: Use Node.js 26
-        uses: actions/setup-node@v6
-        with:
-          node-version: 26
-          cache: "pnpm"
+      - name: Install Node.js, pnpm and Bun from mise.toml
+        uses: jdx/mise-action@v3
 
       - name: Install dependencies
         env:
@@ -46,6 +38,15 @@ jobs:
           REMOTE_TIMEOUT: 35m
         run: |
           pnpm -r -F '~coa-updater' prod:docker-compose-run
+
+      - name: Rebuild the Quackinator index
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          REMOTE_TIMEOUT: 15m
+        run: |
+          pnpm -r -F '~quackinator-api' prod:etl
+          pnpm -r -F '~quackinator-api' prod:deploy
 
       - name: Run stats-updater
         timeout-minutes: 90

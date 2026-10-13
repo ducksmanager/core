@@ -9,17 +9,20 @@ import { prismaClient as prismaDmStats } from "~prisma-schemas/schemas/dm_stats/
 
 import type { UserServices } from "../../index";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export enum COUNTRY_CODE_OPTION {
   ALL = "ALL",
   countries_to_notify = "countries_to_notify",
 }
 
 export default ({ _socket }: UserServices) => ({
-  getSuggestionsForCountry: async (
-    countrycode: string,
-    sincePreviousVisit: "since_previous_visit" | "_",
-    limit: number,
-  ) => {
+  getSuggestionsForCountry: ev(
+    v.string(),
+    v.union([v.literal("since_previous_visit"), v.literal("_")]),
+    v.number(),
+  )(async (countrycode, sincePreviousVisit, limit) => {
     const user = _socket.data.user;
     const since =
       sincePreviousVisit === "since_previous_visit"
@@ -30,8 +33,7 @@ export default ({ _socket }: UserServices) => ({
     return Promise.all(
       (["oldestdate", "score"] as const).map((sort) =>
         getSuggestions(since, countrycode, sort, user.id, limit, true).then(
-          (results) => {
-            const { suggestionsPerUser, authors, storyDetails } = results;
+          ({ suggestionsPerUser, authors, storyDetails, issueDetails }) => {
             const suggestionsForUser =
               suggestionsPerUser[user.id] || new IssueSuggestionList();
             return {
@@ -41,12 +43,13 @@ export default ({ _socket }: UserServices) => ({
               maxScore: suggestionsForUser.maxScore,
               authors,
               storyDetails,
+              issueDetails,
             };
           },
         ),
       ),
     ).then((results) => results.groupBy("sort"));
-  },
+  }),
 });
 
 type SuggestedPublications = {
@@ -118,12 +121,13 @@ export const getSuggestions = async (
   singleUserId: number | null,
   limit: number | null,
   withStoryDetails: boolean,
-): Promise<SuggestionList> => {
-  const emptySuggestionList = {
+) => {
+  const emptySuggestionList: SuggestionList = {
     storyDetails: {},
     suggestionsPerUser: {},
     authors: {},
-  } as SuggestionList;
+    issueDetails: {},
+  };
   if (!["score", "oldestdate"].includes(sort)) {
     return emptySuggestionList;
   }
@@ -197,7 +201,6 @@ export const getSuggestions = async (
       if (!issue) {
         issue = {
           ...suggestedStory,
-          oldestdate: suggestedStory.oldestdate?.split("T")[0] || "",
           stories: {},
         };
       }
@@ -210,6 +213,20 @@ export const getSuggestions = async (
       referencedStories.push(suggestedStory);
     }
   }
+
+  const issueDetails = (
+    await prismaCoa.inducks_issue.findMany({
+      where: {
+        issuecode: {
+          in: [...new Set(referencedIssues.map(({ issuecode }) => issuecode))],
+        },
+      },
+      select: {
+        issuecode: true,
+        oldestdate: true,
+      },
+    })
+  ).groupBy("issuecode");
 
   for (const userId in suggestionsPerUser) {
     const scores = Object.values(suggestionsPerUser[userId].issues).map(
@@ -249,7 +266,7 @@ export const getSuggestions = async (
     }
   }
 
-  return { suggestionsPerUser, authors, storyDetails };
+  return { suggestionsPerUser, authors, storyDetails, issueDetails };
 };
 
 const isSuggestionInCountriesToNotify = (

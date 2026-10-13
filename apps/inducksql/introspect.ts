@@ -2,7 +2,7 @@ import type { Pool } from "mariadb";
 
 import { excludedTablePrefixes, excludedTables } from "./config";
 
-export type Column = {
+type Column = {
   name: string;
   dataType: string;
   columnType: string;
@@ -10,7 +10,7 @@ export type Column = {
   autoIncrement: boolean;
 };
 
-export type Index = {
+type Index = {
   name: string;
   columns: string[];
   unique: boolean;

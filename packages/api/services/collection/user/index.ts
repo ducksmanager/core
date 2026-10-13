@@ -1,6 +1,5 @@
 import type { ScopedError } from "socket-call-server";
 
-import type { UserForAccountForm } from "~dm-types/UserForAccountForm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import PresentationSentenceRequested from "../../../emails/presentation-sentence-requested";
@@ -13,11 +12,15 @@ import {
   EmailValidation,
   getUser,
   OldPasswordValidation,
+  PasswordConfirmationValidation,
   PasswordUpdateValidation,
   PasswordValidation,
   PresentationTextValidation,
   validate,
 } from "./util";
+
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 export default ({ _socket }: UserServices) => ({
   getUser: async () =>
@@ -42,71 +45,92 @@ export default ({ _socket }: UserServices) => ({
     });
   },
 
-  updateUser: async (
-    input: UserForAccountForm,
-  ): Promise<
-    | { hasRequestedPresentationSentenceUpdate: boolean }
-    | ScopedError<"Bad request">
-  > => {
-    let hasRequestedPresentationSentenceUpdate = false;
-    let validators: Validation[] = [
-      new DiscordIdValidation(),
-      new EmailValidation(),
-      new EmailUpdateValidation(),
-      new PresentationTextValidation(),
-    ];
-    input.userId = _socket.data.user.id;
-    if (input.password) {
-      validators = [
-        ...validators,
-        new PasswordValidation(),
-        new PasswordUpdateValidation(),
-        new OldPasswordValidation(),
+  updateUser: ev(
+    v.object({
+      discordId: v.optional(v.string()),
+      email: v.string(),
+      allowSharing: v.boolean(),
+      marketplaceAcceptsExchanges: v.boolean(),
+      presentationText: v.string(),
+      oldPassword: v.optional(v.string()),
+      password: v.optional(v.string()),
+      password2: v.optional(v.string()),
+    }),
+  )(
+    async (
+      input,
+    ): Promise<
+      | { hasRequestedPresentationSentenceUpdate: boolean }
+      | ScopedError<"Bad request">
+    > => {
+      let hasRequestedPresentationSentenceUpdate = false;
+      let validators: Validation[] = [
+        new DiscordIdValidation(),
+        new EmailValidation(),
+        new EmailUpdateValidation(),
+        new PresentationTextValidation(),
       ];
-    }
-    const scopedError = await prismaDm.$transaction((transaction) =>
-      validate(transaction, input, validators),
-    );
-    if (scopedError) {
-      return { error: "Bad request", ...scopedError } as const;
-    }
-    if (input.password) {
-      await prismaDm.user.update({
-        data: {
-          password: getHashedPassword(input.password),
-        },
-        where: {
-          id: _socket.data.user.id,
-        },
-      });
-    }
-    const updatedUser = await prismaDm.user.update({
-      data: {
-        discordId: input.discordId || undefined,
-        email: input.email,
-        allowSharing: input.allowSharing,
-        marketplaceAcceptsExchanges: input.marketplaceAcceptsExchanges,
-      },
-      where: { id: _socket.data.user.id },
-    });
-    if (updatedUser.presentationText !== input.presentationText) {
-      if (!input.presentationText) {
+      if (input.password) {
+        validators = [
+          ...validators,
+          new PasswordValidation(),
+          new PasswordConfirmationValidation(),
+          new PasswordUpdateValidation(),
+          new OldPasswordValidation(),
+        ];
+      }
+      const scopedError = await prismaDm.$transaction((transaction) =>
+        validate(
+          transaction,
+          {
+            ...input,
+            id: _socket.data.user.id,
+            userId: _socket.data.user.id,
+          },
+          validators,
+        ),
+      );
+      if (scopedError) {
+        return { error: "Bad request", ...scopedError } as const;
+      }
+      if (input.password) {
         await prismaDm.user.update({
           data: {
-            presentationText: null,
+            password: getHashedPassword(input.password),
           },
-          where: { id: _socket.data.user.id },
+          where: {
+            id: _socket.data.user.id,
+          },
         });
-      } else {
-        hasRequestedPresentationSentenceUpdate = true;
-        await new PresentationSentenceRequested({
-          user: updatedUser,
-          presentationText: input.presentationText,
-        }).send();
       }
-    }
-    return {
-      hasRequestedPresentationSentenceUpdate,
-    } as const;
-  },
+      const updatedUser = await prismaDm.user.update({
+        data: {
+          discordId: input.discordId || undefined,
+          email: input.email,
+          allowSharing: input.allowSharing,
+          marketplaceAcceptsExchanges: input.marketplaceAcceptsExchanges,
+        },
+        where: { id: _socket.data.user.id },
+      });
+      if (updatedUser.presentationText !== input.presentationText) {
+        if (!input.presentationText) {
+          await prismaDm.user.update({
+            data: {
+              presentationText: null,
+            },
+            where: { id: _socket.data.user.id },
+          });
+        } else {
+          hasRequestedPresentationSentenceUpdate = true;
+          await new PresentationSentenceRequested({
+            user: updatedUser,
+            presentationText: input.presentationText,
+          }).send();
+        }
+      }
+      return {
+        hasRequestedPresentationSentenceUpdate,
+      } as const;
+    },
+  ),
 });

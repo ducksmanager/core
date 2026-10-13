@@ -1,5 +1,3 @@
-import type { Socket } from "socket.io";
-import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 
 import { Prisma } from "~prisma-schemas/client_dm/client";
@@ -7,11 +5,8 @@ import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
 import prisma from "../prisma/client";
 import namespaces from "./namespaces";
-
-export type DatasetsServices = NamespaceProxyTarget<
-  Socket<typeof listenEvents>,
-  Record<string, never>
->;
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 const listenEvents = () => ({
   getDatasets: async () => prisma.$queryRaw<
@@ -33,36 +28,34 @@ const listenEvents = () => ({
       AND decision = 'ok'
       GROUP BY dataset.name`,
 
-  previewDataset: async ({
-    personNationalityFilter,
-    oldestDateFilterMin: _oldestDateFilterMin,
-    oldestDateFilterMax: _oldestDateFilterMax,
-  }: {
-    personNationalityFilter: string[] | undefined;
-    oldestDateFilterMin: number | undefined;
-    oldestDateFilterMax: number | undefined;
-  }) => {
-    const errors: string[] = [];
-    if (personNationalityFilter && !personNationalityFilter.length) {
-      errors.push(
-        "At least one nationality is required when using the nationality filter",
-      );
-    }
-    if (errors.length) {
-      return {
-        errors,
-        datasetSize: 0,
-      } as const;
-    }
-    return prismaCoa.$queryRaw<
-      [
-        {
-          datasetSize: number;
-          samples: string;
-          authors: string;
-        },
-      ]
-    >`
+  previewDataset: ev(
+    v.pipe(
+      v.object({
+        personNationalityFilter: v.optional(v.array(v.string())),
+        oldestDateFilterMin: v.optional(v.number()),
+        oldestDateFilterMax: v.optional(v.number()),
+      }),
+      v.check(
+        ({ personNationalityFilter }) =>
+          !personNationalityFilter || personNationalityFilter.length > 0,
+        "At least one nationality is required when using the nationality filter" as const,
+      ),
+    ),
+  )(
+    async ({
+      personNationalityFilter,
+      oldestDateFilterMin: _oldestDateFilterMin,
+      oldestDateFilterMax: _oldestDateFilterMax,
+    }) =>
+      prismaCoa.$queryRaw<
+        [
+          {
+            datasetSize: number;
+            samples: string;
+            authors: string;
+          },
+        ]
+      >`
       with dataset as (select sitecode, url, REPLACE(artsummary, ',', '') as personcode
       from inducks_entryurl
          inner join inducks_entry using (entrycode)
@@ -96,19 +89,16 @@ const listenEvents = () => ({
       )
       select datasetSize, samples, authors
       from dataset_stats, authors_list
-      `.then(
-      ([result]) =>
-        ({
-          datasetSize: result.datasetSize,
-          authors: JSON.parse(result.authors),
-          samples: JSON.parse(result.samples),
-        }) as {
-          datasetSize: number;
-          samples: { url: string; personcode: string }[];
-          authors: Record<string, number>;
-        },
-    );
-  },
+      `.then<{
+        datasetSize: number;
+        samples: { url: string; personcode: string }[];
+        authors: Record<string, number>;
+      }>(([result]) => ({
+        datasetSize: result.datasetSize,
+        authors: JSON.parse(result.authors),
+        samples: JSON.parse(result.samples),
+      })),
+  ),
 });
 
 const { client, server } = useSocketEvents<

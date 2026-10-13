@@ -8,13 +8,13 @@ import {
   computePublicationcode,
 } from "./overrideNullableCodes";
 
-export type Augmented = {
+type Augmented = {
   issuecode: string;
   publicationcode: string;
   issuenumber: string;
 };
 
-export type ExtraSelectField = Exclude<keyof rawInducksIssue, keyof Augmented>;
+type ExtraSelectField = Exclude<keyof rawInducksIssue, keyof Augmented>;
 
 export type IssuecodeDetail = Augmented &
   Partial<Pick<rawInducksIssue, ExtraSelectField>>;

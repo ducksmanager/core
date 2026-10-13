@@ -27,7 +27,7 @@ export const liveCoverSearchConfig = {
   },
 };
 
-export type LivePhase = 'idle' | 'scanning' | 'matched' | 'confirming' | 'exhausted';
+type LivePhase = 'idle' | 'scanning' | 'matched' | 'confirming' | 'exhausted';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

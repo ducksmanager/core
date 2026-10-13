@@ -277,7 +277,7 @@ const updateAccount = () =>
       await updateMarketplaceContactMethods();
     })
     .catch((e: unknown) => {
-      if (isEventErrorOf(collectionEvents.updateUser, e)) {
+      if (isEventErrorOf(collectionEvents.updateUser, e) && "selector" in e) {
         error = e;
       } else {
         console.error(e);

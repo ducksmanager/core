@@ -120,7 +120,7 @@ const copyTableFromLive = async (
   return affected;
 };
 
-export type SnapshotIntoDatedSchemaOptions = {
+type SnapshotIntoDatedSchemaOptions = {
   liveDatabase: string;
   snapshotDate: string;
   skipTables?: readonly string[];

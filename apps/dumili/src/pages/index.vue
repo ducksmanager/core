@@ -86,7 +86,7 @@
           )
         }}
         <b-form-input
-          v-model="totalPages"
+          v-model.number="totalPages"
           type="number"
           min="4"
           max="996" /></b-form></b-modal

@@ -1,4 +1,4 @@
-import type { EventOutput } from "socket-call-client";
+import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
 
 import type { ClientEvents as CollectionServices } from "~dm-services/collection";
 import type { requestedIssue } from "~prisma-schemas/schemas/dm";
@@ -16,7 +16,10 @@ export const marketplace = defineStore("marketplace", () => {
     isLoadingIssueRequestsAsSeller = ref(false),
     isLoadingIssuesOnSaleByOthers = ref(false),
     contactMethods = ref<{
-      [userId: number]: EventOutput<CollectionServices, "getContactMethods">;
+      [userId: number]: SuccessfulEventOutput<
+        CollectionServices,
+        "getContactMethods"
+      >;
     }>({}),
     sentRequestIssueIds = computed(() =>
       issueRequestsAsBuyer.value?.map(({ issueId }) => issueId),

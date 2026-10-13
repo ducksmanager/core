@@ -12,3 +12,10 @@ docker-compose*
 **/*.sqlite
 **/*.sqlite-wal
 **/*.sqlite-shm
+# Local data a fresh checkout does not have. Without these, a build from the
+# repository root sends tens of gigabytes of context.
+packages/api/services/story-search/covers
+packages/api/pastec-index-last.dat
+apps/edges/edges
+**/.venv
+**/DerivedData

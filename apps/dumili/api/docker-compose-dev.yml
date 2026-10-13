@@ -1,27 +1,6 @@
 name: dumili-api
 
 services:
-  kumiko:
-    restart: always
-    ports:
-      - "8005:8080"
-    build:
-      context: ../../..
-      dockerfile: apps/dumili/api/kumiko/Dockerfile
-  paddleocr:
-    restart: always
-    ports:
-      - "8006:8081"
-    shm_size: "2gb"
-    environment:
-      PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK: "True"
-      PYTHONUNBUFFERED: "1"
-    volumes:
-      - ./paddleocr/server.py:/server.py
-      - ./paddleocr/recognition_model_rules.json:/recognition_model_rules.json
-    build:
-      context: ../../..
-      dockerfile: apps/dumili/api/paddleocr/Dockerfile.aarch64
   db:
     container_name: dumili-db
     restart: always

@@ -16,7 +16,7 @@ export default defineConfig(
       "**/dist",
       "**/bundle.mjs",
       "**/*.d.ts",
-      "prisma/client_dumili/client",
+      "prisma/client_dumili",
       "paddleocr",
       "eslint.config.mjs",
     ],

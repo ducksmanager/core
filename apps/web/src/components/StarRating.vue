@@ -33,8 +33,8 @@ const emit = defineEmits<{
 }>();
 
 defineSlots<{
-  filledStarIcon: () => unknown;
-  emptyStarIcon: () => unknown;
+  filledStarIcon(): never;
+  emptyStarIcon(): never;
 }>();
 
 const currentRating = ref(rating);

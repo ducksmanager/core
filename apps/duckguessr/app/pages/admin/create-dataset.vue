@@ -116,7 +116,7 @@
                         </label>
                         <b-form-input
                           id="oldest-date-filter"
-                          v-model="filters.oldestDateFilterMin"
+                          v-model.number="filters.oldestDateFilterMin"
                           :disabled="!filters.oldestDateFilterMin"
                           type="range"
                           size="lg"
@@ -134,7 +134,7 @@
                         </label>
                         <b-form-input
                           id="newest-date-filter"
-                          v-model="filters.oldestDateFilterMax"
+                          v-model.number="filters.oldestDateFilterMax"
                           :disabled="!filters.oldestDateFilterMax"
                           type="range"
                           :min="1900"
@@ -237,12 +237,9 @@
                   Preview Matches
                 </h3>
 
-                <div
-                  v-if="datasetPreview && 'errors' in datasetPreview"
-                  class="mb-4"
-                >
+                <div v-if="datasetPreviewErrors.length" class="mb-4">
                   <b-alert
-                    v-for="error in datasetPreview.errors"
+                    v-for="error in datasetPreviewErrors"
                     :key="error"
                     variant="warning"
                     :model-value="true"
@@ -346,6 +343,7 @@ const countryNames = ref({
 });
 
 const datasetPreview = ref<EventOutput<DatasetsEmitEvents, "previewDataset">>();
+const datasetPreviewErrors = ref<string[]>([]);
 
 const isCalculatingDatasetPreview = ref(false);
 
@@ -479,6 +477,7 @@ watch(
     console.log("Filters changed, updating matches...");
     isCalculatingDatasetPreview.value = true;
     datasetPreview.value = undefined;
+    datasetPreviewErrors.value = [];
     datasetsSocket
       .previewDataset({
         personNationalityFilter: filters.value.personNationalityFilter,
@@ -488,6 +487,9 @@ watch(
       })
       .then((result) => {
         datasetPreview.value = result;
+      })
+      .catch((error) => {
+        datasetPreviewErrors.value = [error.error];
       })
       .finally(() => {
         isCalculatingDatasetPreview.value = false;

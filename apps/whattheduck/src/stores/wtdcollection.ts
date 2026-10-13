@@ -1,17 +1,10 @@
 import { defineStore } from 'pinia';
 
-import type { EntryPartInfo } from '~dm-types/EntryPartInfo';
-import type { IssueWithIssuecodeOnly } from '~dm-types/IssueWithIssuecodeOnly';
-import type { issue, purchase } from '~prisma-schemas/schemas/dm';
 import useCollection from '~web/src/composables/useCollection';
 import { coa } from '~web/src/stores/coa';
 import { collection } from '~web/src/stores/collection';
 import { stats } from '~web/src/stores/stats';
 import { users } from '~web/src/stores/users';
-
-export type purchaseWithStringDate = Omit<purchase, 'date' | 'userId'> & {
-  date: string;
-};
 
 export const wtdcollection = defineStore('wtdcollection', () => {
   const coaStore = coa();
@@ -123,11 +116,3 @@ export const wtdcollection = defineStore('wtdcollection', () => {
     user,
   };
 });
-
-export type IssueWithCollectionIssues = IssueWithIssuecodeOnly & {
-  countrycode: string;
-  countryname?: string;
-  publicationName: string;
-  collectionIssues?: issue[];
-  partInfo?: EntryPartInfo;
-};
