@@ -91,68 +91,66 @@ const statsMatchingMedals = computed(() =>
     ?.map(({ medalType }) => medalType),
 );
 
-const levelsAndProgress = computed(
-  (): Record<string, MedalLevelAndProgress> =>
-    !stats.value
-      ? {}
-      : MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
-          let level =
-            levels.length -
-            [...levels].reverse().findIndex(
-              (levelThreshold: number) =>
-                (
-                  stats.value!.find(
-                    ({ medalType: statsMedalType }) =>
-                      medalType === statsMedalType,
-                  ) || {
-                    points: 0,
-                  }
-                ).playerPoints! >= levelThreshold,
-            );
+const levelsAndProgress = computed((): Record<string, MedalLevelAndProgress> =>
+  !stats.value
+    ? {}
+    : MEDAL_LEVELS.reduce((acc, { medalType, levels }) => {
+        let level =
+          levels.length -
+          [...levels].reverse().findIndex(
+            (levelThreshold: number) =>
+              (
+                stats.value!.find(
+                  ({ medalType: statsMedalType }) =>
+                    medalType === statsMedalType,
+                ) || {
+                  points: 0,
+                }
+              ).playerPoints! >= levelThreshold,
+          );
 
-          if (level === 4) {
-            level = 0;
-          }
-          if (level === 3) {
-            return {
-              ...acc,
-              [medalType]: {
-                level,
-                currentLevelPoints: 0,
-                currentLevelPercentageProgress: 0,
-              },
-            };
-          }
-          const currentLevelThreshold = level === 0 ? 0 : levels[level - 1];
-          const currentLevelPoints =
-            (
-              stats.value!.find(
+        if (level === 4) {
+          level = 0;
+        }
+        if (level === 3) {
+          return {
+            ...acc,
+            [medalType]: {
+              level,
+              currentLevelPoints: 0,
+              currentLevelPercentageProgress: 0,
+            },
+          };
+        }
+        const currentLevelThreshold = level === 0 ? 0 : levels[level - 1];
+        const currentLevelPoints =
+          (
+            stats.value!.find(
+              ({ medalType: statsMedalType }) => medalType === statsMedalType,
+            ) || {
+              playerPoints: 0,
+            }
+          ).playerPoints! - currentLevelThreshold;
+        const currentLevelProgressPoints = playerStore().gameStats
+          ? (
+              playerStore().gameStats!.stats.find(
                 ({ medalType: statsMedalType }) => medalType === statsMedalType,
               ) || {
                 playerPoints: 0,
               }
-            ).playerPoints! - currentLevelThreshold;
-          const currentLevelProgressPoints = playerStore().gameStats
-            ? (
-                playerStore().gameStats!.stats.find(
-                  ({ medalType: statsMedalType }) =>
-                    medalType === statsMedalType,
-                ) || {
-                  playerPoints: 0,
-                }
-              ).playerPoints
-            : 0;
+            ).playerPoints
+          : 0;
 
-          const medalLevelAndProgress = {
-            level,
-            currentLevelPoints,
-            currentLevelProgressPoints,
-          };
-          return {
-            ...acc,
-            [medalType]: medalLevelAndProgress,
-          };
-        }, {}),
+        const medalLevelAndProgress = {
+          level,
+          currentLevelPoints,
+          currentLevelProgressPoints,
+        };
+        return {
+          ...acc,
+          [medalType]: medalLevelAndProgress,
+        };
+      }, {}),
 );
 
 const noMedalProgress = computed(

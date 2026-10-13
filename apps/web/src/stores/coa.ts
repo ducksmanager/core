@@ -1,10 +1,9 @@
-import type { EventOutput, SuccessfulEventOutput } from "socket-call-client";
+import type { SuccessfulEventOutput } from "socket-call-client";
 
 import type { ClientEvents as CoaClientEvents } from "~dm-services/coa";
 import type { InducksIssueDetails } from "~dm-types/InducksIssueDetails";
 import type { InducksIssueQuotationSimple } from "~dm-types/InducksIssueQuotationSimple";
 import type {
-  ExtraSelectField,
   inducks_story,
   inducks_storyversion,
   IssuecodeDetail,
@@ -54,29 +53,37 @@ export const coa = defineStore("coa", () => {
 
   const locale = useI18n().locale,
     coverUrls = shallowRef<{ [issuecode: string]: string }>({}),
-    countryNames = shallowRef<EventOutput<CoaClientEvents, "getCountryList">>(),
+    countryNames =
+      shallowRef<SuccessfulEventOutput<CoaClientEvents, "getCountryList">>(),
     publicationNames = shallowRef<
-      EventOutput<CoaClientEvents, "getPublicationListFromCountrycodes">
+      SuccessfulEventOutput<
+        CoaClientEvents,
+        "getPublicationListFromCountrycodes"
+      >
     >({}),
     publicationNamesFullCountries = shallowRef<string[]>([]),
-    personNames = shallowRef<EventOutput<CoaClientEvents, "getAuthorList">>(),
+    personNames =
+      shallowRef<SuccessfulEventOutput<CoaClientEvents, "getAuthorList">>(),
     issueDetails = ref<{ [issuecode: string]: InducksIssueDetails }>({}),
     isLoadingCountryNames = ref(false),
     issuecodeDetails = ref<Record<string, IssuecodeDetail>>({}),
     issuePopularities = shallowRef<
-      EventOutput<CoaClientEvents, "getIssuePopularities">
+      SuccessfulEventOutput<CoaClientEvents, "getIssuePopularities">
     >({}),
     issuecodesByPublicationcode = ref<
-      EventOutput<CoaClientEvents, "getIssuecodesByPublicationcodes">
+      SuccessfulEventOutput<CoaClientEvents, "getIssuecodesByPublicationcodes">
     >({}),
     issuesByPublicationcode = ref<
-      Record<string, EventOutput<CoaClientEvents, "getIssuesByPublicationcode">>
+      Record<
+        string,
+        SuccessfulEventOutput<CoaClientEvents, "getIssuesByPublicationcode">
+      >
     >({}),
     issueCountsByCountrycode = ref<
-      EventOutput<CoaClientEvents, "getCoaCountByCountrycode">
+      SuccessfulEventOutput<CoaClientEvents, "getCoaCountByCountrycode">
     >({}),
     issueCountsByPublicationcode = ref<
-      EventOutput<CoaClientEvents, "getCoaCountByPublicationcode">
+      SuccessfulEventOutput<CoaClientEvents, "getCoaCountByPublicationcode">
     >({}),
     issueQuotations = ref<
       SuccessfulEventOutput<
@@ -193,7 +200,7 @@ export const coa = defineStore("coa", () => {
     },
     fetchIssuecodeDetails = async (
       issuecodes: string[],
-      withFields: ExtraSelectField[] = [],
+      withFields: ("title" | "fullyindexed")[] = [],
     ) => {
       const newIssuecodes = issuecodes.filter(
         (issuecode) =>

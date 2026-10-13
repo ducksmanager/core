@@ -3,6 +3,15 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import type { UserServices } from "../../../index";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
+const userOptionTypeValidation = v.union([
+  v.literal("suggestion_notification_country"),
+  v.literal("sales_notification_publications"),
+  v.literal("marketplace_contact_methods"),
+]);
+
 const optionNameToEnum = (
   optionName:
     | "suggestion_notification_country"
@@ -11,7 +20,7 @@ const optionNameToEnum = (
 ) => userOptionType[optionName];
 
 export default ({ _socket }: UserServices) => ({
-  getOption: async (optionName: Parameters<typeof optionNameToEnum>[0]) =>
+  getOption: ev(userOptionTypeValidation)(async (optionName) =>
     prismaDm.userOption
       .findMany({
         where: {
@@ -20,8 +29,12 @@ export default ({ _socket }: UserServices) => ({
         },
       })
       .then((data) => data.map(({ optionValue }) => optionValue)),
+  ),
 
-  setOption: async (optionName: userOptionType, optionValues: string[]) => {
+  setOption: ev(
+    userOptionTypeValidation,
+    v.array(v.string()),
+  )(async (optionName, optionValues) => {
     {
       const userId = _socket.data.user.id;
       await prismaDm.userOption.deleteMany({
@@ -43,5 +56,5 @@ export default ({ _socket }: UserServices) => ({
         ),
       );
     }
-  },
+  }),
 });

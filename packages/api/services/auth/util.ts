@@ -13,11 +13,6 @@ type SocketWithUser = Socket<
   { user?: SessionUser }
 >;
 
-const EMAIL_REGEX =
-  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-
-export const isValidEmail = (email: string) => EMAIL_REGEX.test(email);
-
 export const generateAccessToken = (payload: Omit<SessionUser, "token">) =>
   jwt.sign(
     { exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14, data: payload },

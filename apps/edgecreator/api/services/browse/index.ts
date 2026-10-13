@@ -4,6 +4,8 @@ import path from "path";
 import type { Socket } from "socket.io";
 import type { NamespaceProxyTarget } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { OptionalAuthMiddleware } from "~dm-services/auth/util";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
@@ -192,28 +194,30 @@ const findOngoingEdges = async (currentUsername?: string) => {
 };
 
 const listenEvents = (services: BrowseServices) => ({
-  listPublishedEdgeModels: async (
-    publicationcode: string,
-  ): Promise<
-    | {
-        error: "Generic error";
-        errorDetails: string;
-      }
-    | { results: Awaited<ReturnType<typeof findPublishedEdges>> }
-  > =>
-    new Promise((resolve) => {
-      findPublishedEdges(publicationcode)
-        .then((results) => {
-          resolve({ results });
-        })
-        .catch((errorDetails) => {
-          console.error(errorDetails);
-          return resolve({
-            error: "Generic error",
-            errorDetails: errorDetails as string,
-          } as const);
-        });
-    }),
+  listPublishedEdgeModels: ev(v.string())(
+    async (
+      publicationcode,
+    ): Promise<
+      | {
+          error: "Generic error";
+          errorDetails: string;
+        }
+      | { results: Awaited<ReturnType<typeof findPublishedEdges>> }
+    > =>
+      new Promise((resolve) => {
+        findPublishedEdges(publicationcode)
+          .then((results) => {
+            resolve({ results });
+          })
+          .catch((errorDetails) => {
+            console.error(errorDetails);
+            return resolve({
+              error: "Generic error",
+              errorDetails: errorDetails as string,
+            } as const);
+          });
+      }),
+  ),
   listOngoingEdgeModels: async (): Promise<
     | {
         error: "Generic error";
@@ -235,19 +239,16 @@ const listenEvents = (services: BrowseServices) => ({
         });
     }),
 
-  listEdgeParts: async (parameters: {
-    imageType: "elements" | "photos";
-    country: string;
-    magazine: string;
-  }) => {
-    const { country, imageType, magazine } = parameters;
-    if (
-      !/^(elements)|(photos)$/.test(imageType) ||
-      !/^[a-z]+$/.test(country) ||
-      !/^[-A-Z0-9]+$/.test(magazine)
-    ) {
-      return { error: "Invalid parameters" };
-    }
+  listEdgeParts: ev(
+    v.object({
+      imageType: v.union(
+        [v.literal("elements"), v.literal("photos")],
+        "Invalid image type",
+      ),
+      country: v.pipe(v.string(), v.regex(/^[a-z]+$/, "Invalid country")),
+      magazine: v.pipe(v.string(), v.regex(/^[-A-Z0-9]+$/, "Invalid magazine")),
+    }),
+  )(async ({ country, imageType, magazine }) => {
     try {
       return {
         results: readdirSync(
@@ -259,7 +260,7 @@ const listenEvents = (services: BrowseServices) => ({
     } catch (_e) {
       return { results: [] };
     }
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

@@ -1,6 +1,8 @@
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import type { UserServices } from "../../../index";
 import contactMethods from "./contact-methods";
@@ -11,19 +13,21 @@ export default (services: UserServices) => {
   return {
     ...contactMethods(services),
 
-    deleteRequests: async (issueId: number) => {
+    deleteRequests: ev(v.number())(async (issueId) => {
       await prismaDm.requestedIssue.deleteMany({
         where: {
           buyerId: _socket.data.user.id,
           issueId,
         },
       });
-    },
+    }),
 
-    createRequests: async (issueIds: number[]) => {
-      if (issueIds.find((issueId) => isNaN(issueId))) {
-        return { error: `Invalid issue ID list, NaN` };
-      }
+    createRequests: ev(
+      v.pipe(
+        v.array(v.number(`Invalid issue ID list, NaN`)),
+        v.nonEmpty("Invalid issue ID list"),
+      ),
+    )(async (issueIds) => {
       const issues = await prismaDm.issue.findMany({
         where: {
           id: { in: issueIds },
@@ -57,33 +61,35 @@ export default (services: UserServices) => {
           issueId,
         })),
       });
-    },
+    }),
 
-    getRequests: async (as: "buyer" | "seller") => {
-      switch (as) {
-        case "seller": {
-          const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
-            { id: number }[]
-          >`
+    getRequests: ev(v.union([v.literal("buyer"), v.literal("seller")]))(
+      async (as) => {
+        switch (as) {
+          case "seller": {
+            const requestedIssuesOnSaleIds = await prismaDm.$queryRaw<
+              { id: number }[]
+            >`
             SELECT requestedIssue.ID AS id
             FROM numeros_demandes requestedIssue
             INNER JOIN numeros issue ON requestedIssue.ID_Numero = issue.ID
             WHERE issue.ID_Utilisateur = ${_socket.data.user.id}
         `;
-          return await prismaDm.requestedIssue.findMany({
-            where: {
-              id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
-            },
-          });
+            return await prismaDm.requestedIssue.findMany({
+              where: {
+                id: { in: requestedIssuesOnSaleIds.map(({ id }) => id) },
+              },
+            });
+          }
+          case "buyer":
+            return await prismaDm.requestedIssue.findMany({
+              where: {
+                buyerId: _socket.data.user.id,
+              },
+            });
         }
-        case "buyer":
-          return await prismaDm.requestedIssue.findMany({
-            where: {
-              buyerId: _socket.data.user.id,
-            },
-          });
-      }
-    },
+      },
+    ),
 
     getIssuesForSale: () => getIssuesForSale(_socket.data.user.id),
   };

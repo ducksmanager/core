@@ -1,4 +1,6 @@
 import { useSocketEvents } from "socket-call-server";
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
 
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
@@ -7,7 +9,7 @@ import type { UserServices } from "../../index";
 import namespaces from "../namespaces";
 
 const listenEvents = ({ _socket }: UserServices) => ({
-  sendFeedback: async (feedbackMessage: string) => {
+  sendFeedback: ev(v.string())(async (feedbackMessage) => {
     const user = await prismaDm.user.findUniqueOrThrow({
       where: { id: _socket.data.user.id },
     });
@@ -16,7 +18,7 @@ const listenEvents = ({ _socket }: UserServices) => ({
       feedbackMessage,
     });
     await email.send();
-  },
+  }),
 });
 
 export const { client, server } = useSocketEvents<

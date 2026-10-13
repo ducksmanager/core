@@ -10,16 +10,17 @@ import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 
 import { getPopularityByIssuecodes } from "../../coa/issue-details";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 export default () => ({
-  publishEdge: async ({
-    issuecode,
-    designers,
-    photographers,
-  }: {
-    issuecode: string;
-    designers: string[];
-    photographers: string[];
-  }) => {
+  publishEdge: ev(
+    v.object({
+      issuecode: v.string(),
+      designers: v.array(v.string()),
+      photographers: v.array(v.string()),
+    }),
+  )(async ({ issuecode, designers, photographers }) => {
     const issue = await prismaCoa.inducks_issue.findFirst({
       where: { issuecode },
       select: { publicationcode: true, issuenumber: true },
@@ -60,7 +61,7 @@ export default () => ({
       contributors,
       url: `${process.env.VITE_EDGES_ROOT}/${country}/gen/${magazine}.${issuenumber.replaceAll(" ", "")}.png`,
     };
-  },
+  }),
 });
 
 const getUserIdsByUsername = async (

@@ -10,20 +10,26 @@ import { OptionalAuthMiddleware } from "../_auth";
 import { createEntry } from "../indexation";
 import namespaces from "../namespaces";
 
+import { ev } from "socket-call-server/valibot";
+import * as v from "valibot";
+
 type IndexationCreationServices = NamespaceProxyTarget<
   Socket<typeof listenEvents, object, object, SessionData>,
   Record<string, never>
 >;
 
 const listenEvents = ({ _socket }: IndexationCreationServices) => ({
-  create: async (numberOfPages: number) => {
-    if (numberOfPages < 4 || numberOfPages > 996 || numberOfPages % 2 !== 0) {
-      return {
-        error: `Invalid number of pages`,
-        errorDetails: JSON.stringify({ numberOfPages }),
-      } as const;
-    }
-    return prisma.indexation
+  create: ev(
+    v.pipe(
+      v.number(),
+      v.check(
+        (numberOfPages) =>
+          numberOfPages >= 4 && numberOfPages <= 996 && numberOfPages % 2 === 0,
+        "Invalid number of pages" as const,
+      ),
+    ),
+  )(async (numberOfPages) =>
+    prisma.indexation
       .create({
         data: {
           dmUserId: _socket.data.user?.id || null,
@@ -49,8 +55,8 @@ const listenEvents = ({ _socket }: IndexationCreationServices) => ({
           },
         }),
       )
-      .then((entry) => entry.indexationId);
-  },
+      .then((entry) => entry.indexationId),
+  ),
 });
 
 const { client, server } = useSocketEvents<

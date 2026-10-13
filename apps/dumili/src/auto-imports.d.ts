@@ -383,9 +383,6 @@ declare global {
   export type { EdgeWithStringCreationDate } from '../../../packages/types/EdgeWithStringCreationDate'
   import('../../../packages/types/EdgeWithStringCreationDate')
   // @ts-ignore
-  export type { EditSubscription } from '../../../packages/types/EditSubscription'
-  import('../../../packages/types/EditSubscription')
-  // @ts-ignore
   export type { EntryPartInfo } from '../../../packages/types/EntryPartInfo'
   import('../../../packages/types/EntryPartInfo')
   // @ts-ignore
@@ -460,9 +457,6 @@ declare global {
   // @ts-ignore
   export type { UserContributionTypeEn } from '../../../packages/types/UserContributionTypeEn'
   import('../../../packages/types/UserContributionTypeEn')
-  // @ts-ignore
-  export type { UserForAccountForm } from '../../../packages/types/UserForAccountForm'
-  import('../../../packages/types/UserForAccountForm')
   // @ts-ignore
   export type { WantedEdge } from '../../../packages/types/WantedEdge'
   import('../../../packages/types/WantedEdge')
