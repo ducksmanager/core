@@ -20,14 +20,9 @@ const socket = useDmSocket({
   disableCollectionCache: true,
   onConnected: () => {
     if (!isReady) {
-      void collection()
-        .loadUser()
-        .then(() => {
-          isReady = true;
-        });
-    } else {
-      isReady = true;
+      void collection().loadUser();
     }
+    isReady = true;
   },
   onConnectError: (e) => {
     console.error(e);

@@ -2,7 +2,7 @@ import { useSocketEvents } from "socket-call-server";
 import { ev } from "socket-call-server/valibot";
 import * as v from "valibot";
 
-import type { issue, user } from "~prisma-schemas/schemas/dm";
+import type { issue } from "~prisma-schemas/schemas/dm";
 import { prismaClient as prismaDm } from "~prisma-schemas/schemas/dm/client";
 import { prismaClient as prismaCoa } from "~prisma-schemas/schemas/coa/client";
 
@@ -10,13 +10,10 @@ import namespaces from "../namespaces";
 
 const listenEvents = () => ({
   getPublicCollection: ev(v.string())(async (username) => {
-    let user: user;
-    try {
-      user = await prismaDm.user.findFirstOrThrow({
-        where: { username },
-      });
-    } catch (e) {
-      console.error(e);
+    const user = await prismaDm.user.findFirst({
+      where: { username },
+    });
+    if (!user) {
       return { error: "User not found" };
     }
     if (!user.allowSharing) {
