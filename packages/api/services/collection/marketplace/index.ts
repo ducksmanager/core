@@ -99,25 +99,24 @@ export const getIssuesForSale = async (buyerId: number) =>
   prismaDm.$queryRaw<Pick<issue, "id">[]>`
     SELECT issue.ID as id
     FROM numeros issue
-    INNER JOIN (
-      SELECT seller.ID
-      FROM users seller
-      INNER JOIN users_options uo on seller.ID = uo.ID_User
-      WHERE uo.Option_nom = 'marketplace_contact_methods'
-    ) AS seller
-        ON issue.ID_Utilisateur = seller.ID
-    LEFT JOIN numeros_demandes requested_issue
-        ON issue.ID = requested_issue.ID_Numero
     WHERE
       EXISTS(SELECT 1 FROM numeros_etiquettes labels WHERE labels.ID_Numero = issue.id AND labels.ID_Etiquette = ${ON_SALE_LABEL_ID})
-      AND issue.issuecode IS NOT NULL
-      AND ID_Utilisateur != ${buyerId}
       AND EXISTS(
-        SELECT 1 FROM users_options uo
-        WHERE uo.ID_User = ${buyerId}
-          AND uo.Option_nom = 'sales_notification_publications'
-          AND uo.Option_valeur IN (substring_index(issue.issuecode, ' ', 1),
-                                   issue.issuecode)
+        SELECT 1 FROM users_options seller_option
+        WHERE seller_option.ID_User = issue.ID_Utilisateur
+          AND seller_option.Option_nom = 'marketplace_contact_methods'
+      )
+      AND issue.issuecode IS NOT NULL
+      AND issue.ID_Utilisateur != ${buyerId}
+      AND (
+        substring_index(issue.issuecode, ' ', 1) IN (
+          SELECT Option_valeur FROM users_options
+          WHERE ID_User = ${buyerId} AND Option_nom = 'sales_notification_publications'
+        )
+        OR issue.issuecode IN (
+          SELECT Option_valeur FROM users_options
+          WHERE ID_User = ${buyerId} AND Option_nom = 'sales_notification_publications'
+        )
       )
       AND NOT EXISTS
         (SELECT 1
