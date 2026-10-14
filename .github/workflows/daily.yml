@@ -18,7 +18,7 @@ jobs:
       # REMOTE_PULL_TIMEOUT + REMOTE_TIMEOUT must stay below timeout-minutes.
       REMOTE_PULL_TIMEOUT: 2m
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           lfs: false
