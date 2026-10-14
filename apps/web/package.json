@@ -22,7 +22,7 @@
     "@bperel/vue3-popper-teleport": "^1.4.3",
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
     "@popperjs/core": "^2.11.8",
-    "@sentry/vue": "^10.76.2",
+    "@sentry/vue": "^11.6.0",
     "@studiometa/vue-mapbox-gl": "^2.7.2",
     "@unhead/vue": "^1.11.20",
     "@vueuse/core": "^15.0.0",
