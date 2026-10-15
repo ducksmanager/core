@@ -1,9 +1,6 @@
 <template>
   <span :class="{ [displayClass]: true }" class="align-items-center">
-    <img
-      :alt="countrycode"
-      :src="images().getFlagsPath(`${countrycode}.png`)"
-    />
+    <img :alt="countrycode" :src="getFlagsPath(`${countrycode}.png`)" />
     <span class="mx-1">{{ publicationname }}</span>
     <slot />
   </span>
@@ -16,6 +13,9 @@ const { publicationcode, displayClass = "d-inline-flex" } = defineProps<{
   displayClass?: string;
 }>();
 const countrycode = computed(() => publicationcode.split("/")[0]);
+
+const getFlagsPath = (flag: string) =>
+  `${import.meta.env.VITE_FLAGS_ROOT}${flag}`;
 </script>
 
 <style scoped lang="scss">

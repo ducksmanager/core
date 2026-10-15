@@ -14,17 +14,20 @@ meta:
     </ShortStats>
     <PublicationList is-public />
     <IssueList
-      v-if="publicationcode || mostPossessedPublication"
+      v-if="collectionUserPublicationcode || mostPossessedPublication"
       readonly
-      :publicationcode="(publicationcode || mostPossessedPublication) as string"
+      :publicationcode="(collectionUserPublicationcode || mostPossessedPublication) as string"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-const route = useRoute<"/collection/user/[username]/[[...all]]">();
-const username = computed(() => route.params.username as string);
-const publicationcode = computed(() => route.params.all as string);
+const collectionUserRoute =
+  useRoute<"/collection/user/[username]/[[...all]]">();
+const username = computed(() => collectionUserRoute.params.username);
+const collectionUserPublicationcode = computed(
+  () => collectionUserRoute.params.all as string,
+);
 
 const { loadPublicCollection } = publicCollection();
 const { mostPossessedPublication, issues } = storeToRefs(publicCollection());

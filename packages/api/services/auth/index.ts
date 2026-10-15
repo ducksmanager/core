@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import type { Errorable } from "socket-call-server";
+import type { Errorable, ScopedError } from "socket-call-server";
 import { useSocketEvents } from "socket-call-server";
 import { ev } from "socket-call-server/valibot";
 import * as v from "valibot";
@@ -116,51 +116,45 @@ const listenEvents = () => ({
       password: v.string(),
       email: v.string(),
     }),
-  )(
-    async (input) =>
-      new Promise<Errorable<string, "Bad request">>((resolve) => {
-        console.log(`signup with user ${input.username}`);
-        prismaDm.$transaction(async (transaction) => {
-          const scopedError = await validate(transaction, input, [
-            new UsernameValidation(),
-            new UsernameCreationValidation(),
-            new EmailValidation(),
-            new EmailCreationValidation(),
-            new PasswordValidation(),
-          ]);
-          if (scopedError) {
-            resolve({ error: "Bad request", ...scopedError } as const);
-          } else {
-            const { username, password, email } = input;
-            const hashedPassword = getHashedPassword(password);
-            const user = await transaction.user.create({
-              data: {
-                username,
-                password: hashedPassword,
-                email,
-                signupDate: new Date(),
-              },
-            });
+  )((input): Promise<string | ScopedError<"Bad request">> => {
+    console.log(`signup with user ${input.username}`);
+    return prismaDm.$transaction(async (transaction) => {
+      const scopedError = await validate(transaction, input, [
+        new UsernameValidation(),
+        new UsernameCreationValidation(),
+        new EmailValidation(),
+        new EmailCreationValidation(),
+        new PasswordValidation(),
+      ]);
+      if (scopedError) {
+        return { error: "Bad request", ...scopedError } as const;
+      }
+      const { username, password, email } = input;
+      const hashedPassword = getHashedPassword(password);
+      const user = await transaction.user.create({
+        data: {
+          username,
+          password: hashedPassword,
+          email,
+          signupDate: new Date(),
+        },
+      });
 
-            const privileges = (
-              await transaction.userPermission.findMany({
-                where: {
-                  username,
-                },
-              })
-            ).groupBy("role", "privilege");
-            const token = generateAccessToken({
-              id: user.id,
-              username,
-              hashedPassword,
-              privileges,
-            });
-
-            resolve(token);
-          }
-        });
-      }),
-  ),
+      const privileges = (
+        await transaction.userPermission.findMany({
+          where: {
+            username,
+          },
+        })
+      ).groupBy("role", "privilege");
+      return generateAccessToken({
+        id: user.id,
+        username,
+        hashedPassword,
+        privileges,
+      });
+    });
+  }),
 
   login: ev(
     v.object({
@@ -180,7 +174,7 @@ const listenEvents = () => ({
 
       return token;
     } else {
-      return { error: "Invalid username or password" };
+      return { error: "Invalid username or password" as const };
     }
   }),
 

@@ -26,7 +26,7 @@ const router = createRouter({
 });
 router.beforeResolve(async (to) => {
   if (!to.meta.public && !Cookies.get("token") && to.path !== "/login") {
-    router.push("/login");
+    await router.push("/login");
     return false;
   }
 });

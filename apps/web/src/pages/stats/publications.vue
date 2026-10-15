@@ -24,7 +24,7 @@ const { totalPerPublication, issues } = storeToRefs(collection());
 const { fetchPublicationNames } = coa();
 const { publicationNames } = storeToRefs(coa());
 
-loadCollection();
+void loadCollection();
 const { t: $t } = useI18n();
 
 const smallCountPublications = $computed(() =>
@@ -38,31 +38,31 @@ const smallCountPublications = $computed(() =>
 );
 const totalPerPublicationGroupSmallCounts: {
   [publicationcode: string]: number;
-} = $computed(
-  () =>
-    (smallCountPublications &&
-      totalPerPublication.value && {
-        ...Object.keys(totalPerPublication.value)
-          .filter(
-            (publicationcode) =>
-              !smallCountPublications.includes(publicationcode),
-          )
-          .reduce<Record<string, number>>((acc, publicationcode) => {
-            acc[publicationcode] = totalPerPublication.value![publicationcode];
-            return acc;
-          }, {}),
-        ...(!smallCountPublications.length
-          ? {}
-          : {
-              [""]: smallCountPublications.reduce(
-                (acc, publicationcode) =>
-                  acc + totalPerPublication.value![publicationcode],
-                0,
-              ),
-            }),
-      }) ||
-    {},
-);
+} = $computed(() => {
+  const totals = totalPerPublication.value;
+  if (!smallCountPublications || !totals) {
+    return {};
+  }
+
+  const grouped = Object.keys(totals)
+    .filter(
+      (publicationcode) => !smallCountPublications.includes(publicationcode),
+    )
+    .reduce<Record<string, number>>((acc, publicationcode) => {
+      acc[publicationcode] = totals[publicationcode];
+      return acc;
+    }, {});
+
+  if (smallCountPublications.length) {
+    grouped[""] = smallCountPublications.reduce(
+      (acc, publicationcode) => acc + totals[publicationcode],
+      0,
+    );
+  }
+
+  return grouped;
+});
+
 const labels = $computed(() => {
   if (!hasPublicationNames) return undefined;
 
@@ -71,7 +71,7 @@ const labels = $computed(() => {
     .reduce<string[]>((acc, [publicationcode]) => {
       acc.push(
         publicationNames.value[publicationcode] ||
-          `${$t("Autres")} (${smallCountPublications!.length} ${$t(
+          `${$t("Autres")} (${String(smallCountPublications!.length)} ${$t(
             "Publications",
           ).toLowerCase()})`,
       );
@@ -84,14 +84,12 @@ const values = $computed(() =>
     Math.sign(count1 - count2),
   ),
 );
-const colors = $computed(
-  () =>
-    totalPerPublicationGroupSmallCounts &&
-    Object.entries(totalPerPublicationGroupSmallCounts)
-      .sort(sortByCount)
-      .map(([publicationcode]) =>
-        publicationcode === "" ? "#000" : randomColor(),
-      ),
+const colors = $computed(() =>
+  Object.entries(totalPerPublicationGroupSmallCounts)
+    .sort(sortByCount)
+    .map(([publicationcode]) =>
+      publicationcode === "" ? "#000" : randomColor(),
+    ),
 );
 const randomColor = () =>
   `rgb(${[
@@ -130,7 +128,7 @@ watch(
 );
 
 watch(
-  () => labels && values && colors,
+  () => labels && colors,
   (newValue) => {
     if (!newValue) {
       return;
@@ -162,7 +160,7 @@ watch(
               const percentage = total
                 ? parseFloat(((currentValue / total) * 100).toFixed(1))
                 : 0;
-              return `${currentValue} (${percentage}%)`;
+              return `${String(currentValue)} (${String(percentage)}%)`;
             },
 
             title: (tooltipItems) =>

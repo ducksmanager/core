@@ -38,10 +38,10 @@ const { isPublic } = defineProps<{
   isPublic?: boolean;
 }>();
 
-const route = useRoute();
+const shortStatsRoute = useRoute();
 
 const username = $computed(
-  () => "username" in route.params && route.params.username,
+  () => "username" in shortStatsRoute.params && shortStatsRoute.params.username,
 );
 
 const { total, totalUniqueIssues, totalPerCountry, totalPerPublication } =
