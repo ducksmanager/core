@@ -26,7 +26,7 @@
     "@nuxtjs/i18n": "^10.6.0",
     "@nuxtjs/storybook": "^9.0.1",
     "@pinia/nuxt": "^1.0.2",
-    "@sentry/nuxt": "^10.76.2",
+    "@sentry/nuxt": "^11.6.0",
     "@unhead/vue": "^2.1.17",
     "@vueuse/core": "^15.0.0",
     "@vueuse/integrations": "^15.0.0",
