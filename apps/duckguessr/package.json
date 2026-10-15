@@ -24,7 +24,7 @@
   "dependencies": {
     "@bootstrap-vue-next/nuxt": "^1.0.0",
     "@nuxtjs/i18n": "^10.6.0",
-    "@nuxtjs/storybook": "^9.0.1",
+    "@nuxtjs/storybook": "^10.0.1",
     "@pinia/nuxt": "^1.0.2",
     "@sentry/nuxt": "^10.76.2",
     "@unhead/vue": "^2.1.17",
