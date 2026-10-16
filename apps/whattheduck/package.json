@@ -48,7 +48,7 @@
     "@ionic/vue-router": "^8.8.19",
     "@nanoandrew4/vue3-carousel-3d": "^1.0.2",
     "@sentry/capacitor": "^4.4.0",
-    "@sentry/node": "10.69.0",
+    "@sentry/node": "11.6.0",
     "@sentry/vue": "10.69.0",
     "@vueuse/components": "^15.0.0",
     "@vueuse/core": "^15.0.0",
