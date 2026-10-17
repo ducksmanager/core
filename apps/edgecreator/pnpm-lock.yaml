@@ -26,6 +26,9 @@ importers:
       '@vue-macros/reactivity-transform':
         specifier: ^3.1.4
         version: 3.1.4(vue@3.5.43(typescript@6.0.3))
+      '@vueuse/core':
+        specifier: ^15.0.0
+        version: 15.0.0(vue@3.5.43(typescript@6.0.3))
       axios:
         specifier: ^1.20.0
         version: 1.20.0
@@ -4038,8 +4041,7 @@ snapshots:
     dependencies:
       vue: 2.7.16
 
-  '@types/web-bluetooth@0.0.21':
-    optional: true
+  '@types/web-bluetooth@0.0.21': {}
 
   '@typescript-eslint/eslint-plugin@8.71.1(@typescript-eslint/parser@8.71.1(eslint@10.12.0)(typescript@6.0.3))(eslint@10.12.0)(typescript@6.0.3)':
     dependencies:
@@ -4351,7 +4353,6 @@ snapshots:
       '@vueuse/metadata': 15.0.0
       '@vueuse/shared': 15.0.0(vue@3.5.43(typescript@6.0.3))
       vue: 3.5.43(typescript@6.0.3)
-    optional: true
 
   '@vueuse/integrations@15.0.0(axios@1.20.0)(universal-cookie@7.2.2)(vue@3.5.43(typescript@6.0.3))':
     dependencies:
@@ -4363,13 +4364,11 @@ snapshots:
       universal-cookie: 7.2.2
     optional: true
 
-  '@vueuse/metadata@15.0.0':
-    optional: true
+  '@vueuse/metadata@15.0.0': {}
 
   '@vueuse/shared@15.0.0(vue@3.5.43(typescript@6.0.3))':
     dependencies:
       vue: 3.5.43(typescript@6.0.3)
-    optional: true
 
   acorn-jsx@5.3.2(acorn@8.19.0):
     dependencies:
