@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@sentry/vue": "^10.76.2",
     "@unhead/vue": "^1.11.20",
     "@uppy/core": "^5.2.0",
     "@uppy/vue": "^3.2.0",
