@@ -22,17 +22,17 @@
     "prod:transfer-files-post": "pnpm -F '~ci' prod:transfer-files packages/prisma-schemas/docker-compose.yml:@packages/prisma-schemas/docker-compose.yml"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "^7.10.0",
-    "@prisma/client": "^7.10.0",
+    "@prisma/adapter-mariadb": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "dotenv": "^17.4.2",
-    "prisma": "^7.10.0",
+    "prisma": "^7.10.1",
     "~group-by": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.6.5",
-    "@typescript-eslint/eslint-plugin": "^8.71.1",
+    "@typescript-eslint/eslint-plugin": "^8.71.2",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.10",
     "prettier-plugin-prisma": "^5.0.0",
