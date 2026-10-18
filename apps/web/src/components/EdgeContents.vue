@@ -6,7 +6,7 @@
     :class="{
       visible: !invisible && (imageLoaded || spriteLoaded),
       vertical: orientation === 'vertical',
-      [spriteClass]: true,
+      [spriteClass || '']: true,
     }"
     :style="
       imageLoaded
@@ -43,6 +43,7 @@ const {
   id,
   issuecode,
   spritePath,
+  spriteClass,
   invisible = false,
   highlighted = false,
   orientation = "vertical",
@@ -51,6 +52,7 @@ const {
   issuecode: string;
   src: string;
   spritePath: string | null;
+  spriteClass: string | null;
   invisible?: boolean;
   highlighted?: boolean;
   orientation?: "vertical" | "horizontal";
@@ -60,38 +62,14 @@ const emit = defineEmits<{
   (e: "open-book"): void;
   (e: "ignore-sprite"): void;
 }>();
-const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
+const { loadSpriteCss } = bookcase();
 
-const { addLoadedSprite } = bookcase();
-const { loadedSprites } = storeToRefs(bookcase());
-
-const spriteClass = $computed(() =>
-  id && spritePath ? `edges-${issuecode}` : "",
-);
 const onImageLoad = async (event: Event) => {
   if (spritePath && !ignoreSprite) {
-    if (loadedSprites.value[spritePath]) {
-      loadEdgeFromSprite();
-    } else {
-      try {
-        const css = (
-          await (await fetch(`${SPRITES_ROOT}${spritePath}.css`)).text()
-        ).replaceAll(
-          new RegExp("url\\('[^']+", "g"),
-          `url('${SPRITES_ROOT}${spritePath}.png`,
-        );
-        const style = document.createElement("style");
-        style.textContent = css;
-        document.head.append(style);
-
-        addLoadedSprite({
-          spritePath,
-          css,
-        });
-        loadEdgeFromSprite();
-      } catch (_e) {
-        ignoreSprite = true;
-      }
+    try {
+      loadEdgeFromSprite(await loadSpriteCss(spritePath));
+    } catch (_e) {
+      ignoreSprite = true;
     }
   } else {
     width = (event.target! as HTMLImageElement).naturalWidth;
@@ -100,12 +78,12 @@ const onImageLoad = async (event: Event) => {
     emit("loaded", [id]);
   }
 };
-const loadEdgeFromSprite = () => {
-  if (!loadedSprites.value[spritePath || ""].includes(`.${spriteClass} {`)) {
+const loadEdgeFromSprite = (spriteCss: string) => {
+  if (!spriteCss.includes(`.${spriteClass} {`)) {
     ignoreSprite = true;
     return;
   }
-  const retries = 0;
+  let retries = 0;
   const checkWidthInterval = setInterval(() => {
     if (edge?.clientWidth || 0 > 0) {
       spriteLoaded = true;
@@ -113,7 +91,7 @@ const loadEdgeFromSprite = () => {
       height = edge!.clientHeight;
       emit("loaded", [id]);
       clearInterval(checkWidthInterval);
-    } else if (retries > 100) {
+    } else if (++retries > 100) {
       ignoreSprite = true;
       clearInterval(checkWidthInterval);
     }

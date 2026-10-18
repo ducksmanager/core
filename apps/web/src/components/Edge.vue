@@ -7,6 +7,7 @@
     :src="src"
     :issuecode="issuecode"
     :sprite-path="spritePath"
+    :sprite-class="spritePath ? slug : null"
     :invisible="invisible"
     :highlighted="highlighted"
     :orientation="orientation"
@@ -27,6 +28,7 @@
       :src="src"
       :issuecode="issuecode"
       :sprite-path="spritePath"
+      :sprite-class="spritePath ? slug : null"
       :invisible="invisible"
       :highlighted="highlighted"
       :orientation="orientation"
@@ -43,6 +45,7 @@ const {
   creationDate = null,
   issuecode,
   spritePath = null,
+  slug = null,
   popularity = null,
   invisible = false,
   highlighted = false,
@@ -54,6 +57,7 @@ const {
   creationDate?: string;
   popularity?: number | null;
   spritePath?: string | null;
+  slug?: string | null;
   existing: boolean;
   invisible?: boolean;
   highlighted?: boolean;
@@ -61,7 +65,7 @@ const {
   orientation?: "horizontal" | "vertical";
 }>();
 
-defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
+const emit = defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
 
 defineSlots<{
   "edge-prefix"(): never;
@@ -89,4 +93,13 @@ let src = $computed(() => {
 });
 
 let ignoreSprite = $ref(false);
+
+// The bookcase reveals edges in order, so an edge that can't render must still report as loaded
+watch(
+  $$(hasValidPublicationcode),
+  (isValid) => {
+    if (!isValid) emit("loaded");
+  },
+  { immediate: true },
+);
 </script>

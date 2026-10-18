@@ -1,35 +1,43 @@
 <template>
-  <popper
-    ref="popper"
-    :placement="placement"
-    arrow
-    manual
-    :show="isOverPopup || isOverPopupText"
-    @open:popper="
-      onOpen();
-      $emit('@open:popper');
-    "
-  >
-    <span @mouseover="isOverPopupText = true" @mouseout.prevent="closePopupSoon"
-      ><slot
-    /></span>
-    <template #content>
-      <b-card
-        body-class="p-0"
-        @mouseenter="isOverPopup = true"
-        @mouseleave="isOverPopup = false"
-      >
-        <b-card-header v-if="$slots.header">
-          <slot name="header" />
-        </b-card-header>
-        <slot name="content" />
-      </b-card>
-    </template>
-  </popper>
+  <span>
+    <popper
+      v-bind="$attrs"
+      ref="popper"
+      :placement="placement"
+      arrow
+      manual
+      :show="isOverPopup || isOverPopupText"
+      @open:popper="
+        onOpen();
+        $emit('@open:popper');
+      "
+    >
+      <span
+        @mouseover="isOverPopupText = true"
+        @mouseout.prevent="closePopupSoon"
+        ><slot
+      /></span>
+      <template #content>
+        <b-card
+          body-class="p-0"
+          @mouseenter="isOverPopup = true"
+          @mouseleave="isOverPopup = false"
+        >
+          <b-card-header v-if="$slots.header">
+            <slot name="header" />
+          </b-card-header>
+          <slot name="content" />
+        </b-card>
+      </template>
+    </popper>
+  </span>
 </template>
 
 <script setup lang="ts">
 import Popper from "@bperel/vue3-popper-teleport";
+// Popper's CSS v-bind() makes Vue observe its parent node, so it gets its own wrapper <span>:
+// otherwise every sibling added to a shared parent (e.g. bookcase edges) triggers a document-wide query in every popper
+defineOptions({ inheritAttrs: false });
 const { placement = "top" } = defineProps<{
   placement?: string;
 }>();

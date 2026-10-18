@@ -9,7 +9,10 @@
       backgroundImage: getTextureBackgroundImage(bookcaseTextures.bookcase),
     }"
   >
-    <template v-for="edgeIndex of edgeIndexesToLoad" :key="`edge-${edgeIndex}`">
+    <template
+      v-for="(_, edgeIndex) in edgeCountToLoad"
+      :key="`edge-${edgeIndex}`"
+    >
       <Edge
         v-if="embedded"
         :id="`edge-${edgeIndex}${embedded}`"
@@ -29,28 +32,28 @@
         v-else
         :id="`edge-${edgeIndex}`"
         :invisible="
-            currentEdgeOpened === sortedBookcaseWithPopularity![edgeIndex] ||
-            edgeIndex > lastEdgeIndexContinuouslyLoaded
-          "
+          currentEdgeOpened === sortedBookcaseWithPopularity![edgeIndex] ||
+          edgeIndex > lastEdgeIndexContinuouslyLoaded
+        "
         :highlighted="
-            currentEdgeHighlighted ===
-            sortedBookcaseWithPopularity![edgeIndex].id
-          "
+          currentEdgeHighlighted === sortedBookcaseWithPopularity![edgeIndex].id
+        "
         :issuecode="sortedBookcaseWithPopularity![edgeIndex].issuecode!"
         :creation-date="
-            sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()
-          "
+          sortedBookcaseWithPopularity![edgeIndex].creationDate?.toString()
+        "
         :existing="!!sortedBookcaseWithPopularity![edgeIndex].edgeId"
+        :slug="sortedBookcaseWithPopularity![edgeIndex].slug"
         :sprite-path="
-            edgesUsingSprites?.[
-              sortedBookcaseWithPopularity![edgeIndex].edgeId
-            ] || null
-          "
+          edgesUsingSprites?.[
+            sortedBookcaseWithPopularity![edgeIndex].edgeId
+          ] || null
+        "
         :orientation="orientation"
         @loaded="onEdgeLoaded(edgeIndex)"
         @open-book="
-            $emit('open-book', sortedBookcaseWithPopularity![edgeIndex])
-          "
+          $emit('open-book', sortedBookcaseWithPopularity![edgeIndex])
+        "
         ><template #edge-prefix
           ><slot
             name="edge-prefix"
@@ -108,56 +111,45 @@ const sortedBookcaseWithPopularity = computed(() =>
 
 const MAX_BATCH_SIZE = 50;
 
-let loadedImages = ref<Set<number>>(new Set<number>());
-
-const lastEdgeIndexContinuouslyLoaded = computed(() => {
-  const allLoadedImages = Array.from(loadedImages.value).sort((a, b) =>
-    Math.sign(a - b),
-  );
-  let stop = false;
-  return Math.max(
-    ...allLoadedImages.filter((edgeIndex, i) => {
-      if (stop) {
-        return false;
-      }
-      let isContinuouslyLoadedEdge =
-        i === 0 || allLoadedImages.includes(edgeIndex - 1);
-      if (!isContinuouslyLoadedEdge) {
-        stop = true;
-      }
-      return isContinuouslyLoadedEdge;
-    }),
-  );
-});
+const loadedImages = new Set<number>();
+const lastEdgeIndexContinuouslyLoaded = ref(-1);
+const edgeCountToLoad = ref(0);
+let isFlushScheduled = false;
 
 defineEmits<{
   (e: "open-book", edgeToLoad: BookcaseEdgeWithPopularity): void;
 }>();
 
 const { getImagePath } = images();
-let edgeIndexesToLoad = ref<number[]>([]);
 
 const getTextureBackgroundImage = (textureName: string) =>
   `url('${getImagePath(`textures/${textureName}`)}.jpg')`;
 
-const onEdgeLoaded = (edgeIndex: number) => {
-  loadedImages.value.add(edgeIndex);
-  const nextEdgeIndexToLoad = sortedBookcase?.findIndex(
-    (_, idx) => !edgeIndexesToLoad.value.includes(idx),
+// Coalesce image loads into a single bookcase re-render per frame
+const flushLoadedEdges = () => {
+  isFlushScheduled = false;
+  let lastIndex = lastEdgeIndexContinuouslyLoaded.value;
+  while (loadedImages.has(lastIndex + 1)) lastIndex++;
+  lastEdgeIndexContinuouslyLoaded.value = lastIndex;
+  edgeCountToLoad.value = Math.min(
+    loadedImages.size + MAX_BATCH_SIZE,
+    sortedBookcase?.length || 0,
   );
-  if (nextEdgeIndexToLoad !== undefined && nextEdgeIndexToLoad > -1) {
-    edgeIndexesToLoad.value.push(nextEdgeIndexToLoad);
+};
+
+const onEdgeLoaded = (edgeIndex: number) => {
+  loadedImages.add(edgeIndex);
+  if (!isFlushScheduled) {
+    isFlushScheduled = true;
+    requestAnimationFrame(flushLoadedEdges);
   }
 };
 
 watch(
   () => sortedBookcase,
   (newValue) => {
-    if (newValue && !edgeIndexesToLoad.value.length) {
-      const firstBatchSize = Math.min(MAX_BATCH_SIZE, newValue.length || 0);
-      edgeIndexesToLoad.value = newValue
-        ?.slice(0, firstBatchSize)
-        .map((_, idx) => idx);
+    if (newValue && !edgeCountToLoad.value) {
+      edgeCountToLoad.value = Math.min(MAX_BATCH_SIZE, newValue.length);
     }
   },
   { immediate: true },

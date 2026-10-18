@@ -145,6 +145,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
             issue.issuecode,
             edge.ID AS edgeId,
             edge.DateAjout AS creationDate,
+            edge.slug,
             edgeSprite.Sprite_name AS spriteName,
             edgeSpriteUrl.Version AS spriteVersion,
             edgeSprite.Sprite_size AS spriteSize
@@ -176,7 +177,7 @@ const listenEvents = ({ _socket }: UserServices<true>) => ({
               size: spriteSize,
               version: spriteVersion,
             }))
-            .filter(({ size }) => !!size),
+            .filter(({ size, version }) => !!size && !!version),
         })),
       )
       .then((edges) => ({ edges }));

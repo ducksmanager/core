@@ -65,7 +65,6 @@ export default () => ({
           },
         );
       }
-      return;
     } catch (e) {
       console.error(e);
     }

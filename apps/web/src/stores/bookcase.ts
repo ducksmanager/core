@@ -7,6 +7,8 @@ import type { issue_condition } from "~prisma-schemas/schemas/dm";
 import { socketInjectionKey } from "../composables/useDmSocket";
 import { collection } from "./collection";
 
+const SPRITES_ROOT = "https://res.cloudinary.com/dl7hskxab/image/sprite/";
+
 export type SimpleBookcaseEdge = Pick<BookcaseEdge, "issuecode"> & {
   issueCondition?: issue_condition;
 };
@@ -24,8 +26,7 @@ export const bookcase = defineStore("bookcase", () => {
     userBookcase: userBookcaseEvents,
   } = inject(socketInjectionKey)!;
 
-  const loadedSprites = ref<{ [key: string]: string }>({}),
-    isPrivateBookcase = ref(false),
+  const isPrivateBookcase = ref(false),
     isUserNotExisting = ref(false),
     bookcaseUsername = ref<string>(),
     bookcaseContents =
@@ -59,32 +60,39 @@ export const bookcase = defineStore("bookcase", () => {
           popularity2 && popularity1 ? popularity2 - popularity1 : 0,
         ),
     ),
-    addLoadedSprite = ({
-      spritePath,
-      css,
-    }: {
-      spritePath: string;
-      css: string;
-    }) => {
-      loadedSprites.value = {
-        ...loadedSprites.value,
-        [spritePath]: css,
-      };
-    },
+    spriteCssRequests: Record<string, Promise<string>> = {},
+    loadSpriteCss = (spritePath: string) =>
+      (spriteCssRequests[spritePath] ??= fetch(
+        `${SPRITES_ROOT}${spritePath}.css`,
+      )
+        .then((response) => response.text())
+        .then((rawCss) => {
+          const css = rawCss.replaceAll(
+            new RegExp("url\\('[^']+", "g"),
+            `url('${SPRITES_ROOT}${spritePath}.png`,
+          );
+          const style = document.createElement("style");
+          style.textContent = css;
+          document.head.append(style);
+          return css;
+        })),
     loadBookcase = async () => {
       if (!bookcaseContents.value) {
         await userBookcaseEvents
           .getBookcase(bookcaseUsername.value!)
           .then((response) => {
             bookcaseContents.value = response.edges;
-            for (const issue of bookcaseContents.value) {
-              coa().issuecodeDetails[issue.issuecode] = {
-                issuecode: issue.issuecode,
-                publicationcode: issue.publicationcode,
-                issuenumber: issue.issuenumber,
-                title: issue.title,
-              };
-            }
+            coa().issuecodeDetails = {
+              ...toRaw(coa().issuecodeDetails),
+              ...response.edges
+                .map(({ issuecode, publicationcode, issuenumber, title }) => ({
+                  issuecode,
+                  publicationcode,
+                  issuenumber,
+                  title,
+                }))
+                .groupBy("issuecode"),
+            };
           })
           .catch((e) => {
             switch (e.error) {
@@ -132,7 +140,6 @@ export const bookcase = defineStore("bookcase", () => {
     };
 
   return {
-    loadedSprites,
     isPrivateBookcase,
     isUserNotExisting,
     bookcaseUsername,
@@ -143,7 +150,7 @@ export const bookcase = defineStore("bookcase", () => {
     isSharedBookcase,
     popularIssuesInCollectionWithoutEdge,
     bookcaseWithPopularities,
-    addLoadedSprite,
+    loadSpriteCss,
     loadBookcase,
     loadBookcaseOptions,
     updateBookcaseOptions,
