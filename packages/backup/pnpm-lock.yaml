@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       basic-ftp:
-        specifier: ^5.3.1
-        version: 5.3.1
+        specifier: ^6.2.3
+        version: 6.2.3
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -30,8 +30,8 @@ packages:
   '@types/node@26.6.5':
     resolution: {integrity: sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==}
 
-  basic-ftp@5.3.1:
-    resolution: {integrity: sha512-bopVNp6ugyA150DDuZfPFdt1KZ5a94ZDiwX4hMgZDzF+GttD80lEy8kj98kbyhLXnPvhtIo93mdnLIjpCAeeOw==}
+  basic-ftp@6.2.3:
+    resolution: {integrity: sha512-T7GYtQ2eKJUN5YORG7A8u2WfB9JMN0a4/wl3MI64qq2qTRfa3FXzoNq0DDojZDkDyStcL+TkfKsz4JHEZx5kGQ==}
     engines: {node: '>=10.0.0'}
 
   bun-types@1.4.3:
@@ -59,7 +59,7 @@ snapshots:
     dependencies:
       undici-types: 8.9.0
 
-  basic-ftp@5.3.1: {}
+  basic-ftp@6.2.3: {}
 
   bun-types@1.4.3:
     dependencies:
