@@ -3,6 +3,7 @@ import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "~group-by";
 
+import * as Sentry from "@sentry/vue";
 import { createHead } from "@unhead/vue";
 import { createBootstrap } from "bootstrap-vue-next";
 import { createPinia } from "pinia";
@@ -25,7 +26,7 @@ const router = createRouter({
 
 const store = createPinia();
 
-createApp(App)
+const app = createApp(App)
   .use(SimpleTypeahead)
   .use(createBootstrap())
   .use(i18n)
@@ -36,5 +37,15 @@ createApp(App)
   .provide(
     "edgecreatorSocket",
     new SocketClient(import.meta.env.VITE_EDGECREATOR_SOCKET_URL),
-  )
-  .mount("#app");
+  );
+
+if (import.meta.env.VITE_SENTRY_DSN) {
+  Sentry.init({
+    app,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    integrations: [Sentry.browserTracingIntegration({ router })],
+    tracesSampleRate: 1.0,
+  });
+}
+
+app.mount("#app");

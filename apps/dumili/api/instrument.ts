@@ -5,7 +5,7 @@ dotenv.config({
 
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { SocketIoInstrumentation } from "@opentelemetry/instrumentation-socket.io";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace";
 import * as Sentry from "@sentry/node";
 
 if (!process.env.SENTRY_DSN) {
@@ -22,7 +22,7 @@ const client = Sentry.init({
 if (client) {
   Sentry.initOpenTelemetry(client, {
     spanProcessors: process.env.OTEL_EXPORTER_OTLP_ENDPOINT
-      ? [new BatchSpanProcessor(new OTLPTraceExporter())]
+      ? [new BatchSpanProcessor({ exporter: new OTLPTraceExporter() })]
       : [],
   });
 }

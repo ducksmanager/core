@@ -46,8 +46,6 @@ const app = createApp(App)
     new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL),
   );
 
-app.mount("#app");
-
 if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     integrations: [
@@ -65,3 +63,5 @@ if (import.meta.env.VITE_SENTRY_DSN) {
     tracesSampleRate: 1.0,
   });
 }
+
+app.mount("#app");

@@ -1,3 +1,7 @@
 edgecreator.ducksmanager.net {
     reverse_proxy edgecreator-app-websocket
 }
+
+sentry.edgecreator.ducksmanager.net {
+    reverse_proxy edgecreator-sentry-relay:80
+}

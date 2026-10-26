@@ -41,19 +41,22 @@ const app = createApp(App)
     new SocketClient(import.meta.env.VITE_DM_STORY_SEARCH_SOCKET_URL),
   );
 
-app.mount("#app");
-
 if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     app,
-    dsn: process.env.VITE_SENTRY_DSN,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
     integrations: [
       Sentry.browserTracingIntegration({ router }),
       Sentry.replayIntegration(),
     ],
     tracesSampleRate: 1.0,
-    tracePropagationTargets: ["localhost", process.env.VITE_DUMILI_SOCKET_URL!],
+    tracePropagationTargets: [
+      "localhost",
+      import.meta.env.VITE_DUMILI_SOCKET_URL,
+    ],
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
   });
 }
+
+app.mount("#app");
