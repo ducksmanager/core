@@ -8,7 +8,7 @@ import type { Decision } from "~dm-services/presentation-text";
 const { presentationText: presentationTextEvents } =
   inject(socketInjectionKey)!;
 
-(async () => {
+void (async () => {
   let currentRoute = useRoute<"/admin/presentation-text/[decision]">();
   const { sentence, userId } = currentRoute.query as unknown as {
     sentence: string;

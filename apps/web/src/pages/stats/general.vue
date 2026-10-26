@@ -239,14 +239,14 @@ watch(
   async (newValue) => {
     if (newValue) {
       hasPublicationNames = false;
-      await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode!));
+      await fetchIssuecodeDetails(newValue.map(({ issuecode }) => issuecode));
       await fetchPublicationNames(
         newValue
+          .filter(({ issuecode }) => issuecode in issuecodeDetails.value)
           .map(
             ({ issuecode }) =>
-              issuecodeDetails.value[issuecode!]?.publicationcode,
-          )
-          .filter((publicationcode) => !!publicationcode),
+              issuecodeDetails.value[issuecode].publicationcode,
+          ),
       );
       hasPublicationNames = true;
     }
@@ -254,7 +254,7 @@ watch(
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   await loadCollection();
   await fetchCount();
   const rarityData = await userGlobalStatsEvents.getUsersCollectionRarity();
@@ -262,19 +262,15 @@ watch(
     return;
   }
   rarityRank = rarityData.me.rank;
-  userIdAboveMe = rarityData.aboveMe?.userId ?? null;
+  userIdAboveMe = rarityData.aboveMe.userId;
 
   const rarestIssuecode = rarityData.me.rarestIssue.issuecode;
   await fetchIssuecodeDetails([rarestIssuecode]);
   await fetchPublicationNames([
-    issuecodeDetails.value[rarestIssuecode].publicationcode!,
+    issuecodeDetails.value[rarestIssuecode].publicationcode,
   ]);
-  rarestIssue = {
-    ...issuecodeDetails.value[rarestIssuecode],
-    publicationcode: issuecodeDetails.value[rarestIssuecode].publicationcode!,
-    issuenumber: issuecodeDetails.value[rarestIssuecode].issuenumber!,
-  };
-  if (rarityData.aboveMe?.userId) {
+  rarestIssue = issuecodeDetails.value[rarestIssuecode];
+  if (rarityData.aboveMe.userId) {
     await fetchStats([rarityData.aboveMe.userId]);
   }
 })();

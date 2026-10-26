@@ -31,7 +31,7 @@ const authorsPerStory = computed(() => {
   const result: { [storycode: string]: string[] } = {};
   for (const [author, storyCodes] of Object.entries(stories)) {
     for (const storyCode of storyCodes) {
-      if (!result[storyCode]) {
+      if (!(storyCode in result)) {
         result[storyCode] = [];
       }
       result[storyCode].push(author);

@@ -14,37 +14,23 @@
   </ul>
 </template>
 
-<script lang="ts">
-export type NavigationItem = {
-  title: string;
-  icon?: FunctionalComponent<SVGAttributes>;
-} & (
-  | {
-      route: RouteLocationResolved;
-    }
-  | {
-      onClick: () => void;
-    }
-  | object
-);
-</script>
+<script lang="ts"></script>
 
 <script setup lang="ts">
-import { RouteLocationResolved } from "vue-router";
+import type { NavigationItem as NavigationItemType } from "./NavigationItem";
 import NavigationItem from "./NavigationItem.vue";
 import { FunctionalComponent, SVGAttributes } from "vue";
 
 type Menu = {
   title: string;
   icon: FunctionalComponent<SVGAttributes>;
-  items: readonly NavigationItem[];
+  items: readonly NavigationItemType[];
 };
 
 defineProps<{
   menu: Menu;
 }>();
 </script>
-
 
 <style lang="scss" scoped>
 .b-custom {

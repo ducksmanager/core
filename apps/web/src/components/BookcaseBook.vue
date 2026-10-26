@@ -3,7 +3,7 @@
     <img
       :src="edgeUrl"
       @load="
-        ({ target }: { target: EventTarget|null }) => {
+        ({ target }: { target: EventTarget | null }) => {
           edgeWidth = (target as HTMLImageElement).naturalWidth;
           coverHeight = (target as HTMLImageElement).naturalHeight;
         }
@@ -13,7 +13,7 @@
       v-if="entries?.length"
       :src="cloudinaryBaseUrl + entries[0].url"
       @load="
-        ({ target }: { target: EventTarget|null }) => {
+        ({ target }: { target: EventTarget | null }) => {
           coverRatio =
             (target as HTMLImageElement).naturalHeight /
             (target as HTMLImageElement).naturalWidth;
@@ -32,7 +32,7 @@
       :cover-ratio="coverRatio"
       :edge-width="edgeWidth"
       :pages="
-        pagesWithUrl.map((page) => ({
+        (pagesWithUrl ?? []).map((page) => ({
           ...page,
           image: { url: cloudinaryBaseUrl + page.url },
         }))
@@ -140,17 +140,18 @@ const edgeUrl = computed(
       "/gen/",
     )}.${issue.value.issuenumber.replaceAll(" ", "")}.png`,
 );
-const currentIssueEntryDetails = computed(
-  () => issueDetails.value?.[issuecode],
+// Undefined until fetchIssueUrls has loaded the details
+const currentIssueEntryDetails = computed(() =>
+  issuecode in issueDetails.value ? issueDetails.value[issuecode] : undefined,
 );
-const issue = computed(() => issuecodeDetails.value?.[issuecode]);
+const issue = computed(() => issuecodeDetails.value[issuecode]);
 const entries = computed(() => currentIssueEntryDetails.value?.entries);
 const pagesWithUrl = computed(() => entries.value?.filter(({ url }) => !!url));
 const releaseDate = computed(() => {
-  if (!issueDetails.value[issuecode]?.releaseDate) return null;
+  if (!currentIssueEntryDetails.value?.releaseDate) return null;
 
   const parsedDate =
-    currentIssueEntryDetails.value.releaseDate?.match(RELEASE_DATE_REGEX);
+    currentIssueEntryDetails.value.releaseDate.match(RELEASE_DATE_REGEX);
   return parsedDate?.[0]?.split("-").reverse().join("/");
 });
 const inducksLink = computed(() => {
@@ -180,14 +181,15 @@ const bookClosed = () => {
 };
 
 watch(currentPage, (newValue) => {
-  currentTabIndex.value = entries.value?.findIndex(
-    (entry) => entry.storycode === pagesWithUrl.value[newValue]?.storycode,
-  );
+  currentTabIndex.value =
+    entries.value?.findIndex(
+      (entry) => entry.storycode === pagesWithUrl.value?.[newValue]?.storycode,
+    ) ?? 0;
 });
 
 watch(currentTabIndex, (newValue) => {
-  currentPage.value = pagesWithUrl.value.findIndex(
-    (page) => page.storycode === entries.value[newValue]?.storycode,
+  currentPage.value = (pagesWithUrl.value ?? []).findIndex(
+    (page) => page.storycode === entries.value?.[newValue]?.storycode,
   );
 });
 

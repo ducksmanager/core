@@ -59,8 +59,7 @@ const {
 }>();
 const emit = defineEmits<{
   (e: "loaded", ids: string[]): void;
-  (e: "open-book"): void;
-  (e: "ignore-sprite"): void;
+  (e: "open-book" | "ignore-sprite"): void;
 }>();
 const { loadSpriteCss } = bookcase();
 
@@ -79,16 +78,16 @@ const onImageLoad = async (event: Event) => {
   }
 };
 const loadEdgeFromSprite = (spriteCss: string) => {
-  if (!spriteCss.includes(`.${spriteClass} {`)) {
+  if (!spriteClass || !spriteCss.includes(`.${spriteClass} {`)) {
     ignoreSprite = true;
     return;
   }
   let retries = 0;
   const checkWidthInterval = setInterval(() => {
-    if (edge?.clientWidth || 0 > 0) {
+    if (edge?.clientWidth) {
       spriteLoaded = true;
-      width = edge!.clientWidth;
-      height = edge!.clientHeight;
+      width = edge.clientWidth;
+      height = edge.clientHeight;
       emit("loaded", [id]);
       clearInterval(checkWidthInterval);
     } else if (++retries > 100) {
@@ -114,7 +113,9 @@ let height = $ref<number>();
 
 watch($$(ignoreSprite), (value) => {
   if (value) {
-    console.error(`Could not load sprite for edge ${issuecode}: ${spritePath}`);
+    console.error(
+      `Could not load sprite for edge ${issuecode}: ${spritePath || "null"}`,
+    );
     emit("ignore-sprite");
   }
 });

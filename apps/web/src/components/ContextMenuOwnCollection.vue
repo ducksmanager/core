@@ -175,8 +175,8 @@ const selectedIssues = $computed(() =>
 let isSingleIssueSelected = $computed(() => selectedIssues.length === 1);
 const hasNoCopies = $computed(
   () =>
-    (initialCopies && initialCopies.issuecode === null) ||
-    (initialIssues && !initialIssues.issuecodes.length),
+    initialCopies &&
+    (!initialCopies.issuecode || !initialIssues?.issuecodes.length),
 );
 const hasMaxCopies = $computed(
   () => initialCopies && initialCopies.copies.length >= 3,

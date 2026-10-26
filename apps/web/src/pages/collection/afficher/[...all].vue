@@ -3,12 +3,14 @@ alias:
   - /collection/afficher
 </route>
 <template>
-  <Manage :publicationcode="publicationcode" />
+  <Manage :publicationcode="collectionAfficherPublicationcode" />
 </template>
 
 <script lang="ts" setup>
-const route = useRoute<"/collection/afficher/[...all]">();
-const publicationcode = computed(() =>
-  route.params.all === "_" ? undefined : route.params.all,
+const collectionAfficherRoute = useRoute<"/collection/afficher/[...all]">();
+const collectionAfficherPublicationcode = computed(() =>
+  collectionAfficherRoute.params.all === "_"
+    ? undefined
+    : collectionAfficherRoute.params.all,
 );
 </script>

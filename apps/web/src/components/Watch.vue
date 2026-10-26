@@ -31,8 +31,8 @@
 </template>
 <script setup lang="ts">
 const {
-  isWatched = undefined,
-  isPublicationWatched = undefined,
+  isWatched,
+  isPublicationWatched,
   isIssue = undefined,
   constantWidth = false,
 } = defineProps<{

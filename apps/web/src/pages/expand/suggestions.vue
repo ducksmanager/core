@@ -107,8 +107,8 @@ watch(
   { immediate: true },
 );
 
-loadCollection();
-loadRatings();
+void loadCollection();
+void loadRatings();
 </script>
 
 <style scoped lang="scss">

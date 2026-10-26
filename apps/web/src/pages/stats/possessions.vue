@@ -60,19 +60,15 @@ const { t: $t } = useI18n(),
     number: $t("Afficher en valeurs réelles"),
     percentage: $t("Afficher en pourcentages"),
   },
-  labels = $computed(
-    () =>
-      hasCoaData &&
-      totalPerPublicationUniqueIssuecodesSorted.value?.map(
-        ([publicationcode]) => publicationNames.value[publicationcode],
-      ),
+  labels = $computed(() =>
+    hasCoaData
+      ? totalPerPublicationUniqueIssuecodesSorted.value.map(
+          ([publicationcode]) => publicationNames.value[publicationcode],
+        )
+      : undefined,
   ),
   values = $computed(() => {
-    if (!(
-      totalPerPublicationUniqueIssuecodesSorted.value &&
-      coaIssueCountsByPublicationcode.value &&
-      hasCoaData
-    )) {
+    if (!hasCoaData) {
       return null;
     }
     let possessedIssues = totalPerPublicationUniqueIssuecodesSorted.value.map(
@@ -98,7 +94,7 @@ const { t: $t } = useI18n(),
 watch(
   totalPerPublicationUniqueIssuecodesSorted,
   async (newValue) => {
-    if (!newValue?.length) {
+    if (!newValue.length) {
       return;
     }
     await fetchPublicationNames(
@@ -111,18 +107,16 @@ watch(
 
 watch(
   $$(labels),
-  async (newValue) => {
-    if (!newValue) {
-      return;
-    }
-    height = `${100 + 30 * newValue.length}px`;
+  (newValue) => {
+    if (!newValue) return;
+    height = `${String(100 + 30 * newValue.length)}px`;
   },
   { immediate: true },
 );
 
 watch(
   $$(values),
-  async (newValue) => {
+  (newValue) => {
     if (newValue) {
       chartData = {
         datasets: [
@@ -152,7 +146,7 @@ watch(
               stepSize: 1,
               color: "white",
               callback: (value) =>
-                unitTypeCurrent === "percentage" ? `${value}%` : value,
+                unitTypeCurrent === "percentage" ? `${String(value)}%` : value,
             },
           },
           y: {
@@ -183,7 +177,7 @@ watch(
             callbacks: {
               title: ([tooltipItem]) => tooltipItem.label,
               label: (tooltipItem) =>
-                `${tooltipItem.dataset.label}: ${tooltipItem.raw}${
+                `${tooltipItem.dataset.label!}: ${String(tooltipItem.raw)}${
                   unitTypeCurrent === "percentage" ? "%" : ""
                 }`,
             },
@@ -195,7 +189,7 @@ watch(
   { immediate: true },
 );
 
-loadCollection();
+void loadCollection();
 </script>
 
 <style scoped lang="scss">
