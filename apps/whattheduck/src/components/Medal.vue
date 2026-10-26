@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import type { UserContributionTypeEn } from '~dm-types/UserContributionTypeEn';
 import MedalImage from '~web/src/components/MedalImage.vue';
 
 import { images as wtdImages } from '~/stores/images';
@@ -32,7 +33,7 @@ const {
   xSmall?: boolean;
   nextLevel?: boolean;
   userLevelPoints: number;
-  contribution: string;
+  contribution: UserContributionTypeEn;
 }>();
 
 const { currentLevel, pointsDiffNextLevel, levelProgressPercentage, radius, circumference } = useMedal(
