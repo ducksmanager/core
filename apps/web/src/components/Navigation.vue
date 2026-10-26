@@ -25,7 +25,7 @@
         is-nav
         class="flex-column align-items-stretch"
       >
-        <NavigationMenu v-if="collectionMenu" :menu="collectionMenu" />
+        <NavigationMenu :menu="collectionMenu" />
         <NavigationMenu
           v-if="publicCollectionMenu"
           :menu="publicCollectionMenu"
@@ -68,66 +68,65 @@ const publicCollectionUsername = $computed(() =>
   "username" in route.params ? route.params.username : undefined,
 );
 
-const collectionMenu = computed(() =>
-  !username
-    ? undefined
-    : ({
-        title: $t("Collection"),
-        icon: IBiHouseFill,
-        items: username
-          ? [
-              {
-                title: $t("Ma bibliothèque"),
-                route: router.resolve("/bookcase/show"),
-                icon: IBiBookHalf,
-              },
-              {
-                title: $t("Gérer ma collection"),
-                route: router.resolve({
-                  name: "/collection/show/[...all]",
-                  params: {
-                    all: "_",
-                  },
-                }),
-                icon: IBiList,
-              },
-              {
-                title: $t("Statistiques de ma collection"),
-                route: router.resolve("/stats"),
-                icon: IBiGraphUp,
-              },
-              {
-                title: $t("Agrandir ma collection"),
-                route: router.resolve("/expand"),
-                icon: IBiCapslockFill,
-              },
-              {
-                title: $t("Collection Inducks"),
-                route: router.resolve("/inducks-import"),
-                icon: ICoaFoot,
-              },
-              {
-                title: $t("Imprimer ma collection"),
-                route: router.resolve("/print"),
-                icon: IBiPrinterFill,
-              },
-              {
-                title: $t("Déconnexion"),
-                onClick: logout,
-                icon: IBiXSquareFill,
-              },
-            ]
-          : [
-              {
-                title: $t("Inscription"),
-                route: router.resolve("/signup"),
-              },
-              {
-                title: $t("Connexion"),
-                route: router.resolve("/login"),
-              },
-            ],
-      } as const),
+const collectionMenu = computed(
+  () =>
+    ({
+      title: $t("Collection"),
+      icon: IBiHouseFill,
+      items: username
+        ? [
+            {
+              title: $t("Ma bibliothèque"),
+              route: router.resolve("/bookcase/show"),
+              icon: IBiBookHalf,
+            },
+            {
+              title: $t("Gérer ma collection"),
+              route: router.resolve({
+                name: "/collection/show/[...all]",
+                params: {
+                  all: "_",
+                },
+              }),
+              icon: IBiList,
+            },
+            {
+              title: $t("Statistiques de ma collection"),
+              route: router.resolve("/stats"),
+              icon: IBiGraphUp,
+            },
+            {
+              title: $t("Agrandir ma collection"),
+              route: router.resolve("/expand"),
+              icon: IBiCapslockFill,
+            },
+            {
+              title: $t("Collection Inducks"),
+              route: router.resolve("/inducks-import"),
+              icon: ICoaFoot,
+            },
+            {
+              title: $t("Imprimer ma collection"),
+              route: router.resolve("/print"),
+              icon: IBiPrinterFill,
+            },
+            {
+              title: $t("Déconnexion"),
+              onClick: logout,
+              icon: IBiXSquareFill,
+            },
+          ]
+        : [
+            {
+              title: $t("Inscription"),
+              route: router.resolve("/signup"),
+            },
+            {
+              title: $t("Connexion"),
+              route: router.resolve("/login"),
+            },
+          ],
+    }) as const,
 );
 
 const publicCollectionMenu = computed(() =>
@@ -197,4 +196,3 @@ nav {
   }
 }
 </style>
-

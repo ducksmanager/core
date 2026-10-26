@@ -38,13 +38,13 @@ const countryCodes = $computed(
       ...new Set(issues.value.map((i) => i.publicationcode.split("/")[0])),
     ],
 );
+const getCountryName = (countrycode: string): string =>
+  countryNames.value![countrycode] ?? countrycode;
 const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
     [...countryCodes].sort((countryCodeA, countryCodeB) =>
-      countryNames.value![countryCodeA].localeCompare(
-        countryNames.value![countryCodeB],
-      ),
+      getCountryName(countryCodeA).localeCompare(getCountryName(countryCodeB)),
     ),
 );
 const publicationCodes = $computed(

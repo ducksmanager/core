@@ -14,25 +14,23 @@
   </ul>
 </template>
 
-<script lang="ts">
-
-</script>
+<script lang="ts"></script>
 
 <script setup lang="ts">
-import { NavigationItem } from "./NavigationItem";
+import type { NavigationItem as NavigationItemType } from "./NavigationItem";
+import NavigationItem from "./NavigationItem.vue";
 import { FunctionalComponent, SVGAttributes } from "vue";
 
 type Menu = {
   title: string;
   icon: FunctionalComponent<SVGAttributes>;
-  items: readonly NavigationItem[];
+  items: readonly NavigationItemType[];
 };
 
 defineProps<{
   menu: Menu;
 }>();
 </script>
-
 
 <style lang="scss" scoped>
 .b-custom {

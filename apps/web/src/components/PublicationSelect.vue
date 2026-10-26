@@ -81,10 +81,10 @@ watch(
   $$(currentCountryCode),
   async (newValue, oldValue) => {
     if (newValue) {
-      await fetchPublicationNamesFromCountry(newValue);
       if (oldValue) {
         currentPublicationcode = undefined;
       }
+      await fetchPublicationNamesFromCountry(newValue);
     }
   },
   {

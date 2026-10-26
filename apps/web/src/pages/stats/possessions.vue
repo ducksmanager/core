@@ -94,6 +94,9 @@ const { t: $t } = useI18n(),
 watch(
   totalPerPublicationUniqueIssuecodesSorted,
   async (newValue) => {
+    if (!newValue.length) {
+      return;
+    }
     await fetchPublicationNames(
       newValue.map(([publicationcode]) => publicationcode),
     );

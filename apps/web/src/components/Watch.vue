@@ -33,7 +33,7 @@
 const {
   isWatched,
   isPublicationWatched,
-  isIssue,
+  isIssue = undefined,
   constantWidth = false,
 } = defineProps<{
   isWatched?: boolean;
