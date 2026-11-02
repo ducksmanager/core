@@ -64,8 +64,6 @@ export default defineConfig(
       camelcase: "off",
       "no-console": "off",
       "node/no-callback-literal": "off",
-      "import/default": "off",
-      "import/named": "off",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-inferrable-types": "error",
       "@typescript-eslint/no-unnecessary-type-assertion": "error",
