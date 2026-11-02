@@ -17,7 +17,7 @@
 import { Capacitor } from '@capacitor/core';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import type { Storage as IonicStorage } from '@ionic/storage';
-import { buildStorage } from 'socket-call-client';
+import type { SocketCacheStorage } from 'socket-call-client';
 
 import OfflineBanner from './components/OfflineBanner.vue';
 import { app } from './stores/app';
@@ -49,26 +49,14 @@ router.beforeEach((_, from) => {
   previousRoute.value = from.path;
 });
 
-const cacheStorage = buildStorage({
-  set: (key, data, currentRequest) => {
-    const item = {
-      value: data,
-      ttl: currentRequest?.timeout || 0,
-      timestamp: Date.now(),
-    };
-    storage.set(key, JSON.stringify(item));
-  },
-  find: async (key) => {
+const cacheStorage: SocketCacheStorage = {
+  getItem: async (key) => {
     const item = await storage.get(key);
-    if (!item) {
-      return undefined;
-    }
-
-    return JSON.parse(item).value;
+    return item ? JSON.parse(item) : null;
   },
-  remove: (key) => storage.remove(key),
-  clear: () => storage.clear(),
-});
+  setItem: (key, entry) => storage.set(key, JSON.stringify(entry)),
+  removeItem: (key) => storage.remove(key),
+};
 
 // `onConnectError` runs from a socket callback with no component context, where
 // creating the collection store would fail to `inject` its socket. The store only

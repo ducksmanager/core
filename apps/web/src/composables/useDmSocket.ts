@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { AxiosStorage, SocketClient } from "socket-call-client";
+import type { SocketCacheStorage, SocketClient } from "socket-call-client";
 
 import { type ClientEvents as AppEvents } from "~dm-services/app";
 import { type ClientEvents as AuthEvents } from "~dm-services/auth";
@@ -23,8 +23,14 @@ import { type ClientEvents as PublicCollectionEvents } from "~dm-services/public
 import { type ClientEvents as StatsEvents } from "~dm-services/stats";
 import { type ClientEvents as StorySearchEvents } from "~dm-services/story-search";
 
+export const webCacheStorage = (storage: Storage): SocketCacheStorage => ({
+  getItem: (key) => JSON.parse(storage.getItem(key) ?? "null"),
+  setItem: (key, entry) => storage.setItem(key, JSON.stringify(entry)),
+  removeItem: (key) => storage.removeItem(key),
+});
+
 const defaultExport = (options: {
-  cacheStorage?: AxiosStorage;
+  cacheStorage?: SocketCacheStorage;
   disableCollectionCache?: boolean;
   onConnectError: (
     e: Error,

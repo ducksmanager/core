@@ -31,13 +31,12 @@ import Cookies from "js-cookie";
 
 import useDmSocket, {
   socketInjectionKey as dmSocketInjectionKey,
+  webCacheStorage,
 } from "~web/src/composables/useDmSocket";
 
 import useDumiliSocket, {
   dumiliSocketInjectionKey,
 } from "./composables/useDumiliSocket";
-
-import { buildWebStorage } from "socket-call-client";
 
 const { t: $t } = useI18n();
 
@@ -76,7 +75,7 @@ getCurrentInstance()!.appContext.app.provide(
 getCurrentInstance()!.appContext.app.provide(
   dmSocketInjectionKey,
   useDmSocket({
-    cacheStorage: buildWebStorage(sessionStorage),
+    cacheStorage: webCacheStorage(sessionStorage),
     session,
     onConnectError,
   }),

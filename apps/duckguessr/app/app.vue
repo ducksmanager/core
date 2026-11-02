@@ -3,11 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import { buildWebStorage, SocketClient } from "socket-call-client";
+import { SocketClient } from "socket-call-client";
 import { stores as webStores, composables } from "~web";
 import { playerStore } from "~/stores/player";
 const { useDmSocket } = composables;
-import { socketInjectionKey as dmSocketInjectionKey } from "~web/src/composables/useDmSocket";
+import {
+  socketInjectionKey as dmSocketInjectionKey,
+  webCacheStorage,
+} from "~web/src/composables/useDmSocket";
 import { duckguessrSocketInjectionKey } from "~/composables/useDuckguessrSocket";
 import Cookies from "js-cookie";
 
@@ -60,7 +63,7 @@ getCurrentInstance()!.appContext.app.provide(
 
 const dmSocket = useDmSocket({
   cacheStorage: import.meta.client
-    ? buildWebStorage(sessionStorage)
+    ? webCacheStorage(sessionStorage)
     : undefined,
   session,
   onConnectError,

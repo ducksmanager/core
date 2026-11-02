@@ -7,10 +7,10 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage } from "socket-call-client";
 import { stores as webStores } from "~web";
 import useDmSocket, {
   socketInjectionKey as dmSocketInjectionKey,
+  webCacheStorage,
 } from "~web/src/composables/useDmSocket";
 
 import useEdgecreatorSocket, {
@@ -49,7 +49,7 @@ getCurrentInstance()!.appContext.app.provide(
 );
 
 const dmSocket = useDmSocket({
-  cacheStorage: buildWebStorage(sessionStorage),
+  cacheStorage: webCacheStorage(sessionStorage),
   session,
   onConnectError,
 });

@@ -11,14 +11,13 @@ import i18n from "../src/i18n";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "../src/style.scss";
-import { SocketClient, buildWebStorage } from "./mocks/socket";
+import { SocketClient, noopCacheStorage } from "./mocks/socket";
 import useDumiliSocket, {
   dumiliSocketInjectionKey,
 } from "../src/composables/useDumiliSocket";
 import useDmSocket, {
   socketInjectionKey as dmSocketInjectionKey,
 } from "~web/src/composables/useDmSocket";
-import type { AxiosStorage } from "socket-call-client";
 import { defineStore } from "pinia";
 import { images } from "~web/src/stores/images";
 
@@ -244,9 +243,7 @@ export default definePreview({
         });
 
         const dmSocketInstance = useDmSocket({
-          cacheStorage: buildWebStorage(
-            sessionStorage,
-          ) as unknown as AxiosStorage,
+          cacheStorage: noopCacheStorage,
           session: mockSession,
           onConnectError,
         });
