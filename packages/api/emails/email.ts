@@ -50,6 +50,7 @@ export abstract class Email {
         name: this.getToName(),
         address: this.getTo().replace(/ /g, "__"),
       },
+      replyTo: this.getReplyTo(),
       html: await this.getHtmlBody(),
       text: this.getTextBody(),
       subject: this.getSubject(),
@@ -97,4 +98,5 @@ export abstract class Email {
   abstract getToName(): string;
   abstract getSubject(): string;
   getTextBody = (): string => "";
+  getReplyTo = (): string | undefined => undefined;
 }
