@@ -400,6 +400,7 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
+    "webCacheStorage": true,
     "whenever": true
   }
 }

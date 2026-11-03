@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+import type { SocketCacheStorage } from "socket-call-client";
+
 export class SocketClient {
   public namespaces: Map<string, MockSocketNamespace> = new Map();
 
@@ -203,9 +205,8 @@ class MockSocketNamespace {
   indexationUpdated?: (indexation: unknown) => void;
 }
 
-export const buildWebStorage = (_storage: Storage) => ({
-  get: async (_key: string) => null,
-  set: async (_key: string, _value: unknown) => {},
-  remove: async (_key: string) => {},
-  clear: async () => {},
-});
+export const noopCacheStorage: SocketCacheStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
