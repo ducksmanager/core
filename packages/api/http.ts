@@ -38,6 +38,9 @@ export default () =>
       case "/status/pastecsearch/1":
         data = await getPastecSearchStatus(1);
         break;
+      case "/status/pastecsearch/2":
+        data = await getPastecSearchStatus(2);
+        break;
 
       case "/status/pastec":
         data = await getPastecStatus();

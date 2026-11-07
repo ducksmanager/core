@@ -182,11 +182,38 @@
       ]
     },
     {
+      "type": "stat",
+      "title": "Search response time — server 2 (OpenCV 5.1)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 4, "x": 8, "y": 39 },
+      "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 3 } ] } } },
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "probe_duration_seconds{instance=\"https://api.ducksmanager.net/status/pastecsearch/2\"}", "instant": true }
+      ]
+    },
+    {
       "type": "timeseries",
       "title": "Search response time over time",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 16, "x": 8, "y": 39 },
-      "fieldConfig": { "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10 } } },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 39 },
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 10 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "https://api.ducksmanager.net/status/pastecsearch/0" },
+            "properties": [ { "id": "displayName", "value": "server 0" }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } } ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "https://api.ducksmanager.net/status/pastecsearch/1" },
+            "properties": [ { "id": "displayName", "value": "server 1 (kp1000-flann200)" }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "purple" } } ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "https://api.ducksmanager.net/status/pastecsearch/2" },
+            "properties": [ { "id": "displayName", "value": "server 2" }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } } ]
+          }
+        ]
+      },
       "targets": [
         { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "probe_duration_seconds{job=\"pastec-search-latency\"}", "legendFormat": "{{instance}}" }
       ]

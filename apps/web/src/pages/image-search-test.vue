@@ -204,7 +204,7 @@ const models = ref<
     results?: Results;
   }[]
 >([
-  ...([0, 1] as const).map(
+  ...([0, 1, 2] as const).map(
     (pastecIndex) =>
       ({
         isSelected: true,

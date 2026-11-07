@@ -13,6 +13,8 @@ import namespaces from "../namespaces";
 // import { createRateLimiter } from "../rate-limit";
 import { getPastecStatus } from "../status";
 
+const hostsAndPorts = process.env.PASTEC_HOSTS_AND_PORTS!.split(",");
+
 const listenEvents = () => ({
   searchFromCover: ev(
     v.pipe(
@@ -21,11 +23,13 @@ const listenEvents = () => ({
     ),
     v.pipe(
       v.optional(v.number(), 0),
-      v.picklist([0, 1], "Invalid pastec index" as const),
+      v.picklist(
+        hostsAndPorts.map((_, i) => i),
+        "Invalid pastec index" as const,
+      ),
     ),
   )(async (urlOrBase64, pastecIndex) => {
-    const hostAndPort =
-      process.env.PASTEC_HOSTS_AND_PORTS!.split(",")[pastecIndex];
+    const hostAndPort = hostsAndPorts[pastecIndex];
     console.log(`Searching from cover on ${hostAndPort}`);
     const buffer = urlOrBase64.includes(";base64,")
       ? (
