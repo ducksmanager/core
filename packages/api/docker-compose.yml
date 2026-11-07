@@ -77,6 +77,22 @@ services:
       - ./pastec-index-last.dat:/pastec-index-last.dat:ro
     networks:
       - dm-api-network
+  pastec-kp1000-flann200-opencv5-1:
+    container_name: pastec-opencv-5.1.0
+    image: "bperel/pastec:opencv-5.1.0"
+    restart: always
+    command:
+      [
+        "-p",
+        "4212",
+        "-i",
+        "/pastec-index-last.dat",
+        "/pastec/visualWordsORB.dat",
+      ]
+    volumes:
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
+    networks:
+      - dm-api-network
 
 networks:
   dm-api-network:
