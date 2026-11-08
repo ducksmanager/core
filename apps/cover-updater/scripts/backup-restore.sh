@@ -6,8 +6,8 @@ backup_date=$2
 backup_source_filename_unzipped="backup_cover_info.sql"
 backup_dest_dir=/home/bperel/backup/
 
-PASTEC_HOST=$(echo $PASTEC_HOSTS_AND_PORTS | cut -d',' -f1 | cut -d':' -f1)
-PASTEC_PORT=$(echo $PASTEC_HOSTS_AND_PORTS | cut -d',' -f1 | cut -d':' -f2)
+PASTEC_HOST=$(echo $PASTEC_HOSTS | cut -d',' -f1 | cut -d':' -f1)
+PASTEC_PORT=$(echo $PASTEC_HOSTS | cut -d',' -f1 | cut -d':' -f2)
 
 docker cp ${pastec_data_dir}docker_index_${backup_date}.dat \
     ${PASTEC_HOST}:${PASTEC_CONTAINER_HOME} &&

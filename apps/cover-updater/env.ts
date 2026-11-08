@@ -8,7 +8,7 @@ const requiredKeys = [
   "MYSQL_COA_DATABASE",
   "MYSQL_COVER_INFO_HOST",
   "MYSQL_COVER_INFO_DATABASE",
-  "PASTEC_HOSTS_AND_PORTS",
+  "PASTEC_HOSTS",
 ] as const;
 
 for (const key of requiredKeys) {
@@ -24,7 +24,7 @@ const {
   MYSQL_COA_DATABASE,
   MYSQL_COVER_INFO_HOST,
   MYSQL_COVER_INFO_DATABASE,
-  PASTEC_HOSTS_AND_PORTS,
+  PASTEC_HOSTS,
 } = process.env as Record<(typeof requiredKeys)[number], string>;
 
 const databaseUrl = (host: string, database: string) =>
@@ -39,7 +39,7 @@ process.env.DATABASE_URL_COVER_INFO = databaseUrl(
   MYSQL_COVER_INFO_DATABASE,
 );
 
-export const pastecHosts = PASTEC_HOSTS_AND_PORTS.split(",")
+export const pastecHosts = PASTEC_HOSTS.split(",")
   .map((hostAndPort) => hostAndPort.trim())
   .filter(Boolean);
 

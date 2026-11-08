@@ -13,7 +13,7 @@ import namespaces from "../namespaces";
 // import { createRateLimiter } from "../rate-limit";
 import { getPastecStatus } from "../status";
 
-const hostsAndPorts = process.env.PASTEC_HOSTS_AND_PORTS!.split(",");
+const hostsAndPorts = process.env.PASTEC_HOSTS!.split(",");
 
 const listenEvents = () => ({
   searchFromCover: ev(
@@ -180,7 +180,7 @@ const getCoverUrl = async (coverId: number) =>
     );
 
 const getSimilarImages = async (cover: Buffer, hostAndPort: string) =>
-  !process.env.PASTEC_HOSTS_AND_PORTS!.split(",").includes(hostAndPort)
+  !process.env.PASTEC_HOSTS!.split(",").includes(hostAndPort)
     ? null
     : axios
         .post<SimilarImagesResult>(
