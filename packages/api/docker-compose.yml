@@ -78,7 +78,7 @@ services:
     networks:
       - dm-api-network
   pastec-kp1000-flann200-opencv5-1:
-    container_name: pastec-opencv-5.1.0
+    container_name: pastec-opencv-5-1-0
     image: "bperel/pastec:opencv-5.1.0"
     restart: always
     command:
