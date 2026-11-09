@@ -45,8 +45,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       socket-call-client:
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.12.0
+        version: 0.12.0
       socket-call-server:
         specifier: ^0.12.0
         version: 0.12.0(valibot@1.5.0(typescript@6.0.3))
@@ -1353,8 +1353,8 @@ packages:
     resolution: {integrity: sha512-6x6dK6zJdpTzF4sQeNYxwtvBzf6Eg4GtlesS94HOvTudUeyK2WXAaIfmDgsyslYrRBeFIlsi54AYsFGUuhmvrQ==}
     engines: {node: '>= 0.4'}
 
-  socket-call-client@0.11.0:
-    resolution: {integrity: sha512-ubOecErtms+0gSR7F7mgYK+JhHQ0BxDie9LA8jypccg2WeGuyGmpeB1de319Une8z9IyUzYJb2g0lX0cdRvLpA==}
+  socket-call-client@0.12.0:
+    resolution: {integrity: sha512-NYI/HXgo7hqFOWx98CvL2SDdekCueJa5A5RdbnoBP0CtsnJo8SRcQa0DJDNxSANHCNjqTn8JEA00ht9qbVA+aQ==}
     engines: {node: '>=22.0.0'}
 
   socket-call-server@0.12.0:
@@ -2936,7 +2936,7 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  socket-call-client@0.11.0:
+  socket-call-client@0.12.0:
     dependencies:
       socket.io-client: 4.8.4
     transitivePeerDependencies:

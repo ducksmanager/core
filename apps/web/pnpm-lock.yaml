@@ -57,8 +57,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.44(typescript@6.0.3))
       socket-call-client:
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.12.0
+        version: 0.12.0
       timeago.js:
         specifier: ^4.0.2
         version: 4.0.2
@@ -3346,8 +3346,8 @@ packages:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
     engines: {node: '>=14.16'}
 
-  socket-call-client@0.11.0:
-    resolution: {integrity: sha512-ubOecErtms+0gSR7F7mgYK+JhHQ0BxDie9LA8jypccg2WeGuyGmpeB1de319Une8z9IyUzYJb2g0lX0cdRvLpA==}
+  socket-call-client@0.12.0:
+    resolution: {integrity: sha512-NYI/HXgo7hqFOWx98CvL2SDdekCueJa5A5RdbnoBP0CtsnJo8SRcQa0DJDNxSANHCNjqTn8JEA00ht9qbVA+aQ==}
     engines: {node: '>=22.0.0'}
 
   socket.io-client@4.8.4:
@@ -7158,7 +7158,7 @@ snapshots:
 
   slash@5.1.0: {}
 
-  socket-call-client@0.11.0:
+  socket-call-client@0.12.0:
     dependencies:
       socket.io-client: 4.8.4
     transitivePeerDependencies:

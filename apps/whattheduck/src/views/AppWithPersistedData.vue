@@ -68,7 +68,7 @@ watch(
         () => fetchCollection(),
         () => {
           isCollectionLoaded.value = true;
-          fetchCollection(true);
+          return fetchCollection(true);
         },
       );
     }
