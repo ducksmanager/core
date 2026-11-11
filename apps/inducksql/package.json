@@ -16,14 +16,14 @@
     "prod:docker-compose-run": "DIR=apps/inducksql SERVICE=inducksql-exporter pnpm -F '~ci' prod:docker-compose-run"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.10",
     "mariadb": "^3.5.4",
     "vue": "^3.5.44"
   },
   "devDependencies": {
     "@eslint/compat": "^2.1.1",
     "@eslint/js": "^10.0.1",
-    "@sqlite.org/sqlite-wasm": "3.53.4-build1",
+    "@sqlite.org/sqlite-wasm": "3.54.1-build1",
     "@types/bun": "~1.4.4",
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.10",
