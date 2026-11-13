@@ -12,8 +12,8 @@ importers:
         specifier: ^18.0.10
         version: 18.0.10
       mariadb:
-        specifier: ^3.5.4
-        version: 3.5.4
+        specifier: ^3.5.5
+        version: 3.5.5
       ~prisma-schemas:
         specifier: workspace:*
         version: link:../../packages/prisma-schemas
@@ -59,8 +59,8 @@ packages:
     resolution: {integrity: sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==}
     engines: {node: 20 || >=22}
 
-  mariadb@3.5.4:
-    resolution: {integrity: sha512-3m0vdfgRkjle5/9hHl4R7rlVvnDA7QfuFSNkdIAQNROWKOS0J3b9IQK9HaZSCGEVKiDUbFXFiINfC+cmR5P/aA==}
+  mariadb@3.5.5:
+    resolution: {integrity: sha512-xvR622+h/ANbFvbi5SCkGnJWAFG2pGCUdSyISXXU3ObJ+P2X8KqdF8goCXquCD/lKnmqDeWfgTt1YY7dDI5i2Q==}
     engines: {node: '>= 20.0.0'}
 
   safer-buffer@2.1.2:
@@ -71,8 +71,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  undici-types@8.12.3:
-    resolution: {integrity: sha512-EXE4ydL3S76dFb27UFjNVZHTyv/TLdATj/KUe29ptdcg6qXL48J2tZ3126E5kICj5jn781OR+XlVH1N6Mz8jbA==}
+  undici-types@8.12.4:
+    resolution: {integrity: sha512-GNCQH3MbVGB8OAVAoTiLH8pu4wx5Ni3DWKpnBzGj3WDsi8EwmK0aOVBooNEt+g5YL1eHPxcS9XUTouwFU6j1kQ==}
 
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
@@ -92,7 +92,7 @@ snapshots:
   bun-types@1.4.4:
     dependencies:
       '@types/node': 26.6.6
-      undici-types: 8.12.3
+      undici-types: 8.12.4
 
   denque@2.1.0: {}
 
@@ -104,7 +104,7 @@ snapshots:
 
   lru-cache@11.5.3: {}
 
-  mariadb@3.5.4:
+  mariadb@3.5.5:
     dependencies:
       '@types/geojson': 7946.0.16
       '@types/node': 26.6.6
@@ -116,6 +116,6 @@ snapshots:
 
   typescript@6.0.3: {}
 
-  undici-types@8.12.3: {}
+  undici-types@8.12.4: {}
 
   undici-types@8.9.0: {}
