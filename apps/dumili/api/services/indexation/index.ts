@@ -49,7 +49,7 @@ import { unzipSync } from "fflate";
 import { ev } from "socket-call-server/valibot";
 import * as v from "valibot";
 
-await definePDFJSModule(() => import("pdfjs-dist"));
+definePDFJSModule(() => import("pdfjs-dist"));
 
 // In the production bundle, bun bakes in the CI build path for unrar.wasm.
 // We override it by loading the file explicitly when it's present next to the bundle.

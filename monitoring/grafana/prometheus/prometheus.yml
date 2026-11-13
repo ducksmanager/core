@@ -51,6 +51,7 @@ scrape_configs:
       - targets:
           - https://api.ducksmanager.net/status/pastecsearch/0
           - https://api.ducksmanager.net/status/pastecsearch/1
+          - https://api.ducksmanager.net/status/pastecsearch/2
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

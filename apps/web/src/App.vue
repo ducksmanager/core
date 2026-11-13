@@ -5,9 +5,7 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 
-import { buildWebStorage } from "socket-call-client";
-
-import { socketInjectionKey } from "./composables/useDmSocket";
+import { socketInjectionKey, webCacheStorage } from "./composables/useDmSocket";
 import { register as registerLocaleTimeAgo } from "timeago.js";
 import fr from "timeago.js/esm/lang/fr";
 
@@ -16,7 +14,7 @@ registerLocaleTimeAgo("fr", fr);
 let isReady = $ref(false);
 
 const socket = useDmSocket({
-  cacheStorage: buildWebStorage(sessionStorage),
+  cacheStorage: webCacheStorage(sessionStorage),
   disableCollectionCache: true,
   onConnected: () => {
     if (!isReady) {

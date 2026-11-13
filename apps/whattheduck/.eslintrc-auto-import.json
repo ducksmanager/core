@@ -16,7 +16,6 @@
     "CopyStateWithUndefined": true,
     "DirectiveBinding": true,
     "EdgeWithStringCreationDate": true,
-    "EditSubscription": true,
     "EffectScope": true,
     "EntryPartInfo": true,
     "Event": true,
@@ -73,7 +72,6 @@
     "TO_READ_LABEL_ID": true,
     "TransactionResults": true,
     "UserContributionTypeEn": true,
-    "UserForAccountForm": true,
     "VNode": true,
     "WantedEdge": true,
     "WritableComputedRef": true,
@@ -402,6 +400,7 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
+    "webCacheStorage": true,
     "whenever": true
   }
 }

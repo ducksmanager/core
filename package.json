@@ -8,6 +8,11 @@
   "dependencies": {
     "husky": "^9.1.7"
   },
+  "pnpm": {
+    "neverBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  },
   "scripts": {
     "prepare": "husky",
     "lint": "turbo lint --log-order=stream -F '!~duckguessr*'  -- --cache",

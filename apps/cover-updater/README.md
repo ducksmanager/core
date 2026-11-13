@@ -26,7 +26,7 @@ docker compose run --rm cover-updater
 ### Environment
 
 `MYSQL_ROOT_PASSWORD`, `MYSQL_COA_HOST`, `MYSQL_COA_DATABASE`, `MYSQL_COVER_INFO_HOST`,
-`MYSQL_COVER_INFO_DATABASE` and `PASTEC_HOSTS_AND_PORTS` are required.
+`MYSQL_COVER_INFO_DATABASE` and `PASTEC_HOSTS` are required.
 
 `MAX_DELETE_PERCENT` is optional and defaults to `10`: it caps the share of
 `cover_imports` that a single cleanup may delete. Covers are only deleted when the
@@ -52,7 +52,7 @@ asked to dump the index. That instance must mount it read-write.
 Covers added through `PUT /index/images/:id` only live in the instance's memory,
 so the run ends with a `WRITE` to `/index/io`. Two things follow:
 
-- Only the first instance of `PASTEC_HOSTS_AND_PORTS` mounts the index read-write
+- Only the first instance of `PASTEC_HOSTS` mounts the index read-write
   and dumps it; the others boot from what it wrote.
 - Re-adding a cover id the index already holds is a no-op for its size, since
   Pastec keys images by id. An index size that stays flat while the job reports

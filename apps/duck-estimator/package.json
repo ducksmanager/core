@@ -22,7 +22,7 @@
   "dependencies": {
     "csv-parse": "^7.0.3",
     "csv-writer": "^1.6.0",
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.10",
     "playwright-firefox": "~1.47.2",
     "yargs": "^17.7.3",
     "~prisma-schemas": "workspace:*"
@@ -30,12 +30,12 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/yargs": "^17.0.35",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.0"
+    "typescript-eslint": "^8.72.1"
   }
 }

@@ -12,6 +12,8 @@
   </ion-split-pane>
 </template>
 <script setup lang="ts">
+import type { CacheHydratorState } from 'socket-call-client';
+
 import { app } from '~/stores/app';
 import { wtdcollection } from '~/stores/wtdcollection';
 
@@ -33,9 +35,16 @@ const isCollectionLoaded = ref(false);
 
 const dataLoader = computed(() => socket.value!.socket.cacheHydrator);
 
+const hydratorState = shallowRef<CacheHydratorState>();
+onScopeDispose(
+  dataLoader.value.state.subscribe((state) => {
+    hydratorState.value = state;
+  }),
+);
+
 const collectionLoadProgress = computed(() => {
-  if (dataLoader.value.state?.value?.mode === 'HYDRATE') {
-    return dataLoader.value.state.value.hydratedCallsDoneAmount / dataLoader.value.state.value.cachedCallsDone.length;
+  if (hydratorState.value?.mode === 'HYDRATE') {
+    return hydratorState.value.hydratedCallsDoneAmount / hydratorState.value.cachedCallsDone.length;
   } else {
     return undefined;
   }
@@ -43,8 +52,8 @@ const collectionLoadProgress = computed(() => {
 
 const isCollectionReadonly = computed(
   () =>
-    dataLoader.value.state?.value?.mode === 'LOAD_CACHE' ||
-    (dataLoader.value.state?.value?.mode === 'HYDRATE' &&
+    hydratorState.value?.mode === 'LOAD_CACHE' ||
+    (hydratorState.value?.mode === 'HYDRATE' &&
       collectionLoadProgress.value !== undefined &&
       collectionLoadProgress.value < 1),
 );
@@ -59,7 +68,7 @@ watch(
         () => fetchCollection(),
         () => {
           isCollectionLoaded.value = true;
-          fetchCollection(true);
+          return fetchCollection(true);
         },
       );
     }

@@ -5,7 +5,6 @@ import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import _import from "eslint-plugin-import";
 import pluginVue from "eslint-plugin-vue";
 import parser from "vue-eslint-parser";
 
@@ -42,7 +41,6 @@ export default [
   ),
   {
     plugins: {
-      import: fixupPluginRules(_import),
       "@typescript-eslint": fixupPluginRules(typescriptEslint),
     },
 
