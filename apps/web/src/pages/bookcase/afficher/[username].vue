@@ -14,6 +14,6 @@ meta:
 </template>
 
 <script lang="ts" setup>
-const route = useRoute<"/bookcase/afficher/[username]">();
-const username = computed(() => route.params.username);
+const bookcaseAfficherRoute = useRoute<"/bookcase/afficher/[username]">();
+const username = computed(() => bookcaseAfficherRoute.params.username);
 </script>

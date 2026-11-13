@@ -52,11 +52,11 @@ const items = $computed(
 
 watch(
   user,
-  (newValue) => {
+  async (newValue) => {
     if (newValue) {
-      loadSubscriptions();
+      await loadSubscriptions();
     } else if (newValue === null) {
-      router.push("/login");
+      await router.push("/login");
     }
   },
   { immediate: true },

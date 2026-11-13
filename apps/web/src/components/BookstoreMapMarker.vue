@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { MapboxMarker } from "@studiometa/vue-mapbox-gl";
 import type { Marker, Popup } from "mapbox-gl";
-import { onBeforeUnmount, ref, unref, watch } from "vue";
+import { onBeforeUnmount, useTemplateRef, watch } from "vue";
 
 const {
   anchor = "center",
@@ -34,12 +34,13 @@ const {
 
 const open = defineModel<boolean>("open", { default: false });
 
-const markerRef = ref<InstanceType<typeof MapboxMarker>>();
+const markerRef = useTemplateRef<{
+  marker: Marker | undefined;
+  popup: Popup | null;
+}>("markerRef");
 
 const syncPopupOpen = () => {
-  const m = markerRef.value as
-    (InstanceType<typeof MapboxMarker> & { marker: Marker }) | null;
-  const marker = m?.marker;
+  const marker = markerRef.value?.marker;
   if (!marker) return;
   const popup = marker.getPopup();
   if (!popup) return;
@@ -69,14 +70,7 @@ const bindPopupListeners = (popup: Popup | null | undefined) => {
 let detachPopupListeners: (() => void) | undefined;
 
 watch(
-  () => {
-    const m = markerRef.value as
-      | (InstanceType<typeof MapboxMarker> & {
-          popup: import("vue").ComputedRef<Popup | undefined>;
-        })
-      | null;
-    return m?.popup ? unref(m.popup) : null;
-  },
+  () => markerRef.value?.popup ?? null,
   (popup) => {
     detachPopupListeners?.();
     detachPopupListeners = bindPopupListeners(popup);

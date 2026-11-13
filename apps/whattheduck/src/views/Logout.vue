@@ -8,7 +8,7 @@ import { app } from '~/stores/app';
 const router = useRouter();
 const storage = injectLocal<IonicStorage>('storage')!;
 
-(async () => {
+void (async () => {
   app().token = null;
   await storage.clear();
   await router.replace('/');

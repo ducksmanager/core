@@ -38,14 +38,13 @@ const countryCodes = $computed(
       ...new Set(issues.value.map((i) => i.publicationcode.split("/")[0])),
     ],
 );
+const getCountryName = (countrycode: string): string =>
+  countryNames.value![countrycode] ?? countrycode;
 const countryCodesSortedByName = $computed(
   () =>
     countryCodes &&
-    countryNames &&
     [...countryCodes].sort((countryCodeA, countryCodeB) =>
-      countryNames.value![countryCodeA]?.localeCompare(
-        countryNames.value![countryCodeB],
-      ),
+      getCountryName(countryCodeA).localeCompare(getCountryName(countryCodeB)),
     ),
 );
 const publicationCodes = $computed(
@@ -55,7 +54,7 @@ const publicationCodes = $computed(
 const publicationCodesOfCountry = (countrycode: string) =>
   publicationCodes
     ?.filter((publicationcode) => publicationcode.split("/")[0] === countrycode)
-    ?.sort((a, b) =>
+    .sort((a, b) =>
       (publicationNames.value[a] || "").localeCompare(
         publicationNames.value[b] || "",
       ),
@@ -84,7 +83,7 @@ watch(
   { immediate: true },
 );
 
-(async () => {
+void (async () => {
   await fetchCountryNames();
   await loadCollection();
 })();

@@ -25,8 +25,8 @@
 
 <script setup lang="ts">
 const {
-  issuecode = undefined,
-  issue: propIssue = undefined,
+  issuecode,
+  issue: propIssue,
   clickable = false,
   hideCondition = false,
   noWrap = true,
@@ -57,12 +57,12 @@ const {
 
 const store = coa();
 const issue = computed(() =>
-  issuecode ? store.issuecodeDetails?.[issuecode] : propIssue!,
+  issuecode ? store.issuecodeDetails[issuecode] : propIssue!,
 );
 const publicationname = computed(
   () =>
-    issue.value?.publicationcode &&
-    store.publicationNames?.[issue.value.publicationcode],
+    issue.value.publicationcode &&
+    store.publicationNames[issue.value.publicationcode],
 );
 </script>
 

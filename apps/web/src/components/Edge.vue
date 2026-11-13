@@ -47,9 +47,9 @@ const {
   spritePath = null,
   slug = null,
   popularity = null,
-  invisible = false,
-  highlighted = false,
-  embedded = false,
+  invisible,
+  highlighted,
+  embedded,
   orientation = "vertical",
 } = defineProps<{
   id: string;
@@ -65,7 +65,7 @@ const {
   orientation?: "horizontal" | "vertical";
 }>();
 
-const emit = defineEmits<{ (e: "loaded"): void; (e: "open-book"): void }>();
+const emit = defineEmits<{ (e: "loaded" | "open-book"): void }>();
 
 defineSlots<{
   "edge-prefix"(): never;
@@ -77,7 +77,10 @@ const CLOUDINARY_ROTATED_URL =
 const { publicationNames, issuecodeDetails } = storeToRefs(coa());
 
 const hasValidPublicationcode = $computed(
-  () => issuecode && issuecodeDetails.value[issuecode]?.publicationcode,
+  () =>
+    issuecode &&
+    issuecode in issuecodeDetails.value &&
+    issuecodeDetails.value[issuecode].publicationcode,
 );
 
 let src = $computed(() => {
@@ -89,7 +92,7 @@ let src = $computed(() => {
     : `${orientation === "vertical" ? import.meta.env.VITE_EDGES_ROOT : CLOUDINARY_ROTATED_URL}${countrycode}/gen/${magazineCode}.${issuenumber.replaceAll(
         " ",
         "",
-      )}.png?${creationDate ? new Date(creationDate).getTime() : "default"}`;
+      )}.png?${creationDate ? String(new Date(creationDate).getTime()) : "default"}`;
 });
 
 let ignoreSprite = $ref(false);

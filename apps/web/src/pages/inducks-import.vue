@@ -319,12 +319,14 @@ const processRawData = async () => {
   const REGEX_VALID_ROW = /^([^^]+\^[^^]+)\^/;
   const issueCodes = rawData
     .split("\n")
-    .filter((row: string) => !/^country/.test(row) && REGEX_VALID_ROW.test(row))
+    .filter(
+      (row: string) => !row.startsWith("country") && REGEX_VALID_ROW.test(row),
+    )
     .map((row: string) => row.match(REGEX_VALID_ROW)![1].replace("^", "/"));
   await fetchIssuecodeDetails(issueCodes);
 
   const issues = issueCodes.filter(
-    (issueCode) => issuecodeDetails.value[issueCode],
+    (issueCode) => issueCode in issuecodeDetails.value,
   );
   if (issues.length) {
     issuesToImport = issues;
@@ -334,7 +336,7 @@ const processRawData = async () => {
 
 const groupByPublicationCode = (issues: string[]) =>
   issues
-    ?.map((issuecode) => ({
+    .map((issuecode) => ({
       issuecode,
       publicationcode: issuecodeDetails.value[issuecode].publicationcode,
     }))
@@ -359,7 +361,7 @@ const importIssues = async () => {
     }
   }
 
-  router.push("/collection/show");
+  await router.push("/collection/show");
 };
 
 watch($$(importDataReady), (newValue) => {
@@ -369,10 +371,10 @@ watch($$(importDataReady), (newValue) => {
     issuesImportable = [];
     for (const issuecode of issuesToImport!) {
       if (!(issuecode in issuecodeDetails.value))
-        issuesNotReferenced!.push(issuecode);
+        issuesNotReferenced.push(issuecode);
       else if (findInCollection(issuecode))
-        issuesAlreadyInCollection!.push(issuecode);
-      else issuesImportable!.push(issuecode);
+        issuesAlreadyInCollection.push(issuecode);
+      else issuesImportable.push(issuecode);
     }
 
     issuesNotReferenced = [...new Set(issuesNotReferenced)];
@@ -385,7 +387,8 @@ watch($$(issuesToImport), async (newValue) => {
     return;
   }
   const publicationCodes = newValue
-    .map((issuecode) => issuecodeDetails.value[issuecode]?.publicationcode)
+    .filter((issueCode) => issueCode in issuecodeDetails.value)
+    .map((issuecode) => issuecodeDetails.value[issuecode].publicationcode)
     .filter((p): p is string => !!p);
   await fetchPublicationNames(publicationCodes);
   hasPublicationNames = true;
@@ -393,7 +396,7 @@ watch($$(issuesToImport), async (newValue) => {
   hasIssuecodes = true;
 });
 
-loadCollection();
+void loadCollection();
 </script>
 
 <style scoped lang="scss">

@@ -31,7 +31,7 @@
 const { fetchCount } = users();
 const { count } = storeToRefs(users());
 
-fetchCount();
+void fetchCount();
 </script>
 
 <style scoped lang="scss">

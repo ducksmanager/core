@@ -45,7 +45,10 @@ meta:
 </template>
 
 <script setup lang="ts">
-import { socketInjectionKey } from "../../composables/useDmSocket";
+import {
+  isEventErrorOf,
+  socketInjectionKey,
+} from "../../composables/useDmSocket";
 
 let error = $ref<string>();
 
@@ -61,7 +64,9 @@ const sendPasswordToken = () =>
     .then(() => {
       isSent = true;
     })
-    .catch((e) => {
-      error = e.error;
+    .catch((e: unknown) => {
+      error = isEventErrorOf(authEvents.requestTokenForForgotPassword, e)
+        ? e.error
+        : "Unknown error";
     });
 </script>

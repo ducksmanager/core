@@ -331,9 +331,13 @@ const bookstoreCommentsUserIds = $computed(
     ) || null,
 );
 
+// Repairs UTF-8 text that was stored as Latin-1
 const decodeText = (value: string) => {
+  if (/[^\x00-\xff]/.test(value)) return value;
   try {
-    return decodeURIComponent(escape(value));
+    return new TextDecoder("utf-8", { fatal: true }).decode(
+      Uint8Array.from(value, (char) => char.charCodeAt(0)),
+    );
   } catch (_e) {
     return value;
   }

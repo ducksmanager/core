@@ -140,7 +140,7 @@ watch($$(search), async (newValue) => {
 watch(
   $$(ratings),
   async (newValue) => {
-    if (ratings?.length) {
+    if (ratings.length) {
       await fetchPersonNames(newValue.map(({ personcode }) => personcode));
     }
   },

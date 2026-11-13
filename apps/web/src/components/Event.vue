@@ -120,9 +120,7 @@ const { event } = defineProps<{
     | SignupEvent;
 }>();
 
-const signupEvent = $computed(() =>
-  event.type === "signup" ? (event as SignupEvent) : null,
-);
+const signupEvent = $computed(() => (event.type === "signup" ? event : null));
 
 const medalEvent = $computed(() =>
   event.type === "medal" ? (event as MedalEvent) : null,
