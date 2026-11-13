@@ -39,8 +39,7 @@
                 },
                 originalPagesCount,
               )
-            }}</b-button
-          ><b-alert class="mt-3" model-value variant="warning">{{
+            }}</b-button><b-alert class="mt-3" model-value variant="warning">{{
             $t(
               "Il n'y a pas assez de pages disponibles après cette entrée pour ajuster le nombre de pages ({extraPagesNeeded} pages supplémentaires nécessaires).",
               {

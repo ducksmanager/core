@@ -62,8 +62,9 @@
                     <b v-if="userId && userStats[userId]">{{
                       userStats[userId].username
                     }}</b>
-                    <span v-else>{{ $t("Un visiteur anonyme") }}</span
-                    >&nbsp;<i>{{ formatDate(creationDate) }}</i>
+                    <span v-else>{{
+                      $t("Un visiteur anonyme")
+                    }}</span>&nbsp;<i>{{ formatDate(creationDate) }}</i>
                     <blockquote class="px-3 clearfix">
                       {{ decodeText(comment.comment) }}
                       <BookstoreRatings dark :model-value="comment" readonly />

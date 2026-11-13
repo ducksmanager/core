@@ -60,8 +60,8 @@
           class="toggle ion-margin-top ion-align-items-center ion-justify-content-center"
           style="font-size: small"
         >
-          <ion-col> {{ $t('Trier par date de publication') }}</ion-col
-          ><ion-col><ion-toggle v-model="sortByScore" size="small" color="light" /></ion-col
+          <ion-col> {{ $t('Trier par date de publication') }}</ion-col><ion-col
+            ><ion-toggle v-model="sortByScore" size="small" color="light" /></ion-col
           ><ion-col>{{ $t('Trier par score') }}</ion-col>
         </ion-row>
 
@@ -87,8 +87,8 @@
               :key="author"
               :outline="true"
               @click="showAuthorToast(author)"
-              >{{ author }}</ion-chip
-            ><ion-chip v-if="authors.length > 2" :outline="true">&nbsp;+{{ authors.length - 2 }}</ion-chip
+              >{{ author }}</ion-chip><ion-chip v-if="authors.length > 2" :outline="true"
+              >&nbsp;+{{ authors.length - 2 }}</ion-chip
             ><ion-col class="story-title"
               ><InducksStory
                 show-link="outer"

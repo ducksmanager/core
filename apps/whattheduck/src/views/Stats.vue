@@ -12,13 +12,16 @@
       <ion-row style="height: 25vh" class="ion-text-center">
         <ion-row style="max-height: 120px">
           <ion-row class="ion-text-center" style="height: 75%">
-            <ion-col size="4" class="text-big">{{ ownedCountries!.length }}</ion-col
-            ><ion-col size="4" class="text-big">{{ ownedPublications!.length }}</ion-col
+            <ion-col size="4" class="text-big">{{ ownedCountries!.length }}</ion-col><ion-col
+              size="4"
+              class="text-big"
+              >{{ ownedPublications!.length }}</ion-col
             ><ion-col size="4" class="text-big">{{ total }}</ion-col></ion-row
           >
           <ion-row class="ion-text-center" style="height: 25%">
-            <ion-col size="4">{{ $t('pays|pays', ownedCountries!.length) }}</ion-col
-            ><ion-col size="4">{{ $t('publication|publications', ownedPublications!.length) }}</ion-col
+            <ion-col size="4">{{ $t('pays|pays', ownedCountries!.length) }}</ion-col><ion-col
+              size="4"
+              >{{ $t('publication|publications', ownedPublications!.length) }}</ion-col
             ><ion-col size="4" style="flex-direction: column"
               ><div>{{ $t('numéros') }}</div>
               <small>{{

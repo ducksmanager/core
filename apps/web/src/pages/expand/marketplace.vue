@@ -152,8 +152,7 @@ alias: [/agrandir/marketplace]
           >{{ $t("envoyez-lui un e-mail à l'adresse") }}
           <a :href="`mailto:${contactMethods[modalContactId].email}`">{{
             contactMethods[modalContactId].email
-          }}</a
-          >. {{ $t("Voici un modèle d'e-mail possible :") }}</template
+          }}</a>. {{ $t("Voici un modèle d'e-mail possible :") }}</template
         ><template v-if="modalContactMethod === 'discordId'"
           >{{
             $t(
@@ -163,8 +162,8 @@ alias: [/agrandir/marketplace]
           <a
             target="_blank"
             :href="`https://discord.com/users/${contactMethods[modalContactId].discordId}`"
-            >{{ $t("ce lien") }}</a
-          >. {{ $t("Voici un modèle de message possible :") }}</template
+            >{{ $t("ce lien") }}</a>.
+          {{ $t("Voici un modèle de message possible :") }}</template
         >
       </header>
       <blockquote class="m-3 p-4 border-1 border-secondary">

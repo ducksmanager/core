@@ -8,8 +8,7 @@
     >
     {{ title || $t("Sans titre")
     }}<template v-if="part"> - {{ $t("partie") }} {{ part }}</template>
-    <small>{{ comment }}</small
-    ><template v-if="showLink === 'inner'"
+    <small>{{ comment }}</small><template v-if="showLink === 'inner'"
       >&nbsp;<a target="_blank" :href="url">
         {{ $t("Détails") }}
       </a></template

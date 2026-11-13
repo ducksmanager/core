@@ -19,8 +19,8 @@
         :visible="false"
       >
         <template #header>
-          <b>{{ purchase.date.toLocaleDateString(locale) }}</b
-          >&nbsp;<i v-if="purchase.description"
+          <b>{{ purchase.date.toLocaleDateString(locale) }}</b>&nbsp;<i
+            v-if="purchase.description"
             >{{ purchase.description }}&nbsp;</i
           >{{ issues.length }}
           {{ t("numéro | numéros", issues.length) }}

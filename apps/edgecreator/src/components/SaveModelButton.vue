@@ -67,8 +67,9 @@
             "
             variant="warning"
           >
-            {{ $t("You should select at least one user") }} </b-alert
-          ><vue3-simple-typeahead
+            {{
+              $t("You should select at least one user")
+            }} </b-alert><vue3-simple-typeahead
             :items="getUsersWithoutContributors(contributionType)"
             :item-projection="({ username }: SimpleUser) => username"
             :placeholder="$t('Enter a user name').toString()"

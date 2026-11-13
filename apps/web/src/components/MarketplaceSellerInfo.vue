@@ -6,8 +6,9 @@
       class="small d-inline-flex align-items-center me-2"
       >{{ $t("Réservé !") }}</b-badge
     >
-    <template v-if="sentRequest">{{ $t("Demande envoyée à") }}</template
-    ><template v-else>{{ $t("En vente par") }}</template
+    <template v-if="sentRequest">{{
+      $t("Demande envoyée à")
+    }}</template><template v-else>{{ $t("En vente par") }}</template
     >&nbsp;<UserPopover
       v-if="points[issueOnSale.userId] && stats[issueOnSale.userId]"
       :points="points[issueOnSale.userId]"

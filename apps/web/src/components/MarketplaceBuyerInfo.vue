@@ -7,8 +7,9 @@
         class="d-inline-block me-2"
         :class="{ setAside: isBooked }"
       >
-        <template v-if="isBooked">{{ $t("Réservé pour") }}</template
-        ><template v-else>{{ $t("Demandé par") }}</template
+        <template v-if="isBooked">{{ $t("Réservé pour") }}</template><template
+          v-else
+          >{{ $t("Demandé par") }}</template
         >&nbsp;<UserPopover
           v-if="buyerPoints?.[buyerId] && buyerStats?.[buyerId]"
           :points="buyerPoints[buyerId]"

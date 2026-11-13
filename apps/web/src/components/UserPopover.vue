@@ -69,8 +69,7 @@
         >
           <span v-if="stats.marketplaceAcceptsExchanges">{{
             $t("Peut vendre ou échanger des numéros")
-          }}</span
-          ><span v-else>{{
+          }}</span><span v-else>{{
             $t("Accepte seulement de vendre des numéros")
           }}</span>
         </b-alert>

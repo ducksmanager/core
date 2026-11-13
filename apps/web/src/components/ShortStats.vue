@@ -10,8 +10,7 @@
       <div class="mt-4">
         <template v-if="isPublic">{{
           $t("{username} possède", { username })
-        }}</template
-        ><template v-else>{{ $t("Vous possédez") }}</template
+        }}</template><template v-else>{{ $t("Vous possédez") }}</template
         >&nbsp;<b>{{ total }}</b> {{ t("numéro | numéros", total) }},
         {{ $t("dont") }}
         {{ totalUniqueIssues }}
@@ -20,8 +19,9 @@
       <div class="mt-2 mb-4">
         <template v-if="isPublic">{{
           $t("La collection de {username} est composée de", { username })
+        }}</template><template v-else>{{
+          $t("Votre collection est composée de")
         }}</template
-        ><template v-else>{{ $t("Votre collection est composée de") }}</template
         >&nbsp;<b>{{ Object.keys(totalPerPublication).length }}</b>
         {{ $t("publications différentes issues de") }}
         <b>{{ Object.keys(totalPerCountry).length }}</b>
