@@ -3,7 +3,7 @@ name: duckguessr-api
 services:
   duckguessr-db:
     restart: always
-    image: mariadb:12.2
+    image: mariadb:12.3
     container_name: duckguessr-db
     ports:
       - "64098:3306"

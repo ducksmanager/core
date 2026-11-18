@@ -1,7 +1,7 @@
 services:
   db:
     container_name: db
-    image: "mariadb:12.2"
+    image: "mariadb:12.3"
     restart: always
     mem_limit: 10g
     volumes:
