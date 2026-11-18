@@ -220,14 +220,40 @@
     },
     {
       "type": "row",
-      "title": "Logs",
+      "title": "Database status latency",
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 45 }
+    },
+    {
+      "type": "stat",
+      "title": "/status/db response time",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 46 },
+      "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 8 } ] } } },
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "probe_duration_seconds{job=\"db-status-latency\"}", "instant": true }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "/status/db response time over time",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 18, "x": 6, "y": 46 },
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0, "custom": { "drawStyle": "line", "fillOpacity": 10 } } },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "probe_duration_seconds{job=\"db-status-latency\"}", "legendFormat": "/status/db" }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Logs",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 52 }
     },
     {
       "type": "logs",
       "title": "Container logs",
       "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 46 },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 53 },
       "options": { "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending" },
       "targets": [
         { "refId": "A", "datasource": { "type": "loki", "uid": "loki" }, "expr": "{container=~\".+\"}" }
